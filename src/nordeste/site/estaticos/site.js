@@ -863,7 +863,8 @@
       if (marco) {
         marco.classList.add('nn-marco-alvo');
         const topo = marco.getBoundingClientRect().top - dialogo.getBoundingClientRect().top;
-        dialogo.scrollTop += topo - 72; /* abaixo do botão Fechar, que fica preso no topo */
+        const fechar = dialogo.querySelector('.nn-modal-topo');
+        dialogo.scrollTop += topo - (fechar ? fechar.offsetHeight : 0) - 16; /* abaixo do Fechar, preso no topo, com folga */
       } else {
         dialogo.scrollTop = 0;
       }
@@ -951,13 +952,15 @@
       }
     });
 
-    /* teclado: setas, Home e End passam o foco de cartão em cartão */
+    /* teclado: setas, Home e End passam o foco de cartão em cartão (na lista vertical, até 900 px, também ↑ e ↓) */
     faixa.addEventListener('keydown', (evento) => {
       const atual = evento.target.closest('.nn-epoca-abrir');
       if (!atual || evento.altKey || evento.ctrlKey || evento.metaKey) return;
       const cartoes = epocas().map(cartao);
       const i = cartoes.indexOf(atual);
-      const destino = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: cartoes.length - 1 }[evento.key];
+      const teclas = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: cartoes.length - 1 };
+      if (!largo.matches) Object.assign(teclas, { ArrowDown: i + 1, ArrowUp: i - 1 });
+      const destino = teclas[evento.key];
       if (destino === undefined) return;
       evento.preventDefault();
       if (cartoes[destino]) cartoes[destino].focus();
@@ -971,6 +974,10 @@
     });
     faixa.addEventListener('pointermove', (evento) => {
       if (!arrasto || evento.pointerId !== arrasto.id) return;
+      if ((evento.buttons & 1) === 0) { /* o botão foi solto fora da faixa (antes da captura): o arrasto acabou */
+        largar();
+        return;
+      }
       const dx = evento.clientX - arrasto.x;
       if (!arrasto.andou) {
         if (Math.abs(dx) < LIMIAR_DO_CLIQUE) return;
@@ -982,17 +989,21 @@
       }
       faixa.scrollLeft = arrasto.inicio - dx;
     });
+    function largar() {
+      faixa.classList.remove('nn-arrastando');
+      arrasto = null;
+    }
     const soltar = (evento) => {
       if (!arrasto || evento.pointerId !== arrasto.id) return;
       if (arrasto.andou && evento.type === 'pointerup') {
         engolir = true; /* o click vem logo depois do pointerup, na mesma tarefa */
         window.setTimeout(() => { engolir = false; }, 0);
       }
-      faixa.classList.remove('nn-arrastando');
-      arrasto = null;
+      largar();
     };
-    faixa.addEventListener('pointerup', soltar);
-    faixa.addEventListener('pointercancel', soltar);
+    /* na janela, não na faixa: o botão pode ser solto fora dela antes de o arrasto passar de 6 px (sem captura ainda) */
+    window.addEventListener('pointerup', soltar);
+    window.addEventListener('pointercancel', soltar);
 
     /* botões ‹ › nas pontas da faixa: uma moldura em volta da lista, só com JavaScript */
     const moldura = document.createElement('div');

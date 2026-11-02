@@ -1500,16 +1500,17 @@ html:has(.nn-modal[open]) {
   }
 }
 
-.nn-historia,
-.nn-historia .nn-modal-historia {
-  background-color: var(--nn-papel-antigo);
-  background-image:
+/* o papel (a página e o modal das épocas usam o mesmo): calculado no .nn-historia, com as cores do tema dele */
+.nn-historia {
+  --nn-hist-papel:
     radial-gradient(ellipse 80% 45% at 30% 0%, var(--nn-hist-luz), transparent 70%),
     radial-gradient(ellipse 55% 35% at 100% 100%, var(--nn-hist-mancha), transparent 70%),
     radial-gradient(ellipse 40% 25% at 0% 62%, var(--nn-hist-mancha), transparent 70%),
     repeating-radial-gradient(circle at 23% 37%, var(--nn-hist-grao) 0 1px, transparent 1px 3px),
     repeating-radial-gradient(circle at 71% 64%, var(--nn-hist-grao) 0 1px, transparent 1px 5px),
     repeating-linear-gradient(97deg, var(--nn-hist-fibra) 0 1px, transparent 1px 7px);
+  background-color: var(--nn-papel-antigo);
+  background-image: var(--nn-hist-papel);
 }
 
 .nn > main.nn-historia {
@@ -1976,7 +1977,7 @@ html:has(.nn-modal[open]) {
   margin-left: auto;
 }
 
-/* fecho e o modal das épocas */
+/* fecho */
 
 .nn-historia .nn-hist-fecho {
   display: grid;
@@ -1987,10 +1988,6 @@ html:has(.nn-modal[open]) {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.nn-historia .nn-modal-historia {
-  border-color: var(--nn-hist-borda);
 }
 
 /* com o site.js: os artigos saem da lista (vão para o modal); a faixa horizontal e os botões ‹ › acima de 900 px */
@@ -2115,6 +2112,9 @@ html:has(.nn-modal[open]) {
 
 .nn-historia .nn-modal-historia {
   width: min(880px, calc(100vw - 32px));
+  border-color: var(--nn-hist-borda);
+  background-color: var(--nn-papel-antigo);
+  background-image: var(--nn-hist-papel);
 }
 
 .nn-historia .nn-modal-historia .nn-modal-topo {

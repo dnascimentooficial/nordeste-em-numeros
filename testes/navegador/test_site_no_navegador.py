@@ -562,6 +562,38 @@ def test_historia_arrasto_rola_e_nao_abre(abrir):
         assert _estado(pagina)["aberto"]
 
 
+def test_historia_botao_solto_fora_da_faixa_encerra_o_arrasto(abrir):
+    """Apertar num cartao, sair da faixa (andando so 2 px de lado, sem captura ainda) e soltar fora: o arrasto acaba.
+    Passar o mouse depois, sem botao, nao rola a faixa nem liga o estado de arrasto."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        faixa = pagina.locator("ol.nn-linha-tempo")
+        alvo = _cartao(pagina, pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"])
+        alvo.scroll_into_view_if_needed()
+        caixa = alvo.bounding_box()
+        x, y = caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2
+        pagina.mouse.move(x, y)
+        pagina.mouse.down()
+        pagina.mouse.move(x + 2, y + 400, steps=10)
+        fora = faixa.bounding_box()
+        assert y + 400 > fora["y"] + fora["height"] or y + 400 > 800  # soltou fora da faixa
+        pagina.mouse.up()
+        antes = faixa.evaluate("f => f.scrollLeft")
+        pagina.mouse.move(x, y)
+        pagina.mouse.move(x - 150, y, steps=15)
+        depois = faixa.evaluate("f => ({ rolagem: f.scrollLeft, classe: f.classList.contains('nn-arrastando') })")
+        assert depois == {"rolagem": antes, "classe": False}, depois
+        assert not _estado(pagina)["aberto"]
+        # e o botao solto fora com o arrasto ja em curso (mais de 6 px, com captura) tambem encerra
+        pagina.mouse.move(x, y)
+        pagina.mouse.down()
+        pagina.mouse.move(x - 60, y + 400, steps=10)
+        pagina.mouse.up()
+        antes = faixa.evaluate("f => f.scrollLeft")
+        pagina.mouse.move(x - 200, y, steps=15)
+        depois = faixa.evaluate("f => ({ rolagem: f.scrollLeft, classe: f.classList.contains('nn-arrastando') })")
+        assert depois == {"rolagem": antes, "classe": False}, depois
+
+
 def test_historia_clique_abre_modal_e_esc_devolve_foco(abrir):
     """O cartao abre a epoca no modal (o artigo e movido, nao copiado); X, Esc e clique fora fecham, devolvem o artigo e
     o foco. Com o modal Ampliar ligado ao primeiro dialog da pagina, o fechar apagava o artigo."""
@@ -622,6 +654,22 @@ def test_historia_teclado_setas_e_enter(abrir):
         assert anterior.get_attribute("aria-disabled") == "false"
         anterior.click()
         pagina.wait_for_function("() => document.querySelector('ol.nn-linha-tempo').scrollLeft === 0")
+
+
+def test_historia_lista_vertical_setas_para_cima_e_para_baixo(abrir):
+    """Ate 900 px a lista e vertical: alem de <- e ->, as setas para cima e para baixo passam o foco entre os cartoes."""
+    with abrir(HISTORIA, largura=CELULAR, reduced_motion="reduce") as pagina:
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        _cartao(pagina, ids[0]).focus()
+        for tecla, esperado in (("ArrowDown", ids[1]), ("ArrowDown", ids[2]), ("ArrowUp", ids[1]),
+                                ("ArrowRight", ids[2]), ("ArrowLeft", ids[1]), ("ArrowUp", ids[0]), ("ArrowUp", ids[0])):
+            pagina.keyboard.press(tecla)
+            assert _estado(pagina)["foco"] == esperado, tecla
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:  # na faixa horizontal, para baixo continua rolando a pagina
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        _cartao(pagina, ids[0]).focus()
+        pagina.keyboard.press("ArrowDown")
+        assert _estado(pagina)["foco"] == ids[0]
 
 
 def test_historia_endereco_abre_epoca(abrir):
