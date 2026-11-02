@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorar os dados · Nordeste em Números</title>
+<meta name="description" content="Escolha um indicador e um território, compare dois lado a lado e confira cada ano publicado pelas fontes oficiais.">
+<link rel="canonical" href="https://nordeste.dnascimento.com.br/explorar/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nordeste em Números">
+<meta property="og:title" content="Explorar os dados · Nordeste em Números">
+<meta property="og:description" content="Escolha um indicador e um território, compare dois lado a lado e confira cada ano publicado pelas fontes oficiais.">
+<meta property="og:url" content="https://nordeste.dnascimento.com.br/explorar/">
+<meta property="og:image" content="https://nordeste.dnascimento.com.br/og/explorar.png">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/site.js" defer></script>
+</head>
+<body>
+<a class="nn-pular" href="#conteudo">Ir para o conteúdo</a>
+<div class="nn">
+<header class="nn-topo">
+  <div class="nn-hero-topo">
+    <a class="nn-marca" href="/">Júlio Diógenes · Nordeste em Números</a>
+    <nav class="nn-menu" aria-label="Páginas do site">
+      <a href="/">Início</a>
+      <a href="/estados/">Estados</a>
+      <a href="/explorar/" aria-current="page">Explorar</a>
+      <a href="/cards/">Cards</a>
+      <a href="/sobre/">Sobre os dados</a>
+      <a href="/dados/">Dados</a>
+    </nav>
+    <a class="nn-hero-site" href="https://dnascimento.com.br">dnascimento.com.br</a>
+  </div>
+</header>
+<main id="conteudo">
+<section class="nn-pagina" id="explorar" aria-labelledby="titulo-principal">
+  <h1 id="titulo-principal">Explorar os dados</h1>
+  <p class="nn-muted">Escolha um indicador e um território para ver a série completa, ou compare dois lado a lado. Cada linha mostra só o que a fonte publicou.</p>
+  <div class="nn-controles">
+    <label for="sel-expl-ind">Indicador
+      <select id="sel-expl-ind" class="nn-sel-expl-ind">
+        <option value="pib_pc" data-nome="PIB per capita" data-unidade="R$ correntes" data-casas="0" data-sufixo="" selected>PIB per capita (R$ correntes)</option>
+        <option value="pib_vol" data-nome="Volume do PIB" data-unidade="índice, primeiro ano = 100" data-casas="1" data-sufixo="">Volume do PIB (índice, primeiro ano = 100)</option>
+        <option value="pib_part" data-nome="Participação no PIB do Brasil" data-unidade="%" data-casas="2" data-sufixo="%">Participação no PIB do Brasil (%)</option>
+        <option value="renda" data-nome="Renda domiciliar por pessoa" data-unidade="R$ por mês, a preços do último ano da série" data-casas="0" data-sufixo="">Renda domiciliar por pessoa (R$ por mês)</option>
+        <option value="rend_trab" data-nome="Rendimento do trabalho" data-unidade="R$ por mês, a preços do último ano da série" data-casas="0" data-sufixo="">Rendimento do trabalho (R$ por mês)</option>
+        <option value="desoc" data-nome="Taxa de desocupação" data-unidade="% da força de trabalho" data-casas="1" data-sufixo="%">Desocupação (%)</option>
+        <option value="informal" data-nome="Informalidade" data-unidade="% dos ocupados" data-casas="1" data-sufixo="%">Informalidade (%)</option>
+        <option value="pobreza" data-nome="Pobreza" data-unidade="% da população abaixo de US$ 8,30 por dia" data-casas="1" data-sufixo="%">Pobreza (%)</option>
+        <option value="extrema" data-nome="Extrema pobreza" data-unidade="% da população abaixo de US$ 3,00 por dia" data-casas="1" data-sufixo="%">Extrema pobreza (%)</option>
+        <option value="gini" data-nome="Índice de Gini" data-unidade="0 a 1, maior é mais desigual" data-casas="3" data-sufixo="">Índice de Gini (0 a 1)</option>
+        <option value="idhm" data-nome="IDHM" data-unidade="0 a 1" data-casas="3" data-sufixo="">IDHM (0 a 1)</option>
+        <option value="ideb_ai" data-nome="IDEB, anos iniciais" data-unidade="0 a 10" data-casas="1" data-sufixo="">IDEB, anos iniciais</option>
+        <option value="ideb_af" data-nome="IDEB, anos finais" data-unidade="0 a 10" data-casas="1" data-sufixo="">IDEB, anos finais</option>
+        <option value="ideb_em" data-nome="IDEB, ensino médio" data-unidade="0 a 10" data-casas="1" data-sufixo="">IDEB, ensino médio</option>
+        <option value="aband" data-nome="Abandono no ensino médio" data-unidade="% dos matriculados" data-casas="1" data-sufixo="%">Abandono no ensino médio (%)</option>
+        <option value="matric" data-nome="Matrículas na educação básica" data-unidade="matrículas" data-casas="0" data-sufixo="">Matrículas na educação básica</option>
+        <option value="superior" data-nome="Matrículas no ensino superior" data-unidade="matrículas" data-casas="0" data-sufixo="">Matrículas no ensino superior</option>
+        <option value="pop" data-nome="População" data-unidade="pessoas" data-casas="0" data-sufixo="">População</option>
+      </select>
+    </label>
+    <label for="sel-expl-terr">Território
+      <select id="sel-expl-terr" class="nn-sel-expl-terr">
+        <option value="NE" data-etiqueta="NE" selected>Nordeste</option>
+        <option value="BR" data-etiqueta="BR">Brasil</option>
+        <option value="BR_FORA_NE" data-etiqueta="BR fora NE">Brasil fora do Nordeste</option>
+        <option value="MA" data-etiqueta="MA">Maranhão</option>
+        <option value="PI" data-etiqueta="PI">Piauí</option>
+        <option value="CE" data-etiqueta="CE">Ceará</option>
+        <option value="RN" data-etiqueta="RN">Rio Grande do Norte</option>
+        <option value="PB" data-etiqueta="PB">Paraíba</option>
+        <option value="PE" data-etiqueta="PE">Pernambuco</option>
+        <option value="AL" data-etiqueta="AL">Alagoas</option>
+        <option value="SE_UF" data-etiqueta="SE">Sergipe</option>
+        <option value="BA" data-etiqueta="BA">Bahia</option>
+        <option value="N" data-etiqueta="Norte">Região Norte</option>
+        <option value="SE" data-etiqueta="Sudeste">Região Sudeste</option>
+        <option value="S" data-etiqueta="Sul">Região Sul</option>
+        <option value="CO" data-etiqueta="C.-Oeste">Região Centro-Oeste</option>
+      </select>
+    </label>
+    <label for="sel-expl-terr2">Comparar lado a lado com
+      <select id="sel-expl-terr2" class="nn-sel-expl-terr2">
+        <option value="" selected>nenhum</option>
+        <option value="NE" data-etiqueta="NE">Nordeste</option>
+        <option value="BR" data-etiqueta="BR">Brasil</option>
+        <option value="BR_FORA_NE" data-etiqueta="BR fora NE">Brasil fora do Nordeste</option>
+        <option value="MA" data-etiqueta="MA">Maranhão</option>
+        <option value="PI" data-etiqueta="PI">Piauí</option>
+        <option value="CE" data-etiqueta="CE">Ceará</option>
+        <option value="RN" data-etiqueta="RN">Rio Grande do Norte</option>
+        <option value="PB" data-etiqueta="PB">Paraíba</option>
+        <option value="PE" data-etiqueta="PE">Pernambuco</option>
+        <option value="AL" data-etiqueta="AL">Alagoas</option>
+        <option value="SE_UF" data-etiqueta="SE">Sergipe</option>
+        <option value="BA" data-etiqueta="BA">Bahia</option>
+        <option value="N" data-etiqueta="Norte">Região Norte</option>
+        <option value="SE" data-etiqueta="Sudeste">Região Sudeste</option>
+        <option value="S" data-etiqueta="Sul">Região Sul</option>
+        <option value="CO" data-etiqueta="C.-Oeste">Região Centro-Oeste</option>
+      </select>
+    </label>
+  </div>
+  <article class="nn-card" id="explorar-grafico" data-dados="/explorar/dados/" data-sem-dados="Este indicador não tem dados para este território." data-sem-periodo="Não há dados deste território no período escolhido." data-erro="Não consegui carregar os dados deste indicador. Tente de novo em instantes." data-tabela="Ver os números do território escolhido" data-governos="[[&#34;FHC&#34;,1999.0,2002.9993155373031,false],[&#34;Lula&#34;,2003.0,2010.9993155373031,false],[&#34;Dilma&#34;,2011.0,2016.3641341546886,false],[&#34;Temer&#34;,2016.3613963039015,2016.6680355920603,true],[&#34;Temer&#34;,2016.6652977412732,2018.9993155373031,false],[&#34;Bolsonaro&#34;,2019.0,2022.9993155373031,false],[&#34;Lula&#34;,2023.0,2026.9993155373031,false]]">
+    <p class="nn-eyebrow">Explorar</p>
+    <h2 id="explorar-titulo" aria-live="polite">PIB per capita: Nordeste (R$ correntes)</h2>
+    <p class="nn-muted">A linha forte é o território escolhido. As claras são referências: o Brasil e, para estados e outras regiões, o Nordeste. A linha quebra quando a pesquisa muda ou falta um ano, porque pesquisas diferentes não se emendam.</p>
+    <div class="nn-zoom" id="explorar-zoom" role="group" aria-label="Ajustes do gráfico" data-de="De" data-ate="Até" data-inicio="início" data-fim="fim" data-ampliar="Ampliar a variação" data-todo="Ver todo o período" hidden>
+      <p class="nn-muted">Para ver só um período, arraste o mouse ou o dedo sobre o gráfico, ou escolha os anos. Com um período escolhido, &#34;Ampliar a variação&#34; ajusta a escala vertical aos dados dele; sem isso, a escala continua a do período completo, para a mudança não parecer maior do que é.</p>
+    </div>
+    <div id="explorar-vista">
+<div class="nn-graf" id="g-explorar">
+  <div class="nn-graf-largo"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nn5697a6e9-t nn5697a6e9-d" width="100%" viewBox="0 0 720 300" font-size="11" data-pontos="[{&quot;rotulo&quot;:&quot;Brasil&quot;,&quot;rotulo_curto&quot;:&quot;BR&quot;,&quot;destaque&quot;:false,&quot;pontos&quot;:[[2002,8525.236450209628,&quot;scr_ref2010&quot;],[2003,9712.989361871923,&quot;scr_ref2010&quot;],[2004,10782.405698028191,&quot;scr_ref2010&quot;],[2005,11784.853145760597,&quot;scr_ref2010&quot;],[2006,12900.58717069128,&quot;scr_ref2010&quot;],[2008,16401.482020996853,&quot;scr_ref2010&quot;],[2009,17406.665828287696,&quot;scr_ref2010&quot;],[2010,20370.793550554128,&quot;scr_ref2010&quot;],[2011,22748.71722546721,&quot;scr_ref2010&quot;],[2012,24830.63592056101,&quot;scr_ref2010&quot;],[2013,26521.150965509027,&quot;scr_ref2010&quot;],[2014,28500.24048599802,&quot;scr_ref2010&quot;],[2015,29326.415079509225,&quot;scr_ref2010&quot;],[2016,30421.60537781977,&quot;scr_ref2010&quot;],[2017,31712.653081697423,&quot;scr_ref2010&quot;],[2018,33593.82411752038,&quot;scr_ref2010&quot;],[2019,35161.703972871386,&quot;scr_ref2010&quot;],[2020,35935.737680194215,&quot;scr_ref2010&quot;],[2021,42247.523656494246,&quot;scr_ref2010&quot;],[2022,49633.833242180765,&quot;scr_ref2010&quot;],[2023,53886.6688038132,&quot;scr_ref2010&quot;]]},{&quot;rotulo&quot;:&quot;Nordeste&quot;,&quot;rotulo_curto&quot;:&quot;NE&quot;,&quot;destaque&quot;:true,&quot;pontos&quot;:[[2002,3989.09221459048,&quot;scr_ref2010&quot;],[2003,4469.347754837801,&quot;scr_ref2010&quot;],[2004,4992.199221837911,&quot;scr_ref2010&quot;],[2005,5543.934426428727,&quot;scr_ref2010&quot;],[2006,6160.708009472839,&quot;scr_ref2010&quot;],[2008,7650.652226961904,&quot;scr_ref2010&quot;],[2009,8432.457797126643,&quot;scr_ref2010&quot;],[2010,9848.344211167829,&quot;scr_ref2010&quot;],[2011,10904.532420079086,&quot;scr_ref2010&quot;],[2012,12114.669903491826,&quot;scr_ref2010&quot;],[2013,12985.529075365515,&quot;scr_ref2010&quot;],[2014,14329.12790491756,&quot;scr_ref2010&quot;],[2015,15003.30922414228,&quot;scr_ref2010&quot;],[2016,15784.012530339482,&quot;scr_ref2010&quot;],[2017,16652.56749295715,&quot;scr_ref2010&quot;],[2018,17702.847635286198,&quot;scr_ref2010&quot;],[2019,18358.780998356902,&quot;scr_ref2010&quot;],[2020,18812.118026550696,&quot;scr_ref2010&quot;],[2021,21556.26492838071,&quot;scr_ref2010&quot;],[2022,25394.95368653905,&quot;scr_ref2010&quot;],[2023,27681.96545405597,&quot;scr_ref2010&quot;]]}]" data-casas="0" data-sufixo=""><title id="nn5697a6e9-t">PIB per capita, Nordeste</title><desc id="nn5697a6e9-d">Gráfico de linhas, PIB per capita, Nordeste. Brasil: 8.525 em 2002 e 53.887 em 2023; Nordeste: 3.989 em 2002 e 27.682 em 2023. A tabela com todos os valores está logo abaixo.</desc><defs><pattern id="nn5697a6e9-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="nn-hachura" stroke-width="2.5"/></pattern></defs><rect class="nn-faixa-a" x="50" y="26" width="66.4" height="250"/><text class="nn-rotulo" x="83.2" y="18" text-anchor="middle">FHC</text><rect class="nn-faixa-b" x="116.4" y="26" width="177.2" height="250"/><text class="nn-rotulo" x="205" y="18" text-anchor="middle">Lula</text><rect class="nn-faixa-a" x="293.6" y="26" width="118.8" height="250"/><text class="nn-rotulo" x="353" y="18" text-anchor="middle">Dilma</text><rect x="412.4" y="26" width="6.8" height="250" fill="url(#nn5697a6e9-h)"/><rect class="nn-faixa-a" x="419.1" y="26" width="51.7" height="250"/><text class="nn-rotulo" x="445" y="18" text-anchor="middle">T</text><rect class="nn-faixa-b" x="470.8" y="26" width="88.6" height="250"/><text class="nn-rotulo" x="515.1" y="18" text-anchor="middle">Bolsonaro</text><rect class="nn-faixa-a" x="559.4" y="26" width="88.6" height="250"/><text class="nn-rotulo" x="603.7" y="18" text-anchor="middle">Lula</text><rect x="581.6" y="26" width="66.4" height="250" fill="url(#nn5697a6e9-h)"/><line class="nn-grade" x1="50" x2="648" y1="276" y2="276" stroke-width="1"/><text class="nn-eixo" x="44" y="280" text-anchor="end">0</text><line class="nn-grade" x1="50" x2="648" y1="192.7" y2="192.7" stroke-width="1"/><text class="nn-eixo" x="44" y="196.7" text-anchor="end">20.000</text><line class="nn-grade" x1="50" x2="648" y1="109.3" y2="109.3" stroke-width="1"/><text class="nn-eixo" x="44" y="113.3" text-anchor="end">40.000</text><line class="nn-grade" x1="50" x2="648" y1="26" y2="26" stroke-width="1"/><text class="nn-eixo" x="44" y="30" text-anchor="end">60.000</text><text class="nn-eixo" x="61.1" y="294" text-anchor="middle">2000</text><text class="nn-eixo" x="149.7" y="294" text-anchor="middle">2004</text><text class="nn-eixo" x="238.3" y="294" text-anchor="middle">2008</text><text class="nn-eixo" x="326.9" y="294" text-anchor="middle">2012</text><text class="nn-eixo" x="415.4" y="294" text-anchor="middle">2016</text><text class="nn-eixo" x="504" y="294" text-anchor="middle">2020</text><text class="nn-eixo" x="592.6" y="294" text-anchor="middle">2024</text><g class="nn-linha-ref"><path d="M105.4,240.5L127.5,235.5L149.7,231.1L171.8,226.9L194,222.2" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="105.4" cy="240.5" r="2.2" stroke="none"/><circle cx="127.5" cy="235.5" r="2.2" stroke="none"/><circle cx="149.7" cy="231.1" r="2.2" stroke="none"/><circle cx="171.8" cy="226.9" r="2.2" stroke="none"/><circle cx="194" cy="222.2" r="2.2" stroke="none"/><path d="M238.3,207.7L260.4,203.5L282.6,191.1L304.7,181.2L326.9,172.5L349,165.5L371.1,157.2L393.3,153.8L415.4,149.2L437.6,143.9L459.7,136L481.9,129.5L504,126.3L526.2,100L548.3,69.2L570.5,51.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="238.3" cy="207.7" r="2.2" stroke="none"/><circle cx="260.4" cy="203.5" r="2.2" stroke="none"/><circle cx="282.6" cy="191.1" r="2.2" stroke="none"/><circle cx="304.7" cy="181.2" r="2.2" stroke="none"/><circle cx="326.9" cy="172.5" r="2.2" stroke="none"/><circle cx="349" cy="165.5" r="2.2" stroke="none"/><circle cx="371.1" cy="157.2" r="2.2" stroke="none"/><circle cx="393.3" cy="153.8" r="2.2" stroke="none"/><circle cx="415.4" cy="149.2" r="2.2" stroke="none"/><circle cx="437.6" cy="143.9" r="2.2" stroke="none"/><circle cx="459.7" cy="136" r="2.2" stroke="none"/><circle cx="481.9" cy="129.5" r="2.2" stroke="none"/><circle cx="504" cy="126.3" r="2.2" stroke="none"/><circle cx="526.2" cy="100" r="2.2" stroke="none"/><circle cx="548.3" cy="69.2" r="2.2" stroke="none"/><circle cx="570.5" cy="51.5" r="2.2" stroke="none"/></g><g class="nn-linha-ne"><path d="M105.4,259.4L127.5,257.4L149.7,255.2L171.8,252.9L194,250.3" fill="none" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="105.4" cy="259.4" r="2.2" stroke="none"/><circle cx="127.5" cy="257.4" r="2.2" stroke="none"/><circle cx="149.7" cy="255.2" r="2.2" stroke="none"/><circle cx="171.8" cy="252.9" r="2.2" stroke="none"/><circle cx="194" cy="250.3" r="2.2" stroke="none"/><path d="M238.3,244.1L260.4,240.9L282.6,235L304.7,230.6L326.9,225.5L349,221.9L371.1,216.3L393.3,213.5L415.4,210.2L437.6,206.6L459.7,202.2L481.9,199.5L504,197.6L526.2,186.2L548.3,170.2L570.5,160.7" fill="none" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="238.3" cy="244.1" r="2.2" stroke="none"/><circle cx="260.4" cy="240.9" r="2.2" stroke="none"/><circle cx="282.6" cy="235" r="2.2" stroke="none"/><circle cx="304.7" cy="230.6" r="2.2" stroke="none"/><circle cx="326.9" cy="225.5" r="2.2" stroke="none"/><circle cx="349" cy="221.9" r="2.2" stroke="none"/><circle cx="371.1" cy="216.3" r="2.2" stroke="none"/><circle cx="393.3" cy="213.5" r="2.2" stroke="none"/><circle cx="415.4" cy="210.2" r="2.2" stroke="none"/><circle cx="437.6" cy="206.6" r="2.2" stroke="none"/><circle cx="459.7" cy="202.2" r="2.2" stroke="none"/><circle cx="481.9" cy="199.5" r="2.2" stroke="none"/><circle cx="504" cy="197.6" r="2.2" stroke="none"/><circle cx="526.2" cy="186.2" r="2.2" stroke="none"/><circle cx="548.3" cy="170.2" r="2.2" stroke="none"/><circle cx="570.5" cy="160.7" r="2.2" stroke="none"/></g><text class="nn-rotulo" x="577.5" y="55.5">BR 53.887</text><text class="nn-rotulo-forte" x="577.5" y="164.7">NE 27.682</text></svg></div>
+  <div class="nn-graf-estreito"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nnb79e73a2-t nnb79e73a2-d" width="100%" viewBox="0 0 360 240" font-size="11" data-pontos="[{&quot;rotulo&quot;:&quot;Brasil&quot;,&quot;rotulo_curto&quot;:&quot;BR&quot;,&quot;destaque&quot;:false,&quot;pontos&quot;:[[2002,8525.236450209628,&quot;scr_ref2010&quot;],[2003,9712.989361871923,&quot;scr_ref2010&quot;],[2004,10782.405698028191,&quot;scr_ref2010&quot;],[2005,11784.853145760597,&quot;scr_ref2010&quot;],[2006,12900.58717069128,&quot;scr_ref2010&quot;],[2008,16401.482020996853,&quot;scr_ref2010&quot;],[2009,17406.665828287696,&quot;scr_ref2010&quot;],[2010,20370.793550554128,&quot;scr_ref2010&quot;],[2011,22748.71722546721,&quot;scr_ref2010&quot;],[2012,24830.63592056101,&quot;scr_ref2010&quot;],[2013,26521.150965509027,&quot;scr_ref2010&quot;],[2014,28500.24048599802,&quot;scr_ref2010&quot;],[2015,29326.415079509225,&quot;scr_ref2010&quot;],[2016,30421.60537781977,&quot;scr_ref2010&quot;],[2017,31712.653081697423,&quot;scr_ref2010&quot;],[2018,33593.82411752038,&quot;scr_ref2010&quot;],[2019,35161.703972871386,&quot;scr_ref2010&quot;],[2020,35935.737680194215,&quot;scr_ref2010&quot;],[2021,42247.523656494246,&quot;scr_ref2010&quot;],[2022,49633.833242180765,&quot;scr_ref2010&quot;],[2023,53886.6688038132,&quot;scr_ref2010&quot;]]},{&quot;rotulo&quot;:&quot;Nordeste&quot;,&quot;rotulo_curto&quot;:&quot;NE&quot;,&quot;destaque&quot;:true,&quot;pontos&quot;:[[2002,3989.09221459048,&quot;scr_ref2010&quot;],[2003,4469.347754837801,&quot;scr_ref2010&quot;],[2004,4992.199221837911,&quot;scr_ref2010&quot;],[2005,5543.934426428727,&quot;scr_ref2010&quot;],[2006,6160.708009472839,&quot;scr_ref2010&quot;],[2008,7650.652226961904,&quot;scr_ref2010&quot;],[2009,8432.457797126643,&quot;scr_ref2010&quot;],[2010,9848.344211167829,&quot;scr_ref2010&quot;],[2011,10904.532420079086,&quot;scr_ref2010&quot;],[2012,12114.669903491826,&quot;scr_ref2010&quot;],[2013,12985.529075365515,&quot;scr_ref2010&quot;],[2014,14329.12790491756,&quot;scr_ref2010&quot;],[2015,15003.30922414228,&quot;scr_ref2010&quot;],[2016,15784.012530339482,&quot;scr_ref2010&quot;],[2017,16652.56749295715,&quot;scr_ref2010&quot;],[2018,17702.847635286198,&quot;scr_ref2010&quot;],[2019,18358.780998356902,&quot;scr_ref2010&quot;],[2020,18812.118026550696,&quot;scr_ref2010&quot;],[2021,21556.26492838071,&quot;scr_ref2010&quot;],[2022,25394.95368653905,&quot;scr_ref2010&quot;],[2023,27681.96545405597,&quot;scr_ref2010&quot;]]}]" data-casas="0" data-sufixo=""><title id="nnb79e73a2-t">PIB per capita, Nordeste</title><desc id="nnb79e73a2-d">Gráfico de linhas, PIB per capita, Nordeste. Brasil: 8.525 em 2002 e 53.887 em 2023; Nordeste: 3.989 em 2002 e 27.682 em 2023. A tabela com todos os valores está logo abaixo.</desc><defs><pattern id="nnb79e73a2-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="nn-hachura" stroke-width="2.5"/></pattern></defs><rect class="nn-faixa-a" x="50" y="26" width="26.4" height="190"/><text class="nn-rotulo" x="63.2" y="18" text-anchor="middle">F</text><rect class="nn-faixa-b" x="76.4" y="26" width="70.5" height="190"/><text class="nn-rotulo" x="111.7" y="18" text-anchor="middle">L</text><rect class="nn-faixa-a" x="147" y="26" width="47.3" height="190"/><text class="nn-rotulo" x="170.6" y="18" text-anchor="middle">D</text><rect x="194.2" y="26" width="2.7" height="190" fill="url(#nnb79e73a2-h)"/><rect class="nn-faixa-a" x="196.9" y="26" width="20.6" height="190"/><text class="nn-rotulo" x="207.2" y="18" text-anchor="middle">T</text><rect class="nn-faixa-b" x="217.5" y="26" width="35.3" height="190"/><text class="nn-rotulo" x="235.1" y="18" text-anchor="middle">B</text><rect class="nn-faixa-a" x="252.7" y="26" width="35.3" height="190"/><text class="nn-rotulo" x="270.4" y="18" text-anchor="middle">L</text><rect x="261.6" y="26" width="26.4" height="190" fill="url(#nnb79e73a2-h)"/><line class="nn-grade" x1="50" x2="288" y1="216" y2="216" stroke-width="1"/><text class="nn-eixo" x="44" y="220" text-anchor="end">0</text><line class="nn-grade" x1="50" x2="288" y1="152.7" y2="152.7" stroke-width="1"/><text class="nn-eixo" x="44" y="156.7" text-anchor="end">20.000</text><line class="nn-grade" x1="50" x2="288" y1="89.3" y2="89.3" stroke-width="1"/><text class="nn-eixo" x="44" y="93.3" text-anchor="end">40.000</text><line class="nn-grade" x1="50" x2="288" y1="26" y2="26" stroke-width="1"/><text class="nn-eixo" x="44" y="30" text-anchor="end">60.000</text><text class="nn-eixo" x="54.4" y="234" text-anchor="middle">2000</text><text class="nn-eixo" x="124.9" y="234" text-anchor="middle">2008</text><text class="nn-eixo" x="195.4" y="234" text-anchor="middle">2016</text><text class="nn-eixo" x="266" y="234" text-anchor="middle">2024</text><g class="nn-linha-ref"><path d="M72,189L80.9,185.2L89.7,181.9L98.5,178.7L107.3,175.1" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="72" cy="189" r="2.2" stroke="none"/><circle cx="80.9" cy="185.2" r="2.2" stroke="none"/><circle cx="89.7" cy="181.9" r="2.2" stroke="none"/><circle cx="98.5" cy="178.7" r="2.2" stroke="none"/><circle cx="107.3" cy="175.1" r="2.2" stroke="none"/><path d="M124.9,164.1L133.7,160.9L142.6,151.5L151.4,144L160.2,137.4L169,132L177.8,125.7L186.6,123.1L195.4,119.7L204.3,115.6L213.1,109.6L221.9,104.7L230.7,102.2L239.5,82.2L248.3,58.8L257.1,45.4" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="124.9" cy="164.1" r="2.2" stroke="none"/><circle cx="133.7" cy="160.9" r="2.2" stroke="none"/><circle cx="142.6" cy="151.5" r="2.2" stroke="none"/><circle cx="151.4" cy="144" r="2.2" stroke="none"/><circle cx="160.2" cy="137.4" r="2.2" stroke="none"/><circle cx="169" cy="132" r="2.2" stroke="none"/><circle cx="177.8" cy="125.7" r="2.2" stroke="none"/><circle cx="186.6" cy="123.1" r="2.2" stroke="none"/><circle cx="195.4" cy="119.7" r="2.2" stroke="none"/><circle cx="204.3" cy="115.6" r="2.2" stroke="none"/><circle cx="213.1" cy="109.6" r="2.2" stroke="none"/><circle cx="221.9" cy="104.7" r="2.2" stroke="none"/><circle cx="230.7" cy="102.2" r="2.2" stroke="none"/><circle cx="239.5" cy="82.2" r="2.2" stroke="none"/><circle cx="248.3" cy="58.8" r="2.2" stroke="none"/><circle cx="257.1" cy="45.4" r="2.2" stroke="none"/></g><g class="nn-linha-ne"><path d="M72,203.4L80.9,201.8L89.7,200.2L98.5,198.4L107.3,196.5" fill="none" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="72" cy="203.4" r="2.2" stroke="none"/><circle cx="80.9" cy="201.8" r="2.2" stroke="none"/><circle cx="89.7" cy="200.2" r="2.2" stroke="none"/><circle cx="98.5" cy="198.4" r="2.2" stroke="none"/><circle cx="107.3" cy="196.5" r="2.2" stroke="none"/><path d="M124.9,191.8L133.7,189.3L142.6,184.8L151.4,181.5L160.2,177.6L169,174.9L177.8,170.6L186.6,168.5L195.4,166L204.3,163.3L213.1,159.9L221.9,157.9L230.7,156.4L239.5,147.7L248.3,135.6L257.1,128.3" fill="none" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="124.9" cy="191.8" r="2.2" stroke="none"/><circle cx="133.7" cy="189.3" r="2.2" stroke="none"/><circle cx="142.6" cy="184.8" r="2.2" stroke="none"/><circle cx="151.4" cy="181.5" r="2.2" stroke="none"/><circle cx="160.2" cy="177.6" r="2.2" stroke="none"/><circle cx="169" cy="174.9" r="2.2" stroke="none"/><circle cx="177.8" cy="170.6" r="2.2" stroke="none"/><circle cx="186.6" cy="168.5" r="2.2" stroke="none"/><circle cx="195.4" cy="166" r="2.2" stroke="none"/><circle cx="204.3" cy="163.3" r="2.2" stroke="none"/><circle cx="213.1" cy="159.9" r="2.2" stroke="none"/><circle cx="221.9" cy="157.9" r="2.2" stroke="none"/><circle cx="230.7" cy="156.4" r="2.2" stroke="none"/><circle cx="239.5" cy="147.7" r="2.2" stroke="none"/><circle cx="248.3" cy="135.6" r="2.2" stroke="none"/><circle cx="257.1" cy="128.3" r="2.2" stroke="none"/></g><text class="nn-rotulo" x="264.1" y="49.4">BR 53.887</text><text class="nn-rotulo-forte" x="264.1" y="132.3">NE 27.682</text></svg></div>
+</div>
+<details>
+  <summary>Ver os números do território escolhido</summary>
+  <div class="nn-tabela">
+    <table>
+      <thead><tr><th scope="col">Ano</th><th scope="col">Território</th><th scope="col" class="nn-num">Valor</th><th scope="col">Série da fonte</th></tr></thead>
+      <tbody>
+        <tr><td>2002</td><td>Nordeste</td><td class="nn-num">3.989</td><td>scr_ref2010</td></tr>
+        <tr><td>2003</td><td>Nordeste</td><td class="nn-num">4.469</td><td>scr_ref2010</td></tr>
+        <tr><td>2004</td><td>Nordeste</td><td class="nn-num">4.992</td><td>scr_ref2010</td></tr>
+        <tr><td>2005</td><td>Nordeste</td><td class="nn-num">5.544</td><td>scr_ref2010</td></tr>
+        <tr><td>2006</td><td>Nordeste</td><td class="nn-num">6.161</td><td>scr_ref2010</td></tr>
+        <tr><td>2008</td><td>Nordeste</td><td class="nn-num">7.651</td><td>scr_ref2010</td></tr>
+        <tr><td>2009</td><td>Nordeste</td><td class="nn-num">8.432</td><td>scr_ref2010</td></tr>
+        <tr><td>2010</td><td>Nordeste</td><td class="nn-num">9.848</td><td>scr_ref2010</td></tr>
+        <tr><td>2011</td><td>Nordeste</td><td class="nn-num">10.905</td><td>scr_ref2010</td></tr>
+        <tr><td>2012</td><td>Nordeste</td><td class="nn-num">12.115</td><td>scr_ref2010</td></tr>
+        <tr><td>2013</td><td>Nordeste</td><td class="nn-num">12.986</td><td>scr_ref2010</td></tr>
+        <tr><td>2014</td><td>Nordeste</td><td class="nn-num">14.329</td><td>scr_ref2010</td></tr>
+        <tr><td>2015</td><td>Nordeste</td><td class="nn-num">15.003</td><td>scr_ref2010</td></tr>
+        <tr><td>2016</td><td>Nordeste</td><td class="nn-num">15.784</td><td>scr_ref2010</td></tr>
+        <tr><td>2017</td><td>Nordeste</td><td class="nn-num">16.653</td><td>scr_ref2010</td></tr>
+        <tr><td>2018</td><td>Nordeste</td><td class="nn-num">17.703</td><td>scr_ref2010</td></tr>
+        <tr><td>2019</td><td>Nordeste</td><td class="nn-num">18.359</td><td>scr_ref2010</td></tr>
+        <tr><td>2020</td><td>Nordeste</td><td class="nn-num">18.812</td><td>scr_ref2010</td></tr>
+        <tr><td>2021</td><td>Nordeste</td><td class="nn-num">21.556</td><td>scr_ref2010</td></tr>
+        <tr><td>2022</td><td>Nordeste</td><td class="nn-num">25.395</td><td>scr_ref2010</td></tr>
+        <tr><td>2023</td><td>Nordeste</td><td class="nn-num">27.682</td><td>scr_ref2010</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+    </div>
+    <div class="nn-fonte"><span>Valores como publicados pela fonte, sem interpolação. As fontes e os métodos de cada indicador estão em Sobre os dados.</span></div>
+  </article>
+</section>
+</main>
+<footer class="nn-rodape">
+  <span><strong>Júlio Diógenes · Nordeste em Números</strong></span>
+  <span>Dados oficiais publicados em 1º de novembro de 2026. Fontes e fórmulas em <a href="/sobre/">Sobre os dados</a>.</span>
+  <span>sha256 da base: <code class="nn-sha-base">f572acb05c16193b788e78433abaea3ad481a2f36ec8b2ced64537fe50913b9d</code></span>
+  <span>Compilação sob licença <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</span>
+  <span class="nn-credito">Foto: <a href="https://dnascimento.com.br">Júlio Diógenes</a></span>
+  <a href="https://dnascimento.com.br">dnascimento.com.br</a>
+</footer>
+</div>
+</body>
+</html>

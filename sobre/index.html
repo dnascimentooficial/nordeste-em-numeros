@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sobre os dados · Nordeste em Números</title>
+<meta name="description" content="Por que eu fiz este site, como ler os gráficos, todas as fontes, as fórmulas que eu uso e o que ainda falta na base.">
+<link rel="canonical" href="https://nordeste.dnascimento.com.br/sobre/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nordeste em Números">
+<meta property="og:title" content="Sobre os dados · Nordeste em Números">
+<meta property="og:description" content="Por que eu fiz este site, como ler os gráficos, todas as fontes, as fórmulas que eu uso e o que ainda falta na base.">
+<meta property="og:url" content="https://nordeste.dnascimento.com.br/sobre/">
+<meta property="og:image" content="https://nordeste.dnascimento.com.br/og/sobre.png">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/site.js" defer></script>
+</head>
+<body>
+<a class="nn-pular" href="#conteudo">Ir para o conteúdo</a>
+<div class="nn">
+<header class="nn-topo">
+  <div class="nn-hero-topo">
+    <a class="nn-marca" href="/">Júlio Diógenes · Nordeste em Números</a>
+    <nav class="nn-menu" aria-label="Páginas do site">
+      <a href="/">Início</a>
+      <a href="/estados/">Estados</a>
+      <a href="/explorar/">Explorar</a>
+      <a href="/cards/">Cards</a>
+      <a href="/sobre/" aria-current="page">Sobre os dados</a>
+      <a href="/dados/">Dados</a>
+    </nav>
+    <a class="nn-hero-site" href="https://dnascimento.com.br">dnascimento.com.br</a>
+  </div>
+</header>
+<main id="conteudo">
+<section class="nn-pagina" id="sobre" aria-labelledby="titulo-principal">
+  <h1 id="titulo-principal">Sobre os dados</h1>
+
+  <article class="nn-card" id="sobre-o-que">
+    <h2>Por que eu fiz este painel</h2>
+    <p>Porque cansei de ouvir que o Nordeste está do mesmo jeito, dito com toda a certeza do mundo e sem nenhum número na mão. Juntei os dados oficiais de 2000 para cá, comparei o Nordeste com o Brasil e com o resto do país, e deixei tudo aberto para quem quiser conferir.</p>
+    <p>Não é peça de torcida. Onde melhorou, eu mostro. Onde a distância continua grande, eu mostro também.</p>
+    <p class="nn-muted nn-credito-sobre">Foto da abertura: <a href="https://dnascimento.com.br">Júlio Diógenes</a>.</p>
+    <h3>Como ler</h3>
+    <ul class="nn-lista">
+      <li>As faixas cinza mostram quem governava o país. Servem para situar o tempo, não para dar crédito nem culpa a ninguém.</li>
+      <li>Quando a pesquisa muda (PNAD para PNAD Contínua, por exemplo), a linha do gráfico quebra. Pesquisas diferentes não se emendam.</li>
+      <li>Ano sem dado fica em branco. Eu não invento ponto para ligar a linha.</li>
+    </ul>
+  </article>
+
+  <article class="nn-card" id="sobre-lacunas">
+    <h2>O que ainda falta, e por quê</h2>
+    <ul class="nn-lista">
+      <li class="nn-lacuna">PIB de 2024: as Contas Regionais 2024 ainda não tinham sido divulgadas pelo IBGE em 1º de novembro de 2026.</li>
+      <li class="nn-lacuna">PIB per capita de 2007: não há valor publicado para conferir o cálculo.</li>
+      <li class="nn-lacuna">Renda e pobreza antes de 2012: a série da PNAD antiga ainda não foi incorporada.</li>
+      <li class="nn-lacuna">Matrículas de 2003 e 2004: existem, mas o INEP só publicou em PDF. Em 2026.</li>
+      <li class="nn-lacuna">IDHM do Nordeste em 2000 e 2010: não publicado para a região.</li>
+      <li class="nn-lacuna">Linha de pobreza: confirmada pelos metadados do Ipeadata, não por publicação do IBGE.</li>
+    </ul>
+  </article>
+
+  <article class="nn-card" id="sobre-fontes">
+    <h2>Todas as fontes de dados</h2>
+    <p>Uma linha por série. Quando a fonte muda de pesquisa no meio do período, o indicador tem mais de uma série, e elas nunca são emendadas. Os links levam à página oficial de cada fonte.</p>
+    <div class="nn-tabela nn-tabela-alta">
+      <table>
+        <thead><tr><th scope="col">Indicador</th><th scope="col">Órgão</th><th scope="col">Fonte</th><th scope="col">Tabela ou arquivo usado</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="1">Taxa de abandono no ensino médio</td><td rowspan="1">INEP</td><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/taxas-de-rendimento-escolar">INEP, Indicadores Educacionais, Taxas de Rendimento Escolar (2007 a 2025)</a></td><td>Planilhas das Taxas de Rendimento Escolar (Brasil, regiões e UFs) de cada ano, um zip por ano em download.inep.gov.br</td></tr>
+          <tr><td rowspan="2">Taxa de desocupação</td><td rowspan="2">IBGE</td><td><a href="https://www.ipeadata.gov.br/ExibeSerieR.aspx?serid=199442121">Ipea, Taxa de desemprego (IBGE/PNAD), série Dese_Pnad do Ipeadata</a></td><td>Ipeadata, série Dese_Pnad (inativa), Brasil, regiões e estados</td></tr>
+          <tr><td><a href="https://sidra.ibge.gov.br/tabela/4562">IBGE, PNAD Contínua anual</a></td><td>SIDRA, tabela 4562, variável 4099</td></tr>
+          <tr><td rowspan="1">Pessoas desocupadas</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/10364">IBGE, PNAD Contínua anual (condição de ocupação, por sexo)</a></td><td>SIDRA, tabela 10364, variável 4092, sexo total</td></tr>
+          <tr><td rowspan="1">Extrema pobreza</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/5817">IBGE, PNAD Contínua (indicador ODS 1.1.1)</a></td><td>SIDRA, tabela 5817, variável 9617</td></tr>
+          <tr><td rowspan="1">Pessoas na força de trabalho</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/10364">IBGE, PNAD Contínua anual (condição de ocupação, por sexo)</a></td><td>SIDRA, tabela 10364, variável 4088, sexo total</td></tr>
+          <tr><td rowspan="2">Índice de Gini da renda domiciliar per capita</td><td rowspan="2">IBGE</td><td><a href="https://www.ipeadata.gov.br/ExibeSerieR.aspx?serid=1422364745">Ipea, Índice de Gini (PNAD/IBGE), série PGINI do Ipeadata</a></td><td>Ipeadata, série PGINI (inativa), Brasil, regiões e estados</td></tr>
+          <tr><td><a href="https://sidra.ibge.gov.br/tabela/7435">IBGE, PNAD Contínua anual (rendimento de todas as fontes)</a></td><td>SIDRA, tabela 7435, variável 10681</td></tr>
+          <tr><td rowspan="1">Índice de Desenvolvimento da Educação Básica (IDEB)</td><td rowspan="1">INEP</td><td><a href="https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/ideb/resultados/2005-2025">INEP, Índice de Desenvolvimento da Educação Básica (resultados de 2005 a 2025)</a></td><td>Planilhas de divulgação do IDEB 2025: divulgacao_regioes_ufs_ideb_2025.zip (regiões e UFs) e divulgacao_brasil_ideb_2025.zip (Brasil), três abas cada (anos iniciais, anos finais e ensino médio)</td></tr>
+          <tr><td rowspan="2">Índice de Desenvolvimento Humano Municipal (IDHM) e componentes</td><td rowspan="2">PNUD/Ipea/FJP (Atlas do Desenvolvimento Humano no Brasil)</td><td><a href="https://www.ipeadata.gov.br/ExibeSerieR.aspx?serid=40037">PNUD/Ipea/FJP, Atlas do Desenvolvimento Humano no Brasil (Censos Demográficos), via Ipeadata</a></td><td>Ipeadata, séries IDHM, IDHMRE, IDHMED e IDHMLO (Brasil e estados; janela 2000-2010)</td></tr>
+          <tr><td><a href="https://www.ipeadata.gov.br/ExibeSerieR.aspx?serid=40037">PNUD/Ipea/FJP, Radar IDHM (PNAD Contínua), via Ipeadata</a></td><td>Ipeadata, séries IDHM, IDHMRE, IDHMED e IDHMLO (Brasil, regiões e estados; janela 2012-2024)</td></tr>
+          <tr><td rowspan="1">Pessoas ocupadas em trabalho informal</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/4680">IBGE, PNAD Contínua anual (situação de informalidade)</a></td><td>SIDRA, tabela 4680, variável 4090, categoria Informais</td></tr>
+          <tr><td rowspan="1">Taxa de informalidade</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/4708">IBGE, PNAD Contínua anual</a></td><td>SIDRA, tabela 4708, variável 12466</td></tr>
+          <tr><td rowspan="1">Massa de rendimento domiciliar per capita</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/7427">IBGE, PNAD Contínua anual (rendimento de todas as fontes)</a></td><td>SIDRA, tabela 7427, variável 10495</td></tr>
+          <tr><td rowspan="3">Matrículas na educação básica, por etapa e rede</td><td rowspan="3">INEP</td><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/sinopses-estatisticas/educacao-basica">INEP, Censo Escolar, sinopses estatísticas de 2000, 2001 e 2002</a></td><td>Sinopses Estatísticas do Censo Escolar de 2000, 2001 e 2002 (um .xls por ano, tabelas 1.1, 1.5, 1.13 e 1.36 pela numeração das abas)</td></tr>
+          <tr><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/sinopses-estatisticas/educacao-basica">INEP, Censo Escolar, resultados de 2005 e 2006</a></td><td>Resultados do Censo Escolar de 2005 e de 2006 (um .xls por ano, tabelas 1.1, 1.6, 1.12, 1.18 e 1.43)</td></tr>
+          <tr><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/sinopses-estatisticas/educacao-basica">INEP, Censo Escolar, sinopses estatísticas da educação básica de 2007 a 2025</a></td><td>Sinopses Estatísticas da Educação Básica de 2007 a 2025 (um zip por ano, com a planilha da sinopse por município; tabelas 1.1, 1.5 e 1.14, e 1.1, 1.8 e 1.20 em 2025)</td></tr>
+          <tr><td rowspan="1">Pessoas ocupadas</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/4680">IBGE, PNAD Contínua anual (situação de informalidade)</a></td><td>SIDRA, tabela 4680, variável 4090, categoria Total</td></tr>
+          <tr><td rowspan="1">PIB a preços correntes</td><td rowspan="1">IBGE</td><td><a href="https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais/9054-contas-regionais-do-brasil.html">IBGE, Sistema de Contas Regionais (referência 2010)</a></td><td>SIDRA, Contas Regionais do Brasil</td></tr>
+          <tr><td rowspan="1">Participação no PIB nacional</td><td rowspan="1">IBGE</td><td><a href="https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais/9054-contas-regionais-do-brasil.html">IBGE, Sistema de Contas Regionais (referência 2010)</a></td><td>SIDRA, tabela 5938 (Contas Regionais do Brasil), variável 496</td></tr>
+          <tr><td rowspan="1">PIB per capita</td><td rowspan="1">IBGE</td><td><a href="https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais/9054-contas-regionais-do-brasil.html">Cálculo do projeto com dados do IBGE: PIB a preços correntes (Contas Regionais, SIDRA 5938) ÷ população residente (estimativas SIDRA 6579; Censos SIDRA 202 e 4709) × 1000</a></td><td>SIDRA 5938 (variável 37) e SIDRA 6579 (variável 9324), 202 e 4709 (variável 93), já coletadas nas fichas pib_nominal e populacao</td></tr>
+          <tr><td rowspan="1">PIB real (índice de volume)</td><td rowspan="1">IBGE</td><td><a href="https://ftp.ibge.gov.br/Contas_Regionais/2023/xls/Especiais_2002_2023_xls.zip">IBGE, Sistema de Contas Regionais (referência 2010)</a></td><td>Tabelas especiais das Contas Regionais 2002-2023, Tabela 3 (arquivo tab03.xls)</td></tr>
+          <tr><td rowspan="1">Pobreza</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/5877">IBGE, PNAD Contínua (indicador ODS 1.2.1)</a></td><td>SIDRA, tabela 5877, variável 9948</td></tr>
+          <tr><td rowspan="4">População residente</td><td rowspan="4">IBGE</td><td><a href="https://sidra.ibge.gov.br/pesquisa/estimapop/tabelas">IBGE, Estimativas de População</a></td><td>SIDRA, tabela 6579, variável 9324</td></tr>
+          <tr><td><a href="https://sidra.ibge.gov.br/pesquisa/estimapop/tabelas">IBGE, Estimativas de População</a></td><td>SIDRA, tabela 6579, variável 9324</td></tr>
+          <tr><td><a href="https://sidra.ibge.gov.br/tabela/202">IBGE, Censos Demográficos de 2000 e 2010</a></td><td>SIDRA, tabela 202, variável 93</td></tr>
+          <tr><td><a href="https://sidra.ibge.gov.br/pesquisa/censo-demografico/demografico-2022/primeiros-resultados-populacao-e-domicilios">IBGE, Censo Demográfico 2022</a></td><td>SIDRA, tabela 4709, variável 93</td></tr>
+          <tr><td rowspan="1">População residente da PNAD Contínua</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/7436">IBGE, PNAD Contínua anual (rendimento de todas as fontes)</a></td><td>SIDRA, tabela 7436, variável 606</td></tr>
+          <tr><td rowspan="1">Renda domiciliar per capita</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/7533">IBGE, PNAD Contínua anual (rendimento de todas as fontes)</a></td><td>SIDRA, tabela 7533, variável 10816</td></tr>
+          <tr><td rowspan="1">Rendimento médio real do trabalho</td><td rowspan="1">IBGE</td><td><a href="https://sidra.ibge.gov.br/tabela/4566">IBGE, PNAD Contínua anual</a></td><td>SIDRA, tabela 4566, variável 5935</td></tr>
+          <tr><td rowspan="2">Ensino superior, matrículas de graduação e instituições</td><td rowspan="2">INEP</td><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/sinopses-estatisticas/educacao-superior">INEP, Censo da Educação Superior, sinopses estatísticas de 2001 a 2008</a></td><td>Sinopses estatísticas da educação superior de 2001 a 2008 (um .xls por ano, tabelas 1.1 e 5.1)</td></tr>
+          <tr><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/sinopses-estatisticas/educacao-superior">INEP, Censo da Educação Superior, sinopse estatística (por município) de 2009 a 2024</a></td><td>Sinopses estatísticas da educação superior de 2009 a 2024 (um zip por ano, com a planilha da sinopse por município; tabelas 1.1 e 5.1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="nn-card" id="sobre-formulas">
+    <h2>Fórmulas que eu uso</h2>
+    <p>A maior parte dos números é publicada pronta pela fonte. Eu só faço as contas abaixo, todas declaradas e conferidas.</p>
+    <h3>PIB per capita</h3>
+    <ul class="nn-lista">
+      <li>PIB per capita = PIB a preços correntes (em mil reais) ÷ população residente, multiplicado por mil para chegar a reais.</li>
+      <li>A população de cada ano é a que o IBGE usa no PIB per capita que divulga: a estimativa anual, o Censo de 2010 em 2010 e o Censo de 2022 em 2022 e 2023.</li>
+      <li>O IBGE não publica o PIB per capita por região e estado em formato legível por máquina. Conferi o cálculo contra os valores que ele divulga, e o resultado da conferência está no dicionário de verificação do projeto.</li>
+    </ul>
+    <h3>Brasil fora do Nordeste</h3>
+    <ul class="nn-lista">
+      <li>Contagens (população, PIB, matrículas, desocupados, ocupados, informais, força de trabalho, massa de renda): Brasil − Nordeste.</li>
+      <li>PIB per capita: (PIB do Brasil − PIB do Nordeste) ÷ (população do Brasil − população do Nordeste), multiplicado por mil. É a razão das diferenças, não a média dos estados.</li>
+      <li>Taxa de desocupação: (desocupados do Brasil − do Nordeste) ÷ (força de trabalho do Brasil − do Nordeste), em porcentagem.</li>
+      <li>Taxa de informalidade: (informais do Brasil − do Nordeste) ÷ (ocupados do Brasil − do Nordeste), em porcentagem.</li>
+      <li>Renda domiciliar por pessoa: (massa de renda do Brasil − do Nordeste) ÷ (população da PNAD Contínua do Brasil − do Nordeste), multiplicado por mil.</li>
+      <li>Quando não existe contagem publicada para refazer a conta (pobreza, Gini, IDEB, IDHM, abandono escolar, rendimento do trabalho, volume do PIB), a comparação é com o Brasil inteiro.</li>
+    </ul>
+    <h3>Comparação entre territórios</h3>
+    <ul class="nn-lista">
+      <li>Razão = valor do Nordeste (ou do estado) ÷ valor da referência, em porcentagem. 100% significa igualdade; 50%, metade.</li>
+      <li>Nas frases do site, diferença no período é o valor do último ano com dado menos o do primeiro ano com dado, em pontos percentuais.</li>
+    </ul>
+    <h3>Valores em reais</h3>
+    <ul class="nn-lista">
+      <li>Renda domiciliar por pessoa e rendimento do trabalho: reais constantes, pelo deflator da PNAD Contínua do IBGE, a preços médios do último ano da série.</li>
+      <li>PIB e PIB per capita: valores correntes de cada ano. As comparações usam a razão entre territórios no mesmo ano, que dispensa deflator.</li>
+      <li>Volume do PIB: índice encadeado publicado pelo IBGE (primeiro ano = 100), sem cálculo meu.</li>
+    </ul>
+    <h3>O que eu não faço</h3>
+    <ul class="nn-lista">
+      <li>Não interpolo anos sem dado, não projeto anos futuros e não estimo valores ausentes.</li>
+      <li>Não emendo pesquisas diferentes (PNAD e PNAD Contínua, Censo e estimativas).</li>
+      <li>Não tiro média de taxas entre estados: os agregados saem sempre das contagens.</li>
+    </ul>
+  </article>
+
+  <article class="nn-card" id="sobre-arquivos">
+    <h2>Os arquivos por trás dos números</h2>
+    <p>O site lê só a base publicada, exatamente como está nos arquivos da página Dados, com a data e o sha256 de cada um. <a href="/dados/">Ir para Dados</a>.</p>
+  </article>
+</section>
+</main>
+<footer class="nn-rodape">
+  <span><strong>Júlio Diógenes · Nordeste em Números</strong></span>
+  <span>Dados oficiais publicados em 1º de novembro de 2026. Fontes e fórmulas em <a href="/sobre/">Sobre os dados</a>.</span>
+  <span>sha256 da base: <code class="nn-sha-base">f572acb05c16193b788e78433abaea3ad481a2f36ec8b2ced64537fe50913b9d</code></span>
+  <span>Compilação sob licença <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</span>
+  <span class="nn-credito">Foto: <a href="https://dnascimento.com.br">Júlio Diógenes</a></span>
+  <a href="https://dnascimento.com.br">dnascimento.com.br</a>
+</footer>
+</div>
+</body>
+</html>
