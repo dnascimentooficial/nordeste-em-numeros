@@ -22,10 +22,13 @@ SITE = "https://nordeste.dnascimento.com.br"
 PAGINAS = {
     "index.html": "/", "estados/index.html": "/estados/", "explorar/index.html": "/explorar/",
     "cards/index.html": "/cards/", "sobre/index.html": "/sobre/", "dados/index.html": "/dados/",
+    # historia.yaml do repositorio aprovado (provisoria: false): a pagina sai em toda geracao, sem o aviso de previa
+    "como-chegamos/index.html": "/como-chegamos/",
 }
 OG = {
     "index.html": "index", "estados/index.html": "estados", "explorar/index.html": "explorar",
     "cards/index.html": "cards", "sobre/index.html": "sobre", "dados/index.html": "dados",
+    "como-chegamos/index.html": "como-chegamos",
 }
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
          "novembro", "dezembro"]
@@ -76,6 +79,25 @@ def test_gera_as_paginas_do_nucleo(gerado):
     assert (saida / "dados" / "base_nordeste.csv").read_bytes() == (RAIZ / "dados/base/base_nordeste.csv").read_bytes()
     assert (saida / "dados" / "derivados.csv").read_bytes() == (RAIZ / "dados/base/derivados.csv").read_bytes()
     assert relatorio.fechos_suprimidos == [] and relatorio.cards_suprimidos == []
+
+
+def test_pagina_como_chegamos_publicada_sem_aviso_de_previa(gerado):
+    # historia.yaml aprovado (provisoria: false): a geracao normal, sem incluir_provisoria, publica a pagina inteira,
+    # no menu de todas as paginas, indexavel e sem o aviso de previa
+    saida, relatorio = gerado
+    assert relatorio.historia_provisoria is False
+    html = _ler(saida, "como-chegamos/index.html")
+    arvore = Arvore(html)
+    assert not arvore.achar("p", classe="nn-hist-previa") and "Prévia" not in html
+    assert not arvore.achar("meta", name="robots")
+    assert "[provisório]" not in html
+    artigos = arvore.achar("article", classe="nn-epoca-conteudo")
+    assert len(artigos) == 8
+    assert len(arvore.achar("img", classe="nn-epoca-imagem")) == 8  # toda epoca com imagem, condicao de publicar
+    for pagina in PAGINAS:
+        menu = [e["attrs"].get("href") for e in Arvore(_ler(saida, pagina)).achar("a")]
+        assert "/como-chegamos/" in menu, pagina
+    assert (saida / "historia").is_dir()  # as imagens das epocas vao junto com a pagina
 
 
 def test_sem_nan_undefined_ou_marcador_cru(gerado):
@@ -599,7 +621,7 @@ def test_cli_site_sai_com_zero(tmp_path):
     assert (saida / "index.html").is_file()
     relatorio = json.loads(arquivo.read_text(encoding="utf-8"))
     assert sorted(relatorio) == ["cards_suprimidos", "fechos_suprimidos", "historia_provisoria", "paginas"]
-    assert relatorio["historia_provisoria"] is True  # historia.yaml do repositorio ainda e provisorio: sem a pagina
+    assert relatorio["historia_provisoria"] is False  # historia.yaml do repositorio aprovado: a pagina entra
     cards = [f"cards/{c['id']}/index.html" for c in carregar_conteudo(RAIZ / "metadados" / "site").cards]
     assert sorted(relatorio["paginas"]) == sorted([*PAGINAS, *cards])
 

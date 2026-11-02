@@ -25,7 +25,7 @@ from auxiliares import RAIZ, Arvore, copiar_base, definir_foto, estaticos_com_fo
 CONTORNO = RAIZ / "metadados" / "site" / "nordeste-contorno.svg"
 FERRAMENTA = RAIZ / "ferramentas" / "gerar_contorno.py"
 CHROMIUM_DO_AMBIENTE = Path("/opt/pw-browsers/chromium")
-PAGINAS_COM_OG = ("index", "estados", "explorar", "cards", "sobre", "dados")
+PAGINAS_COM_OG = ("index", "estados", "explorar", "cards", "sobre", "dados", "como-chegamos")
 FOTO = {"credito": "Fulana de Tal, CC BY-SA 4.0", "url": "https://commons.wikimedia.org/wiki/File:Exemplo.jpg"}
 
 

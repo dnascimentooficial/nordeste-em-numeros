@@ -328,7 +328,7 @@ _TEXTOS_DA_HISTORIA = {
     "titulos": ".nn-hist-titulo, .nn-hist-secao, .nn-epoca-nome, .nn-epoca-titulo, .nn-epoca-conteudo h4",
     "datas": ".nn-epoca-periodo, .nn-epoca-data, .nn-marco-ano",
     "etiquetas": ".nn-tipo",
-    "texto": ".nn-hist-previa, .nn-hist-subtitulo, .nn-hist-valor, .nn-hist-rotulo, .nn-hist-legenda, .nn-hist-nota, "
+    "texto": ".nn-hist-subtitulo, .nn-hist-valor, .nn-hist-rotulo, .nn-hist-legenda, .nn-hist-nota, "
              ".nn-hist-texto, .nn-marco-titulo, .nn-epoca-resumo, .nn-epoca-texto, .nn-epoca-marcos, .nn-epoca-numeros, "
              ".nn-epoca-ficou, .nn-epoca-fontes, .nn-epoca-nav, .nn-epoca-credito, .nn-hist-fecho",
 }
@@ -571,11 +571,15 @@ def test_historia_botao_solto_fora_da_faixa_encerra_o_arrasto(abrir):
         alvo.scroll_into_view_if_needed()
         caixa = alvo.bounding_box()
         x, y = caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2
+        # um ponto da janela fora da faixa: abaixo dela, se couber na janela; senao, acima (a altura da faixa e do que
+        # vem antes dela muda com o conteudo, entao o ponto e medido, nao fixo)
+        borda = faixa.bounding_box()
+        altura = pagina.viewport_size["height"]
+        y_fora = borda["y"] + borda["height"] + 20 if borda["y"] + borda["height"] + 20 < altura else borda["y"] - 20
+        assert 0 < y_fora < altura and not borda["y"] <= y_fora <= borda["y"] + borda["height"], (y_fora, borda)
         pagina.mouse.move(x, y)
         pagina.mouse.down()
-        pagina.mouse.move(x + 2, y + 400, steps=10)
-        fora = faixa.bounding_box()
-        assert y + 400 > fora["y"] + fora["height"] or y + 400 > 800  # soltou fora da faixa
+        pagina.mouse.move(x + 2, y_fora, steps=10)
         pagina.mouse.up()
         antes = faixa.evaluate("f => f.scrollLeft")
         pagina.mouse.move(x, y)
@@ -586,7 +590,7 @@ def test_historia_botao_solto_fora_da_faixa_encerra_o_arrasto(abrir):
         # e o botao solto fora com o arrasto ja em curso (mais de 6 px, com captura) tambem encerra
         pagina.mouse.move(x, y)
         pagina.mouse.down()
-        pagina.mouse.move(x - 60, y + 400, steps=10)
+        pagina.mouse.move(x - 60, y_fora, steps=10)
         pagina.mouse.up()
         antes = faixa.evaluate("f => f.scrollLeft")
         pagina.mouse.move(x - 200, y, steps=15)

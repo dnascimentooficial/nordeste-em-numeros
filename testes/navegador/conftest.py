@@ -43,15 +43,18 @@ def _csp_do_htaccess(site: Path) -> str:
 @pytest.fixture(scope="session")
 def _site_e_relatorio(tmp_path_factory):
     saida = tmp_path_factory.mktemp("site") / "saida"
-    # incluir_provisoria: a pagina Como chegamos (historia.yaml ainda provisorio) entra em todas as rotas desde ja,
-    # com o aviso de previa, para os testes de cada pagina (axe, console, CSP, largura, movimento) a cobrirem
-    return saida, gerar_site(Caminhos(raiz=RAIZ), saida, imagens=False, incluir_provisoria=True)
+    # a geracao normal, como a da automacao: com historia.yaml aprovado (provisoria: false), a pagina Como chegamos
+    # entra em todas as rotas sem o aviso de previa, e os testes de cada pagina (axe, console, CSP, largura, movimento)
+    # a cobrem como publicada
+    relatorio = gerar_site(Caminhos(raiz=RAIZ), saida, imagens=False)
+    assert not relatorio.historia_provisoria, "historia.yaml voltou a ser provisorio: a pagina Como chegamos sumiria"
+    return saida, relatorio
 
 
 @pytest.fixture(scope="session")
 def site_gerado(_site_e_relatorio) -> Path:
     """O site completo (sem as imagens PNG, que test_imagens.py cobre), gerado uma vez da base e dos metadados reais,
-    com a pagina Como chegamos mesmo enquanto o conteudo dela e provisorio."""
+    com a pagina Como chegamos publicada."""
     return _site_e_relatorio[0]
 
 

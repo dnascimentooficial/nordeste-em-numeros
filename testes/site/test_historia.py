@@ -413,6 +413,9 @@ CENSOS_DO_DOSSIE = [1872, 1890, 1900, 1920, 1940, 1950, 1960, 1970, 1980, 1991, 
 def test_historia_do_repositorio_e_valida():
     historia = carregar_historia(RAIZ / "metadados" / "site")
     assert historia is not None
+    # aprovado e publicado (Tarefa 7, Passo 4): sem provisorio, a validacao exige imagem em toda epoca
+    assert historia.provisoria is False
+    assert all(e.imagem is not None for e in historia.epocas)
     assert len(historia.epocas) == 8
     assert [e.inicio for e in historia.epocas] == [1530, 1654, 1808, 1889, 1930, 1950, 1964, 1985]
     # texto final (Tarefa 7): sem a marca de rascunho em lugar nenhum do arquivo

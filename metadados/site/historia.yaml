@@ -3,7 +3,8 @@
 # os marcados [C] no dossiê ficaram de fora. A parcela da população não é digitada: vem de historia/censos.csv.
 # Títulos de marco e fontes de número vão sem ponto final: o modelo põe o ponto.
 # Parágrafos do texto de cada época separados por linha em branco.
-provisoria: true
+# Texto aprovado pelo usuário e conferido (conferência cruzada da Tarefa 7): a página vai ao ar.
+provisoria: false
 
 abertura:
   titulo: Como chegamos até aqui
