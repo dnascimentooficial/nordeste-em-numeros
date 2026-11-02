@@ -17,6 +17,7 @@ from nordeste.site.dados import Ponto
 
 TIPOS = {"oficial": "dado oficial", "historiador": "estimativa de historiador", "interpretacao": "interpretação"}
 LICENCAS = ("dominio-publico", "ilustracao-do-autor", "cc-by")
+ROTULO_DA_LICENCA = {"dominio-publico": "domínio público", "ilustracao-do-autor": "ilustração do autor", "cc-by": "CC BY"}
 LICENCA_QUE_EXIGE_URL = "cc-by"  # a pagina da imagem com a licenca precisa estar a vista
 PALAVRAS_MINIMAS = 150
 PALAVRAS_MAXIMAS = 300
@@ -266,6 +267,14 @@ def carregar_historia(pasta: Path) -> Historia | None:
         if epoca.id in vistos:
             raise ErroConteudo(f"epocas[{i}].id: id repetido {epoca.id!r}.")
         vistos.add(epoca.id)
+    marcos_vistos: dict[int, int] = {}  # cada marco vira id="m<ano>" na pagina: o ano nao se repete entre epocas
+    for i, epoca in enumerate(epocas):
+        for marco in epoca.marcos:
+            if marco.ano in marcos_vistos:
+                raise ErroConteudo(
+                    f"epocas[{i}].marcos: ano {marco.ano} repetido (ja e marco de epocas[{marcos_vistos[marco.ano]}])."
+                )
+            marcos_vistos[marco.ano] = i
     fecho = _validar_fecho(bruto["fecho"])
     return Historia(
         provisoria=provisoria, abertura=abertura, epocas=tuple(sorted(epocas, key=lambda e: e.inicio)), fecho=fecho,

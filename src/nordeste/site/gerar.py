@@ -1,5 +1,5 @@
-"""Gerador do site estatico a partir da base publicada, dos relatorios e dos metadados: Inicio, Estados, Explorar,
-Cards, Sobre e Dados.
+"""Gerador do site estatico a partir da base publicada, dos relatorios e dos metadados: Inicio, Como chegamos ate
+aqui (so com o conteudo historico pronto), Estados, Explorar, Cards, Sobre e Dados.
 
 Nada aqui le o relogio nem a base de trabalho: a mesma base publicada gera o mesmo site, byte a byte. Todo numero de
 texto vem de um marcador preenchido pela base (`conteudo.preencher`); fecho e card cuja condicao falha, ou cujo texto
@@ -30,6 +30,7 @@ from nordeste.site.explorar import (
 )
 from nordeste.site.formatacao import numero
 from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico
+from nordeste.site.historia import ROTULO_DA_LICENCA, TIPOS, Historia, carregar_historia, parcela_do_nordeste
 from nordeste.site.imagens import VERSAO_DO_RENDER, AlvoImagem, renderizar
 
 NOME_DO_SITE = "Nordeste em Números"
@@ -80,7 +81,7 @@ class Pagina(NamedTuple):
     rotulo: str  # no menu
 
 
-PAGINAS = (
+PAGINAS = (  # as paginas de sempre; a da historia entra depois do Inicio so quando o conteudo dela esta pronto
     Pagina("index", "inicio.html", "index.html", "/", "Início"),
     Pagina("estados", "estados.html", "estados/index.html", "/estados/", "Estados"),
     Pagina("explorar", "explorar.html", "explorar/index.html", "/explorar/", "Explorar"),
@@ -88,7 +89,15 @@ PAGINAS = (
     Pagina("sobre", "sobre.html", "sobre/index.html", "/sobre/", "Sobre os dados"),
     Pagina("dados", "dados.html", "dados/index.html", "/dados/", "Dados"),
 )
+PAGINA_HISTORIA = Pagina("como-chegamos", "como_chegamos.html", "como-chegamos/index.html", "/como-chegamos/", "Como chegamos aqui")
 PAGINAS_COM_DATASET = ("index", "dados")
+PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site
+AVISO_DA_PREVIA = "Prévia: texto provisório"
+
+
+def paginas_do_site(com_historia: bool) -> tuple[Pagina, ...]:
+    """As paginas do menu, na ordem dele: a da historia entre Inicio e Estados quando ela e gerada."""
+    return (PAGINAS[0], PAGINA_HISTORIA, *PAGINAS[1:]) if com_historia else PAGINAS
 
 
 @dataclass
@@ -97,6 +106,8 @@ class RelatorioSite:
     # ids das perguntas que ficaram sem fecho ou sairam inteiras e da faixa de numeros da abertura, se saiu (abertura_numeros)
     fechos_suprimidos: list[str]
     cards_suprimidos: list[str]
+    # historia.yaml com `provisoria: true`: a pagina Como chegamos nao sai (so em previa, com incluir_provisoria)
+    historia_provisoria: bool = False
 
 
 # --- datas e textos ---
@@ -336,6 +347,82 @@ def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict) -> dic
     }
 
 
+# --- Como chegamos ate aqui ---
+
+def _credito(imagem) -> dict:
+    return {
+        "src": PASTA_IMAGENS_HISTORIA + imagem.arquivo, "alt": imagem.alt, "titulo": imagem.titulo,
+        "autor": imagem.autor, "data": imagem.data, "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url,
+    }
+
+
+def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
+    """Os numeros grandes (primeiro e ultimo censo), o grafico dos censos nas duas larguras e a tabela dos valores.
+
+    A parcela vem sempre de `parcela_do_nordeste` (censos.csv), nunca de texto. O grafico usa as funcoes dos outros
+    graficos com um eixo proprio (do primeiro ao ultimo censo), a linha emendada (os censos nao sao anuais) e nenhuma
+    faixa de governo (`governos` vazio, com as colunas de sempre).
+    """
+    parcelas = parcela_do_nordeste(historia)
+    primeiro, ultimo = parcelas[0], parcelas[-1]
+    linhas = [Linha("Nordeste", "Nordeste", parcelas, True)]
+    cfg = ConfigGrafico(
+        titulo=f"Parcela da população brasileira que vivia no Nordeste, por censo, de {primeiro.ano} a {ultimo.ano}",
+        casas=1, sufixo="%", min0=True,
+    )
+    eixo = (primeiro.ano, ultimo.ano + 1)
+    numeros = [{"valor": f"{numero(p.valor, 1)}%", "ano": p.ano} for p in dict.fromkeys((primeiro, ultimo))]
+    return {
+        "numeros": numeros,
+        "grafico": {
+            "id": "g-censos",
+            "largo": grafico_linhas(linhas, cfg, governos, **LARGO, eixo=eixo, emendar=True),
+            "estreito": grafico_linhas(linhas, cfg, governos, **ESTREITO, eixo=eixo, emendar=True),
+        },
+        "tabela": [
+            {"ano": ano, "nordeste": numero(nordeste, 0), "brasil": numero(brasil, 0),
+             "parcela": f"{numero(p.valor, 1)}%", "fonte": fonte}
+            for (ano, nordeste, brasil, fonte), p in zip(historia.censos, parcelas)
+        ],
+    }
+
+
+def _epocas(historia: Historia) -> list[dict]:
+    """Cada epoca pronta para o cartao da linha do tempo e para o artigo do modal, com a anterior e a proxima."""
+    epocas = historia.epocas
+    return [
+        {
+            "id": e.id, "periodo": f"{e.inicio}–{e.fim}", "nome": e.nome, "resumo": e.resumo,
+            "paragrafos": [p.strip() for p in e.texto.split("\n\n") if p.strip()],
+            "marcos": e.marcos,
+            "numeros": [
+                {"valor": n.valor, "legenda": n.legenda, "tipo": n.tipo, "rotulo": TIPOS[n.tipo], "fonte": n.fonte}
+                for n in e.numeros
+            ],
+            "o_que_ficou": e.o_que_ficou, "interpretacao": TIPOS["interpretacao"],
+            "fontes": [{"texto": f["texto"], "url": f.get("url")} for f in e.fontes],
+            "imagem": None if e.imagem is None else _credito(e.imagem),
+            "anterior": epocas[i - 1].id if i > 0 else None,
+            "proxima": epocas[i + 1].id if i + 1 < len(epocas) else None,
+        }
+        for i, e in enumerate(epocas)
+    ]
+
+
+def _contexto_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
+    return {
+        "historia": {
+            "previa": AVISO_DA_PREVIA if historia.provisoria else None, "abertura": historia.abertura, "fecho": historia.fecho,
+            **_abertura_da_historia(historia, governos), "epocas": _epocas(historia),
+        }
+    }
+
+
+def _creditos_da_historia(historia: Historia) -> list[dict]:
+    """A lista de creditos das imagens da pagina, para Sobre os dados: uma por epoca que tem imagem."""
+    return [{"epoca": e.nome, **_credito(e.imagem)} for e in historia.epocas if e.imagem is not None]
+
+
 # --- paginas ---
 
 def _anos_da_base(dados: DadosSite) -> tuple[int, int]:
@@ -444,6 +531,7 @@ def _ler_manifesto(pasta: Path | None) -> dict[str, str]:
 
 def _gerar_imagens(
     saida: Path, ambiente: Environment, comum: dict, cards: list[dict], contorno: dict, anterior: Path | None,
+    paginas: tuple[Pagina, ...] = PAGINAS,
 ) -> None:
     """og/<pagina>.png (1200x630) para cada pagina que nao e de card e cards/<id>.png (1080x1350) para cada card.
 
@@ -458,7 +546,7 @@ def _gerar_imagens(
     apoio.mkdir()
     alvos = []
     try:
-        for p in PAGINAS:
+        for p in paginas:
             nome = f"og-{p.chave}.html"
             _escrever(
                 ambiente, apoio, "og.html", nome, titulo=NOME_DO_SITE, card=None, contorno=contorno,
@@ -512,11 +600,11 @@ def _exigir(parte: object, spec: set | dict, caminho: str) -> None:
             _exigir(parte[chave], spec[chave], f"{caminho}.{chave}")
 
 
-def _validar_textos(textos: object) -> None:
+def _validar_textos(textos: object, paginas: tuple[Pagina, ...] = PAGINAS) -> None:
     """As chaves de textos.yaml que o gerador e os modelos leem; faltando uma, ErroConteudo em vez de KeyError."""
     exigidos = {
         **TEXTOS_EXIGIDOS,
-        "paginas": {p.chave: {"titulo", "descricao"} for p in PAGINAS},
+        "paginas": {p.chave: {"titulo", "descricao"} for p in paginas},
         "dados": {**dict.fromkeys(TEXTOS_EXIGIDOS["dados"] - {"arquivos"}), "arquivos": set(ARQUIVOS_DE_DADOS)},
     }
     _exigir(textos, exigidos, "textos")
@@ -593,25 +681,35 @@ def _escrever(ambiente: Environment, saida: Path, modelo: str, arquivo: str, **c
     destino.write_bytes(ambiente.get_template(modelo).render(**contexto).encode("utf-8"))
 
 
-def _pagina(chave: str, rota: str, titulo: str, descricao: str, imagem: str, json_ld: str | None = None) -> dict:
+def _pagina(
+    chave: str, rota: str, titulo: str, descricao: str, imagem: str, json_ld: str | None = None, noindex: bool = False,
+) -> dict:
     return {
         "chave": chave, "rota": rota, "url": URL_DO_SITE + rota, "titulo": titulo, "descricao": descricao,
-        "imagem": imagem, "json_ld": json_ld,
+        "imagem": imagem, "json_ld": json_ld, "noindex": noindex,
     }
 
 
 def gerar_site(
     caminhos: Caminhos, saida: Path, *, imagens: bool = True, anterior: Path | None = None,
+    incluir_provisoria: bool = False,
 ) -> RelatorioSite:
     """Apaga e recria `saida` com as paginas do site e as copias dos CSVs; devolve o que foi suprimido.
 
     `anterior` e a saida da geracao anterior (uma pasta de fora de `saida`): os PNG cuja entrada nao mudou sao
     copiados dela em vez de renderizados de novo.
+
+    A pagina Como chegamos ate aqui sai quando `historia.yaml` existe e nao e provisorio. `incluir_provisoria` (so
+    para previa local; a automacao semanal nunca usa) gera a pagina com o conteudo provisorio, com o aviso de previa
+    e fora dos buscadores (`noindex`).
     """
     _validar_saida(caminhos, saida, anterior)
     dados = DadosSite.carregar(caminhos)
     conteudo = carregar_conteudo(caminhos.metadados / "site")
-    _validar_textos(conteudo.textos)
+    historia = carregar_historia(caminhos.metadados / "site")
+    com_historia = historia is not None and (not historia.provisoria or incluir_provisoria)
+    paginas_do_menu = paginas_do_site(com_historia)
+    _validar_textos(conteudo.textos, paginas_do_menu)
     destaques = calcular_destaques(dados, conteudo)
     data = data_por_extenso(dados.data_base)
     abertura, paragrafos_suprimidos = _paragrafos_da_abertura(conteudo.textos["abertura"]["intro"], destaques)
@@ -627,14 +725,17 @@ def gerar_site(
     anos = _anos_da_base(dados)
     arquivos = _arquivos_de_dados(caminhos, textos)
     comum = {
-        "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in PAGINAS],
+        "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in paginas_do_menu],
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR,
         "foto": textos.get("foto"),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
         "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": "/".join(reversed(dados.data_base.split("-"))),
+        "creditos_historia": _creditos_da_historia(historia) if com_historia else [],
     }
     por_pagina = {"estados": _contexto_dos_estados(dados), "explorar": _contexto_do_explorar(dados, explorar)}
+    if com_historia:
+        por_pagina[PAGINA_HISTORIA.chave] = _contexto_da_historia(historia, dados.governos.iloc[:0])
 
     if saida.exists():
         shutil.rmtree(saida)
@@ -642,11 +743,12 @@ def gerar_site(
     (saida / "explorar" / "dados").mkdir(parents=True)
     _copiar_estaticos(saida, com_foto=comum["foto"] is not None)
     ambiente = _ambiente()
-    for p in PAGINAS:
+    for p in paginas_do_menu:
         pagina = _pagina(
             p.chave, p.rota, textos["paginas"][p.chave]["titulo"], textos["paginas"][p.chave]["descricao"],
             f"{URL_DO_SITE}/og/{p.chave}.png",
             _json_ld(dados, textos, anos, arquivos) if p.chave in PAGINAS_COM_DATASET else None,
+            noindex=p is PAGINA_HISTORIA and historia.provisoria,
         )
         _escrever(ambiente, saida, p.modelo, p.arquivo, pagina=pagina, **comum, **por_pagina.get(p.chave, {}))
     for card in cards:
@@ -662,10 +764,13 @@ def gerar_site(
         texto = json.dumps(por_territorio, ensure_ascii=False, separators=(",", ":")) + "\n"
         (saida / "explorar" / "dados" / f"{chave}.json").write_bytes(texto.encode("utf-8"))
 
-    paginas = [p.arquivo for p in PAGINAS] + [f"cards/{c['id']}/index.html" for c in cards]
+    paginas = [p.arquivo for p in paginas_do_menu] + [f"cards/{c['id']}/index.html" for c in cards]
     if imagens:
-        _gerar_imagens(saida, ambiente, comum, cards, _contorno(caminhos), anterior)
-    return RelatorioSite(paginas, [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos], cards_fora)
+        _gerar_imagens(saida, ambiente, comum, cards, _contorno(caminhos), anterior, paginas_do_menu)
+    return RelatorioSite(
+        paginas, [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos], cards_fora,
+        historia_provisoria=historia is not None and historia.provisoria,
+    )
 
 
 def relatorio_em_json(relatorio: RelatorioSite) -> str:

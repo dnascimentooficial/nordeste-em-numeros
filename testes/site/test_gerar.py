@@ -598,7 +598,8 @@ def test_cli_site_sai_com_zero(tmp_path):
     assert codigo == 0
     assert (saida / "index.html").is_file()
     relatorio = json.loads(arquivo.read_text(encoding="utf-8"))
-    assert sorted(relatorio) == ["cards_suprimidos", "fechos_suprimidos", "paginas"]
+    assert sorted(relatorio) == ["cards_suprimidos", "fechos_suprimidos", "historia_provisoria", "paginas"]
+    assert relatorio["historia_provisoria"] is True  # historia.yaml do repositorio ainda e provisorio: sem a pagina
     cards = [f"cards/{c['id']}/index.html" for c in carregar_conteudo(RAIZ / "metadados" / "site").cards]
     assert sorted(relatorio["paginas"]) == sorted([*PAGINAS, *cards])
 

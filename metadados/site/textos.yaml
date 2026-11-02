@@ -78,6 +78,9 @@ paginas:
   index:
     titulo: "O Nordeste está do mesmo jeito? · Nordeste em Números"
     descricao: "Conferi nos números oficiais do IBGE, do INEP, do Ipea e do Atlas Brasil se o Nordeste está do mesmo jeito. Cada resposta traz o gráfico e a fonte, para você conferir."
+  como-chegamos:
+    titulo: "Como chegamos até aqui · Nordeste em Números"
+    descricao: "Conto em oito épocas como o Nordeste passou de centro econômico da colônia à região que ficou para trás, do açúcar até hoje, com a fonte de cada número."
   sobre:
     titulo: "Sobre os dados · Nordeste em Números"
     descricao: "Por que eu fiz este site, como ler os gráficos, todas as fontes, as fórmulas que eu uso e o que ainda falta na base."

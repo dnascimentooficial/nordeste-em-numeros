@@ -172,6 +172,15 @@ def test_recusa_id_repetido(tmp_path):
     _recusa(tmp_path, dados, "epocas[2].id")
 
 
+def test_recusa_ano_de_marco_repetido_entre_epocas(tmp_path):
+    # cada marco vira um id="m<ano>" na pagina: dois marcos no mesmo ano dariam dois ids iguais
+    dados = _historia()
+    dados["epocas"][1]["fim"] = dados["epocas"][2]["inicio"]
+    dados["epocas"][1]["marcos"][0]["ano"] = dados["epocas"][2]["inicio"]
+    dados["epocas"][2]["marcos"][0]["ano"] = dados["epocas"][2]["inicio"]
+    _recusa(tmp_path, dados, "epocas[2].marcos")
+
+
 @pytest.mark.parametrize("palavras, passa", [(149, False), (150, True), (300, True), (301, False)])
 def test_recusa_texto_fora_de_150_a_300_palavras(tmp_path, palavras, passa):
     dados = _historia()

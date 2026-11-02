@@ -1,0 +1,410 @@
+"""Pagina "Como chegamos ate aqui": gerada do historia.yaml (de teste) e dos censos, com a abertura, a linha do tempo,
+o conteudo de cada modal no HTML, o menu, o OpenGraph e os creditos das imagens em Sobre."""
+
+import json
+import re
+from pathlib import Path
+
+import pytest
+import yaml
+
+from nordeste.caminhos import Caminhos
+from nordeste.cli import main
+from nordeste.site import gerar
+from nordeste.site.gerar import RelatorioSite, gerar_site
+from nordeste.site.historia import TIPOS
+
+from auxiliares import Arvore, copiar_base
+
+SITE = "https://nordeste.dnascimento.com.br"
+PAGINA = "como-chegamos/index.html"
+# 1872 e 2022 com os valores do dossie (46,7% e 26,9%); 1950 so para a serie ter um ponto no meio
+CENSOS = (
+    "ano,populacao_nordeste,populacao_brasil,fonte\n"
+    "1872,4638560,9930478,Censo de teste A\n"
+    "1950,17973413,51944397,Censo de teste B\n"
+    "2022,54658515,203080756,Censo de teste C\n"
+)
+IMAGENS = (
+    {"licenca": "dominio-publico", "url": None, "rotulo": "domínio público"},
+    {"licenca": "cc-by", "url": "https://commons.wikimedia.org/wiki/File:Teste.jpg", "rotulo": "CC BY"},
+    {"licenca": "ilustracao-do-autor", "url": None, "rotulo": "ilustração do autor"},
+)
+
+
+def _epoca(i: int, com_imagem: bool = True) -> dict:
+    inicio = 1600 + 100 * i
+    epoca = {
+        "id": str(inicio),
+        "inicio": inicio,
+        "fim": inicio + 100,
+        "nome": f"Época de teste {i}",
+        "resumo": f"Resumo da época {i}.",
+        "texto": " ".join([f"palavra{i}"] * 200),
+        "marcos": [
+            {"ano": inicio + 10, "titulo": f"Marco A{i}", "texto": f"Texto do marco A{i}."},
+            {"ano": inicio + 50, "titulo": f"Marco B{i}", "texto": f"Texto do marco B{i}."},
+        ],
+        "numeros": [
+            {"valor": f"{i + 1}0 engenhos", "legenda": f"Legenda oficial {i}", "tipo": "oficial", "fonte": f"IBGE, tabela {i}"},
+            {"valor": f"{i + 2} mil", "legenda": f"Legenda historiador {i}", "tipo": "historiador", "fonte": f"Autor {i}, Obra {i}, p. 1{i}"},
+        ],
+        "o_que_ficou": f"O que ficou da época {i}.",
+        "fontes": [{"texto": f"Obra impressa {i}"}, {"texto": f"Obra on-line {i}", "url": f"https://exemplo.org/obra-{i}"}],
+    }
+    if com_imagem:
+        imagem = IMAGENS[i % len(IMAGENS)]
+        epoca["imagem"] = {
+            "arquivo": f"epoca-{inicio}.webp", "titulo": f"Título da imagem {i}", "autor": f"Autor da imagem {i}",
+            "data": f"{inicio + 40}", "licenca": imagem["licenca"], "alt": f"Cena da época {i}", "url": imagem["url"],
+        }
+    return epoca
+
+
+def _historia(provisoria: bool = False, com_imagem: bool = True) -> dict:
+    return {
+        "provisoria": provisoria,
+        "abertura": {
+            "titulo": "Como chegamos até aqui",
+            "subtitulo": "Subtítulo da abertura de teste.",
+            "legenda": "Legenda do gráfico de teste.",
+            "nota_estados": "Nota dos estados de teste.",
+            "texto": "Texto da abertura de teste.",
+        },
+        "epocas": [_epoca(i, com_imagem) for i in range(3)],
+        "fecho": {
+            "titulo": "E de 2000 para cá?",
+            "texto": "Texto do fecho de teste.",
+            "links": [{"texto": "Início", "url": "../"}, {"texto": "Cards", "url": "../cards/"}],
+        },
+    }
+
+
+def _base(raiz: Path, historia: dict | None, censos: str = CENSOS) -> Path:
+    copiar_base(raiz)
+    pasta = raiz / "metadados" / "site"
+    (pasta / "historia.yaml").unlink(missing_ok=True)
+    if historia is not None:
+        (pasta / "historia").mkdir(exist_ok=True)
+        (pasta / "historia.yaml").write_text(yaml.safe_dump(historia, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        (pasta / "historia" / "censos.csv").write_text(censos, encoding="utf-8")
+    return raiz
+
+
+def _ler(saida: Path, pagina: str = PAGINA) -> str:
+    return (saida / pagina).read_text(encoding="utf-8")
+
+
+def _trecho(html: str, abre: str, fecha: str) -> str:
+    inicio = html.index(abre)
+    return html[inicio:html.index(fecha, inicio)]
+
+
+def _epoca_html(html: str, id_: str) -> str:
+    """Da abertura do <li> da epoca ao fim do artigo dela (inclusive)."""
+    return _trecho(html, f'<li class="nn-epoca" id="{id_}">', "</article>") + "</article>"
+
+
+def _menu(html: str) -> list[tuple[str, str]]:
+    nav = _trecho(html, '<nav class="nn-menu"', "</nav>")
+    return re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', nav)
+
+
+@pytest.fixture(scope="module")
+def gerado(tmp_path_factory) -> tuple[Path, RelatorioSite]:
+    raiz = _base(tmp_path_factory.mktemp("base"), _historia())
+    saida = tmp_path_factory.mktemp("site") / "saida"
+    return saida, gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
+
+
+def test_pagina_gerada_no_menu_entre_inicio_e_estados(gerado):
+    saida, relatorio = gerado
+    assert PAGINA in relatorio.paginas and (saida / PAGINA).is_file()
+    assert relatorio.historia_provisoria is False
+    assert relatorio.paginas.index(PAGINA) == relatorio.paginas.index("index.html") + 1
+    for pagina in ("index.html", PAGINA, "sobre/index.html", "cards/pobreza/index.html"):
+        menu = _menu(_ler(saida, pagina))
+        assert menu[:3] == [("/", "Início"), ("/como-chegamos/", "Como chegamos aqui"), ("/estados/", "Estados")], pagina
+    arvore = Arvore(_ler(saida))
+    atual = [e for e in arvore.achar("a") if e["attrs"].get("aria-current") == "page"]
+    assert [e["attrs"]["href"] for e in atual] == ["/como-chegamos/"]
+    assert len(arvore.achar("main", classe="nn-historia")) == 1
+    assert arvore.achar("main")[0]["attrs"]["id"] == "conteudo"  # o link "Ir para o conteúdo" continua valendo
+
+
+def test_abertura_mostra_parcelas_calculadas(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    arvore = Arvore(html)
+    secao = arvore.achar("section", classe="nn-hist-abertura")
+    assert len(secao) == 1
+    numero = Arvore.texto(arvore.achar(classe="nn-hist-numero")[0])
+    assert "46,7%" in numero and "1872" in numero and "26,9%" in numero and "2022" in numero
+    abertura = Arvore.texto(secao[0])
+    for texto in ("Como chegamos até aqui", "Subtítulo da abertura de teste.", "Legenda do gráfico de teste.",
+                  "Nota dos estados de teste.", "Texto da abertura de teste."):
+        assert texto in abertura
+    # o grafico dos censos nas duas larguras, dentro da abertura, com os tres censos e a linha emendada
+    trecho = _trecho(html, '<section class="nn-hist-abertura"', "</section>")
+    svgs = Arvore(trecho).achar("svg")
+    assert [s["attrs"]["viewbox"] for s in svgs] == ["0 0 720 300", "0 0 360 240"]
+    for svg in svgs:
+        assert svg["attrs"]["data-eixo"] == "1872 2023"
+        pontos = json.loads(svg["attrs"]["data-pontos"])
+        assert [p[:2] for p in pontos[0]["pontos"]] == [[1872, 46.7], [1950, 34.6], [2022, 26.9]]
+        assert svg["attrs"]["data-sufixo"] == "%" and svg["attrs"]["data-casas"] == "1"
+    assert len(Arvore(trecho).achar("path")) == 2  # uma linha por largura
+    assert not [r for r in Arvore(trecho).achar("rect") if "nn-faixa" in r["attrs"].get("class", "")]
+    # a tabela que a descricao acessivel promete: um censo por linha, com as populacoes e a fonte
+    linhas = [Arvore.texto(tr) for tr in Arvore(trecho).achar("tr")][1:]
+    assert len(linhas) == 3
+    assert "1872" in linhas[0] and "46,7%" in linhas[0] and "4.638.560" in linhas[0] and "Censo de teste A" in linhas[0]
+    assert "2022" in linhas[2] and "26,9%" in linhas[2] and "203.080.756" in linhas[2]
+
+
+def test_abertura_muda_com_os_censos(tmp_path):
+    outros = CENSOS.replace("1872,4638560,9930478", "1872,5000000,10000000")
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=_base(tmp_path / "base", _historia(), outros)), saida, imagens=False)
+    numero = Arvore.texto(Arvore(_ler(saida)).achar(classe="nn-hist-numero")[0])
+    assert "50,0%" in numero and "46,7%" not in numero
+
+
+def test_cada_epoca_tem_artigo_completo(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    historia = _historia()
+    assert len(Arvore(html).achar("ol", classe="nn-linha-tempo")) == 1
+    assert [e["attrs"]["id"] for e in Arvore(html).achar("li", classe="nn-epoca")] == ["1600", "1700", "1800"]
+    for i, epoca in enumerate(historia["epocas"]):
+        trecho = _epoca_html(html, epoca["id"])
+        arvore = Arvore(trecho)
+        botao = arvore.achar("button", classe="nn-epoca-abrir")
+        assert len(botao) == 1 and botao[0]["attrs"]["data-epoca"] == epoca["id"]
+        assert botao[0]["attrs"]["type"] == "button"
+        cartao = Arvore.texto(botao[0])
+        assert f"{epoca['inicio']}–{epoca['fim']}" in cartao and epoca["nome"] in cartao
+        img_cartao = [e for e in arvore.achar("img") if any(e is f for f in _filhos(arvore, botao[0]))]
+        assert len(img_cartao) == 1
+        assert img_cartao[0]["attrs"]["loading"] == "lazy"
+        assert img_cartao[0]["attrs"]["src"] == f"/historia/{epoca['imagem']['arquivo']}"
+        assert img_cartao[0]["attrs"]["alt"] == epoca["imagem"]["alt"]
+
+        artigo = _trecho(trecho, '<article class="nn-epoca-conteudo"', "</article>")
+        arv = Arvore(artigo)
+        texto = Arvore.texto(arv.elementos[0])
+        # 1. imagem com credito (autor, titulo, data, licenca; link quando ha url)
+        img = arv.achar("img")
+        assert len(img) == 1 and img[0]["attrs"]["alt"] == epoca["imagem"]["alt"]
+        assert img[0]["attrs"]["loading"] == "lazy"
+        credito = Arvore.texto(arv.achar(classe="nn-epoca-credito")[0])
+        imagem = IMAGENS[i % len(IMAGENS)]
+        for parte in (epoca["imagem"]["autor"], epoca["imagem"]["titulo"], epoca["imagem"]["data"], imagem["rotulo"]):
+            assert parte in credito, (epoca["id"], parte)
+        if imagem["url"]:
+            assert imagem["url"] in [a["attrs"]["href"] for a in arv.achar("a")]
+        # 2 a 7: resumo, texto, marcos, numeros com etiqueta, o que ficou, fontes
+        assert Arvore.texto(arv.achar(classe="nn-epoca-resumo")[0]) == epoca["resumo"]
+        assert epoca["texto"] in Arvore.texto(arv.achar(classe="nn-epoca-texto")[0])
+        for marco in epoca["marcos"]:
+            item = arv.achar(id=f"m{marco['ano']}")
+            assert len(item) == 1
+            assert all(p in Arvore.texto(item[0]) for p in (str(marco["ano"]), marco["titulo"], marco["texto"]))
+        etiquetas = arv.achar("span", classe="nn-tipo")
+        assert len(etiquetas) == len(epoca["numeros"]) + 1  # mais a de "interpretação", no "O que ficou disso"
+        for numero, etiqueta in zip(epoca["numeros"], etiquetas):
+            assert etiqueta["attrs"]["class"].split() == ["nn-tipo", f"nn-tipo-{numero['tipo']}"]
+            assert etiqueta["attrs"]["title"] == numero["fonte"]
+            assert Arvore.texto(etiqueta) == TIPOS[numero["tipo"]]
+            assert numero["valor"] in texto and numero["legenda"] in texto and numero["fonte"] in texto
+        ficou = Arvore.texto(arv.achar(classe="nn-epoca-ficou")[0])
+        assert "O que ficou disso" in ficou and epoca["o_que_ficou"] in ficou and TIPOS["interpretacao"] in ficou
+        assert etiquetas[-1]["attrs"]["class"].split() == ["nn-tipo", "nn-tipo-interpretacao"]
+        fontes = Arvore.texto(arv.achar(classe="nn-epoca-fontes")[0])
+        assert all(f["texto"] in fontes for f in epoca["fontes"])
+        assert "https://exemplo.org/obra-" + str(i) in [a["attrs"]["href"] for a in arv.achar("a")]
+        # a ordem da spec (secao 5, itens 1 a 8)
+        marcas = ["<img", "nn-epoca-credito", "nn-epoca-resumo", "nn-epoca-texto", "nn-epoca-marcos",
+                  "nn-epoca-numeros", "nn-epoca-ficou", "nn-epoca-fontes", "nn-epoca-nav"]
+        posicoes = [artigo.index(m) for m in marcas]
+        assert posicoes == sorted(posicoes), epoca["id"]
+
+
+def _filhos(arvore: Arvore, pai: dict) -> list[dict]:
+    """Os elementos depois de `pai` ate o fim dele (o HTMLParser nao guarda a arvore: usa a ordem e o texto)."""
+    inicio = arvore.elementos.index(pai)
+    filhos = []
+    for e in arvore.elementos[inicio + 1:]:
+        if e["tag"] == "article" or e["attrs"].get("class") == "nn-marcos-linha":
+            break
+        filhos.append(e)
+    return filhos
+
+
+def test_primeira_e_ultima_epoca_sem_botao_sem_destino(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    ids = ["1600", "1700", "1800"]
+    for i, id_ in enumerate(ids):
+        nav = Arvore(_trecho(_epoca_html(html, id_), '<nav class="nn-epoca-nav"', "</nav>"))
+        anterior = nav.achar("a", classe="nn-epoca-anterior")
+        proxima = nav.achar("a", classe="nn-epoca-proxima")
+        if i == 0:
+            assert anterior == []
+        else:
+            assert [(a["attrs"]["href"], a["attrs"]["data-epoca"]) for a in anterior] == [(f"#{ids[i - 1]}", ids[i - 1])]
+            assert Arvore.texto(anterior[0]) == "← época anterior"
+        if i == len(ids) - 1:
+            assert proxima == []
+        else:
+            assert [(a["attrs"]["href"], a["attrs"]["data-epoca"]) for a in proxima] == [(f"#{ids[i + 1]}", ids[i + 1])]
+            assert Arvore.texto(proxima[0]) == "próxima época →"
+    # os textos dos botoes nao aparecem fora da navegacao da epoca que tem destino
+    assert html.count("← época anterior") == 2 and html.count("próxima época →") == 2
+
+
+def test_marcos_apontam_para_a_epoca_certa(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    todos = Arvore(html).achar("a", classe="nn-marco")
+    assert len(todos) == 6
+    for epoca in _historia()["epocas"]:
+        trecho = _epoca_html(html, epoca["id"])
+        linha = _trecho(trecho, "<li", "<article")  # os marcos da linha do tempo, fora do artigo
+        marcos = Arvore(linha).achar("a", classe="nn-marco")
+        assert [m["attrs"]["data-marco"] for m in marcos] == [str(m["ano"]) for m in epoca["marcos"]]
+        for marco, a in zip(epoca["marcos"], marcos):
+            assert a["attrs"]["href"] == f"#m{marco['ano']}"
+            assert a["attrs"]["data-epoca"] == epoca["id"]
+            assert str(marco["ano"]) in Arvore.texto(a)
+            artigo = _trecho(trecho, '<article class="nn-epoca-conteudo"', "</article>")
+            assert f'id="m{marco["ano"]}"' in artigo
+    ids = [e["attrs"]["id"] for e in Arvore(html).elementos if "id" in e["attrs"]]
+    assert len(ids) == len(set(ids))
+
+
+def test_um_unico_dialog_vazio_no_fim(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    arvore = Arvore(html)
+    dialogos = arvore.achar("dialog")
+    assert len(dialogos) == 1
+    assert dialogos[0]["attrs"]["class"].split() == ["nn-modal", "nn-modal-historia"]
+    dialogo = _trecho(html, "<dialog", "</dialog>")
+    assert "nn-epoca-conteudo" not in dialogo and "nn-modal-fechar" in dialogo and "nn-modal-corpo" in dialogo
+    assert html.index("<dialog") > html.index('<ol class="nn-linha-tempo"')
+    fecho = arvore.achar("section", classe="nn-hist-fecho")
+    assert len(fecho) == 1
+    assert "E de 2000 para cá?" in Arvore.texto(fecho[0])
+    assert [a["attrs"]["href"] for a in Arvore(_trecho(html, '<section class="nn-hist-fecho"', "</section>")).achar("a")] == ["../", "../cards/"]
+
+
+def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
+    saida, _ = gerado
+    arvore = Arvore(_ler(saida))
+    assert not arvore.achar("style")
+    for e in arvore.elementos:
+        assert "style" not in e["attrs"], e["tag"]
+        assert not [a for a in e["attrs"] if a.startswith("on")], e["tag"]
+        if e["tag"] in ("img", "script", "link") and (e["attrs"].get("src") or e["attrs"].get("href")):
+            url = e["attrs"].get("src") or e["attrs"]["href"]
+            assert url.startswith("/") or url.startswith(SITE), url
+    for script in arvore.achar("script"):
+        assert script["attrs"].get("src") == "/site.js" and not Arvore.texto(script)
+    visivel = arvore.texto_visivel()
+    assert not re.search(r"\b(nan|none|undefined|null)\b", visivel, flags=re.IGNORECASE)
+    assert "{" not in visivel and "Prévia" not in visivel
+    assert not arvore.achar("meta", name="robots")
+
+
+def test_provisoria_nao_gera_pagina_nem_menu(tmp_path):
+    raiz = _base(tmp_path / "base", _historia(provisoria=True, com_imagem=False))
+    saida = tmp_path / "saida"
+    relatorio = gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
+    assert relatorio.historia_provisoria is True
+    assert PAGINA not in relatorio.paginas and not (saida / "como-chegamos").exists()
+    for pagina in ("index.html", "sobre/index.html"):
+        assert "/como-chegamos/" not in [href for href, _ in _menu(_ler(saida, pagina))]
+        assert "como-chegamos" not in _ler(saida, pagina)
+    assert json.loads(gerar.relatorio_em_json(relatorio))["historia_provisoria"] is True
+
+
+def test_sem_historia_yaml_nao_ha_pagina(tmp_path):
+    saida = tmp_path / "saida"
+    relatorio = gerar_site(Caminhos(raiz=_base(tmp_path / "base", None)), saida, imagens=False)
+    assert relatorio.historia_provisoria is False and PAGINA not in relatorio.paginas
+    assert "/como-chegamos/" not in _ler(saida, "index.html")
+
+
+def test_incluir_provisoria_gera_previa_com_aviso_e_noindex(tmp_path):
+    raiz = _base(tmp_path / "base", _historia(provisoria=True, com_imagem=False))
+    saida = tmp_path / "saida"
+    relatorio = gerar_site(Caminhos(raiz=raiz), saida, imagens=False, incluir_provisoria=True)
+    assert relatorio.historia_provisoria is True and PAGINA in relatorio.paginas
+    html = _ler(saida)
+    arvore = Arvore(html)
+    aviso = arvore.achar(classe="nn-hist-previa")
+    assert len(aviso) == 1 and "Prévia: texto provisório" in Arvore.texto(aviso[0])
+    assert [m["attrs"]["content"] for m in arvore.achar("meta", name="robots")] == ["noindex"]
+    assert ("/como-chegamos/", "Como chegamos aqui") in _menu(_ler(saida, "index.html"))
+    assert not Arvore(_ler(saida, "index.html")).achar("meta", name="robots")  # so a pagina previa sai do indice
+    # epoca sem imagem (so possivel com provisoria): cartao e artigo sem <img>, sem credito, e o resto inteiro
+    assert not arvore.achar("img") and not arvore.achar(classe="nn-epoca-credito")
+    assert len(arvore.achar("button", classe="nn-epoca-abrir")) == 3
+    assert len(arvore.achar("article", classe="nn-epoca-conteudo")) == 3
+    assert not Arvore(_ler(saida, "sobre/index.html")).achar(id="sobre-imagens")
+
+
+def test_cli_incluir_provisoria(tmp_path):
+    raiz = _base(tmp_path / "base", _historia(provisoria=True, com_imagem=False))
+    assert main(["--raiz", str(raiz), "site", "--saida", str(tmp_path / "sem"), "--sem-imagens"]) == 0
+    assert not (tmp_path / "sem" / PAGINA).exists()
+    assert main(["--raiz", str(raiz), "site", "--saida", str(tmp_path / "com"), "--sem-imagens",
+                 "--incluir-provisoria"]) == 0
+    assert "Prévia: texto provisório" in _ler(tmp_path / "com")
+
+
+def test_creditos_das_imagens_em_sobre(gerado):
+    saida, _ = gerado
+    html = _ler(saida, "sobre/index.html")
+    arvore = Arvore(html)
+    secao = arvore.achar(id="sobre-imagens")
+    assert len(secao) == 1
+    itens = [Arvore.texto(li) for li in arvore.achar("li", classe="nn-credito-imagem")]
+    assert len(itens) == 3
+    for i, epoca in enumerate(_historia()["epocas"]):
+        imagem = epoca["imagem"]
+        assert all(p in itens[i] for p in (imagem["autor"], imagem["titulo"], imagem["data"], IMAGENS[i]["rotulo"]))
+    assert IMAGENS[1]["url"] in [a["attrs"].get("href") for a in arvore.achar("a")]
+    assert "/como-chegamos/" in [a["attrs"].get("href") for a in Arvore(_trecho(html, 'id="sobre-imagens"', "</article>")).achar("a")]
+
+
+def test_pagina_tem_og_e_canonical_proprios(gerado):
+    saida, _ = gerado
+    arvore = Arvore(_ler(saida))
+    url = f"{SITE}/como-chegamos/"
+    assert [e["attrs"]["href"] for e in arvore.achar("link", rel="canonical")] == [url]
+    metas = {(m["attrs"].get("property") or m["attrs"].get("name")): m["attrs"]["content"] for m in arvore.achar("meta") if "content" in m["attrs"]}
+    assert metas["og:url"] == url
+    assert metas["og:image"] == f"{SITE}/og/como-chegamos.png"
+    titulo = Arvore.texto(arvore.achar("title")[0])
+    assert titulo == metas["og:title"] == "Como chegamos até aqui · Nordeste em Números"
+    assert metas["og:description"] == metas["description"] != ""
+
+
+def test_imagem_og_da_pagina_pelo_mesmo_caminho_das_outras(tmp_path, monkeypatch):
+    fotografados = {}
+
+    def renderizar_falso(alvos, raiz):
+        for alvo in alvos:
+            fotografados[alvo.png.relative_to(raiz).as_posix()] = alvo.html.read_text(encoding="utf-8")
+            alvo.png.parent.mkdir(parents=True, exist_ok=True)
+            alvo.png.write_bytes(b"png")
+
+    monkeypatch.setattr(gerar, "renderizar", renderizar_falso)
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=_base(tmp_path / "base", _historia())), saida, imagens=True)
+    assert "og/como-chegamos.png" in fotografados
+    titulo = Arvore(fotografados["og/como-chegamos.png"]).achar("h1", classe="nn-og-titulo")[0]
+    assert Arvore.texto(titulo) == "Como chegamos até aqui"
+    assert "og/como-chegamos.png" in json.loads((saida / gerar.MANIFESTO_DE_IMAGENS).read_text(encoding="utf-8"))

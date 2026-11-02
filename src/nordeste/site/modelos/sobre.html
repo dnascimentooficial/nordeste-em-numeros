@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_epoca.html" import credito %}
 {% block conteudo %}
 <section class="nn-pagina" id="sobre" aria-labelledby="titulo-principal">
   <h1 id="titulo-principal">Sobre os dados</h1>
@@ -45,6 +46,18 @@
     </div>
   </article>
 
+{% if creditos_historia %}
+  <article class="nn-card" id="sobre-imagens">
+    <h2>Imagens da página Como chegamos até aqui</h2>
+    <p>As imagens das épocas da <a href="/como-chegamos/">linha do tempo</a>, com autor, título, data e licença.</p>
+    <ul class="nn-lista">
+{% for c in creditos_historia %}
+      <li class="nn-credito-imagem"><b>{{ c.epoca }}:</b> {{ credito(c) }}.</li>
+{% endfor %}
+    </ul>
+  </article>
+
+{% endif %}
   <article class="nn-card" id="sobre-formulas">
     <h2>{{ textos.formulas.titulo }}</h2>
     <p>{{ textos.formulas.intro }}</p>

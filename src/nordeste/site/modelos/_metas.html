@@ -1,6 +1,9 @@
 <title>{{ pagina.titulo }}</title>
 <meta name="description" content="{{ pagina.descricao }}">
 <link rel="canonical" href="{{ pagina.url }}">
+{% if pagina.noindex %}
+<meta name="robots" content="noindex">
+{% endif %}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nordeste em Números">
 <meta property="og:title" content="{{ pagina.titulo }}">

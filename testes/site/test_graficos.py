@@ -309,3 +309,45 @@ def test_minigrafico_e_decorativo_e_traz_um_path_por_trecho():
     assert "style=" not in svg
     assert [_classe(g) for g in _todos(raiz, "g")] == ["nn-linha-ne", "nn-linha-ref"]
     assert minigrafico([]) == "" and minigrafico([_linha(pontos=[])]) == ""
+
+
+# --- eixo proprio e linha emendada (grafico dos censos da pagina Como chegamos) ---
+
+SEM_GOVERNOS = pd.DataFrame(columns=["presidente", "inicio", "fim", "mandato", "interino", "partido", "apelido"])
+CENSOS = _pontos((1872, 46.7), (1950, 34.6), (2022, 26.9), serie="censo")
+
+
+def test_governos_vazio_nao_quebra_e_nao_desenha_faixa():
+    raiz = _raiz(grafico_linhas([_linha()], CFG, SEM_GOVERNOS))
+    assert not [r for r in _todos(raiz, "rect") if _classe(r).startswith("nn-faixa")]
+    assert [_classe(g) for g in _todos(raiz, "g")] == ["nn-linha-ne"]
+
+
+def test_eixo_proprio_mostra_os_censos_desde_1872_e_vai_ao_script():
+    linha = _linha("Nordeste", CENSOS)
+    svg = grafico_linhas([linha], CFG, SEM_GOVERNOS, eixo=(1872, 2023), emendar=True)
+    raiz = _raiz(svg)
+    assert raiz.get("data-eixo") == "1872 2023"  # o site.js le o eixo da dica daqui
+    assert len(_todos(raiz, "circle")) == 3
+    assert len(_todos(raiz, "path")) == 1  # emendada: censos nao sao anuais, a linha liga um ao outro
+    anos = [int(t.text) for t in _todos(raiz, "text") if (t.text or "").isdigit() and len(t.text) == 4]
+    assert anos and min(anos) >= 1872 and max(anos) <= 2022 and len(anos) <= 8
+    assert not [r for r in _todos(raiz, "rect") if r.get("fill", "").startswith("url(")]  # sem ano futuro hachurado
+    assert "46,7% em 1872" in "".join(_todos(raiz, "desc")[0].itertext())
+    estreito = _raiz(grafico_linhas([linha], CFG, SEM_GOVERNOS, largura=360, altura=240, eixo=(1872, 2023), emendar=True))
+    anos_estreito = [t.text for t in _todos(estreito, "text") if (t.text or "").isdigit() and len(t.text) == 4]
+    assert 0 < len(anos_estreito) <= 4
+
+
+def test_sem_emendar_ano_faltante_continua_quebrando_e_eixo_padrao_sem_data_eixo():
+    linha = _linha("Nordeste", CENSOS)
+    raiz = _raiz(grafico_linhas([linha], CFG, SEM_GOVERNOS, eixo=(1872, 2023)))
+    assert len(_todos(raiz, "path")) == 0  # tres pontos soltos
+    padrao = _raiz(grafico_linhas([_linha()], CFG, GOVERNOS_MINI))
+    assert padrao.get("data-eixo") is None  # os graficos de 2000 em diante ficam byte a byte iguais
+
+
+def test_descricao_acessivel_com_eixo_proprio():
+    linha = _linha("Nordeste", CENSOS, rotulo="Nordeste")
+    texto = descricao_acessivel([linha], CFG, eixo=(1872, 2023))
+    assert "46,7% em 1872" in texto and "26,9% em 2022" in texto

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_epoca.html" import epoca %}
+{% block atributos_main %} class="nn-historia"{% endblock %}
+{% block conteudo %}
+{% set h = historia %}
+{% if h.previa %}
+<p class="nn-hist-previa" role="note"><strong>{{ h.previa }}.</strong> Só publico esta página depois da revisão do texto.</p>
+{% endif %}
+<section class="nn-hist-abertura" aria-labelledby="titulo-principal">
+  <h1 class="nn-hist-titulo" id="titulo-principal">{{ h.abertura.titulo }}</h1>
+  <p class="nn-hist-subtitulo">{{ h.abertura.subtitulo }}</p>
+  <p class="nn-hist-numero">
+{% for n in h.numeros %}
+    <span class="nn-hist-parcela"><strong class="nn-hist-valor">{{ n.valor }}</strong> <span class="nn-hist-rotulo">{% if loop.first %}dos brasileiros viviam no Nordeste em {{ n.ano }}{% else %}em {{ n.ano }}{% endif %}</span></span>
+{% endfor %}
+  </p>
+  <figure class="nn-hist-grafico">
+    <div class="nn-graf" id="{{ h.grafico.id }}">
+      <div class="nn-graf-largo">{{ h.grafico.largo|safe }}</div>
+      <div class="nn-graf-estreito">{{ h.grafico.estreito|safe }}</div>
+    </div>
+    <figcaption class="nn-hist-legenda">{{ h.abertura.legenda }}</figcaption>
+  </figure>
+  <p class="nn-hist-nota">{{ h.abertura.nota_estados }}</p>
+  <details>
+    <summary>Ver os números dos censos</summary>
+    <div class="nn-tabela">
+      <table>
+        <thead><tr><th scope="col">Censo</th><th scope="col" class="nn-num">Nordeste</th><th scope="col" class="nn-num">Brasil</th><th scope="col" class="nn-num">Parcela do Nordeste</th><th scope="col">Fonte</th></tr></thead>
+        <tbody>
+{% for linha in h.tabela %}
+          <tr><td>{{ linha.ano }}</td><td class="nn-num">{{ linha.nordeste }}</td><td class="nn-num">{{ linha.brasil }}</td><td class="nn-num">{{ linha.parcela }}</td><td>{{ linha.fonte }}</td></tr>
+{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  <p class="nn-hist-texto">{{ h.abertura.texto }}</p>
+</section>
+
+<section class="nn-hist-linha" aria-labelledby="titulo-linha">
+  <h2 class="nn-hist-secao" id="titulo-linha">Linha do tempo</h2>
+  <ol class="nn-linha-tempo">
+{% for e in h.epocas %}
+{{ epoca(e) }}{% endfor %}
+  </ol>
+</section>
+
+<section class="nn-hist-fecho" aria-labelledby="titulo-fecho">
+  <h2 class="nn-hist-secao" id="titulo-fecho">{{ h.fecho.titulo }}</h2>
+  <p>{{ h.fecho.texto }}</p>
+  <ul class="nn-hist-fecho-links">
+{% for link in h.fecho.links %}
+    <li><a href="{{ link.url }}">{{ link.texto }}</a></li>
+{% endfor %}
+  </ul>
+</section>
+{# A janela única das épocas: vazia até o site.js levar para ela o artigo da época aberta. #}
+<dialog class="nn-modal nn-modal-historia" aria-labelledby="nn-modal-titulo">
+  <div class="nn-modal-caixa">
+    <div class="nn-modal-topo">
+      <button type="button" class="nn-modal-fechar"><span>{{ textos.ampliar.fechar }}</span> <span aria-hidden="true">×</span></button>
+    </div>
+    <div class="nn-modal-corpo"></div>
+  </div>
+</dialog>
+{% endblock %}

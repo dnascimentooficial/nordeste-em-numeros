@@ -140,32 +140,33 @@ def faixas_em_json(governos: pd.DataFrame) -> str:
 # --- linhas -----------------------------------------------------------------------------------------------------
 
 
-def _visiveis(linhas: list[Linha]) -> list[Linha]:
-    """Linhas so com os pontos dentro do eixo; linha sem ponto no eixo sai."""
+def _visiveis(linhas: list[Linha], eixo: tuple[int, int] = (ANO_INICIAL, ANO_FINAL)) -> list[Linha]:
+    """Linhas so com os pontos dentro do eixo (`[inicio, fim)`); linha sem ponto no eixo sai."""
     recortadas = [
-        Linha(l.rotulo, l.rotulo_curto, [p for p in l.pontos if ANO_INICIAL <= p.ano < ANO_FINAL], l.destaque)
+        Linha(l.rotulo, l.rotulo_curto, [p for p in l.pontos if eixo[0] <= p.ano < eixo[1]], l.destaque)
         for l in linhas
     ]
     return [l for l in recortadas if l.pontos]
 
 
-def _trechos(pontos: list[Ponto]) -> list[list[Ponto]]:
-    """Quebra a linha na troca de serie e no ano faltante: nunca emenda dois trechos."""
+def _trechos(pontos: list[Ponto], emendar: bool = False) -> list[list[Ponto]]:
+    """Quebra a linha na troca de serie e no ano faltante: nunca emenda dois trechos. Com `emendar` (serie que nao e
+    anual, como a dos censos), so a troca de serie quebra a linha."""
     trechos: list[list[Ponto]] = []
     for p in pontos:
         anterior = trechos[-1][-1] if trechos else None
-        if anterior is not None and p.ano == anterior.ano + 1 and p.serie == anterior.serie:
+        if anterior is not None and (emendar or p.ano == anterior.ano + 1) and p.serie == anterior.serie:
             trechos[-1].append(p)
         else:
             trechos.append([p])
     return trechos
 
 
-def _desenhar_linha(l: Linha, x: Callable[[Ponto], float], y: Escala) -> str:
+def _desenhar_linha(l: Linha, x: Callable[[Ponto], float], y: Escala, emendar: bool = False) -> str:
     classe = "nn-linha-ne" if l.destaque else "nn-linha-ref"
     espessura = "2.6" if l.destaque else "2"
     partes = [f'<g class="{classe}">']
-    for trecho in _trechos(l.pontos):
+    for trecho in _trechos(l.pontos, emendar):
         if len(trecho) > 1:
             caminho = "".join(f"{'M' if i == 0 else 'L'}{_c(x(p))},{_c(y(p.valor))}" for i, p in enumerate(trecho))
             partes.append(
@@ -200,10 +201,12 @@ def _y_dos_rotulos(alvos: list[float], topo: float, eixo: float) -> list[float]:
 # --- textos e acessibilidade ------------------------------------------------------------------------------------
 
 
-def descricao_acessivel(linhas: list[Linha], cfg: ConfigGrafico) -> str:
-    """Primeiro e ultimo valor de cada linha, como no prototipo (`window.nnAria`)."""
+def descricao_acessivel(
+    linhas: list[Linha], cfg: ConfigGrafico, eixo: tuple[int, int] = (ANO_INICIAL, ANO_FINAL)
+) -> str:
+    """Primeiro e ultimo valor de cada linha dentro do eixo, como no prototipo (`window.nnAria`)."""
     partes = []
-    for l in _visiveis(linhas):
+    for l in _visiveis(linhas, eixo):
         primeiro, ultimo = l.pontos[0], l.pontos[-1]
         partes.append(
             f"{l.rotulo}: {numero(primeiro.valor, cfg.casas)}{cfg.sufixo} em {primeiro.ano} "
@@ -233,27 +236,32 @@ def _atributo(valor: str) -> str:
     return escape(valor, quote=True)
 
 
-def _passo_dos_anos(estreito: bool) -> int:
-    vao = ANO_FINAL - ANO_INICIAL
+def _passo_dos_anos(estreito: bool, vao: int = ANO_FINAL - ANO_INICIAL) -> int:
     if vao <= 8:
         return 2 if estreito else 1
     if vao <= 16:
         return 4 if estreito else 2
-    return 8 if estreito else 4
+    if vao <= 32:
+        return 8 if estreito else 4
+    # eixo longo (os censos desde 1872): ate 4 anos no estreito e 8 no largo, em passos redondos
+    return next((p for p in (10, 20, 25, 50) if vao / p <= (4 if estreito else 8)), 100)
 
 
 # --- graficos ---------------------------------------------------------------------------------------------------
 
 
 def grafico_linhas(
-    linhas: list[Linha], cfg: ConfigGrafico, governos: pd.DataFrame, largura: int = 720, altura: int = 300
+    linhas: list[Linha], cfg: ConfigGrafico, governos: pd.DataFrame, largura: int = 720, altura: int = 300, *,
+    eixo: tuple[int, int] = (ANO_INICIAL, ANO_FINAL), emendar: bool = False,
 ) -> str:
     """`<svg>` do grafico de linhas; vazio (`""`) quando nenhuma linha tem ponto dentro do eixo.
 
     Os atributos `data-pontos`, `data-casas` e `data-sufixo` levam os dados completos recebidos (inclusive fora do
-    eixo) para o site.js redesenhar com zoom e comparacao.
+    eixo) para o site.js redesenhar com zoom e comparacao. `eixo` (`[inicio, fim)`, em anos) troca o eixo padrao de
+    2000 a 2026, e vai ao site.js em `data-eixo`; `emendar` liga os pontos de uma serie que nao e anual (censos).
     """
-    visiveis = _visiveis(linhas)
+    ano_inicial, ano_final = eixo_anos = eixo
+    visiveis = _visiveis(linhas, eixo_anos)
     if not visiveis:
         return ""
     estreito = largura < LARGURA_ESTREITA
@@ -276,7 +284,7 @@ def grafico_linhas(
     topo, base = 26, 24
     esquerda = math.ceil(max((_largura_texto(r) for r in rotulos_y), default=30)) + 10
     direita = math.ceil(max(_largura_texto(r) for r in rotulos_fim)) + 12
-    x_anos = _escala((ANO_INICIAL, ANO_FINAL), (esquerda, largura - direita))
+    x_anos = _escala((ano_inicial, ano_final), (esquerda, largura - direita))
     y = _escala(dominio, (altura - base, topo))
     x_ponto: Callable[[Ponto], float] = lambda p: x_anos(p.ano + 0.5)  # pontos no meio do ano
     eixo, alto_quadro = altura - base, altura - topo - base
@@ -288,16 +296,17 @@ def grafico_linhas(
     partes = [
         f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="{id_titulo} {id_desc}" width="100%" '
         f'viewBox="0 0 {largura} {altura}" font-size="11" data-pontos="{_atributo(dados)}" '
-        f'data-casas="{cfg.casas}" data-sufixo="{_atributo(cfg.sufixo)}">',
+        f'data-casas="{cfg.casas}" data-sufixo="{_atributo(cfg.sufixo)}"'
+        + ("" if eixo_anos == (ANO_INICIAL, ANO_FINAL) else f' data-eixo="{ano_inicial} {ano_final}"') + ">",
         f'<title id="{id_titulo}">{escape(cfg.titulo, quote=False)}</title>',
-        f'<desc id="{id_desc}">{escape(descricao_acessivel(linhas, cfg), quote=False)}</desc>',
+        f'<desc id="{id_desc}">{escape(descricao_acessivel(linhas, cfg, eixo_anos), quote=False)}</desc>',
         f'<defs><pattern id="{id_padrao}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
         '<line x1="0" y1="0" x2="0" y2="6" class="nn-hachura" stroke-width="2.5"/></pattern></defs>',
     ]
 
     # faixas de governo (interino hachurado) com o nome no topo
     for i, faixa in enumerate(_faixas(governos)):
-        a, b = max(ANO_INICIAL, faixa.inicio), min(ANO_FINAL, faixa.fim)
+        a, b = max(ano_inicial, faixa.inicio), min(ano_final, faixa.fim)
         if b <= a:
             continue
         xa, xb = x_anos(a), x_anos(b)
@@ -318,8 +327,8 @@ def grafico_linhas(
 
     # anos depois do ultimo dado
     ultimo_ano = max(l.pontos[-1].ano for l in visiveis)
-    if ultimo_ano + 1 < ANO_FINAL:
-        xa, xb = x_anos(ultimo_ano + 1), x_anos(ANO_FINAL)
+    if ultimo_ano + 1 < ano_final:
+        xa, xb = x_anos(ultimo_ano + 1), x_anos(ano_final)
         partes.append(
             f'<rect x="{_c(xa)}" y="{topo}" width="{_c(xb - xa)}" height="{_c(alto_quadro)}" fill="url(#{id_padrao})"/>'
         )
@@ -338,12 +347,12 @@ def grafico_linhas(
         )
 
     # anos no eixo x
-    passo = _passo_dos_anos(estreito)
-    for ano in range(math.ceil(ANO_INICIAL / passo) * passo, ANO_FINAL, passo):
+    passo = _passo_dos_anos(estreito, ano_final - ano_inicial)
+    for ano in range(math.ceil(ano_inicial / passo) * passo, ano_final, passo):
         partes.append(f'<text class="nn-eixo" x="{_c(x_anos(ano + 0.5))}" y="{altura - 6}" text-anchor="middle">{ano}</text>')
 
     # quebras de serie
-    quebras = [(ano, rotulo) for ano, rotulo in cfg.quebras if ANO_INICIAL < ano < ANO_FINAL]
+    quebras = [(ano, rotulo) for ano, rotulo in cfg.quebras if ano_inicial < ano < ano_final]
     for i, (ano, rotulo) in enumerate(quebras):
         partes.append(
             f'<line class="nn-quebra" x1="{_c(x_anos(ano))}" x2="{_c(x_anos(ano))}" y1="{topo}" y2="{eixo}" '
@@ -355,7 +364,7 @@ def grafico_linhas(
             )
 
     for l in visiveis:
-        partes.append(_desenhar_linha(l, x_ponto, y))
+        partes.append(_desenhar_linha(l, x_ponto, y, emendar))
 
     # rotulos da ponta
     alvos = [y(l.pontos[-1].valor) + 4 for l in visiveis]

@@ -47,6 +47,8 @@ def _parser() -> argparse.ArgumentParser:
     site.add_argument("--anterior", type=Path,
                       help="saida da geracao anterior: dela se copiam os PNG cuja entrada nao mudou (fora de --saida)")
     site.add_argument("--relatorio", type=Path, help="grava em JSON o que foi suprimido (fechos e cards)")
+    site.add_argument("--incluir-provisoria", action="store_true",
+                      help="previa local: gera a pagina Como chegamos mesmo com historia.yaml provisorio (noindex)")
     return parser
 
 
@@ -132,11 +134,16 @@ def _publicar(caminhos: Caminhos, hoje: date, ensaio: bool) -> int:
     return 0
 
 
-def _site(caminhos: Caminhos, saida: Path, imagens: bool, relatorio: Path | None, anterior: Path | None) -> int:
+def _site(
+    caminhos: Caminhos, saida: Path, imagens: bool, relatorio: Path | None, anterior: Path | None,
+    incluir_provisoria: bool = False,
+) -> int:
     from nordeste.site.gerar import gerar_site, relatorio_em_json  # o pipeline nao precisa do gerador
 
     try:
-        resultado = gerar_site(caminhos, saida, imagens=imagens, anterior=anterior)
+        resultado = gerar_site(
+            caminhos, saida, imagens=imagens, anterior=anterior, incluir_provisoria=incluir_provisoria,
+        )
     except (ValueError, OSError) as erro:  # inclui ErroConteudo; base ou metadados ilegiveis nao viram traceback
         print(f"site: {erro}", file=sys.stderr)
         return 1
@@ -159,7 +166,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.comando == "consolidar":
             return _consolidar(caminhos)
         if args.comando == "site":
-            return _site(caminhos, args.saida, not args.sem_imagens, args.relatorio, args.anterior)
+            return _site(
+                caminhos, args.saida, not args.sem_imagens, args.relatorio, args.anterior, args.incluir_provisoria,
+            )
         # validar e o ensaio de publicacao: mesmos insumos, grava validacao.csv e nunca toca dados/base/.
         return _publicar(caminhos, hoje, ensaio=args.comando == "validar" or args.ensaio)
     except (ErroColeta, ErroFicha, ErroPublicacao) as erro:

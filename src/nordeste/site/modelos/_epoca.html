@@ -1,0 +1,73 @@
+{# Uma época da linha do tempo: o cartão (o botão que o site.js liga ao modal), os marcos na linha e o artigo com
+   todo o conteúdo do modal (spec, seção 5). Sem JavaScript, o artigo fica visível logo abaixo do cartão. #}
+{% macro credito(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
+{% macro epoca(e) %}
+    <li class="nn-epoca" id="{{ e.id }}">
+      <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}" aria-haspopup="dialog">
+{% if e.imagem %}
+        <img class="nn-epoca-miniatura" src="{{ e.imagem.src }}" alt="{{ e.imagem.alt }}" loading="lazy">
+{% endif %}
+        <span class="nn-epoca-periodo">{{ e.periodo }}</span>
+        <span class="nn-epoca-nome">{{ e.nome }}</span>
+      </button>
+      <ul class="nn-marcos-linha" aria-label="Marcos de {{ e.nome }}">
+{% for m in e.marcos %}
+        <li><a class="nn-marco" href="#m{{ m.ano }}" data-epoca="{{ e.id }}" data-marco="{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <span class="nn-marco-titulo">{{ m.titulo }}</span></a></li>
+{% endfor %}
+      </ul>
+      <article class="nn-epoca-conteudo" aria-labelledby="t-{{ e.id }}">
+        <p class="nn-epoca-data">{{ e.periodo }}</p>
+        <h3 class="nn-epoca-titulo" id="t-{{ e.id }}">{{ e.nome }}</h3>
+{% if e.imagem %}
+        <figure class="nn-epoca-figura">
+          <img class="nn-epoca-imagem" src="{{ e.imagem.src }}" alt="{{ e.imagem.alt }}" loading="lazy">
+          <figcaption class="nn-epoca-credito">Imagem: {{ credito(e.imagem) }}.</figcaption>
+        </figure>
+{% endif %}
+        <p class="nn-epoca-resumo">{{ e.resumo }}</p>
+        <div class="nn-epoca-texto">
+{% for paragrafo in e.paragrafos %}
+          <p>{{ paragrafo }}</p>
+{% endfor %}
+        </div>
+        <div class="nn-epoca-marcos">
+          <h4>Marcos</h4>
+          <ol>
+{% for m in e.marcos %}
+            <li id="m{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <b>{{ m.titulo }}.</b> {{ m.texto }}</li>
+{% endfor %}
+          </ol>
+        </div>
+        <div class="nn-epoca-numeros">
+          <h4>Números</h4>
+          <ul>
+{% for n in e.numeros %}
+            <li><span class="nn-epoca-valor">{{ n.valor }}</span> <span class="nn-epoca-legenda">{{ n.legenda }}</span> <span class="nn-tipo nn-tipo-{{ n.tipo }}" title="{{ n.fonte }}">{{ n.rotulo }}</span> <span class="nn-epoca-fonte-numero">Fonte: {{ n.fonte }}.</span></li>
+{% endfor %}
+          </ul>
+        </div>
+        <div class="nn-epoca-ficou">
+          <h4>O que ficou disso</h4>
+          <p>{{ e.o_que_ficou }} <span class="nn-tipo nn-tipo-interpretacao" title="Leitura minha, a partir das fontes desta época">{{ e.interpretacao }}</span></p>
+        </div>
+        <div class="nn-epoca-fontes">
+          <h4>Fontes</h4>
+          <ul>
+{% for f in e.fontes %}
+            <li>{% if f.url %}<a href="{{ f.url }}">{{ f.texto }}</a>{% else %}{{ f.texto }}{% endif %}</li>
+{% endfor %}
+          </ul>
+        </div>
+{% if e.anterior or e.proxima %}
+        <nav class="nn-epoca-nav" aria-label="Outras épocas">
+{% if e.anterior %}
+          <a class="nn-epoca-anterior" href="#{{ e.anterior }}" data-epoca="{{ e.anterior }}">← época anterior</a>
+{% endif %}
+{% if e.proxima %}
+          <a class="nn-epoca-proxima" href="#{{ e.proxima }}" data-epoca="{{ e.proxima }}">próxima época →</a>
+{% endif %}
+        </nav>
+{% endif %}
+      </article>
+    </li>
+{% endmacro %}
