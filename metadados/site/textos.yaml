@@ -1,13 +1,17 @@
 # Textos fixos do site, em primeira pessoa. Marcadores {destaque.campo[:formato]} como em perguntas.yaml.
 # O recorte de anos do selo ("2000 a ..."), a data da base e o sha256 saem da base publicada, no gerador.
 
-# Foto da abertura (opcional): vira o fundo esmaecido da abertura, sob uma camada preta de 88%.
-# A foto é o arquivo src/nordeste/site/estaticos/foto-abertura.webp (o nome que o estilo.css usa; webp de até 200 KB) e só
-# vai para o site com esta chave. credito é o texto do rodapé e de Sobre (autor); url é a página do autor. Sem a chave,
-# a abertura segue preta, não há crédito e a foto não é copiada.
+# Imagem da abertura (opcional): ocupa a metade direita da abertura no desktop e uma faixa no topo no celular, com o
+# texto sempre sobre preto. É o arquivo src/nordeste/site/estaticos/foto-abertura.webp (o nome que o estilo.css usa; webp
+# de até 200 KB) e só vai para o site com esta chave. credito é o autor e url a página dele (obrigatórios); rotulo é o
+# texto antes do crédito (sem ele, "Foto") e descricao, opcional, sai entre parênteses depois do crédito. Rodapé:
+# "<rotulo>: <credito> (<descricao>)"; Sobre: "<rotulo> da abertura: <credito> (<descricao>).". Sem a chave, a abertura
+# segue preta, não há crédito e a imagem não é copiada.
 foto:
+  rotulo: "Imagem"
   credito: "Júlio Diógenes"
   url: "https://dnascimento.com.br"
+  descricao: "composição com praia, mata e sertão do Nordeste"
 
 abertura:
   eyebrow: "Nordeste em Números"
