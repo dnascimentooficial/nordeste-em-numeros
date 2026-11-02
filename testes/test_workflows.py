@@ -76,7 +76,7 @@ def test_atualizar_tem_agenda_concorrencia_e_permissoes_minimas():
 def test_atualizar_chama_os_comandos_na_ordem():
     roteiro = "\n".join(p.get("run", "") for p in _passos(_carregar("atualizar.yml")))
     esperados = [
-        r'pip install -e "\.\[site\]"',
+        r'pip install -c requisitos-travados\.txt -e "\.\[site\]"',
         r"python -m playwright install --with-deps chromium",
         r"python -m nordeste\.automacao baixar-brutos",
         r"python -m nordeste\.automacao pular-inep",
@@ -120,7 +120,7 @@ def test_testes_roda_a_suite_e_o_navegador():
     (python,) = [p for p in passos if p.get("uses", "").startswith("actions/setup-python@")]
     assert python["with"]["python-version"] == "3.12"
     roteiro = "\n".join(p.get("run", "") for p in passos)
-    for comando in ('pip install -e ".[dev,site,ferramentas]"', "python -m playwright install --with-deps chromium",
+    for comando in ('pip install -c requisitos-travados.txt -e ".[dev,site,ferramentas]"', "python -m playwright install --with-deps chromium",
                     "python -m pytest -W error", "python -m pytest -m navegador -W error"):
         assert comando in roteiro
 
@@ -468,3 +468,24 @@ def test_commit_dos_dados_rebase_sobre_a_main_nova_e_so_se_mudou(tmp_path, remot
     topo = _git(remoto, "rev-parse", "main")
     assert _rodar(_passo("atualizar.yml", "commit_dados"), clone).returncode == 0  # nada mudou em dados/
     assert _git(remoto, "rev-parse", "main") == topo
+
+
+def test_toda_instalacao_usa_as_versoes_travadas():
+    """A CI e o robo semanal instalam as versoes com que a base foi validada (o pandas 4 quebrou 38 testes)."""
+    raiz = Path(__file__).resolve().parents[1]
+    travadas = {
+        linha.split("==")[0]: linha.split("==")[1]
+        for linha in (raiz / "requisitos-travados.txt").read_text(encoding="utf-8").splitlines()
+        if linha and not linha.startswith("#")
+    }
+    for pacote in ("pandas", "numpy", "pyarrow", "openpyxl", "xlrd", "playwright"):
+        assert pacote in travadas, pacote
+    assert "certifi" not in travadas  # a cadeia de certificados acompanha as autoridades atuais
+    instalacoes = 0
+    for nome in NOMES:
+        for passo in _passos(_carregar(nome)):
+            for linha in passo.get("run", "").splitlines():
+                if re.search(r"\bpip install\b", linha) and "--upgrade pip" not in linha:
+                    instalacoes += 1
+                    assert "-c requisitos-travados.txt" in linha, (nome, linha)
+    assert instalacoes == len(NOMES)

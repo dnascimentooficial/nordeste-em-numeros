@@ -1,0 +1,32 @@
+# Versões exatas com que a base foi validada (suíte local e publicação de 2026-11-01).
+# Os workflows instalam com `pip install -c requisitos-travados.txt ...`, para a CI e o robô semanal
+# não trocarem de versão sozinhos (o pandas 4 mudou a leitura de planilhas e quebrou 38 testes).
+# Para atualizar: subir as versões aqui, rodar `python -m pytest -W error` e `-m navegador`, e conferir
+# a base com `python -m nordeste publicar --ensaio`. certifi fica de fora de propósito: a cadeia de
+# certificados precisa acompanhar as autoridades atuais.
+charset-normalizer==3.5.1
+et-xmlfile==2.0.0
+greenlet==3.5.6
+idna==3.20
+iniconfig==2.3.1
+jinja2==3.1.6
+markupsafe==3.0.3
+numpy==2.5.3
+openpyxl==3.1.5
+packaging==26.3
+pandas==3.0.5
+pillow==12.3.0
+playwright==1.64.1
+pluggy==1.7.0
+pyarrow==26.0.0
+pyee==14.0.0
+pygments==2.21.0
+pytest==9.2.0
+python-dateutil==2.9.0.post0
+pyyaml==6.0.3
+requests==2.34.2
+shapely==2.2.0
+six==1.17.0
+typing-extensions==4.16.0
+urllib3==2.8.0
+xlrd==2.0.2

@@ -23,7 +23,7 @@ jobs:
       - name: Instalar
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev,site,ferramentas]"
+          pip install -c requisitos-travados.txt -e ".[dev,site,ferramentas]"
           python -m playwright install --with-deps chromium
       - name: Suíte
         run: python -m pytest -W error

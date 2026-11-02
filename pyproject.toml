@@ -8,8 +8,8 @@ version = "0.1.0"
 description = "Base historica de indicadores do Nordeste brasileiro"
 requires-python = ">=3.12"
 dependencies = [
-    "pandas",
-    "numpy",
+    "pandas>=3,<4",
+    "numpy>=2,<3",
     "pyarrow",
     "pyyaml",
     "requests",
