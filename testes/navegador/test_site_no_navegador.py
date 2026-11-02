@@ -30,7 +30,12 @@ LIMITE_DA_INICIAL = 500_000  # bytes, sem a foto da abertura
 
 
 def _violacoes_do_axe(pagina) -> list[str]:
-    """`regra (impacto): alvo, ...` de cada violacao grave da pagina aberta (axe-core, todas as regras padrao)."""
+    """`regra (impacto): alvo, ...` de cada violacao grave da pagina aberta (axe-core, todas as regras padrao).
+
+    As paginas inteiras abrem com reduced_motion="reduce": o axe mede o estado final. Com animacao, o que esta fora
+    da tela fica com opacidade 0 (o axe nem confere) e o que esta entrando aparece pela metade (a legenda foi medida
+    no meio do fade e reprovou o contraste no tema escuro, na CI e, de vez em quando, aqui).
+    """
     pagina.evaluate(AXE)  # evaluate nao esta sujeito a CSP; o script tag estaria
     achadas = pagina.evaluate("axe.run(document).then(r => r.violations)")
     return [
@@ -46,7 +51,7 @@ def _violacoes_do_axe(pagina) -> list[str]:
 def test_axe_sem_violacao_grave(abrir, rotas, esquema):
     graves = {}
     for rota in rotas:
-        with abrir(rota, color_scheme=esquema) as pagina:
+        with abrir(rota, color_scheme=esquema, reduced_motion="reduce") as pagina:
             achadas = _violacoes_do_axe(pagina)
             if achadas:
                 graves[rota] = achadas
@@ -62,7 +67,7 @@ def test_axe_com_o_modal_aberto_e_com_o_explorar_trocado(abrir):
             "() => document.querySelector('dialog.nn-modal').getAnimations({ subtree: true }).every((a) => a.playState === 'finished')"
         )
         assert _violacoes_do_axe(pagina) == []
-    with abrir("/explorar/") as pagina:
+    with abrir("/explorar/", reduced_motion="reduce") as pagina:
         pagina.select_option("#sel-expl-ind", "gini")
         pagina.select_option("#sel-expl-terr2", "BR")
         pagina.wait_for_function("() => document.getElementById('explorar-titulo').textContent.includes('×')")
