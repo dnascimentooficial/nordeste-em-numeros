@@ -45,7 +45,7 @@ Recorte: estados que hoje formam o Nordeste (MA, PI, CE, RN, PB, PE, AL, SE, BA)
 | 2010 | 53.081.950 | 190.755.799 | 27,8 | IBGE, SIDRA, tabela 1286 [A] |
 | 2022 | 54.658.515 | 203.080.756 | 26,9 | IBGE, SIDRA, tabela 4709 [A] |
 
-Percentuais calculados por mim a partir dos valores da tabela, com uma casa decimal (valores com duas casas: 46,71; 41,87; 38,70; 36,71; 35,00; 34,60; 31,59; 30,34; 29,24; 28,91; 28,12; 27,83; 26,92). Na página, o gerador calcula a parcela a partir do `censos.csv` (spec, seção 3).
+Percentuais calculados por mim a partir dos valores da tabela, com uma casa decimal (valores com duas casas: 46,71; 41,87; 38,70; 36,71; 35,00; 34,60; 31,59; 30,34; 29,24; 28,91; 28,12; 27,83; 26,91). Na página, o gerador calcula a parcela a partir do `censos.csv` (spec, seção 3).
 
 **Notas da série:**
 
@@ -58,7 +58,7 @@ Percentuais calculados por mim a partir dos valores da tabela, com uma casa deci
 **Conferência dos valores de trabalho da spec:**
 
 - **46,7% (1872):** confere. 4.638.560 / 9.930.478 = 46,71% (SIDRA 1286).
-- **26,9% (2022):** confere. 54.658.515 / 203.080.756 = 26,92% (SIDRA 4709). O número de trabalho da spec para o Nordeste (54.644.582) é da primeira divulgação e deve ser trocado por 54.658.515, que forma par com o total revisado 203.080.756.
+- **26,9% (2022):** confere. 54.658.515 / 203.080.756 = 26,91% (SIDRA 4709). O número de trabalho da spec para o Nordeste (54.644.582) é da primeira divulgação e deve ser trocado por 54.658.515, que forma par com o total revisado 203.080.756.
 
 **Decisões e cuidados para `censos.csv`:**
 

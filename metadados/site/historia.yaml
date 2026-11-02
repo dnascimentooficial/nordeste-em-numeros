@@ -108,7 +108,7 @@ epocas:
 
       Ao longo do século, o café do Vale do Paraíba, e depois o de São Paulo, tomou o lugar do açúcar na exportação. Quando o tráfico de africanos acabou, em 1850, o preço do escravizado subiu nas fazendas de café. Proprietários do Nordeste venderam gente para lá. Robert Slenes estima que pelo menos 200 mil pessoas foram levadas para o Sudeste por esse tráfico interno, entre as décadas de 1850 e 1880. A venda foi decisão de quem era dono aqui. A procura vinha de lá.
 
-      A Grande Seca de 1877 a 1879 matou dezenas de milhares de pessoas só no Ceará. Rodolpho Theóphilo, que viu a seca de perto, contou 27.378 mortos em Fortaleza em pouco mais de dois meses. Para a região inteira, as estimativas divergem tanto que prefiro não usar nenhuma. A escravidão só acabou em 1888, um ano antes do fim do Império, e o Nordeste chegou à República com menos peso na economia do país do que tinha no começo do século.
+      A Grande Seca de 1877 a 1879 matou dezenas de milhares de pessoas só no Ceará. Rodolpho Theóphilo contou 27.378 mortos em Fortaleza em pouco mais de dois meses. Para a região inteira, as estimativas divergem tanto que prefiro não usar nenhuma. A escravidão só acabou em 1888, um ano antes do fim do Império, e o Nordeste chegou à República com menos peso na economia do país do que tinha no começo do século.
     marcos:
       - {ano: 1817, titulo: "Revolução Pernambucana", texto: "Impostos para a Corte, seca de 1816 e preços ruins levam Pernambuco à revolta."}
       - {ano: 1850, titulo: "Fim do tráfico atlântico", texto: "Começa a venda de escravizados do Nordeste para as fazendas de café."}
@@ -168,7 +168,7 @@ epocas:
         legenda: "Parte do Nordeste na produção industrial do Brasil, de 1907 a 1939."
         tipo: historiador
         fonte: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970, p. 56"
-    o_que_ficou: "A seca virou política federal em 1909, mas a obra pública chegou primeiro onde já havia poder. E a indústria do país nasceu longe do Nordeste."
+    o_que_ficou: "A seca virou política federal em 1909, mas a obra pública chegou primeiro onde já havia poder. E a indústria do país cresceu longe do Nordeste."
     fontes:
       - texto: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970 (repositório do Ipea)"
         url: https://repositorio.ipea.gov.br/bitstream/11058/14495/1/Desequilibrios_regionais_concentra%c3%a7%c3%a3o_industrial.pdf
@@ -193,7 +193,7 @@ epocas:
     nome: Vargas e a grande migração
     resumo: "O governo federal centraliza, a indústria cresce no Centro-Sul e os nordestinos começam a sair para São Paulo e o Rio."
     texto: |-
-      Depois de 1930 o governo federal passou a decidir mais, e a indústria acelerou no Centro-Sul. Para o Nordeste, a novidade foi a seca entrar na Constituição. A de 1934 mandou a União gastar com a defesa contra as secas pelo menos 4% da sua receita tributária.
+      Depois de 1930 o governo federal passou a decidir mais, e a indústria acelerou no Centro-Sul. Para o Nordeste, a novidade foi a seca entrar na Constituição. A de 1934 mandou a União gastar com a defesa contra as secas pelo menos 4% da sua receita tributária sem aplicação especial.
 
       A seca de 1932 mostrou o outro lado. Governos montaram campos de concentração para segurar os retirantes longe das capitais, e o Correio da Manhã noticiou os campos naquele ano. A seca era tratada como problema de ordem pública, e o retirante, como ameaça.
 
@@ -240,7 +240,7 @@ epocas:
     texto: |-
       As secas de 1951 a 1952 e de 1958 mostraram o limite dos açudes. Em 1952 uma lei criou o Banco do Nordeste, com sede em Fortaleza. Em 1955 a Chesf inaugurou a primeira usina de Paulo Afonso.
 
-      Em 1959 saiu o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, o GTDN, coordenado por Celso Furtado. O diagnóstico era direto. A renda por pessoa do Nordeste não chegava a um terço da do Centro-Sul. Para o relatório, a verdadeira causa do atraso estava "na pobreza relativa do seu suporte físico": terra escassa e pouco capital acumulado. A proposta era industrializar a região.
+      Em 1959 saiu o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, o GTDN, coordenado por Celso Furtado. O diagnóstico era direto. A renda por pessoa do Nordeste não chegava a um terço da do Centro-Sul. O relatório apontava a "escassez relativa do fator terra e menor acumulação de capital" e concluía que a causa do atraso estava "na pobreza relativa do seu suporte físico". A proposta era industrializar a região.
 
       O relatório também olhou para dentro. A política de açudes tinha servido às grandes propriedades. No mesmo ano, as reportagens de Antônio Callado no Correio da Manhã deram nome à rede de latifundiários e políticos que vivia das obras contra a seca: indústria da seca. O nome pegou.
 
