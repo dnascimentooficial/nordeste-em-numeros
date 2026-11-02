@@ -110,7 +110,7 @@ def test_fecho_cujo_destaque_sumiu_da_base_fica_suprimido_sem_quebrar(conteudo, 
 
 def test_sem_travessao_nos_textos():
     arquivos = sorted(PASTA_SITE.glob("*.yaml"))
-    assert {a.name for a in arquivos} == {"destaques.yaml", "perguntas.yaml", "cards.yaml", "textos.yaml"}
+    assert {a.name for a in arquivos} == {"destaques.yaml", "perguntas.yaml", "cards.yaml", "textos.yaml", "historia.yaml"}
     for arquivo in arquivos:
         assert "—" not in arquivo.read_text(encoding="utf-8"), arquivo.name
 
