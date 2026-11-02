@@ -35,3 +35,26 @@ para a licença e indique se fez alterações.
     Recife; domínio público (autor morto em 1937). https://commons.wikimedia.org/wiki/File:B%C3%AAn%C3%A7%C3%A3o_das_bandeiras_da_Revolu%C3%A7%C3%A3o_de_1817.jpg
   - `1889.webp`: Flávio de Barros, *400 jagunços prisioneiros* (1897); domínio público.
     https://commons.wikimedia.org/wiki/File:Canudos_rebels.jpg
+  - `1930.webp`: José Bonifácio Paranhos da Costa, *Campo de Patu* (1932), publicada no *Relatório da Comissão Médica
+    de Assistência e Profilaxia aos Flagelados do Nordeste* (1933), Arquivo Nacional; domínio público (fotografia
+    publicada em 1933, Lei 9.610/98, art. 44). https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/
+  - `marco-1932.webp`: José Bonifácio Paranhos da Costa, *Campo do Pirambu* (1932), mesmo relatório; domínio público.
+    https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/
+  - `1950.webp`: autor desconhecido, *Juscelino Kubitschek, João Goulart, Celso Furtado e Parsifal Barroso* (1960),
+    Fundo Correio da Manhã, Arquivo Nacional; domínio público. https://commons.wikimedia.org/wiki/File:Juscelino_Kubitschek,_Jo%C3%A3o_Goulart,_Celso_Furtado_e_Parsifal_Barroso_(1960).tif
+  - `1964.webp`: autor desconhecido, *Construção da Usina de Paulo Afonso III, Bahia* (1966), Fundo Correio da Manhã,
+    Arquivo Nacional; domínio público. https://commons.wikimedia.org/wiki/File:Constru%C3%A7%C3%A3o_da_Usina_de_Paulo_Afonso_III,_Bahia.tif
+  - `1985.webp`: Valter Campanato/Agência Brasil, pau de arara em Caraúbas do Piauí (2006); CC BY 3.0 BR.
+    https://commons.wikimedia.org/wiki/File:Caraubasdopiaui10122006-2.jpg
+  - `marco-1630.webp`: gravador anônimo, *Verovering van Olinda in Brazilië door generaal Hendrick C. Loncq, 1630*
+    (1651–1652), Rijksmuseum; domínio público (CC0 no museu). https://commons.wikimedia.org/wiki/File:Verovering_van_Olinda_in_Brazili%C3%AB_door_generaal_Hendrick_C._Loncq,_1630,_RP-P-OB-79.394.jpg
+  - `marco-1763.webp`: George Raper (atribuída), *Entrance of Rio de Janeiro from the anchorage* (século XVIII),
+    National Library of Australia; domínio público. https://commons.wikimedia.org/wiki/File:Brazil_18thc_GuanabaraBay.jpg
+  - `marco-1897.webp`: Flávio de Barros, *Ruínas da igreja do Bom Jesus em Canudos* (1897); domínio público.
+    https://commons.wikimedia.org/wiki/File:Ruins_church_in_canudos_1897.jpg
+  - `marco-1934.webp`: capa da Constituição de 1934, Imprensa Nacional; domínio público.
+    https://commons.wikimedia.org/wiki/File:Capa_da_Constitui%C3%A7%C3%A3o_de_1934.jpg
+  - `marco-1959.webp`: autor desconhecido, *Celso Furtado* (1962), Fundo Correio da Manhã, Arquivo Nacional; domínio
+    público. https://commons.wikimedia.org/wiki/File:Celso_Furtado.tif
+  - `marco-1970.webp`: autor desconhecido, "Pau do Presidente", marco do início da Transamazônica em Altamira (1972),
+    Fundo Agência Nacional, Arquivo Nacional; domínio público. https://commons.wikimedia.org/wiki/File:Monumento_que_marca_o_in%C3%ADcio_da_constru%C3%A7%C3%A3o_da_Rodovia_Transamaz%C3%B4nica,_conhecido_como_%E2%80%9CPau_do_Presidente%E2%80%9D,_Altamira_(PA).jpg

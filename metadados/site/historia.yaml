@@ -27,7 +27,8 @@ epocas:
     marcos:
       - {ano: 1549, titulo: "Salvador vira sede do governo-geral", texto: "A Coroa instala na Bahia o governo da colônia."}
       - {ano: 1570, titulo: "Gandavo conta 60 engenhos", texto: "Dois terços deles ficam em Pernambuco e na Bahia."}
-      - {ano: 1630, titulo: "Holandeses tomam Olinda e Recife", texto: "A Companhia das Índias Ocidentais ocupa Pernambuco até 1654."}
+      - {ano: 1630, titulo: "Holandeses tomam Olinda e Recife", texto: "A Companhia das Índias Ocidentais ocupa Pernambuco até 1654.",
+         imagem: {arquivo: "marco-1630.webp", titulo: "Conquista de Olinda em 1630, gravura de 1651–1652", autor: "Gravador anônimo, Rijksmuseum", data: "1651–1652", licenca: "dominio-publico", alt: "Gravura em preto e branco da vila de Olinda no alto do morro, com a igreja, vista do mar, e navios holandeses atacando o porto.", url: "https://commons.wikimedia.org/wiki/File:Verovering_van_Olinda_in_Brazili%C3%AB_door_generaal_Hendrick_C._Loncq,_1630,_RP-P-OB-79.394.jpg"}}
     numeros:
       - valor: "de 60 para 120"
         legenda: "Engenhos de açúcar no Brasil, contados em 1570 e entre 1583 e 1585."
@@ -70,7 +71,8 @@ epocas:
     marcos:
       - {ano: 1654, titulo: "Os holandeses deixam o Recife", texto: "A capitulação, em janeiro, encerra a ocupação. O açúcar das Antilhas entra na disputa logo depois."}
       - {ano: 1661, titulo: "Paz de Haia", texto: "Portugal paga indenização aos Países Baixos, que desistem do Nordeste."}
-      - {ano: 1763, titulo: "A capital vai de Salvador para o Rio", texto: "O Rio, porto do ouro de Minas, vira sede do governo da colônia."}
+      - {ano: 1763, titulo: "A capital vai de Salvador para o Rio", texto: "O Rio, porto do ouro de Minas, vira sede do governo da colônia.",
+         imagem: {arquivo: "marco-1763.webp", titulo: "Entrada do Rio de Janeiro vista do ancoradouro", autor: "George Raper (atribuída), National Library of Australia", data: "século XVIII", licenca: "dominio-publico", alt: "Aquarela da entrada da baía de Guanabara, com o Pão de Açúcar à esquerda, uma fortaleza à direita e barcos na água.", url: "https://commons.wikimedia.org/wiki/File:Brazil_18thc_GuanabaraBay.jpg"}}
     numeros:
       - valor: "cerca de 877 toneladas"
         legenda: "Ouro produzido no Brasil no século XVIII, na estimativa mais citada."
@@ -151,7 +153,8 @@ epocas:
 
       De fora, a época teve um governo federal voltado para o café. De dentro, um mando local que ficou com a água das obras públicas.
     marcos:
-      - {ano: 1897, titulo: "Canudos é destruído", texto: "A quarta expedição do Exército encerra a guerra em outubro."}
+      - {ano: 1897, titulo: "Canudos é destruído", texto: "A quarta expedição do Exército encerra a guerra em outubro.",
+         imagem: {arquivo: "marco-1897.webp", titulo: "Ruínas da igreja do Bom Jesus em Canudos", autor: "Flávio de Barros", data: "1897", licenca: "dominio-publico", alt: "Fotografia em sépia das paredes de pedra da igreja de Canudos destruídas, com madeiras queimadas e entulho, depois do fim da guerra.", url: "https://commons.wikimedia.org/wiki/File:Ruins_church_in_canudos_1897.jpg"}}
       - {ano: 1909, titulo: "Nasce a Inspetoria de Obras Contra as Secas", texto: "O Decreto 7.619 cria o primeiro órgão federal contra as secas."}
       - {ano: 1919, titulo: "A inspetoria vira federal no nome", texto: "O Decreto 13.687 cria a Inspetoria Federal de Obras Contra as Secas."}
     numeros:
@@ -191,8 +194,10 @@ epocas:
 
       Em 1945 o governo federal criou a Chesf, para gerar energia na cachoeira de Paulo Afonso, e a inspetoria contra as secas virou o DNOCS. A energia e a água passaram a ter empresa e departamento federais. A terra continuou com os mesmos donos.
     marcos:
-      - {ano: 1932, titulo: "Seca e campos de concentração", texto: "Governos retêm retirantes em campos, longe das capitais."}
-      - {ano: 1934, titulo: "A seca entra na Constituição", texto: "O artigo 177 reserva parte da receita federal para a defesa contra as secas."}
+      - {ano: 1932, titulo: "Seca e campos de concentração", texto: "Governos retêm retirantes em campos, longe das capitais.",
+         imagem: {arquivo: "marco-1932.webp", titulo: "Campo do Pirambu, em Fortaleza", autor: "José Bonifácio Paranhos da Costa", data: "1932", licenca: "dominio-publico", alt: "Fotografia de galpões compridos cobertos de zinco num terreno de areia, com retirantes sentados no chão e homens tirando água de uma bomba manual em primeiro plano.", url: "https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/"}}
+      - {ano: 1934, titulo: "A seca entra na Constituição", texto: "O artigo 177 reserva parte da receita federal para a defesa contra as secas.",
+         imagem: {arquivo: "marco-1934.webp", titulo: "Capa da Constituição de 1934", autor: "Assembleia Nacional Constituinte, Imprensa Nacional", data: "1934", licenca: "dominio-publico", alt: "Capa vermelha da Constituição da República dos Estados Unidos do Brasil, impressa em 1934.", url: "https://commons.wikimedia.org/wiki/File:Capa_da_Constitui%C3%A7%C3%A3o_de_1934.jpg"}}
       - {ano: 1945, titulo: "Nascem a Chesf e o DNOCS", texto: "Em outubro, decreto-lei cria a Chesf. Em dezembro, a inspetoria contra as secas vira DNOCS."}
     numeros:
       - valor: "4%"
@@ -209,6 +214,14 @@ epocas:
         url: https://anpuh.org.br/uploads/anais-simposios/pdf/2019-01/1548874926_f8b61f43959074f84c38312d02d3702b.pdf
       - texto: "DNOCS, Carta de Serviços ao Cidadão (histórico do órgão)"
         url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
+    imagem:
+      arquivo: "1930.webp"
+      titulo: "Campo de Patu"
+      autor: "José Bonifácio Paranhos da Costa"
+      data: "1932"
+      licenca: "dominio-publico"
+      alt: "Fotografia de uma multidão de retirantes, homens, mulheres e crianças de roupa clara, reunidos junto a uma linha de trem no campo de concentração de Patu, em Senador Pompeu, no Ceará, com um vagão coberto à direita."
+      url: "https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/"
 
   - id: "1950"
     inicio: 1950
@@ -228,7 +241,8 @@ epocas:
     marcos:
       - {ano: 1952, titulo: "Nasce o Banco do Nordeste", texto: "A Lei 1.649, de julho, cria o banco, com sede em Fortaleza."}
       - {ano: 1955, titulo: "Paulo Afonso começa a gerar energia", texto: "A Chesf inaugura a primeira usina na cachoeira do São Francisco."}
-      - {ano: 1959, titulo: "GTDN e Sudene", texto: "Sai o relatório coordenado por Furtado, e em dezembro a Lei 3.692 institui a Sudene."}
+      - {ano: 1959, titulo: "GTDN e Sudene", texto: "Sai o relatório coordenado por Furtado, e em dezembro a Lei 3.692 institui a Sudene.",
+         imagem: {arquivo: "marco-1959.webp", titulo: "Celso Furtado, foto de 1962", autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional", data: "1962", licenca: "dominio-publico", alt: "Fotografia em preto e branco de Celso Furtado, de terno e gravata, sentado a uma mesa com papéis, olhando para o lado.", url: "https://commons.wikimedia.org/wiki/File:Celso_Furtado.tif"}}
       - {ano: 1961, titulo: "Começa o 34/18", texto: "A Lei 3.995 cria o desconto no imposto de renda para investir no Nordeste. A Lei 4.239, de 1963, o amplia."}
     numeros:
       - valor: "menos de um terço"
@@ -249,6 +263,14 @@ epocas:
         url: https://rbeur.anpur.org.br/rbeur/article/download/7827/5724/31270
       - texto: "Ipea, Considerações sobre o sistema de incentivos fiscais para o desenvolvimento do Nordeste"
         url: https://repositorio.ipea.gov.br/bitstream/11058/14213/1/Consideracoes_sistema_de_incentivos_fiscais_desenvolvimento_nordeste.pdf
+    imagem:
+      arquivo: "1950.webp"
+      titulo: "Juscelino Kubitschek, João Goulart, Celso Furtado e Parsifal Barroso"
+      autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional"
+      data: "1960"
+      licenca: "dominio-publico"
+      alt: "Fotografia de um grupo de homens de terno caminhando numa visita oficial, cercados de soldados e de populares; entre eles estão Juscelino Kubitschek, João Goulart, Celso Furtado e Parsifal Barroso."
+      url: "https://commons.wikimedia.org/wiki/File:Juscelino_Kubitschek,_Jo%C3%A3o_Goulart,_Celso_Furtado_e_Parsifal_Barroso_(1960).tif"
 
   - id: "1964"
     inicio: 1964
@@ -265,7 +287,8 @@ epocas:
       A crítica mais dura a esse modelo veio de alguém de dentro. Francisco de Oliveira, que trabalhou na Sudene de 1959 a 1964, publicou em 1977 Elegia para uma re(li)gião, um livro contra o caminho que a Sudene seguiu, sobretudo depois do golpe.
     marcos:
       - {ano: 1964, titulo: "Furtado perde os direitos políticos", texto: "Em abril, com base no Ato Institucional n. 1, ele deixa a Sudene."}
-      - {ano: 1970, titulo: "Programa de Integração Nacional", texto: "O Decreto-Lei 1.106 manda 30% dos incentivos fiscais para o programa que começa pela Transamazônica."}
+      - {ano: 1970, titulo: "Programa de Integração Nacional", texto: "O Decreto-Lei 1.106 manda 30% dos incentivos fiscais para o programa que começa pela Transamazônica.",
+         imagem: {arquivo: "marco-1970.webp", titulo: "Pau do Presidente, marco do início da Transamazônica, em Altamira (PA)", autor: "Autor desconhecido, Fundo Agência Nacional, Arquivo Nacional", data: "1972", licenca: "dominio-publico", alt: "Fotografia aérea em preto e branco do monumento de duas colunas que marca o início da rodovia Transamazônica, numa praça de terra à beira da estrada.", url: "https://commons.wikimedia.org/wiki/File:Monumento_que_marca_o_in%C3%ADcio_da_constru%C3%A7%C3%A3o_da_Rodovia_Transamaz%C3%B4nica,_conhecido_como_%E2%80%9CPau_do_Presidente%E2%80%9D,_Altamira_(PA).jpg"}}
       - {ano: 1974, titulo: "Nasce o Finor", texto: "O Decreto-Lei 1.376 reúne os incentivos do Nordeste num fundo."}
     numeros:
       - valor: "30%"
@@ -280,6 +303,14 @@ epocas:
         url: https://downloads.fipe.org.br/publicacoes/bif/bif512-82-84.pdf
       - texto: "Flávio Mendes, sobre Elegia para uma re(li)gião, de Francisco de Oliveira, Caderno CRH (2018)"
         url: https://www.redalyc.org/journal/3476/347659220009/347659220009.pdf
+    imagem:
+      arquivo: "1964.webp"
+      titulo: "Construção da Usina de Paulo Afonso III, Bahia"
+      autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional"
+      data: "1966"
+      licenca: "dominio-publico"
+      alt: "Fotografia aérea da usina de Paulo Afonso III em obras, no rio São Francisco: a represa à esquerda, a barragem de concreto, a casa de força e a subestação, com máquinas e canteiro em primeiro plano."
+      url: "https://commons.wikimedia.org/wiki/File:Constru%C3%A7%C3%A3o_da_Usina_de_Paulo_Afonso_III,_Bahia.tif"
 
   - id: "1985"
     inicio: 1985
@@ -322,6 +353,14 @@ epocas:
         url: https://apisidra.ibge.gov.br/values/t/5938/n1/all/n2/2/v/496/p/2022
       - texto: "IBGE, Agência de Notícias, Em 2022, PIB cresce em 24 unidades da federação"
         url: https://agenciadenoticias.ibge.gov.br/pt/agencia-noticias/41893-em-2022-pib-cresce-em-24-unidades-da-federacao.html
+    imagem:
+      arquivo: "1985.webp"
+      titulo: "Pau de arara em Caraúbas do Piauí"
+      autor: "Valter Campanato/Agência Brasil"
+      data: "2006"
+      licenca: "cc-by"
+      alt: "Fotografia colorida de uma caminhonete Ford marrom numa estrada de terra da caatinga seca, com crianças e adultos de pé na carroceria, debaixo de uma lona laranja."
+      url: "https://commons.wikimedia.org/wiki/File:Caraubasdopiaui10122006-2.jpg"
 
 fecho:
   titulo: E de 2000 para cá?

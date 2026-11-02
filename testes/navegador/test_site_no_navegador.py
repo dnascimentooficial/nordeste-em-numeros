@@ -826,8 +826,7 @@ def test_historia_imagens_de_marco_so_com_o_modal_aberto(abrir):
     epoca, a do marco carrega (lazy) quando chega perto da tela, com a caixa 21:9 do width/height."""
     with abrir(HISTORIA, reduced_motion="reduce") as pagina:
         fontes = pagina.evaluate("() => [...document.querySelectorAll('img.nn-marco-imagem')].map((i) => i.src)")
-        if not fontes:  # a marcacao (lazy, dentro do artigo) e conferida em testes/site/test_como_chegamos.py
-            pytest.skip("o historia.yaml ainda nao tem marco com imagem")
+        assert fontes, "nenhum marco com imagem no historia.yaml"
         baixadas = lambda: {r for r in pagina.evaluate("() => performance.getEntriesByType('resource').map((r) => r.name)")}
         assert not set(fontes) & baixadas()
         epoca = pagina.evaluate("() => document.querySelector('img.nn-marco-imagem').closest('li.nn-epoca').id")
