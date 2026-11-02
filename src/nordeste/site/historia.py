@@ -6,6 +6,7 @@ Toda recusa levanta ErroConteudo com o caminho do campo (ex. `epocas[2].numeros[
 """
 
 import csv
+import datetime
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -89,9 +90,19 @@ def _mapa(obj: object, onde: str, obrigatorias: tuple[str, ...], opcionais: tupl
 
 
 def _texto(obj: object, onde: str) -> str:
+    if isinstance(obj, (int, float, datetime.date)) and not isinstance(obj, bool):
+        campo = onde.rsplit(".", 1)[-1]
+        raise ErroConteudo(f'{onde}: o YAML leu {obj!r} como numero ou data; escreva entre aspas ({campo}: "{obj}").')
     if not isinstance(obj, str) or not obj.strip():
         raise ErroConteudo(f"{onde}: esperava um texto nao vazio, veio {obj!r}.")
     return obj
+
+
+def _url(obj: object, onde: str) -> str:
+    texto = _texto(obj, onde)
+    if not texto.startswith(("http://", "https://")):
+        raise ErroConteudo(f"{onde}: a url deve comecar com http:// ou https://, veio {texto!r}.")
+    return texto
 
 
 def _inteiro(obj: object, onde: str) -> int:
@@ -150,7 +161,7 @@ def _validar_fonte(fonte: object, onde: str) -> dict:
     _mapa(fonte, onde, ("texto",), ("url",))
     _texto(fonte["texto"], f"{onde}.texto")
     if fonte.get("url") is not None:
-        _texto(fonte["url"], f"{onde}.url")
+        _url(fonte["url"], f"{onde}.url")
     return dict(fonte)
 
 
@@ -162,7 +173,7 @@ def _validar_imagem(imagem: object, onde: str) -> ImagemHistorica:
     url = imagem.get("url")
     if campos["licenca"] == LICENCA_QUE_EXIGE_URL and url is None:
         raise ErroConteudo(f"{onde}.url: obrigatoria para a licenca {LICENCA_QUE_EXIGE_URL!r} (pagina da imagem com a licenca).")
-    return ImagemHistorica(**campos, url=None if url is None else _texto(url, f"{onde}.url"))
+    return ImagemHistorica(**campos, url=None if url is None else _url(url, f"{onde}.url"))
 
 
 def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
@@ -203,7 +214,7 @@ def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
 def _ler_censos(pasta: Path) -> tuple[tuple[int, int, int, str], ...]:
     caminho = pasta / "historia" / "censos.csv"
     try:
-        with caminho.open(encoding="utf-8", newline="") as arquivo:
+        with caminho.open(encoding="utf-8-sig", newline="") as arquivo:
             leitor = csv.DictReader(arquivo)
             if tuple(leitor.fieldnames or ()) != _COLUNAS_DOS_CENSOS:
                 raise ErroConteudo(f"censos.csv: colunas devem ser {_COLUNAS_DOS_CENSOS}, vieram {leitor.fieldnames}.")
@@ -219,6 +230,8 @@ def _ler_censos(pasta: Path) -> tuple[tuple[int, int, int, str], ...]:
             ano, nordeste, brasil = (int(linha[c]) for c in _COLUNAS_DOS_CENSOS[:3])
         except (TypeError, ValueError) as erro:
             raise ErroConteudo(f"{onde}: ano e populacoes devem ser inteiros ({dict(linha)}).") from erro
+        if ano <= 0:
+            raise ErroConteudo(f"{onde}: ano deve ser positivo, veio {ano}.")
         if nordeste <= 0 or brasil <= 0:
             raise ErroConteudo(f"{onde} (ano {ano}): populacoes devem ser positivas.")
         if nordeste > brasil:

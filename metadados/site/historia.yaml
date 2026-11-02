@@ -228,7 +228,7 @@ epocas:
       financiamento regionais, regulamentados em 1989 no Fundo Constitucional do Nordeste, com metade dos recursos para o
       semiárido. A Sudene foi extinta em 2001 por medida provisória e recriada em 2007 por lei complementar, e a página
       vai tratar essas datas como contexto, sem atribuir resultado a nenhum governo. Nas últimas décadas a população do
-      Nordeste passou a crescer mais devagar e a parcela do país que vive na região caiu para 26,9% em 2022. O produto por
+      Nordeste passou a crescer mais devagar que a do país, e a abertura da página mostra o efeito disso. O produto por
       pessoa ainda é cerca de metade do brasileiro. Falta comparar tudo isso com os cards do resto do site, que mostram o
       que mudou em educação, renda e trabalho desde 2000. Este texto é rascunho, a ser reescrito depois da revisão do
       dossiê e da conferência dos números. Também vou separar o que veio de decisões tomadas fora da região do que
@@ -239,17 +239,13 @@ epocas:
       - {ano: 2001, titulo: "Sudene extinta", texto: "[provisório] A medida provisória cria a Adene no lugar."}
       - {ano: 2007, titulo: "Sudene recriada", texto: "[provisório] Lei Complementar 125, de 3 de janeiro."}
     numeros:
-      - valor: "26,9%"
-        legenda: "[provisório] Parcela da população brasileira que vivia no Nordeste em 2022."
-        tipo: oficial
-        fonte: "IBGE, SIDRA, tabela 4709 (Censo Demográfico 2022)"
       - valor: "R$ 25.401 e R$ 49.638"
         legenda: "[provisório] PIB por pessoa do Nordeste e do Brasil em 2022, cerca de 51%."
         tipo: oficial
         fonte: "IBGE, Contas Regionais 2022"
     o_que_ficou: "[provisório] Os fundos existem há mais de trinta anos, e a diferença de renda por pessoa continua perto de metade."
     fontes:
-      - texto: "IBGE, SIDRA, tabela 4709 (Censo Demográfico 2022)"
+      - texto: "IBGE, Contas Regionais 2022"
       - texto: "Lei 7.827, de 27 de setembro de 1989, gov.br/mdr"
 
 fecho:

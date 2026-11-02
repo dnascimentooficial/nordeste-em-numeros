@@ -1,3 +1,5 @@
+import datetime
+import re
 from pathlib import Path
 
 import pytest
@@ -194,10 +196,12 @@ def test_recusa_imagem_com_campo_vazio(tmp_path):
     _recusa(tmp_path, dados, "epocas[0].imagem.alt")
 
 
-def test_aceita_as_duas_licencas_e_recusa_outra(tmp_path):
+@pytest.mark.parametrize("licenca", ["dominio-publico", "ilustracao-do-autor", "cc-by"])
+def test_aceita_as_licencas_permitidas(tmp_path, licenca):
     dados = _historia()
-    dados["epocas"][0]["imagem"]["licenca"] = "ilustracao-do-autor"
-    assert carregar_historia(_escrever(tmp_path, dados)).epocas[0].imagem.licenca == "ilustracao-do-autor"
+    dados["epocas"][0]["imagem"]["licenca"] = licenca
+    dados["epocas"][0]["imagem"]["url"] = "https://exemplo.org/imagem"  # obrigatoria so para cc-by
+    assert carregar_historia(_escrever(tmp_path, dados)).epocas[0].imagem.licenca == licenca
 
 
 def test_recusa_licenca_desconhecida(tmp_path):
@@ -289,6 +293,52 @@ def test_recusa_abertura_e_fecho_incompletos(tmp_path):
     _recusa(tmp_path, dados, "fecho.links")
 
 
+@pytest.mark.parametrize("onde, caminho, valor", [
+    ("imagem", "data", 1640),
+    ("imagem", "data", datetime.date(1640, 5, 1)),
+    ("numero", "valor", 10),
+    ("numero", "valor", 10.5),
+])
+def test_recusa_numero_ou_data_lido_pelo_yaml_sem_aspas(tmp_path, onde, caminho, valor):
+    dados = _historia()
+    alvo = dados["epocas"][1]["imagem"] if onde == "imagem" else dados["epocas"][1]["numeros"][0]
+    alvo[caminho] = valor
+    prefixo = "imagem" if onde == "imagem" else "numeros[0]"
+    mensagem = _recusa(tmp_path, dados, f"epocas[1].{prefixo}.{caminho}")
+    assert "aspas" in mensagem
+
+
+def test_recusa_data_sem_aspas_no_arquivo_yaml(tmp_path):
+    # o caso real: `data: 1640` escrito a mao no YAML
+    _escrever(tmp_path)
+    texto = (tmp_path / "historia.yaml").read_text(encoding="utf-8").replace("data: '1640'", "data: 1640", 1)
+    assert "data: 1640" in texto
+    (tmp_path / "historia.yaml").write_text(texto, encoding="utf-8")
+    with pytest.raises(ErroConteudo, match=r"epocas\[0\]\.imagem\.data.*aspas"):
+        carregar_historia(tmp_path)
+
+
+@pytest.mark.parametrize("url", ["ftp://exemplo.org/x", "exemplo.org/x", "../x", "javascript:alert(1)"])
+def test_recusa_url_que_nao_e_http(tmp_path, url):
+    dados = _historia()
+    dados["epocas"][1]["imagem"]["url"] = url
+    _recusa(tmp_path, dados, "epocas[1].imagem.url")
+    dados = _historia()
+    dados["epocas"][2]["fontes"][1]["url"] = url
+    _recusa(tmp_path, dados, "epocas[2].fontes[1].url")
+
+
+def test_link_do_fecho_aceita_endereco_relativo(tmp_path):
+    assert carregar_historia(_escrever(tmp_path)).fecho["links"] == [{"texto": "Início", "url": "../"}]
+
+
+def test_censos_aceita_bom_utf8_e_recusa_ano_nao_positivo(tmp_path):
+    historia = carregar_historia(_escrever(tmp_path, censos="\ufeff" + CENSOS))  # CSV salvo pelo Excel
+    assert historia.censos[0][0] == 1872
+    for ano in ("0", "-5"):
+        _recusa(tmp_path, _historia(), "censos.csv", f"ano,populacao_nordeste,populacao_brasil,fonte\n{ano},1,2,F\n")
+
+
 def test_sem_historia_yaml_devolve_none(tmp_path):
     assert carregar_historia(tmp_path) is None
 
@@ -306,3 +356,31 @@ def test_historia_provisoria_do_repositorio_e_valida():
     assert [e.inicio for e in historia.epocas] == [1530, 1654, 1808, 1889, 1930, 1950, 1964, 1985]
     assert all("[provisório]" in e.texto for e in historia.epocas)
     assert [(p.ano, p.valor) for p in parcela_do_nordeste(historia)] == [(1872, 46.7), (2022, 26.9)]
+
+
+def _formatar_parcela(valor: float) -> str:
+    return f"{valor:.1f}".replace(".", ",")
+
+
+def test_historia_real_nao_digita_a_parcela_da_populacao():
+    # Restricao global: a parcela vem de censos.csv, nunca digitada (nem em numeros, nem nos textos da epoca).
+    historia = carregar_historia(RAIZ / "metadados" / "site")
+    parcelas = {_formatar_parcela(p.valor) for p in parcela_do_nordeste(historia)}
+    assert parcelas  # 46,7 e 26,9 no provisorio
+    for i, epoca in enumerate(historia.epocas):
+        for j, numero in enumerate(epoca.numeros):
+            assert numero.valor.strip().removesuffix("%").strip() not in parcelas, f"epocas[{i}].numeros[{j}].valor"
+        textos = [epoca.resumo, epoca.texto, epoca.o_que_ficou, *(n.legenda for n in epoca.numeros)]
+        textos += [m.titulo + " " + m.texto for m in epoca.marcos]
+        for texto in textos:
+            for parcela in parcelas:
+                assert not re.search(rf"(?<![\d,.]){re.escape(parcela)}\s*%", texto), f"epocas[{i}]: {parcela}% em {texto[:60]!r}"
+
+
+def test_o_teste_da_parcela_pega_o_numero_digitado(tmp_path):
+    # a verificacao acima so vale se ela falhar quando a parcela aparece: confere sobre a fixture
+    dados = _historia()
+    dados["epocas"][0]["numeros"][0]["valor"] = "46,7%"
+    historia = carregar_historia(_escrever(tmp_path, dados))
+    parcelas = {_formatar_parcela(p.valor) for p in parcela_do_nordeste(historia)}
+    assert historia.epocas[0].numeros[0].valor.removesuffix("%") in parcelas
