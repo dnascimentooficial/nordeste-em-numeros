@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% from "_epoca.html" import epoca %}
 {% block atributos_main %} class="nn-historia"{% endblock %}
+{# a serifada dos titulos so existe nesta pagina: o estilo.css declara a fonte, e so aqui ela e pedida (spec, secao 7) #}
+{% block cabeca %}<link rel="preload" href="/fontes/eb-garamond/EBGaramond.woff2" as="font" type="font/woff2" crossorigin>
+{% endblock %}
 {% block conteudo %}
 {% set h = historia %}
 {% if h.previa %}

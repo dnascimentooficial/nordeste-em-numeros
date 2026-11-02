@@ -316,6 +316,111 @@ def test_abertura_com_foto_texto_fora_da_foto_e_com_contraste_nos_pixels_reais(a
     assert reprovados == [], piores
 
 
+
+# --- pagina Como chegamos: papel envelhecido, serifada so nela, contraste nos pixels reais ---
+
+HISTORIA = "/como-chegamos/"
+SERIFADA = "EBGaramond.woff2"
+# document.fonts.check() da true tambem quando nenhuma @font-face casa; aqui a face tem de existir e estar carregada
+_SERIFADA_CARREGADA = "() => [...document.fonts].some((f) => f.family.replace(/\"/g, '') === 'EB Garamond' && f.status === 'loaded')"
+# cada grupo: os textos que o teste mede (o no de texto herda a cor do elemento pai); todo grupo precisa aparecer
+_TEXTOS_DA_HISTORIA = {
+    "titulos": ".nn-hist-titulo, .nn-hist-secao, .nn-epoca-nome, .nn-epoca-titulo, .nn-epoca-conteudo h4",
+    "datas": ".nn-epoca-periodo, .nn-epoca-data, .nn-marco-ano",
+    "etiquetas": ".nn-tipo",
+    "texto": ".nn-hist-previa, .nn-hist-subtitulo, .nn-hist-valor, .nn-hist-rotulo, .nn-hist-legenda, .nn-hist-nota, "
+             ".nn-hist-texto, .nn-marco-titulo, .nn-epoca-resumo, .nn-epoca-texto, .nn-epoca-marcos, .nn-epoca-numeros, "
+             ".nn-epoca-ficou, .nn-epoca-fontes, .nn-epoca-nav, .nn-epoca-credito, .nn-hist-fecho",
+}
+_NOS_DE_TEXTO = """(grupos) => {
+  const saida = {};
+  for (const [grupo, seletor] of Object.entries(grupos)) {
+    const nos = [];
+    for (const raiz of document.querySelectorAll(seletor)) {
+      const andar = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+      for (let no = andar.nextNode(); no; no = andar.nextNode()) {
+        if (!no.textContent.trim()) continue;
+        const pai = no.parentElement;
+        if (pai.closest('svg, dialog')) continue;
+        const intervalo = document.createRange();
+        intervalo.selectNodeContents(no);
+        const caixas = [...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0)
+          .map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height }));
+        if (caixas.length) nos.push({ nome: `${pai.tagName.toLowerCase()}.${pai.className}`, cor: getComputedStyle(pai).color, caixas });
+      }
+    }
+    saida[grupo] = nos;
+  }
+  return saida;
+}"""
+# some todo texto da pagina (inclusive marcadores de lista e sublinhados), sem mexer em fundos, bordas e caixas
+_ESCONDER_O_TEXTO = """() => {
+  for (const e of document.querySelectorAll('main *, main')) {
+    for (const [p, v] of [['color', 'transparent'], ['-webkit-text-fill-color', 'transparent'],
+                          ['text-decoration-color', 'transparent'], ['text-shadow', 'none'], ['caret-color', 'transparent']]) {
+      e.style.setProperty(p, v, 'important');
+    }
+  }
+}"""
+
+
+def _cor_computada(texto: str) -> tuple[np.ndarray, float]:
+    """(rgb de 0 a 255, alfa) de uma cor do getComputedStyle: `rgb()`/`rgba()` ou, vinda de color-mix, `color(srgb r g b / a)`
+    com os canais de 0 a 1."""
+    canais = [float(v) for v in re.findall(r"[\d.]+(?:e-?\d+)?", texto)]
+    escala = 255.0 if texto.startswith("color(srgb") else 1.0
+    return np.array(canais[:3]) * escala, canais[3] if len(canais) > 3 else 1.0
+
+
+@pytest.mark.parametrize("esquema", ["light", "dark"])
+@pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
+def test_historia_contraste_em_pixels(abrir, largura, esquema):
+    """Titulos, datas dos marcos, etiquetas de tipo e texto: >= 4,5:1 no pior pixel do papel atras de cada linha."""
+    with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        pagina.evaluate("() => document.fonts.ready")
+        assert pagina.evaluate(_SERIFADA_CARREGADA)
+        grupos = pagina.evaluate(_NOS_DE_TEXTO, _TEXTOS_DA_HISTORIA)
+        pagina.evaluate(_ESCONDER_O_TEXTO)
+        fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"))
+    alto, largo = fundo.shape[:2]
+    reprovados, piores = [], {}
+    for grupo, nos in grupos.items():
+        assert nos, f"nenhum texto em {grupo}"
+        pior_do_grupo = 99.0
+        for no in nos:
+            cor, alfa = _cor_computada(no["cor"])
+            assert alfa > 0, no["nome"]
+            for c in no["caixas"]:
+                xa, xb = max(0, int(c["x"])), min(largo, int(np.ceil(c["x"] + c["w"])))
+                ya, yb = max(0, int(c["y"])), min(alto, int(np.ceil(c["y"] + c["h"])))
+                atras = fundo[ya:yb, xa:xb].reshape(-1, 3).astype(float)
+                if not len(atras):
+                    continue
+                pior = float(_contrastes(alfa * cor + (1 - alfa) * atras, atras).min())
+                pior_do_grupo = min(pior_do_grupo, pior)
+                if pior < _LIMITE_DO_CONTRASTE:
+                    reprovados.append(f"{grupo} {no['nome']} ({no['cor']}): {pior:.2f}:1")
+        piores[grupo] = round(pior_do_grupo, 2)
+    assert reprovados == [], (piores, reprovados[:8])
+
+
+def test_historia_so_pede_a_serifada_nesta_pagina(abrir, rotas):
+    """A @font-face da EB Garamond fica no estilo.css global, mas o navegador so baixa a fonte onde algo a usa."""
+    assert HISTORIA in rotas
+    pediram = {}
+    for rota in rotas:
+        with abrir(rota) as pagina:
+            pagina.evaluate("() => document.fonts.ready")
+            nomes = pagina.evaluate("() => performance.getEntriesByType('resource').map((r) => r.name)")
+            pediram[rota] = [n for n in nomes if n.endswith(SERIFADA)]
+            if rota == HISTORIA:
+                assert pagina.evaluate(_SERIFADA_CARREGADA)
+                familia = pagina.locator("h1.nn-hist-titulo").evaluate("e => getComputedStyle(e).fontFamily")
+                assert familia.startswith('"EB Garamond"'), familia
+    assert len(pediram.pop(HISTORIA)) == 1  # uma vez so: o preload e o uso pedem o mesmo arquivo (crossorigin)
+    assert {r: p for r, p in pediram.items() if p} == {}
+
+
 # --- Explorar ---
 
 

@@ -177,7 +177,62 @@ def test_cores_e_fontes_da_identidade(saida):
             assert fonte.read_bytes()[:4] == b"wOF2", url
             licenca = fonte.parent / "OFL.txt"
             assert "SIL Open Font License" in licenca.read_text(encoding="utf-8"), url
-    assert set(familias) == {"Manrope", "DM Sans"}
+    assert set(familias) == {"Manrope", "DM Sans", "EB Garamond"}
+
+
+
+# --- pagina Como chegamos: a serifada so nela ---
+
+SERIFADA = "EB Garamond"
+PASTA_SERIFADA = RAIZ / "src" / "nordeste" / "site" / "estaticos" / "fontes" / "eb-garamond"
+
+
+def _seletores(cabecalho: str) -> list[str]:
+    return [s.strip() for s in cabecalho.split(",") if s.strip()]
+
+
+def _sob_a_historia(seletor: str) -> bool:
+    """O seletor so casa dentro de `.nn-historia` (a classe do <main> da pagina Como chegamos)."""
+    return bool(re.search(r"(^|[\s>+~])\.nn-historia(?![\w-])", seletor) or seletor.startswith(".nn-historia"))
+
+
+def test_fonte_serifada_so_na_pagina_de_historia(saida):
+    css = (saida / "estilo.css").read_text(encoding="utf-8")
+    regras = _regras(css)
+    faces = [d for c, d in regras if c and c[-1] == "@font-face" and d.startswith("font-family")]
+    assert any(SERIFADA in d for d in faces)
+    # variaveis que levam a serifada: valem como o nome dela
+    variaveis = {d.split(":", 1)[0].strip() for c, d in regras if d.startswith("--") and SERIFADA in d}
+    usos = []
+    for cabecalhos, declaracao in regras:
+        if not cabecalhos or cabecalhos[-1] == "@font-face" or ":" not in declaracao:
+            continue
+        propriedade, valor = (x.strip() for x in declaracao.split(":", 1))
+        if SERIFADA in valor or any(f"var({v}" in valor for v in variaveis):
+            usos.append((cabecalhos[-1], propriedade))
+            for seletor in _seletores(cabecalhos[-1]):
+                assert _sob_a_historia(seletor), (seletor, declaracao)
+    assert any(p in ("font-family", "font") for _, p in usos), usos  # e ela e usada (titulos da pagina)
+    assert {":root", "body", "html", ".nn"}.isdisjoint(s for c, _ in usos for s in _seletores(c))
+
+
+def test_ebgaramond_local_com_licenca(saida):
+    for pasta in (PASTA_SERIFADA, saida / "fontes" / "eb-garamond"):
+        fonte, licenca = pasta / "EBGaramond.woff2", pasta / "OFL.txt"
+        assert fonte.read_bytes()[:4] == b"wOF2", fonte
+        assert 5_000 < fonte.stat().st_size < 80_000, fonte.stat().st_size  # so o subconjunto latino, um peso
+        texto = licenca.read_text(encoding="utf-8")
+        assert "SIL Open Font License" in texto and "EB Garamond" in texto, licenca
+    css = _sem_comentarios((saida / "estilo.css").read_text(encoding="utf-8"))
+    face = next(f for f in re.findall(r"@font-face\s*\{([^}]*)\}", css) if SERIFADA in f)
+    assert re.findall(r"url\(\s*['\"]?([^'\")]+)", face) == ["/fontes/eb-garamond/EBGaramond.woff2"]
+    assert re.search(r"font-weight:\s*500\s*;", face)  # um peso so: os titulos nao pedem negrito sintetico
+    assert all(u.startswith("/") for u in re.findall(r"url\(\s*['\"]?([^'\")]+)", css))  # nada externo
+    # as variaveis da pagina, nos dois temas
+    raizes = [(c, d) for c, d in _regras(css) if c and c[-1] == ":root"]
+    for nome in ("--nn-papel-antigo", "--nn-sepia"):
+        assert any(len(c) == 1 and d.startswith(nome + ":") for c, d in raizes), nome
+        assert any(c[0].startswith("@media (prefers-color-scheme: dark)") and d.startswith(nome + ":") for c, d in raizes), nome
 
 
 def test_movimento_so_sem_reduced_motion(saida):

@@ -317,6 +317,18 @@ def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
     assert not arvore.achar("meta", name="robots")
 
 
+
+def test_so_a_pagina_de_historia_pre_carrega_a_serifada(gerado):
+    """A EB Garamond (titulos desta pagina) vem pre-carregada so aqui; as outras paginas nem a citam no HTML."""
+    saida, relatorio = gerado
+    previas = [e["attrs"] for e in Arvore(_ler(saida)).achar("link", rel="preload")]
+    assert previas == [{"rel": "preload", "href": "/fontes/eb-garamond/EBGaramond.woff2", "as": "font",
+                        "type": "font/woff2", "crossorigin": None}]
+    for pagina in relatorio.paginas:
+        if pagina != PAGINA:
+            assert "EBGaramond" not in _ler(saida, pagina), pagina
+
+
 def test_provisoria_nao_gera_pagina_nem_menu(tmp_path):
     raiz = _base(tmp_path / "base", _historia(provisoria=True, com_imagem=False))
     saida = tmp_path / "saida"

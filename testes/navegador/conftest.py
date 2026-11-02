@@ -43,12 +43,15 @@ def _csp_do_htaccess(site: Path) -> str:
 @pytest.fixture(scope="session")
 def _site_e_relatorio(tmp_path_factory):
     saida = tmp_path_factory.mktemp("site") / "saida"
-    return saida, gerar_site(Caminhos(raiz=RAIZ), saida, imagens=False)
+    # incluir_provisoria: a pagina Como chegamos (historia.yaml ainda provisorio) entra em todas as rotas desde ja,
+    # com o aviso de previa, para os testes de cada pagina (axe, console, CSP, largura, movimento) a cobrirem
+    return saida, gerar_site(Caminhos(raiz=RAIZ), saida, imagens=False, incluir_provisoria=True)
 
 
 @pytest.fixture(scope="session")
 def site_gerado(_site_e_relatorio) -> Path:
-    """O site completo (sem as imagens PNG, que test_imagens.py cobre), gerado uma vez da base e dos metadados reais."""
+    """O site completo (sem as imagens PNG, que test_imagens.py cobre), gerado uma vez da base e dos metadados reais,
+    com a pagina Como chegamos mesmo enquanto o conteudo dela e provisorio."""
     return _site_e_relatorio[0]
 
 
@@ -71,7 +74,7 @@ def endereco(site_gerado) -> str:
 
 @pytest.fixture(scope="session")
 def rotas(site_gerado) -> list[str]:
-    """Rota de cada pagina gerada (as seis do menu e cada card), em ordem estavel."""
+    """Rota de cada pagina gerada (as do menu, inclusive /como-chegamos/, e cada card), em ordem estavel."""
     return sorted(
         "/" if p.parent == site_gerado else f"/{p.parent.relative_to(site_gerado).as_posix()}/"
         for p in site_gerado.rglob("index.html")

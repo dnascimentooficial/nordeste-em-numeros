@@ -287,7 +287,7 @@ def grafico_linhas(
     x_anos = _escala((ano_inicial, ano_final), (esquerda, largura - direita))
     y = _escala(dominio, (altura - base, topo))
     x_ponto: Callable[[Ponto], float] = lambda p: x_anos(p.ano + 0.5)  # pontos no meio do ano
-    eixo, alto_quadro = altura - base, altura - topo - base
+    y_eixo, alto_quadro = altura - base, altura - topo - base
 
     dados = _dados_para_o_script(linhas)
     id_base = "nn" + hashlib.sha1(f"{cfg.titulo}|{largura}|{altura}|{dados}".encode()).hexdigest()[:8]
@@ -355,7 +355,7 @@ def grafico_linhas(
     quebras = [(ano, rotulo) for ano, rotulo in cfg.quebras if ano_inicial < ano < ano_final]
     for i, (ano, rotulo) in enumerate(quebras):
         partes.append(
-            f'<line class="nn-quebra" x1="{_c(x_anos(ano))}" x2="{_c(x_anos(ano))}" y1="{topo}" y2="{eixo}" '
+            f'<line class="nn-quebra" x1="{_c(x_anos(ano))}" x2="{_c(x_anos(ano))}" y1="{topo}" y2="{y_eixo}" '
             'stroke-width="1" stroke-dasharray="2 3"/>'
         )
         if not estreito:
@@ -368,7 +368,7 @@ def grafico_linhas(
 
     # rotulos da ponta
     alvos = [y(l.pontos[-1].valor) + 4 for l in visiveis]
-    for l, rotulo, y_rotulo in zip(visiveis, rotulos_fim, _y_dos_rotulos(alvos, topo, eixo)):
+    for l, rotulo, y_rotulo in zip(visiveis, rotulos_fim, _y_dos_rotulos(alvos, topo, y_eixo)):
         classe = "nn-rotulo-forte" if l.destaque else "nn-rotulo"
         partes.append(
             f'<text class="{classe}" x="{_c(x_ponto(l.pontos[-1]) + 7)}" y="{_c(y_rotulo)}">{escape(rotulo, quote=False)}</text>'
