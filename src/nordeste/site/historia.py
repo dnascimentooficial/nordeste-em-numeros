@@ -21,6 +21,11 @@ ROTULO_DA_LICENCA = {"dominio-publico": "domínio público", "ilustracao-do-auto
 LICENCA_QUE_EXIGE_URL = "cc-by"  # a pagina da imagem com a licenca precisa estar a vista
 PALAVRAS_MINIMAS = 150
 PALAVRAS_MAXIMAS = 300
+MARCOS_POR_EPOCA = (2, 4)  # spec, secao 5
+NUMEROS_POR_EPOCA = (1, 3)
+# o modelo _epoca.html poe o ponto depois do titulo do marco e da fonte do numero ("<b>{{ m.titulo }}.</b>",
+# "Fonte: {{ n.fonte }}."): com pontuacao no fim do campo sairia ".." ou "?."
+PONTUACAO_FINAL = (".", "?", "!")
 
 _COLUNAS_DOS_CENSOS = ("ano", "populacao_nordeste", "populacao_brasil", "fonte")
 
@@ -106,6 +111,19 @@ def _url(obj: object, onde: str) -> str:
     return texto
 
 
+def _sem_pontuacao_final(texto: str, onde: str) -> str:
+    if texto.rstrip().endswith(PONTUACAO_FINAL):
+        raise ErroConteudo(f"{onde}: termina em {texto.rstrip()[-1]!r}; escreva sem pontuacao final (o modelo poe o ponto).")
+    return texto
+
+
+def _quantos(itens: list, onde: str, faixa: tuple[int, int], nome: str) -> list:
+    minimo, maximo = faixa
+    if not minimo <= len(itens) <= maximo:
+        raise ErroConteudo(f"{onde}: {len(itens)} {nome}, fora de {minimo} a {maximo} por epoca.")
+    return itens
+
+
 def _inteiro(obj: object, onde: str) -> int:
     if isinstance(obj, bool) or not isinstance(obj, int):
         raise ErroConteudo(f"{onde}: esperava um ano inteiro, veio {obj!r}.")
@@ -142,7 +160,8 @@ def _validar_marco(marco: object, onde: str, epoca: dict) -> Marco:
     ano = _inteiro(marco["ano"], f"{onde}.ano")
     if not epoca["inicio"] <= ano <= epoca["fim"]:
         raise ErroConteudo(f"{onde}.ano: {ano} fora do periodo da epoca ({epoca['inicio']} a {epoca['fim']}).")
-    return Marco(ano, _texto(marco["titulo"], f"{onde}.titulo"), _texto(marco["texto"], f"{onde}.texto"))
+    titulo = _sem_pontuacao_final(_texto(marco["titulo"], f"{onde}.titulo"), f"{onde}.titulo")
+    return Marco(ano, titulo, _texto(marco["texto"], f"{onde}.texto"))
 
 
 def _validar_numero(numero: object, onde: str) -> NumeroHistorico:
@@ -154,7 +173,7 @@ def _validar_numero(numero: object, onde: str) -> NumeroHistorico:
         raise ErroConteudo(f"{onde}.tipo: 'interpretacao' so aparece no campo o_que_ficou, nao em numeros.")
     return NumeroHistorico(
         _texto(numero["valor"], f"{onde}.valor"), _texto(numero["legenda"], f"{onde}.legenda"), tipo,
-        _texto(numero["fonte"], f"{onde}.fonte"),
+        _sem_pontuacao_final(_texto(numero["fonte"], f"{onde}.fonte"), f"{onde}.fonte"),
     )
 
 
@@ -193,8 +212,10 @@ def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
     palavras = len(texto.split())
     if not PALAVRAS_MINIMAS <= palavras <= PALAVRAS_MAXIMAS:
         raise ErroConteudo(f"{onde}.texto: {palavras} palavras, fora de {PALAVRAS_MINIMAS} a {PALAVRAS_MAXIMAS}.")
-    marcos = [_validar_marco(m, f"{onde}.marcos[{i}]", epoca) for i, m in enumerate(_lista(epoca["marcos"], f"{onde}.marcos"))]
-    numeros = [_validar_numero(n, f"{onde}.numeros[{i}]") for i, n in enumerate(_lista(epoca["numeros"], f"{onde}.numeros"))]
+    lista_de_marcos = _quantos(_lista(epoca["marcos"], f"{onde}.marcos"), f"{onde}.marcos", MARCOS_POR_EPOCA, "marcos")
+    lista_de_numeros = _quantos(_lista(epoca["numeros"], f"{onde}.numeros"), f"{onde}.numeros", NUMEROS_POR_EPOCA, "numeros")
+    marcos = [_validar_marco(m, f"{onde}.marcos[{i}]", epoca) for i, m in enumerate(lista_de_marcos)]
+    numeros = [_validar_numero(n, f"{onde}.numeros[{i}]") for i, n in enumerate(lista_de_numeros)]
     fontes = [_validar_fonte(f, f"{onde}.fontes[{i}]") for i, f in enumerate(_lista(epoca["fontes"], f"{onde}.fontes"))]
     if epoca.get("imagem") is not None:
         imagem = _validar_imagem(epoca["imagem"], f"{onde}.imagem")

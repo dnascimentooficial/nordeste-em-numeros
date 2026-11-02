@@ -1,256 +1,299 @@
-# Conteúdo provisório da página "Como chegamos até aqui" (Tarefa 2). Os textos são marcados "[provisório]" e serão
-# reescritos na Tarefa 6 a partir do dossiê aprovado (docs/historia/dossie.md). Números e fontes seguem o dossiê;
-# os marcados [C] lá ficaram de fora. A parcela da população não é digitada: vem de historia/censos.csv.
+# Conteúdo da página "Como chegamos até aqui" (spec docs/specs/2026-11-02-como-chegamos-design.md).
+# Texto na voz do autor, escrito a partir do dossiê aprovado (docs/historia/dossie.md). Cada número tem tipo e fonte;
+# os marcados [C] no dossiê ficaram de fora. A parcela da população não é digitada: vem de historia/censos.csv.
+# Títulos de marco e fontes de número vão sem ponto final: o modelo põe o ponto.
+# Parágrafos do texto de cada época separados por linha em branco.
 provisoria: true
 
 abertura:
   titulo: Como chegamos até aqui
-  subtitulo: "[provisório] Quase metade dos brasileiros vivia no Nordeste em 1872. Hoje é pouco mais de um quarto."
+  subtitulo: "O Nordeste já foi o centro econômico do Brasil. Esta página conta, em oito épocas, como a região ficou para trás e quem decidiu o quê."
   legenda: "Parcela da população brasileira que vivia no Nordeste, por censo. Fonte: IBGE, SIDRA, tabelas 1286 (1872 a 2010) e 4709 (2022)."
-  nota_estados: "A divisão regional de hoje não existia em 1872. A série usa os estados que hoje formam o Nordeste, do Maranhão à Bahia."
-  texto: "[provisório] Escolhi este número porque ele resume a história que a página conta. A região perdeu peso no país sem perder gente: a população do Nordeste cresceu mais de dez vezes de 1872 a 2022, e a do Brasil cresceu ainda mais."
+  nota_estados: "A divisão regional de hoje não existia em 1872. A série usa os estados que hoje formam o Nordeste, do Maranhão à Bahia. Não houve censo em 1910 nem em 1930, e o ponto de 2022 vem de outra tabela do IBGE, a do Censo 2022."
+  texto: "Escolhi a população porque é a conta que dá para fazer do primeiro censo, em 1872, até o último. O Nordeste ganhou gente em todos os censos. O que encolheu foi o peso dele no país, e as épocas abaixo contam por quê."
 
 epocas:
   - id: "1530"
     inicio: 1530
     fim: 1654
     nome: Colônia do açúcar
-    resumo: "[provisório] A Coroa fez do açúcar o negócio da colônia, e o litoral do Nordeste foi o centro dele."
-    texto: >-
-      [provisório] A Coroa portuguesa ocupou o litoral com capitanias e fez do açúcar o negócio da colônia. Os engenhos de
-      Pernambuco e da Bahia, movidos a trabalho de africanos escravizados, multiplicaram-se na segunda metade do século XVI,
-      e Salvador foi a sede do governo-geral a partir de 1549. A riqueza que saía dos portos do Nordeste ia quase toda para
-      Lisboa e para os comerciantes que financiavam o transporte, enquanto os senhores de engenho concentravam terra e poder
-      na região. Em 1630 a Companhia das Índias Ocidentais, holandesa, tomou Olinda e Recife e ficou até 1654. A guerra
-      destruiu engenhos e derrubou a exportação das capitanias ocupadas. Os holandeses aprenderam o ofício do açúcar aqui e
-      o levaram depois para as Antilhas, onde passaram a concorrer com o produto brasileiro. Escrevo este texto como
-      rascunho: os fatos vêm do dossiê, mas ainda falta a conferência cruzada de cada número contra a fonte e a revisão
-      da voz do autor antes de qualquer versão final.
+    resumo: "A Coroa fez do açúcar o negócio da colônia, e o litoral de Pernambuco e da Bahia era onde ele acontecia."
+    texto: |-
+      Começo pelo açúcar porque foi com ele que o Nordeste virou o centro da colônia. A Coroa portuguesa dividiu o litoral em capitanias e, em 1549, pôs o governo-geral em Salvador. Os engenhos se espalharam por Pernambuco e pela Bahia na segunda metade do século XVI. Em 1570 o cronista Gandavo contou 60 engenhos no Brasil, dois terços deles nessas duas capitanias. Pouco mais de dez anos depois, já eram 120.
+
+      Quem fez esse dinheiro foram africanos escravizados, trazidos à força para plantar, cortar e moer cana. O lucro ficava com poucos. Na região, com os senhores de engenho, donos da terra e de gente. Fora dela, com quem levava o açúcar para a Europa, um comércio em que os holandeses tinham peso. O modelo de ocupação foi decidido em Lisboa. A terra concentrada e o trabalho escravo foram sustentados por quem mandava aqui.
+
+      Em 1630 a Companhia das Índias Ocidentais, holandesa, tomou Olinda e Recife. A guerra durou até 1654 e destruiu engenhos. Pelas contas de Roberto Simonsen, a exportação de açúcar das capitanias ocupadas caiu à metade depois de 1630. A expulsão dos holandeses foi feita por forças da própria região. Quando saíram, eles levaram o que tinham aprendido aqui, e isso pesou na época seguinte.
     marcos:
-      - {ano: 1549, titulo: "Salvador, sede do governo-geral", texto: "[provisório] A cidade da Bahia vira capital da colônia."}
-      - {ano: 1630, titulo: "Holandeses tomam Olinda e Recife", texto: "[provisório] A ocupação dura até 1654 e derruba a exportação de açúcar das capitanias ocupadas."}
-      - {ano: 1654, titulo: "Expulsão dos holandeses", texto: "[provisório] A capitulação na Campina do Taborda encerra a ocupação; o açúcar das Antilhas já começa a concorrer."}
+      - {ano: 1549, titulo: "Salvador vira sede do governo-geral", texto: "A Coroa instala na Bahia o governo da colônia."}
+      - {ano: 1570, titulo: "Gandavo conta 60 engenhos", texto: "Dois terços deles ficam em Pernambuco e na Bahia."}
+      - {ano: 1630, titulo: "Holandeses tomam Olinda e Recife", texto: "A Companhia das Índias Ocidentais ocupa Pernambuco até 1654."}
     numeros:
-      - valor: "60 a 192 engenhos"
-        legenda: "[provisório] Engenhos de açúcar em operação no Brasil, de 1570 (60) a 1612 (192)."
+      - valor: "de 60 para 120"
+        legenda: "Engenhos de açúcar no Brasil, contados em 1570 e entre 1583 e 1585."
         tipo: historiador
-        fonte: "Stuart B. Schwartz, tabela 1, a partir de Gandavo (1570) e Fernão Cardim (1583–1585)"
-    o_que_ficou: "[provisório] Terra concentrada e uma economia voltada para fora: uma herança que a região carrega até hoje."
+        fonte: "Stuart B. Schwartz, tabela 1, com as contagens de Gandavo (1570) e de Fernão Cardim (1583 a 1585)"
+      - valor: "de 60 mil para 30 mil caixas"
+        legenda: "Exportação anual de açúcar das capitanias ocupadas pelos holandeses, antes e depois de 1630."
+        tipo: historiador
+        fonte: "Roberto Simonsen, História Econômica do Brasil (1500/1820), 6ª edição"
+    o_que_ficou: "O Nordeste foi o centro da colônia, mas a riqueza ficou com poucos senhores de terra e de gente. Esse desenho de terra concentrada atravessou os séculos seguintes."
     fontes:
-      - texto: "Stuart B. Schwartz, tabela 1 de capítulo sobre o Brasil colonial (obra e página a conferir)"
+      - texto: "Stuart B. Schwartz, capítulo sobre o Brasil colonial de 1580 a 1750, tabela 1 (cópia da UFPR)"
+        url: https://docs.ufpr.br/~lgeraldo/textosbrasila/schwartzobrasilcolonial.pdf
       - texto: "Roberto Simonsen, História Econômica do Brasil (1500/1820), 6ª edição"
+        url: https://portal2.fazenda.rj.gov.br/wp-content/uploads/2022/09/historia-economica-do-brasil-1500-1820.pdf
+      - texto: "Celso Furtado, Formação Econômica do Brasil (1959), na resenha de Letícia Inácio (UFRRJ)"
+        url: https://cursos.ufrrj.br/grad/cienciaseconomicas/files/2021/01/Resenha-Formação-Econômica-do-Brasil-Letícia-Inácio-.pdf
 
   - id: "1654"
     inicio: 1654
     fim: 1808
     nome: Concorrência, ouro e a capital que muda
-    resumo: "[provisório] O açúcar perde espaço, o ouro de Minas puxa o eixo para o Sudeste e a capital sai de Salvador."
-    texto: >-
-      [provisório] Depois da expulsão dos holandeses, o açúcar do Nordeste passou a disputar mercado com o das Antilhas, e
-      Furtado conta que menos de uma década depois já havia lá uma economia açucareira de proporções consideráveis. Os
-      historiadores divergem sobre o tamanho da crise do açúcar no século XVIII, e a página vai mostrar essa divergência em
-      vez de escolher um lado. O que ninguém discute é que o centro econômico da colônia se deslocou. A mineração de ouro
-      em Minas Gerais começou na década de 1690, atraiu gente, gado e escravizados do Nordeste e fez do Rio de Janeiro o
-      porto da riqueza nova. Em 1763 a capital passou de Salvador para o Rio. A Coroa também criou monopólios, como a
-      Companhia Geral de Pernambuco e Paraíba, de 1759, que organizavam a produção regional em favor dos comerciantes
-      associados. Este texto é rascunho e será reescrito a partir do dossiê aprovado, com cada número conferido na fonte.
+    resumo: "O açúcar ganha concorrente nas Antilhas, o ouro de Minas puxa a colônia para o Centro-Sul e a capital sai de Salvador."
+    texto: |-
+      Depois de 1654, o açúcar do Nordeste ganhou concorrente. Os holandeses levaram técnica e dinheiro para as Antilhas. Celso Furtado registra que, menos de dez anos depois da expulsão, já funcionava lá uma economia açucareira de proporções consideráveis. O Nordeste continuou produzindo açúcar, só que agora dividia o mercado com uma produção mais nova.
+
+      Os historiadores não concordam sobre o tamanho do estrago. Há quem fale em crise do açúcar e há quem veja recuperação até as primeiras décadas do século XVIII. Não vou escolher um lado. O que ninguém discute é que o eixo da colônia mudou de lugar.
+
+      No fim do século XVII começou a mineração de ouro em Minas Gerais. O ouro atraiu gente, escravizados e a atenção da Coroa, e fez do Rio de Janeiro o porto da riqueza nova. Em 1763 a capital saiu de Salvador e foi para o Rio. A mudança serviu, entre outras coisas, para vigiar as minas de perto e conter o contrabando. Foi uma decisão de Lisboa, pensando no ouro.
+
+      Na região, a forma de produzir quase não mudou. Os senhores de engenho mantiveram a terra concentrada e o trabalho escravo, o mesmo arranjo de antes, agora com um preço mais disputado. A época termina em 1808, quando a Corte portuguesa chega ao Rio e o centro político se muda de vez para o Sudeste.
     marcos:
-      - {ano: 1690, titulo: "Começa a mineração de ouro em Minas", texto: "[provisório] Década de 1690: o ouro desloca o eixo econômico para o Sudeste."}
-      - {ano: 1759, titulo: "Companhia Geral de Pernambuco e Paraíba", texto: "[provisório] Monopólio pombalino sobre a produção regional."}
-      - {ano: 1763, titulo: "A capital vai de Salvador para o Rio", texto: "[provisório] O vice-reinado se instala no Rio de Janeiro."}
+      - {ano: 1654, titulo: "Os holandeses deixam o Recife", texto: "A capitulação, em janeiro, encerra a ocupação. O açúcar das Antilhas entra na disputa logo depois."}
+      - {ano: 1661, titulo: "Paz de Haia", texto: "Portugal paga indenização aos Países Baixos, que desistem do Nordeste."}
+      - {ano: 1763, titulo: "A capital vai de Salvador para o Rio", texto: "O Rio, porto do ouro de Minas, vira sede do governo da colônia."}
     numeros:
-      - valor: "877 toneladas"
-        legenda: "[provisório] Ouro produzido no Brasil no século XVIII, estimativa mais citada."
+      - valor: "cerca de 877 toneladas"
+        legenda: "Ouro produzido no Brasil no século XVIII, na estimativa mais citada."
         tipo: historiador
-        fonte: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português, 2ª ed., 1979"
-    o_que_ficou: "[provisório] O Nordeste deixou de ser o centro do país há mais de duzentos anos, bem antes de qualquer política regional."
+        fonte: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português, 2ª edição, 1979"
+    o_que_ficou: "O centro de decisão foi para o Sudeste em 1763 e não voltou mais. Daí em diante, muito do que se decidiu sobre o Nordeste foi decidido longe dele."
     fontes:
-      - texto: "Celso Furtado, Formação Econômica do Brasil, 1959"
-      - texto: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português, 2ª ed., 1979"
+      - texto: "Celso Furtado, Formação Econômica do Brasil (1959), na resenha de Letícia Inácio (UFRRJ)"
+        url: https://cursos.ufrrj.br/grad/cienciaseconomicas/files/2021/01/Resenha-Formação-Econômica-do-Brasil-Letícia-Inácio-.pdf
+      - texto: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português, 2ª edição, 1979 (estimativa citada em artigo acadêmico)"
+        url: https://dialnet.unirioja.es/descarga/articulo/7186230.pdf
+      - texto: "Maria Fernanda Bicalho, O Rio de Janeiro no século XVIII: a transferência da capital e a construção do território centro-sul da América portuguesa, revista Urbana (Unicamp)"
+        url: https://periodicos.sbu.unicamp.br/ojs/index.php/urbana/article/download/8635108/2923/4361
+      - texto: "Debate sobre a crise do açúcar no século XVII, revista Clio (UFPE)"
+        url: https://periodicos.ufpe.br/revistas/index.php/revistaclio/article/download/24458/19774/48886
 
   - id: "1808"
     inicio: 1808
     fim: 1889
     nome: Império e revoltas
-    resumo: "[provisório] A Corte chega ao Rio, o café sobe, o açúcar cai e o Nordeste vira fornecedor de mão de obra."
-    texto: >-
-      [provisório] A chegada da Corte ao Rio, em 1808, consolidou o Sudeste como centro político. Nas províncias do
-      Nordeste, os impostos para sustentar a Corte e as campanhas militares alimentaram revoltas, como a Revolução
-      Pernambucana de 1817 e a Confederação do Equador, de 1824. Ao longo do século, o café passou a dominar a pauta de
-      exportações e o açúcar perdeu peso. Com o fim do tráfico atlântico, em 1850, começou o tráfico entre províncias, e
-      parte dos escravizados do Nordeste foi vendida para as fazendas do Sudeste. A Grande Seca de 1877 a 1879 matou muita
-      gente no Ceará, e as estimativas de mortos divergem e a página só vai usar a ordem de grandeza confirmada. A
-      Abolição, em 1888, encerrou a escravidão sem política de terra ou de trabalho para os libertos. O texto é rascunho, e
-      a conferência cruzada dos números contra as fontes ainda não foi feita.
+    resumo: "A Corte se instala no Rio, Pernambuco se revolta, o café toma o lugar do açúcar e o Nordeste vende gente para o Sul."
+    texto: |-
+      Com a Corte no Rio, as províncias do Norte passaram a pagar impostos que sustentavam a nova capital e a guerra no Sul. Isso veio junto com a seca de 1816 e com preço ruim para o açúcar e o algodão. Em 1817 Pernambuco se revoltou. A base da revolta foi uma aliança de produtores de açúcar e algodão com comerciantes do Recife. Em 1824 veio a Confederação do Equador. O governo central reprimiu as duas.
+
+      Ao longo do século, o café do Vale do Paraíba, e depois o de São Paulo, tomou o lugar do açúcar na exportação. Quando o tráfico de africanos acabou, em 1850, o preço do escravizado subiu nas fazendas de café. Proprietários do Nordeste venderam gente para lá. Robert Slenes estima que pelo menos 200 mil pessoas foram levadas para o Sudeste por esse tráfico interno, entre as décadas de 1850 e 1880. A venda foi decisão de quem era dono aqui. A procura vinha de lá.
+
+      A Grande Seca de 1877 a 1879 matou dezenas de milhares de pessoas só no Ceará. Para a região inteira, as estimativas divergem tanto que prefiro não usar nenhuma. Fico com a ordem de grandeza mais segura. A escravidão só acabou em 1888, um ano antes do fim do Império, e o Nordeste chegou à República com menos peso na economia do país do que tinha no começo do século.
     marcos:
-      - {ano: 1817, titulo: "Revolução Pernambucana", texto: "[provisório] Impostos para a Corte, seca de 1816 e queda da produção de açúcar e algodão."}
-      - {ano: 1824, titulo: "Confederação do Equador", texto: "[provisório] Nova revolta no Nordeste contra o poder centralizado no Rio."}
-      - {ano: 1877, titulo: "Grande Seca", texto: "[provisório] A seca de 1877 a 1879 marca a região e o debate sobre ela."}
-      - {ano: 1888, titulo: "Abolição", texto: "[provisório] Fim da escravidão no Brasil."}
+      - {ano: 1817, titulo: "Revolução Pernambucana", texto: "Impostos para a Corte, seca de 1816 e preços ruins levam Pernambuco à revolta."}
+      - {ano: 1850, titulo: "Fim do tráfico atlântico", texto: "Começa a venda de escravizados do Nordeste para as fazendas de café."}
+      - {ano: 1877, titulo: "Grande Seca", texto: "A seca vai até 1879 e mata dezenas de milhares de pessoas no Ceará."}
     numeros:
-      - valor: "18,4% para 61,5%"
-        legenda: "[provisório] Participação do café no valor exportado pelo Brasil, entre 1821–1830 e 1881–1890."
-        tipo: oficial
-        fonte: "Estatísticas históricas de comércio exterior, em compilação (a conferir na fonte primária)"
-      - valor: "200 mil pessoas"
-        legenda: "[provisório] Escravizados levados ao Sudeste pelo tráfico interno, pelo menos, nas décadas de 1850 a 1880."
+      - valor: "pelo menos 200 mil"
+        legenda: "Escravizados levados para o Sudeste pelo tráfico interno, das décadas de 1850 a 1880."
         tipo: historiador
-        fonte: "Robert Slenes, tese de doutorado, Stanford, 1976"
-    o_que_ficou: "[provisório] A região entrou no século XX com pouca gente escolarizada e com a terra nas mãos de poucos."
+        fonte: "Robert Slenes, tese de doutorado (Stanford, 1976), citada na revista Resgate (Unicamp)"
+      - valor: "dezenas de milhares"
+        legenda: "Mortos na Grande Seca de 1877 a 1879, só no Ceará. As estimativas divergem, e por isso uso a ordem de grandeza."
+        tipo: historiador
+        fonte: "Artigo acadêmico sobre a Grande Seca no Ceará, Redalyc, documento 307470821003"
+    o_que_ficou: "No Império o Nordeste perdeu a exportação para o café e perdeu gente, vendida para o Sul. A seca de 1877 fixou a imagem da região como lugar de flagelo, e essa imagem ainda pesa."
     fontes:
-      - texto: "Robert Slenes, tese de doutorado, Stanford, 1976 (citada em segunda mão no dossiê)"
-      - texto: "Dossiê histórico do projeto, docs/historia/dossie.md, época 3"
+      - texto: "Robert Slenes, tese de doutorado (Stanford, 1976), citada na revista Resgate (Unicamp)"
+        url: https://periodicos.sbu.unicamp.br/ojs/index.php/resgate/article/download/8645794/13094/18520
+      - texto: "Robert Slenes, artigo de 2004 sobre o mercado de escravizados no Norte e no Nordeste"
+        url: https://www.redalyc.org/journal/770/77070146007/77070146007.pdf
+      - texto: "Artigo sobre a base social de 1817, revista Almanack (USP)"
+        url: https://periodicos.usp.br/alb/article/download/11605/13374/14480
+      - texto: "Artigo acadêmico sobre a Grande Seca no Ceará, Redalyc, documento 307470821003"
 
   - id: "1889"
     inicio: 1889
     fim: 1930
     nome: "Primeira República: café com leite, seca e Canudos"
-    resumo: "[provisório] O poder fica com São Paulo e Minas, a indústria concentra-se no Sudeste e a seca vira assunto federal."
-    texto: >-
-      [provisório] Na Primeira República, o poder nacional girou em torno de São Paulo e Minas Gerais, a chamada política
-      do café com leite. No Nordeste, os coronéis controlavam votos e terra, e o sertão guardava conflitos que o governo
-      só enxergava como ameaça. A Guerra de Canudos, de 1896 a 1897, é o caso mais conhecido: uma comunidade de
-      sertanejos foi destruída por quatro expedições militares. A seca passou a ser tratada como problema nacional, e em
-      1909 o governo federal criou a Inspetoria de Obras Contra as Secas, antecessora do DNOCS. Enquanto isso, a indústria
-      cresceu mais em São Paulo, com o café financiando fábricas e ferrovias. As obras contra a seca se concentraram em
-      açudes em propriedades privadas, e a página vai discutir o que isso rendeu a quem. Este texto é rascunho, a ser
-      reescrito depois da revisão do dossiê e da conferência dos números, e o peso de cada lado, de fora e de dentro da região, ainda precisa ser equilibrado.
+    resumo: "O poder federal fica com São Paulo e Minas, a indústria nasce no Sudeste e a seca ganha um órgão federal."
+    texto: |-
+      Na República, o governo federal ficou nas mãos de São Paulo e Minas Gerais, e a política econômica girou em torno do café. A indústria nasceu perto do café. Pelas contas de Wilson Cano, a parte de São Paulo na produção industrial do país saiu de cerca de um sexto, em 1907, para mais de um terço, em 1929. Procurei o número do Nordeste nesses anos e não achei. Prefiro não chutar.
+
+      No sertão da Bahia, o arraial de Canudos foi destruído pelo Exército em 1897, na quarta expedição mandada contra ele. As contas de mortos que circulam não têm origem acadêmica que eu tenha conseguido conferir, por isso não ponho número aqui.
+
+      A seca virou assunto federal em 1909, com a Inspetoria de Obras Contra as Secas, que mais tarde viraria o DNOCS. O órgão era dirigido a partir do Rio e construiu açudes e estradas. Muitos açudes ficaram dentro de grandes propriedades. No sertão quem mandava eram os coronéis, que controlavam o voto e a terra e passaram a controlar também a água. Décadas depois, o relatório do GTDN criticaria esse arranjo.
+
+      De fora, a época teve um governo federal voltado para o café. De dentro, um mando local que ficou com a água das obras públicas.
     marcos:
-      - {ano: 1897, titulo: "Fim da Guerra de Canudos", texto: "[provisório] A quarta expedição encerra a guerra em outubro de 1897."}
-      - {ano: 1909, titulo: "Inspetoria de Obras Contra as Secas", texto: "[provisório] Decreto 7.619 cria o órgão federal que depois seria o DNOCS."}
-      - {ano: 1919, titulo: "Inspetoria Federal de Obras Contra as Secas", texto: "[provisório] Decreto 13.687 renomeia o órgão."}
+      - {ano: 1897, titulo: "Canudos é destruído", texto: "A quarta expedição do Exército encerra a guerra em outubro."}
+      - {ano: 1909, titulo: "Nasce a Inspetoria de Obras Contra as Secas", texto: "O Decreto 7.619 cria o primeiro órgão federal contra as secas."}
+      - {ano: 1919, titulo: "A inspetoria vira federal no nome", texto: "O Decreto 13.687 cria a Inspetoria Federal de Obras Contra as Secas."}
     numeros:
-      - valor: "15,9% para 37,5%"
-        legenda: "[provisório] Participação de São Paulo no valor da produção industrial brasileira, de 1907 a 1929."
+      - valor: "de um sexto a mais de um terço"
+        legenda: "Parte de São Paulo no valor da produção industrial do Brasil, de 1907 a 1929."
         tipo: historiador
-        fonte: "Wilson Cano, Raízes da concentração industrial em São Paulo (edição e página a conferir)"
-    o_que_ficou: "[provisório] A seca virou política pública, mas as obras e o poder local deixaram a desigualdade quase intacta."
+        fonte: "Wilson Cano, Raízes da concentração industrial em São Paulo"
+    o_que_ficou: "A seca virou política federal em 1909, mas a obra pública chegou primeiro onde já havia poder. E a indústria do país nasceu longe do Nordeste."
     fontes:
       - texto: "Wilson Cano, Raízes da concentração industrial em São Paulo"
-      - texto: "Carta de Serviços do DNOCS, gov.br/dnocs"
+      - texto: "Artigo sobre as obras contra as secas de 1909 a 1945, revista Risco (USP)"
+        url: https://revistas.usp.br/risco/article/view/203768
+      - texto: "DNOCS, Carta de Serviços ao Cidadão (histórico do órgão)"
+        url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
+      - texto: "Asas da graúna: Nordeste, Nordestes, Fundação Perseu Abramo (sobre a crítica do GTDN aos açudes)"
+        url: https://fpabramo.org.br/asas-da-grauna-nordeste-nordestes/
 
   - id: "1930"
     inicio: 1930
     fim: 1950
     nome: Vargas e a grande migração
-    resumo: "[provisório] O Estado nacional passa a planejar, e gente do Nordeste começa a sair para o Sudeste."
-    texto: >-
-      [provisório] A Revolução de 1930 trocou o arranjo político da Primeira República e deu ao governo federal um papel
-      maior na economia. Para a seca, a Constituição de 1934 reservou parte da receita tributária da União, e a seca de
-      1932 mostrou o outro lado: campos onde o governo reunia retirantes para controlar a fuga do sertão. O país se
-      industrializava no Sudeste, e as cidades de lá passaram a atrair trabalhadores do Nordeste, num fluxo que cresceria
-      nas décadas seguintes. No fim do período, em 1945, nasceu a Chesf, estatal que levaria energia hidrelétrica do rio
-      São Francisco à região, e o órgão contra as secas passou a se chamar DNOCS. Não encontrei número confiável de saldo
-      migratório nem da participação do Nordeste no produto nesses anos, e por isso a página não vai citar nenhum. O
-      texto é rascunho e depende da revisão do dossiê e da conferência de cada fato contra a fonte citada, uma a uma.
+    resumo: "O governo federal centraliza, a indústria cresce no Centro-Sul e os nordestinos começam a sair para São Paulo e o Rio."
+    texto: |-
+      Depois de 1930 o governo federal passou a decidir mais, e a indústria acelerou no Centro-Sul. Para o Nordeste, a novidade foi a seca entrar na Constituição. A de 1934 mandou a União gastar com a defesa contra as secas pelo menos 4% da sua receita tributária.
+
+      A seca de 1932 mostrou o outro lado. Governos montaram campos de concentração para segurar os retirantes longe das capitais, e o Correio da Manhã noticiou os campos naquele ano. A seca era tratada como problema de ordem pública, e o retirante, como ameaça.
+
+      Foi nessa época que começou a saída de nordestinos para São Paulo e o Rio, um fluxo que cresceu nas décadas seguintes. A seca empurrava, e a terra concentrada também. O trabalho no campo era precário, e as frentes de trabalho e a água ficavam sob controle das elites locais. Procurei um número confiável de quantos saíram nesses anos e não achei. Por isso não ponho nenhum.
+
+      Em 1945 o governo federal criou a Chesf, para gerar energia na cachoeira de Paulo Afonso, e a inspetoria contra as secas virou o DNOCS. A energia e a água passaram a ter empresa e departamento federais. A terra continuou com os mesmos donos.
     marcos:
-      - {ano: 1932, titulo: "Seca e campos de retirantes", texto: "[provisório] O governo reúne retirantes em campos no Ceará."}
-      - {ano: 1934, titulo: "Constituição reserva receita para as secas", texto: "[provisório] Artigo 177: não menos de 4% da receita tributária federal."}
-      - {ano: 1945, titulo: "Nasce a Chesf", texto: "[provisório] Decreto-Lei 8.031 cria a empresa de energia do São Francisco."}
+      - {ano: 1932, titulo: "Seca e campos de concentração", texto: "Governos retêm retirantes em campos, longe das capitais."}
+      - {ano: 1934, titulo: "A seca entra na Constituição", texto: "O artigo 177 reserva parte da receita federal para a defesa contra as secas."}
+      - {ano: 1945, titulo: "Nascem a Chesf e o DNOCS", texto: "Em outubro, decreto-lei cria a Chesf. Em dezembro, a inspetoria contra as secas vira DNOCS."}
     numeros:
       - valor: "4%"
-        legenda: "[provisório] Piso da receita tributária federal para a defesa contra as secas, pela Constituição de 1934."
+        legenda: "Piso da receita tributária federal para a defesa contra as secas, fixado pela Constituição de 1934."
         tipo: oficial
-        fonte: "Constituição de 1934, art. 177 (texto a conferir no Planalto)"
-    o_que_ficou: "[provisório] Começa a saída de gente que, até hoje, ajuda a explicar por que a população do Nordeste cresce menos que a do país."
+        fonte: "Constituição de 1934, art. 177"
+    o_que_ficou: "Foi nessa época que a saída virou destino para gerações de nordestinos, e o Sudeste cresceu também com esse trabalho."
     fontes:
-      - texto: "Constituição de 1934, art. 177, Planalto"
-      - texto: "Decreto-Lei 8.031, de 3 de outubro de 1945, Planalto"
+      - texto: "Constituição de 1934, art. 177 (Planalto)"
+        url: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao34.htm
+      - texto: "Decreto-Lei 8.031, de 3 de outubro de 1945, que cria a Chesf (Planalto)"
+        url: https://planalto.gov.br/ccivil_03/Decreto-Lei/Del8031.htm
+      - texto: "Artigo sobre os campos de concentração de 1932, Anais do Simpósio Nacional da ANPUH, 2019"
+        url: https://anpuh.org.br/uploads/anais-simposios/pdf/2019-01/1548874926_f8b61f43959074f84c38312d02d3702b.pdf
+      - texto: "DNOCS, Carta de Serviços ao Cidadão (histórico do órgão)"
+        url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
 
   - id: "1950"
     inicio: 1950
     fim: 1964
     nome: BNB, GTDN e Sudene
-    resumo: "[provisório] A região vira objeto de planejamento: banco regional, diagnóstico de Furtado e uma superintendência."
-    texto: >-
-      [provisório] Nos anos 1950, o Nordeste passou a ser tratado como problema de desenvolvimento, e não só de seca. A
-      Lei 1.649, de 1952, criou o Banco do Nordeste do Brasil, com sede em Fortaleza. Em 1955 foi inaugurada a usina de
-      Paulo Afonso, da Chesf. Em 1959, o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, escrito sob a
-      direção de Celso Furtado, diagnosticou a região: renda por pessoa inferior a um terço da do Centro-Sul, e uma
-      economia que dependia do açúcar, da seca e de uma estrutura agrária concentrada. A proposta era industrializar,
-      mexer na terra e levar a fronteira agrícola para o Maranhão. Daí saiu a Sudene, criada por lei em dezembro de 1959.
-      A reforma agrária ficou de fora, e a página vai mostrar o que foi feito e o que ficou pelo caminho, sem dar crédito
-      ou culpa a governo algum. É um rascunho, a revisar com o dossiê.
+    resumo: "Pela primeira vez, o atraso do Nordeste é tratado como problema econômico, com banco, diagnóstico e uma superintendência."
+    texto: |-
+      As secas de 1951 a 1952 e de 1958 mostraram o limite dos açudes. Em 1952 uma lei criou o Banco do Nordeste, com sede em Fortaleza. Em 1955 a Chesf inaugurou a primeira usina de Paulo Afonso.
+
+      Em 1959 saiu o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, o GTDN, coordenado por Celso Furtado. O diagnóstico era direto. A renda por pessoa do Nordeste não chegava a um terço da do Centro-Sul, e o problema era econômico e de estrutura, não só de clima. A proposta era industrializar a região.
+
+      O relatório também olhou para dentro. A política de açudes tinha servido às grandes propriedades. No mesmo ano, as reportagens de Antônio Callado no Correio da Manhã deram nome à rede de latifundiários e políticos que vivia das obras contra a seca: indústria da seca. O nome pegou.
+
+      Em dezembro de 1959 uma lei instituiu a Sudene. No começo dos anos 1960 vieram os descontos no imposto de renda para quem investisse em projetos no Nordeste, o sistema que ficou conhecido como 34/18, pelos números dos artigos das duas leis.
+
+      Quem decidiu foi o governo federal: o banco, a superintendência e os incentivos. Mas o diagnóstico que justificou tudo isso dizia que parte do problema estava na própria região.
     marcos:
-      - {ano: 1952, titulo: "Criado o Banco do Nordeste", texto: "[provisório] Lei 1.649, de 19 de julho, com sede em Fortaleza."}
-      - {ano: 1955, titulo: "Inaugurada Paulo Afonso I", texto: "[provisório] Usina da Chesf no rio São Francisco."}
-      - {ano: 1959, titulo: "GTDN e Sudene", texto: "[provisório] O relatório de Furtado e a Lei 3.692, de 15 de dezembro, que institui a Sudene."}
+      - {ano: 1952, titulo: "Nasce o Banco do Nordeste", texto: "A Lei 1.649, de julho, cria o banco, com sede em Fortaleza."}
+      - {ano: 1955, titulo: "Paulo Afonso começa a gerar energia", texto: "A Chesf inaugura a primeira usina na cachoeira do São Francisco."}
+      - {ano: 1959, titulo: "GTDN e Sudene", texto: "Sai o relatório coordenado por Furtado, e em dezembro a Lei 3.692 institui a Sudene."}
+      - {ano: 1961, titulo: "Começa o 34/18", texto: "A Lei 3.995 cria o desconto no imposto de renda para investir no Nordeste. A Lei 4.239, de 1963, o amplia."}
     numeros:
       - valor: "menos de um terço"
-        legenda: "[provisório] Renda por pessoa do Nordeste em relação à do Centro-Sul, segundo o diagnóstico do GTDN."
+        legenda: "Renda por pessoa do Nordeste em relação à do Centro-Sul, no diagnóstico do GTDN."
         tipo: oficial
         fonte: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, 1959"
-      - valor: "57,3%"
-        legenda: "[provisório] Renda por pessoa do Nordeste em relação à média do Brasil em 1960."
-        tipo: historiador
-        fonte: "Gomes (1994), tabela citada na Revista Econômica do Nordeste, BNB"
-    o_que_ficou: "[provisório] A ideia de que a região tem um problema que se resolve com planejamento nasceu aqui e segue viva."
+    o_que_ficou: "Pela primeira vez o atraso do Nordeste foi tratado como problema econômico com causa conhecida, e não como castigo do clima. O BNB e a Sudene existem até hoje por causa dessa virada."
     fontes:
-      - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, 1959"
-      - texto: "Lei 3.692, de 15 de dezembro de 1959, Câmara dos Deputados"
+      - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, 1959 (ficha na Biblioteca do BNDES)"
+        url: https://web.bndes.gov.br/bib/jspui/handle/1408/17760
+      - texto: "Trechos do relatório do GTDN, Revista Brasileira de Geografia (IBGE)"
+        url: https://rbg.ibge.gov.br/index.php/rbg/article/view/2493/1872
+      - texto: "Lei 1.649, de 19 de julho de 1952, que cria o Banco do Nordeste (Planalto)"
+        url: https://planalto.gov.br/ccivil_03/leis/1950-1969/l1649.htm
+      - texto: "Lei 3.692, de 15 de dezembro de 1959, que institui a Sudene (Câmara dos Deputados)"
+        url: https://www2.camara.leg.br/legin/fed/lei/1950-1959/lei-3692-15-dezembro-1959-354371-norma-pl.html
+      - texto: "Antônio Callado, Os industriais da sêca e os Galileus de Pernambuco (1960), em artigo da Revista Brasileira de Estudos Urbanos e Regionais"
+        url: https://rbeur.anpur.org.br/rbeur/article/download/7827/5724/31270
+      - texto: "Ipea, Considerações sobre o sistema de incentivos fiscais para o desenvolvimento do Nordeste"
+        url: https://repositorio.ipea.gov.br/bitstream/11058/14213/1/Consideracoes_sistema_de_incentivos_fiscais_desenvolvimento_nordeste.pdf
 
   - id: "1964"
     inicio: 1964
     fim: 1985
     nome: "Ditadura: obra grande e Sudene esvaziada"
-    resumo: "[provisório] A Sudene perde o rumo original, e as obras e os incentivos fiscais crescem sob comando central."
-    texto: >-
-      [provisório] O golpe de 1964 cortou o projeto reformista do GTDN. Furtado teve os direitos políticos suspensos, e a
-      Sudene foi perdendo autonomia para os órgãos do governo federal. Os governos militares apostaram em obras grandes e
-      em incentivos fiscais. Em 1970, o Programa de Integração Nacional passou a destinar parte dos incentivos fiscais à
-      Transamazônica e a outras estradas na Amazônia, e uma regra do decreto reservou 30% desses incentivos para esse
-      programa, o que mexeu com o dinheiro que antes seguia para o Nordeste. Em 1974 foi criado o Finor, fundo de
-      investimentos da região. A industrialização incentivada trouxe fábricas, mas os ganhos ficaram concentrados em
-      poucas capitais e em empresas de fora. Este texto é rascunho e será reescrito, com as datas e os números
-      conferidos contra as fontes, depois da revisão do dossiê pelo autor. A parte que ainda falta é dizer, sem atribuir
-      resultado a presidente ou partido, o que cada medida mudou na vida de quem ficou e de quem partiu.
+    resumo: "Furtado é cassado, a Sudene perde o papel de planejar e parte dos incentivos fiscais vai para a Amazônia."
+    texto: |-
+      Em abril de 1964 Celso Furtado teve os direitos políticos suspensos com base no Ato Institucional n. 1 e deixou a Sudene. A superintendência continuou existindo, mas perdeu o papel de planejar a região. As decisões passaram a sair de Brasília.
+
+      Em 1970 um decreto-lei criou o Programa de Integração Nacional e mandou para ele 30% dos incentivos fiscais. A primeira etapa do programa era abrir a Transamazônica e a Cuiabá-Santarém. Na prática, parte do desconto no imposto de renda que antes ia para projetos no Nordeste passou a pagar estrada na Amazônia. Quanto isso tirou, de fato, do Nordeste eu não consegui medir. A regra, porém, está no texto do decreto-lei. Em 1974 os incentivos da região foram reunidos num fundo, o Finor.
+
+      Vieram fábricas e obras grandes, e a distância de renda por pessoa para o resto do país continuou grande. Medir essa distância nos anos 1960 e 1970 é difícil: as estimativas variam tanto conforme a fonte que um número só enganaria.
+
+      A crítica mais dura a esse modelo veio de alguém de dentro. Francisco de Oliveira, que trabalhou na Sudene de 1959 a 1964, publicou em 1977 Elegia para uma re(li)gião, um livro contra o caminho que a Sudene seguiu, sobretudo depois do golpe.
     marcos:
-      - {ano: 1964, titulo: "Furtado perde os direitos políticos", texto: "[provisório] Abril de 1964, com base no Ato Institucional n. 1."}
-      - {ano: 1970, titulo: "Programa de Integração Nacional", texto: "[provisório] Decreto-Lei 1.106, de 16 de junho, e a regra dos 30% dos incentivos fiscais."}
-      - {ano: 1974, titulo: "Criado o Finor", texto: "[provisório] Decreto-Lei 1.376, de 12 de dezembro."}
+      - {ano: 1964, titulo: "Furtado perde os direitos políticos", texto: "Em abril, com base no Ato Institucional n. 1, ele deixa a Sudene."}
+      - {ano: 1970, titulo: "Programa de Integração Nacional", texto: "O Decreto-Lei 1.106 manda 30% dos incentivos fiscais para o programa que começa pela Transamazônica."}
+      - {ano: 1974, titulo: "Nasce o Finor", texto: "O Decreto-Lei 1.376 reúne os incentivos do Nordeste num fundo."}
     numeros:
       - valor: "30%"
-        legenda: "[provisório] Parcela dos incentivos fiscais destinada ao PIN pelo decreto de 1970."
+        legenda: "Parte dos incentivos fiscais que o decreto-lei de 1970 mandou para o Programa de Integração Nacional."
         tipo: oficial
-        fonte: "Decreto-Lei 1.106, de 16 de junho de 1970, art. 5º, Planalto"
-    o_que_ficou: "[provisório] A distância entre o que o diagnóstico propunha e o que foi feito ainda orienta o debate sobre política regional."
+        fonte: "Decreto-Lei 1.106, de 16 de junho de 1970, art. 5º"
+    o_que_ficou: "A região ganhou fábricas e obras grandes, mas perdeu o lugar onde se pensava o próprio desenvolvimento. A distância de renda para o resto do país atravessou a ditadura sem fechar."
     fontes:
-      - texto: "Decreto-Lei 1.106, de 16 de junho de 1970, Planalto"
-      - texto: "Dossiê histórico do projeto, docs/historia/dossie.md, época 7"
+      - texto: "Decreto-Lei 1.106, de 16 de junho de 1970, que cria o Programa de Integração Nacional (Planalto)"
+        url: https://www.planalto.gov.br/ccivil_03/decreto-lei/1965-1988/del1106.htm
+      - texto: "Informações Fipe, n. 512 (sobre a cassação de Celso Furtado)"
+        url: https://downloads.fipe.org.br/publicacoes/bif/bif512-82-84.pdf
+      - texto: "Flávio Mendes, sobre Elegia para uma re(li)gião, de Francisco de Oliveira, Caderno CRH (2018)"
+        url: https://www.redalyc.org/journal/3476/347659220009/347659220009.pdf
 
   - id: "1985"
     inicio: 1985
     fim: 2026
     nome: Redemocratização até hoje
-    resumo: "[provisório] A Constituição cria fundos regionais, a Sudene acaba e volta, e a região segue com metade da renda do país por pessoa."
-    texto: >-
-      [provisório] A Constituição de 1988 reservou parte da arrecadação do imposto de renda e do IPI para fundos de
-      financiamento regionais, regulamentados em 1989 no Fundo Constitucional do Nordeste, com metade dos recursos para o
-      semiárido. A Sudene foi extinta em 2001 por medida provisória e recriada em 2007 por lei complementar, e a página
-      vai tratar essas datas como contexto, sem atribuir resultado a nenhum governo. Nas últimas décadas a população do
-      Nordeste passou a crescer mais devagar que a do país, e a abertura da página mostra o efeito disso. O produto por
-      pessoa ainda é cerca de metade do brasileiro. Falta comparar tudo isso com os cards do resto do site, que mostram o
-      que mudou em educação, renda e trabalho desde 2000. Este texto é rascunho, a ser reescrito depois da revisão do
-      dossiê e da conferência dos números. Também vou separar o que veio de decisões tomadas fora da região do que
-      nasceu dentro dela, nas elites locais e nos arranjos de poder estaduais.
+    resumo: "A Constituição cria fundos regionais, a Sudene acaba e volta, e a região produz uma parte do PIB menor que a parte da população que vive nela."
+    texto: |-
+      A Constituição de 1988 reservou 3% do que a União arrecada com imposto de renda e IPI para financiar o setor produtivo do Norte, do Nordeste e do Centro-Oeste. Uma lei de 1989 regulamentou os fundos. O do Nordeste, o FNE, é operado pelo Banco do Nordeste, e metade do dinheiro vai para o semiárido. É uma parte fixa da arrecadação, escrita na Constituição.
+
+      Em 2001 a Sudene foi extinta e trocada por uma agência, a Adene. Em 2007 uma lei complementar recriou a Sudene. A instituição que nasceu do diagnóstico de 1959 sumiu e voltou em seis anos.
+
+      Em 2022, segundo as Contas Regionais do IBGE, o Nordeste produziu 13,8% do PIB do país. O IBGE avisa que essa série ainda vai ser revista, com outro ano de referência. A parte da população que vive aqui, na abertura desta página, é quase o dobro disso. Dito de outro jeito: o PIB por pessoa do Nordeste fica perto da metade do brasileiro.
+
+      O dinheiro dos fundos e dos incentivos vem de decisão federal. Mas ele não se aplica sozinho. Passa por governos estaduais, bancos e empresas da própria região, que decidem onde ele vai parar. Não ponho resultado desta época na conta de governo nenhum.
     marcos:
-      - {ano: 1988, titulo: "Constituição e fundos regionais", texto: "[provisório] Artigo 159: 3% do IR e do IPI para o financiamento do Norte, Nordeste e Centro-Oeste."}
-      - {ano: 1989, titulo: "Lei 7.827 regulamenta os fundos", texto: "[provisório] Nasce o FNE, com metade dos recursos para o semiárido."}
-      - {ano: 2001, titulo: "Sudene extinta", texto: "[provisório] A medida provisória cria a Adene no lugar."}
-      - {ano: 2007, titulo: "Sudene recriada", texto: "[provisório] Lei Complementar 125, de 3 de janeiro."}
+      - {ano: 1988, titulo: "Constituição cria os fundos regionais", texto: "O artigo 159 reserva 3% do imposto de renda e do IPI para financiar o Norte, o Nordeste e o Centro-Oeste."}
+      - {ano: 1989, titulo: "Lei 7.827 regulamenta o FNE", texto: "Metade do fundo do Nordeste vai para o semiárido."}
+      - {ano: 2001, titulo: "Sudene extinta", texto: "Uma medida provisória troca a superintendência pela Adene."}
+      - {ano: 2007, titulo: "Sudene recriada", texto: "A Lei Complementar 125, de 3 de janeiro, recria a superintendência."}
     numeros:
-      - valor: "R$ 25.401 e R$ 49.638"
-        legenda: "[provisório] PIB por pessoa do Nordeste e do Brasil em 2022, cerca de 51%."
+      - valor: "3%"
+        legenda: "Parte da arrecadação federal de imposto de renda e IPI que a Constituição de 1988 reservou para financiar o setor produtivo do Norte, do Nordeste e do Centro-Oeste."
         tipo: oficial
-        fonte: "IBGE, Contas Regionais 2022"
-    o_que_ficou: "[provisório] Os fundos existem há mais de trinta anos, e a diferença de renda por pessoa continua perto de metade."
+        fonte: "Constituição de 1988, art. 159, inciso I, alínea c"
+      - valor: "13,8%"
+        legenda: "Parte do Nordeste no PIB do Brasil em 2022."
+        tipo: oficial
+        fonte: "IBGE, Contas Regionais 2022 (SIDRA, tabela 5938)"
+    o_que_ficou: "A distância que começou a se formar quando o eixo saiu do Nordeste ainda está nos números de hoje. Mais de um em cada quatro brasileiros vive aqui, e a região produz menos de um sétimo do que o país produz."
     fontes:
-      - texto: "IBGE, Contas Regionais 2022"
-      - texto: "Lei 7.827, de 27 de setembro de 1989, gov.br/mdr"
+      - texto: "Sudene, nota técnica sobre o FNE e o art. 159, I, c, da Constituição de 1988"
+        url: https://www.gov.br/sudene/pt-br/acesso-a-informacao/institucional/conselho-deliberativo/arquivos/1-sei_sudene-0513046-nota-tecnica-272-2023.pdf
+      - texto: "Lei 7.827, de 27 de setembro de 1989, que regulamenta os fundos constitucionais"
+        url: https://www.gov.br/mdr/pt-br/assuntos/fundos-regionais-e-incentivos-fiscais/fundos-constitucionais-de-financiamento-fno-fne-e-fco/L7827.pdf
+      - texto: "Medida Provisória 2.146-1, de 4 de maio de 2001, que extingue a Sudene (Câmara dos Deputados)"
+        url: https://www2.camara.leg.br/legin/fed/medpro/2001/medidaprovisoria-2146-1-4-maio-2001-348819-norma-pe.html
+      - texto: "Lei Complementar 125, de 3 de janeiro de 2007, que recria a Sudene (Câmara dos Deputados)"
+        url: https://www2.camara.leg.br/legin/fed/leicom/2007/leicomplementar-125-3-janeiro-2007-548989-publicacaooriginal-64228-pl.html
+      - texto: "IBGE, Contas Regionais 2022, SIDRA, tabela 5938 (participação no PIB do Brasil)"
+        url: https://apisidra.ibge.gov.br/values/t/5938/n1/all/n2/2/v/496/p/2022
+      - texto: "IBGE, Agência de Notícias, Em 2022, PIB cresce em 24 unidades da federação"
+        url: https://agenciadenoticias.ibge.gov.br/pt/agencia-noticias/41893-em-2022-pib-cresce-em-24-unidades-da-federacao.html
 
 fecho:
   titulo: E de 2000 para cá?
-  texto: "[provisório] Os números do resto do site contam o que aconteceu desde então."
+  texto: "A história desta página chega mais ou menos onde começam os outros números do site. De 2000 para cá, os cards mostram o que aconteceu com pobreza, renda, escola e trabalho no Nordeste, sempre ao lado do Brasil."
   links:
     - {texto: Início, url: ../}
     - {texto: Cards, url: ../cards/}

@@ -192,6 +192,50 @@ def test_recusa_texto_fora_de_150_a_300_palavras(tmp_path, palavras, passa):
         assert str(palavras) in mensagem
 
 
+@pytest.mark.parametrize("lista, quantos, passa", [
+    ("marcos", 1, False), ("marcos", 2, True), ("marcos", 4, True), ("marcos", 5, False),
+    ("numeros", 1, True), ("numeros", 3, True), ("numeros", 4, False),
+])
+def test_marcos_de_2_a_4_e_numeros_de_1_a_3_por_epoca(tmp_path, lista, quantos, passa):
+    # spec, secao 5: 2 a 4 marcos e 1 a 3 numeros em cada epoca (o vazio ja e recusado por _lista)
+    dados = _historia()
+    epoca = dados["epocas"][1]
+    if lista == "marcos":
+        epoca["marcos"] = [
+            {"ano": epoca["inicio"] + 10 * (k + 1), "titulo": f"Marco {k}", "texto": "Texto do marco."} for k in range(quantos)
+        ]
+    else:
+        epoca["numeros"] = [dict(epoca["numeros"][0], valor=f"{k + 1} mil") for k in range(quantos)]
+    if passa:
+        assert len(getattr(carregar_historia(_escrever(tmp_path, dados)).epocas[1], lista)) == quantos
+    else:
+        mensagem = _recusa(tmp_path, dados, f"epocas[1].{lista}")
+        assert str(quantos) in mensagem
+
+
+@pytest.mark.parametrize("final", [".", "?", "!", ".  "])
+@pytest.mark.parametrize("campo", ["titulo do marco", "fonte do numero"])
+def test_recusa_titulo_de_marco_ou_fonte_com_pontuacao_final(tmp_path, campo, final):
+    # o modelo poe o ponto depois do titulo do marco e da fonte: "Recife.." ou "Recife?." na pagina
+    dados = _historia()
+    if campo == "titulo do marco":
+        dados["epocas"][2]["marcos"][1]["titulo"] = "Holandeses tomam Recife" + final
+        caminho = "epocas[2].marcos[1].titulo"
+    else:
+        dados["epocas"][2]["numeros"][0]["fonte"] = "Roberto Simonsen, História Econômica do Brasil, 6ª ed" + final
+        caminho = "epocas[2].numeros[0].fonte"
+    assert "pontuacao final" in _recusa(tmp_path, dados, caminho)
+
+
+def test_titulo_de_marco_e_fonte_sem_ponto_final_passam(tmp_path):
+    dados = _historia()
+    dados["epocas"][0]["marcos"][0]["titulo"] = "Lei 3.692 institui a Sudene"  # ponto no meio pode
+    dados["epocas"][0]["numeros"][0]["fonte"] = "Decreto-Lei 1.106, de 16/06/1970, art. 5º"
+    epoca = carregar_historia(_escrever(tmp_path, dados)).epocas[0]
+    assert epoca.numeros[0].fonte.endswith("art. 5º")
+    assert "Lei 3.692 institui a Sudene" in [m.titulo for m in epoca.marcos]
+
+
 @pytest.mark.parametrize("campo", ["autor", "data", "licenca", "alt"])
 def test_recusa_imagem_sem_autor_data_licenca_ou_alt(tmp_path, campo):
     dados = _historia()
@@ -358,13 +402,22 @@ def test_yaml_ilegivel_levanta_erro_de_conteudo(tmp_path):
         carregar_historia(tmp_path)
 
 
-def test_historia_provisoria_do_repositorio_e_valida():
+CENSOS_DO_DOSSIE = [1872, 1890, 1900, 1920, 1940, 1950, 1960, 1970, 1980, 1991, 2000, 2010, 2022]
+
+
+def test_historia_do_repositorio_e_valida():
     historia = carregar_historia(RAIZ / "metadados" / "site")
-    assert historia is not None and historia.provisoria is True
+    assert historia is not None
     assert len(historia.epocas) == 8
     assert [e.inicio for e in historia.epocas] == [1530, 1654, 1808, 1889, 1930, 1950, 1964, 1985]
-    assert all("[provisório]" in e.texto for e in historia.epocas)
-    assert [(p.ano, p.valor) for p in parcela_do_nordeste(historia)] == [(1872, 46.7), (2022, 26.9)]
+    # texto final (Tarefa 7): sem a marca de rascunho em lugar nenhum do arquivo
+    assert "[provisório]" not in (RAIZ / "metadados" / "site" / "historia.yaml").read_text(encoding="utf-8")
+    # os 13 censos do dossie (SIDRA 1286 de 1872 a 2010, 4709 em 2022), com a parcela calculada
+    parcelas = parcela_do_nordeste(historia)
+    assert [p.ano for p in parcelas] == CENSOS_DO_DOSSIE
+    assert (parcelas[0].valor, parcelas[-1].valor) == (46.7, 26.9)
+    assert {c[3] for c in historia.censos[:-1]} == {"IBGE, SIDRA, tabela 1286"}
+    assert historia.censos[-1][3] == "IBGE, SIDRA, tabela 4709"
 
 
 def _formatar_parcela(valor: float) -> str:
@@ -375,7 +428,7 @@ def test_historia_real_nao_digita_a_parcela_da_populacao():
     # Restricao global: a parcela vem de censos.csv, nunca digitada (nem em numeros, nem nos textos da epoca).
     historia = carregar_historia(RAIZ / "metadados" / "site")
     parcelas = {_formatar_parcela(p.valor) for p in parcela_do_nordeste(historia)}
-    assert parcelas  # 46,7 e 26,9 no provisorio
+    assert len(parcelas) == 13  # um por censo, de 1872 a 2022
     for i, epoca in enumerate(historia.epocas):
         for j, numero in enumerate(epoca.numeros):
             assert numero.valor.strip().removesuffix("%").strip() not in parcelas, f"epocas[{i}].numeros[{j}].valor"
@@ -384,6 +437,10 @@ def test_historia_real_nao_digita_a_parcela_da_populacao():
         for texto in textos:
             for parcela in parcelas:
                 assert not re.search(rf"(?<![\d,.]){re.escape(parcela)}\s*%", texto), f"epocas[{i}]: {parcela}% em {texto[:60]!r}"
+    # a abertura e o fecho tambem: o numero grande da abertura e calculado, o texto em volta nao o repete
+    for onde, texto in [*(("abertura." + k, v) for k, v in historia.abertura.items()), ("fecho.texto", historia.fecho["texto"])]:
+        for parcela in parcelas:
+            assert not re.search(rf"(?<![\d,.]){re.escape(parcela)}\s*%", texto), f"{onde}: {parcela}%"
 
 
 def test_o_teste_da_parcela_pega_o_numero_digitado(tmp_path):
