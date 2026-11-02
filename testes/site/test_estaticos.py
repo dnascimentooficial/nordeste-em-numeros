@@ -29,6 +29,14 @@ HTACCESS = [
     'Header always set Referrer-Policy "strict-origin-when-cross-origin"',
     'Header always set X-Frame-Options "DENY"',
     'Header always set Strict-Transport-Security "max-age=31536000"',
+    "AddDefaultCharset UTF-8",
+    "AddCharset UTF-8 .css .js .json .csv .svg .txt",
+    '<FilesMatch "\\.(html|css|js|json|csv)$">',  # sem cache longo: a Hostinger guardou um 404 do estilo.css
+    'Header set Cache-Control "no-cache"',
+    "</FilesMatch>",
+    '<FilesMatch "\\.(png|webp|woff2)$">',
+    'Header set Cache-Control "max-age=86400"',
+    "</FilesMatch>",
 ]
 CORES = ("#ea2e00", "#c42600", "#080808", "#f5f4ef", "#ffffff")
 # elementos que carregam um recurso pela URL; <a> e so link (as fontes oficiais sao links e podem ser externos)
