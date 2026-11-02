@@ -188,7 +188,9 @@ def test_cada_epoca_tem_artigo_completo(gerado):
         assert len(img_cartao) == 1
         assert img_cartao[0]["attrs"]["loading"] == "lazy"
         assert img_cartao[0]["attrs"]["src"] == f"/historia/{epoca['imagem']['arquivo']}"
-        assert img_cartao[0]["attrs"]["alt"] == epoca["imagem"]["alt"]
+        # a miniatura e decorativa: a descricao fica so na imagem do artigo, para o leitor de tela nao ler a cena duas
+        # vezes e o nome do botao comecar pelo periodo e pelo nome da epoca
+        assert img_cartao[0]["attrs"]["alt"] == ""
 
         artigo = _trecho(trecho, '<article class="nn-epoca-conteudo"', "</article>")
         arv = Arvore(artigo)

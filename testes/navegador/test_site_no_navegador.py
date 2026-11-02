@@ -332,8 +332,11 @@ _TEXTOS_DA_HISTORIA = {
              ".nn-hist-texto, .nn-marco-titulo, .nn-epoca-resumo, .nn-epoca-texto, .nn-epoca-marcos, .nn-epoca-numeros, "
              ".nn-epoca-ficou, .nn-epoca-fontes, .nn-epoca-nav, .nn-epoca-credito, .nn-hist-fecho",
 }
-_NOS_DE_TEXTO = """(grupos) => {
+# na pagina, o texto fora do modal (coordenadas da pagina, para o print inteiro); com `modal`, so o texto do <dialog>
+# aberto (coordenadas da janela, para o print da janela: com o modal aberto a pagina nao rola)
+_NOS_DE_TEXTO = """({ grupos, modal }) => {
   const saida = {};
+  const dialogo = document.querySelector('dialog[open]');
   for (const [grupo, seletor] of Object.entries(grupos)) {
     const nos = [];
     for (const raiz of document.querySelectorAll(seletor)) {
@@ -341,12 +344,27 @@ _NOS_DE_TEXTO = """(grupos) => {
       for (let no = andar.nextNode(); no; no = andar.nextNode()) {
         if (!no.textContent.trim()) continue;
         const pai = no.parentElement;
-        if (pai.closest('svg, dialog')) continue;
+        if (pai.closest('svg')) continue;
+        if (modal ? !(dialogo && dialogo.contains(pai)) : pai.closest('dialog')) continue;
         const intervalo = document.createRange();
         intervalo.selectNodeContents(no);
-        const caixas = [...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0)
-          .map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height }));
-        if (caixas.length) nos.push({ nome: `${pai.tagName.toLowerCase()}.${pai.className}`, cor: getComputedStyle(pai).color, caixas });
+        const dx = modal ? 0 : scrollX, dy = modal ? 0 : scrollY;
+        // o que uma caixa que rola (a faixa horizontal) corta nao esta na tela: fica fora da medida
+        let corte = null;
+        for (let e = pai.parentElement; e && e !== document.body; e = e.parentElement) {
+          if (getComputedStyle(e).overflowX !== 'visible' && e.tagName !== 'DIALOG') { corte = e.getBoundingClientRect(); break; }
+        }
+        const dentro = (c) => !corte || (c.left >= corte.left - 1 && c.right <= corte.right + 1 && c.top >= corte.top - 1 && c.bottom <= corte.bottom + 1);
+        const caixas = [...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0 && dentro(c))
+          .map((c) => ({ x: c.left + dx, y: c.top + dy, w: c.width, h: c.height }));
+        let fundo = 'transparent';  // a primeira cor de fundo opaca de baixo para cima (o selo, o papel ou o modal)
+        for (let e = pai; e; e = e.parentElement) {
+          const cor = getComputedStyle(e).backgroundColor;
+          if (cor !== 'rgba(0, 0, 0, 0)' && !cor.endsWith('/ 0)')) { fundo = cor; break; }
+        }
+        const estilo = getComputedStyle(pai);
+        if (caixas.length) nos.push({ nome: `${pai.tagName.toLowerCase()}.${pai.className}`, cor: estilo.color, caixas,
+                                      fundo, pequeno: parseFloat(estilo.fontSize) < 24 });
       }
     }
     saida[grupo] = nos;
@@ -372,22 +390,22 @@ def _cor_computada(texto: str) -> tuple[np.ndarray, float]:
     return np.array(canais[:3]) * escala, canais[3] if len(canais) > 3 else 1.0
 
 
-@pytest.mark.parametrize("esquema", ["light", "dark"])
-@pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
-def test_historia_contraste_em_pixels(abrir, largura, esquema):
-    """Titulos, datas dos marcos, etiquetas de tipo e texto: >= 4,5:1 no pior pixel do papel atras de cada linha."""
-    with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
-        pagina.evaluate("() => document.fonts.ready")
-        assert pagina.evaluate(_SERIFADA_CARREGADA)
-        grupos = pagina.evaluate(_NOS_DE_TEXTO, _TEXTOS_DA_HISTORIA)
-        pagina.evaluate(_ESCONDER_O_TEXTO)
-        fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"))
+# a cor do texto laranja e a do fundo dos carimbos e etiquetas, como o navegador as calcula (para comparar strings)
+_CORES_DA_REGRA = """() => ({
+  laranja: getComputedStyle(document.querySelector('.nn-epoca-periodo')).color,
+  selo: getComputedStyle(document.querySelector('.nn-epoca-periodo')).backgroundColor,
+})"""
+
+
+def _reprovados_no_contraste(fundo: np.ndarray, grupos: dict, onde: str, piores: dict, regra: dict) -> list[str]:
+    """Cada linha de texto contra o pior pixel do fundo atras dela (o print com o texto escondido). E a regra da
+    estetica: texto laranja pequeno nunca direto sobre o papel, so sobre o fundo claro dos carimbos (--nn-hist-selo)."""
     alto, largo = fundo.shape[:2]
-    reprovados, piores = [], {}
+    reprovados = []
     for grupo, nos in grupos.items():
-        assert nos, f"nenhum texto em {grupo}"
-        pior_do_grupo = 99.0
         for no in nos:
+            if no["cor"] == regra["laranja"] and no["pequeno"] and no["fundo"] != regra["selo"]:
+                reprovados.append(f"{onde} {grupo} {no['nome']}: laranja pequeno sobre {no['fundo']}, fora do selo")
             cor, alfa = _cor_computada(no["cor"])
             assert alfa > 0, no["nome"]
             for c in no["caixas"]:
@@ -397,10 +415,47 @@ def test_historia_contraste_em_pixels(abrir, largura, esquema):
                 if not len(atras):
                     continue
                 pior = float(_contrastes(alfa * cor + (1 - alfa) * atras, atras).min())
-                pior_do_grupo = min(pior_do_grupo, pior)
+                piores[f"{onde} {grupo}"] = round(min(piores.get(f"{onde} {grupo}", 99.0), pior), 2)
                 if pior < _LIMITE_DO_CONTRASTE:
-                    reprovados.append(f"{grupo} {no['nome']} ({no['cor']}): {pior:.2f}:1")
-        piores[grupo] = round(pior_do_grupo, 2)
+                    reprovados.append(f"{onde} {grupo} {no['nome']} ({no['cor']}): {pior:.2f}:1")
+    return reprovados
+
+
+@pytest.mark.parametrize("esquema", ["light", "dark"])
+@pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
+def test_historia_contraste_em_pixels(abrir, largura, esquema):
+    """Titulos, datas dos marcos, etiquetas de tipo e texto: >= 4,5:1 no pior pixel do papel atras de cada linha, na
+    pagina (com o site.js os artigos saem da lista) e no modal aberto da primeira e da ultima epoca."""
+    vistos: dict[str, int] = {}
+    reprovados, piores = [], {}
+    with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        pagina.evaluate("() => document.fonts.ready")
+        assert pagina.evaluate(_SERIFADA_CARREGADA)
+        regra = pagina.evaluate(_CORES_DA_REGRA)
+        grupos = pagina.evaluate(_NOS_DE_TEXTO, {"grupos": _TEXTOS_DA_HISTORIA, "modal": False})
+        pagina.evaluate(_ESCONDER_O_TEXTO)
+        fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"))
+        reprovados += _reprovados_no_contraste(fundo, grupos, "pagina", piores, regra)
+        for grupo, nos in grupos.items():
+            vistos[grupo] = vistos.get(grupo, 0) + len(nos)
+    for indice in (0, -1):
+        with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
+            pagina.evaluate("() => document.fonts.ready")
+            cartoes = pagina.locator("button.nn-epoca-abrir")
+            (cartoes.first if indice == 0 else cartoes.last).click()
+            assert pagina.locator("dialog.nn-modal-historia").evaluate("d => d.open")
+            # a janela cresce ate o modal caber inteiro nela: o print da janela pega todo o artigo
+            for _ in range(3):
+                altura = pagina.locator("dialog.nn-modal-historia").evaluate("d => d.scrollHeight") + 80
+                pagina.set_viewport_size({"width": largura, "height": altura})
+            grupos = pagina.evaluate(_NOS_DE_TEXTO, {"grupos": _TEXTOS_DA_HISTORIA, "modal": True})
+            assert sum(len(n) for n in grupos.values()) > 20  # o artigo esta no modal, e o modal esta a vista
+            pagina.evaluate(_ESCONDER_O_TEXTO)
+            fundo = np.array(Image.open(io.BytesIO(pagina.screenshot())).convert("RGB"))
+            reprovados += _reprovados_no_contraste(fundo, grupos, f"modal {indice}", piores, regra)
+            for grupo, nos in grupos.items():
+                vistos[grupo] = vistos.get(grupo, 0) + len(nos)
+    assert all(vistos.get(g) for g in _TEXTOS_DA_HISTORIA), vistos  # todo grupo aparece na pagina ou no modal
     assert reprovados == [], (piores, reprovados[:8])
 
 
@@ -419,6 +474,357 @@ def test_historia_so_pede_a_serifada_nesta_pagina(abrir, rotas):
                 assert familia.startswith('"EB Garamond"'), familia
     assert len(pediram.pop(HISTORIA)) == 1  # uma vez so: o preload e o uso pedem o mesmo arquivo (crossorigin)
     assert {r: p for r, p in pediram.items() if p} == {}
+
+
+# --- pagina Como chegamos: a faixa arrastavel e o modal de cada epoca ---
+
+MODAL_HISTORIA = "dialog.nn-modal-historia"
+CARTAO = "button.nn-epoca-abrir"
+LIMITE_DA_HISTORIA = 1_000_000  # bytes baixados ao abrir a pagina, sem abrir modal
+# o estado que os testes conferem: modal aberto, epoca no modal, endereco, foco, onde estao os artigos e ids repetidos
+_ESTADO_DA_HISTORIA = """() => {
+  const dialogo = document.querySelector('dialog.nn-modal-historia');
+  const artigo = dialogo.querySelector('.nn-epoca-conteudo');
+  const ativo = document.activeElement;
+  const ids = [...document.querySelectorAll('[id]')].map((e) => e.id);
+  return {
+    aberto: dialogo.open,
+    epoca: artigo ? artigo.getAttribute('aria-labelledby').slice(2) : null,
+    rotulo: dialogo.getAttribute('aria-labelledby'),
+    hash: location.hash,
+    foco: ativo && ativo.matches('button.nn-epoca-abrir') ? ativo.getAttribute('data-epoca') : (ativo && dialogo.contains(ativo) ? 'modal' : null),
+    na_lista: [...document.querySelectorAll('li.nn-epoca')].filter((li) => li.querySelector(':scope > .nn-epoca-conteudo')).length,
+    artigos: document.querySelectorAll('article.nn-epoca-conteudo').length,
+    epocas: document.querySelectorAll('li.nn-epoca').length,
+    repetidos: ids.filter((id, i) => ids.indexOf(id) !== i),
+    historico: history.length,
+  };
+}"""
+_EPOCAS_E_MARCOS = """() => [...document.querySelectorAll('li.nn-epoca')].map((li) => ({
+  id: li.id, marcos: [...li.querySelectorAll('a.nn-marco')].map((a) => a.getAttribute('data-marco')),
+}))"""
+
+
+def _estado(pagina) -> dict:
+    return pagina.evaluate(_ESTADO_DA_HISTORIA)
+
+
+def _cartao(pagina, epoca: str):
+    return pagina.locator(f'{CARTAO}[data-epoca="{epoca}"]')
+
+
+_FECHOU = "() => { const d = document.querySelector('dialog.nn-modal-historia'); return !d.open && !d.querySelector('article') && location.hash === ''; }"
+
+
+def _esperar_fechar(pagina) -> None:
+    """O close() desliga o open na hora, mas o evento close (que devolve o artigo e o foco e acerta o endereco) vem numa
+    tarefa depois; o history.back() do fechar tambem e assincrono."""
+    pagina.wait_for_function(_FECHOU)
+
+
+def _fechado_e_no_lugar(estado: dict, foco: str) -> None:
+    """Modal fechado, endereco limpo, o foco no cartao e cada artigo de volta ao seu <li>, sem id repetido."""
+    assert not estado["aberto"] and estado["epoca"] is None and estado["hash"] == "", estado
+    assert estado["foco"] == foco, estado
+    assert estado["na_lista"] == estado["artigos"] == estado["epocas"] and estado["repetidos"] == [], estado
+
+
+def test_historia_arrasto_rola_e_nao_abre(abrir):
+    """Foco 2: arrastar 200 px sobre um cartao rola a faixa e nao abre o modal; um clique que anda menos de 6 px abre."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        faixa = pagina.locator("ol.nn-linha-tempo")
+        medidas = faixa.evaluate("f => ({ x: getComputedStyle(f).overflowX, snap: getComputedStyle(f).scrollSnapType, rola: f.scrollWidth > f.clientWidth })")
+        assert medidas == {"x": "auto", "snap": "x mandatory", "rola": True}, medidas
+        alvo = _cartao(pagina, pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"])
+        alvo.scroll_into_view_if_needed()
+        caixa = alvo.bounding_box()
+        x, y = caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2
+        pagina.mouse.move(x, y)
+        pagina.mouse.down()
+        for passo in range(1, 21):
+            pagina.mouse.move(x - 10 * passo, y)
+        durante = faixa.evaluate("f => ({ rolagem: f.scrollLeft, classe: f.classList.contains('nn-arrastando') })")
+        pagina.mouse.up()
+        assert abs(durante["rolagem"] - 200) <= 2 and durante["classe"], durante
+        estado = _estado(pagina)
+        assert not estado["aberto"] and estado["hash"] == "" and estado["na_lista"] == estado["epocas"], estado
+        assert faixa.evaluate("f => f.classList.contains('nn-arrastando')") is False
+        assert faixa.evaluate("f => f.scrollLeft") > 0  # soltou e a faixa ficou rolada (presa num cartao pelo snap)
+        # depois do arrasto, o proximo clique vale; um tremor de 3 px ainda e clique
+        alvo = _cartao(pagina, pagina.evaluate(_EPOCAS_E_MARCOS)[2]["id"])
+        alvo.scroll_into_view_if_needed()
+        caixa = alvo.bounding_box()
+        x, y = caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2
+        pagina.mouse.move(x, y)
+        pagina.mouse.down()
+        pagina.mouse.move(x + 3, y)
+        pagina.mouse.up()
+        assert _estado(pagina)["aberto"]
+
+
+def test_historia_clique_abre_modal_e_esc_devolve_foco(abrir):
+    """O cartao abre a epoca no modal (o artigo e movido, nao copiado); X, Esc e clique fora fecham, devolvem o artigo e
+    o foco. Com o modal Ampliar ligado ao primeiro dialog da pagina, o fechar apagava o artigo."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        epoca = pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"]
+        for fechar in ("Escape", "x", "fora"):
+            _cartao(pagina, epoca).click()
+            estado = _estado(pagina)
+            assert estado["aberto"] and estado["epoca"] == epoca and estado["hash"] == f"#{epoca}", estado
+            assert estado["rotulo"] == f"t-{epoca}" and estado["foco"] == "modal", estado
+            assert estado["na_lista"] == estado["epocas"] - 1 and estado["artigos"] == estado["epocas"], estado
+            assert estado["repetidos"] == [], estado
+            assert pagina.locator(f"{MODAL_HISTORIA} .nn-epoca-texto").is_visible()
+            if fechar == "Escape":
+                pagina.keyboard.press("Escape")
+            elif fechar == "x":
+                pagina.locator(f"{MODAL_HISTORIA} .nn-modal-fechar").click()
+            else:
+                caixa = pagina.locator(MODAL_HISTORIA).bounding_box()
+                assert caixa["x"] > 20  # no desktop o modal nao ocupa a largura toda
+                pagina.mouse.click(caixa["x"] / 2, 400)
+            _esperar_fechar(pagina)
+            _fechado_e_no_lugar(_estado(pagina), epoca)
+            assert not pagina.locator("li.nn-epoca .nn-epoca-conteudo").first.is_visible()  # com JS, fora da lista
+
+
+def test_historia_teclado_setas_e_enter(abrir):
+    """Setas e Home/End movem o foco entre os cartoes; Enter abre; os botoes nas pontas rolam um cartao."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        _cartao(pagina, ids[0]).focus()
+        for tecla, esperado in (("ArrowRight", ids[1]), ("ArrowRight", ids[2]), ("ArrowLeft", ids[1]),
+                                ("End", ids[-1]), ("Home", ids[0]), ("ArrowLeft", ids[0])):
+            pagina.keyboard.press(tecla)
+            assert _estado(pagina)["foco"] == esperado, tecla
+        pagina.keyboard.press("End")
+        assert pagina.locator("ol.nn-linha-tempo").evaluate("f => f.scrollLeft") > 0  # o cartao focado veio a vista
+        pagina.keyboard.press("ArrowLeft")
+        pagina.keyboard.press("Enter")
+        estado = _estado(pagina)
+        assert estado["aberto"] and estado["epoca"] == ids[-2], estado
+        pagina.keyboard.press("Escape")
+        _esperar_fechar(pagina)
+        _fechado_e_no_lugar(_estado(pagina), ids[-2])
+        # os botoes nas pontas: ‹ sem destino no comeco, › rola um cartao
+        faixa = pagina.locator("ol.nn-linha-tempo")
+        faixa.evaluate("f => { f.scrollLeft = 0; }")
+        anterior, proximo = pagina.locator(".nn-faixa-anterior"), pagina.locator(".nn-faixa-proxima")
+        assert anterior.is_visible() and proximo.is_visible()
+        pagina.wait_for_function("() => document.querySelector('.nn-faixa-anterior').getAttribute('aria-disabled') === 'true'")
+        passo = pagina.evaluate("""() => {
+          const f = document.querySelector('ol.nn-linha-tempo');
+          return f.querySelector('li.nn-epoca').getBoundingClientRect().width + parseFloat(getComputedStyle(f).columnGap);
+        }""")
+        proximo.click()
+        pagina.wait_for_function("() => document.querySelector('ol.nn-linha-tempo').scrollLeft > 0")
+        assert abs(faixa.evaluate("f => f.scrollLeft") - passo) <= 2
+        assert anterior.get_attribute("aria-disabled") == "false"
+        anterior.click()
+        pagina.wait_for_function("() => document.querySelector('ol.nn-linha-tempo').scrollLeft === 0")
+
+
+def test_historia_endereco_abre_epoca(abrir):
+    """`#<id da epoca>` abre a epoca; `#<ano de um marco>` (ou `#m<ano>`) abre a epoca dele, rolada ate o marco."""
+    with abrir(HISTORIA, java_script_enabled=False) as pagina:
+        epocas = pagina.evaluate(_EPOCAS_E_MARCOS)
+    ids = {e["id"] for e in epocas}
+    epoca = epocas[1]
+    marco = next(m for m in epocas[1]["marcos"] if m not in ids)  # o do dossie: 1763, a capital vai para o Rio
+    with abrir(f"{HISTORIA}#{epoca['id']}", reduced_motion="reduce") as pagina:
+        estado = _estado(pagina)
+        assert estado["aberto"] and estado["epoca"] == epoca["id"] and estado["hash"] == f"#{epoca['id']}", estado
+        assert pagina.locator(MODAL_HISTORIA).evaluate("d => d.scrollTop") == 0
+    for endereco in (marco, f"m{marco}"):
+        with abrir(f"{HISTORIA}#{endereco}", reduced_motion="reduce") as pagina:
+            estado = _estado(pagina)
+            assert estado["aberto"] and estado["epoca"] == epoca["id"], (endereco, estado)
+            dentro = pagina.evaluate(f"""() => {{
+              const d = document.querySelector('dialog.nn-modal-historia').getBoundingClientRect();
+              const m = document.getElementById('m{marco}');
+              const c = m.getBoundingClientRect();
+              return {{ visivel: c.top >= d.top && c.top < d.bottom - 40, marcado: m.classList.contains('nn-marco-alvo'), rolou: document.querySelector('dialog.nn-modal-historia').scrollTop > 0 }};
+            }}""")
+            assert dentro == {"visivel": True, "marcado": True, "rolou": True}, (endereco, dentro)
+            # fechar uma epoca aberta pelo endereco limpa o endereco sem sair da pagina
+            pagina.keyboard.press("Escape")
+            _esperar_fechar(pagina)
+            _fechado_e_no_lugar(_estado(pagina), epoca["id"])
+            assert pagina.url.endswith(HISTORIA)
+
+
+@pytest.mark.parametrize("fragmento", ["9999", "abc", "m9999", "titulo-principal", "%E0%A4%A", "t-1530"])
+def test_historia_endereco_invalido_nao_quebra(abrir, fragmento):
+    """Foco 1: endereco que nao e epoca nem marco abre a pagina normal, sem modal e sem erro (o `with` confere)."""
+    with abrir(f"{HISTORIA}#{fragmento}") as pagina:
+        estado = _estado(pagina)
+        assert not estado["aberto"] and estado["epoca"] is None and estado["na_lista"] == estado["epocas"], estado
+        assert pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+
+
+def test_historia_proxima_tres_vezes_e_um_voltar_fecha(abrir):
+    """Foco 3: o cartao abre com pushState, anterior/proxima trocam com replaceState; um voltar fecha o modal."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        antes = _estado(pagina)["historico"]
+        _cartao(pagina, ids[0]).click()
+        for i in range(1, 4):
+            pagina.locator(f"{MODAL_HISTORIA} a.nn-epoca-proxima").click()
+            estado = _estado(pagina)
+            assert estado["aberto"] and estado["epoca"] == ids[i] and estado["hash"] == f"#{ids[i]}", estado
+            assert estado["rotulo"] == f"t-{ids[i]}" and estado["repetidos"] == [], estado
+            assert estado["na_lista"] == estado["epocas"] - 1, estado  # a epoca anterior voltou ao seu lugar
+            assert pagina.locator(MODAL_HISTORIA).evaluate("d => d.scrollTop") == 0
+        pagina.locator(f"{MODAL_HISTORIA} a.nn-epoca-anterior").click()
+        assert _estado(pagina)["epoca"] == ids[2]
+        assert _estado(pagina)["historico"] == antes + 1  # uma entrada so: a do cartao
+        pagina.go_back()
+        _esperar_fechar(pagina)
+        _fechado_e_no_lugar(_estado(pagina), ids[2])
+        assert pagina.url.endswith(HISTORIA)
+        pagina.go_forward()  # e o avancar reabre a epoca do endereco
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal-historia').open")
+        assert _estado(pagina)["epoca"] == ids[2]
+
+
+def test_historia_marco_abre_epoca_no_marco(abrir):
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        epocas = pagina.evaluate(_EPOCAS_E_MARCOS)
+        epoca = epocas[2]
+        marco = epoca["marcos"][-1]
+        link = pagina.locator(f'a.nn-marco[data-marco="{marco}"]')
+        link.scroll_into_view_if_needed()
+        link.click()
+        estado = _estado(pagina)
+        assert estado["aberto"] and estado["epoca"] == epoca["id"] and estado["hash"] == f"#m{marco}", estado
+        assert pagina.evaluate(f"""() => {{
+          const d = document.querySelector('dialog.nn-modal-historia').getBoundingClientRect();
+          const c = document.getElementById('m{marco}').getBoundingClientRect();
+          return c.top >= d.top && c.top < d.bottom - 40;
+        }}""")
+        pagina.keyboard.press("Escape")
+        _esperar_fechar(pagina)
+        _fechado_e_no_lugar(_estado(pagina), epoca["id"])  # o foco volta ao cartao da epoca do marco
+
+
+def test_historia_sem_js_mostra_todas_as_epocas(abrir):
+    with abrir(HISTORIA, java_script_enabled=False) as pagina:
+        assert not pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+        artigos = pagina.locator("li.nn-epoca > article.nn-epoca-conteudo")
+        assert artigos.count() == pagina.locator("li.nn-epoca").count() >= 2
+        assert pagina.locator("li.nn-epoca > article.nn-epoca-conteudo:visible").count() == artigos.count()
+        assert pagina.locator(".nn-epoca-texto:visible").count() == artigos.count()
+        assert pagina.locator(".nn-faixa-anterior, .nn-faixa-proxima").count() == 0
+        # sem JS a lista e vertical, uma epoca embaixo da outra
+        assert pagina.locator("ol.nn-linha-tempo").evaluate("f => getComputedStyle(f).overflowX") == "visible"
+        topos = pagina.locator("li.nn-epoca").evaluate_all("ls => ls.map((l) => l.getBoundingClientRect().top)")
+        assert topos == sorted(topos) and len(set(topos)) == len(topos)
+
+
+def test_historia_390_vertical_sem_estouro(abrir):
+    with abrir(HISTORIA, largura=CELULAR, reduced_motion="reduce") as pagina:
+        faixa = pagina.locator("ol.nn-linha-tempo")
+        assert faixa.evaluate("f => getComputedStyle(f).overflowX") == "visible"
+        caixas = pagina.locator("li.nn-epoca").evaluate_all("ls => ls.map((l) => { const c = l.getBoundingClientRect(); return [c.top, c.bottom]; })")
+        assert all(b[0] >= a[1] for a, b in zip(caixas, caixas[1:]))  # uma embaixo da outra
+        assert pagina.locator("li.nn-epoca .nn-epoca-conteudo:visible").count() == 0  # o conteudo vai para o modal
+        assert not pagina.locator(".nn-faixa-anterior").is_visible() and not pagina.locator(".nn-faixa-proxima").is_visible()
+        assert _estouro(pagina) == {}
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        _cartao(pagina, ids[-1]).click()
+        medidas = pagina.locator(MODAL_HISTORIA).evaluate("""d => {
+          const c = d.getBoundingClientRect();
+          const fora = [...d.querySelectorAll('*')].filter((e) => e.getBoundingClientRect().right > c.right + 1).map((e) => e.className);
+          return { largura: c.width, altura: c.height, rola: d.scrollWidth > d.clientWidth, fora: fora.slice(0, 4) };
+        }""")
+        assert medidas == {"largura": CELULAR, "altura": 800, "rola": False, "fora": []}, medidas  # tela cheia
+
+
+_IMAGEM_VALIDA = None
+
+
+def _imagem_valida() -> str:
+    """Uma WebP de 600 x 400 em data: (a CSP aceita img-src data:), para medir o cartao com a imagem carregada."""
+    global _IMAGEM_VALIDA
+    if _IMAGEM_VALIDA is None:
+        import base64
+        bruto = io.BytesIO()
+        Image.new("RGB", (600, 400), (150, 110, 70)).save(bruto, "WEBP")
+        _IMAGEM_VALIDA = "data:image/webp;base64," + base64.b64encode(bruto.getvalue()).decode()
+    return _IMAGEM_VALIDA
+
+
+def test_historia_imagem_quebrada_mostra_alt(abrir):
+    """Foco 5. O historia.yaml provisorio ainda nao tem imagens: o teste poe no 1o cartao e no 1o artigo a mesma
+    marcacao do _epoca.html (miniatura com alt="" e figura com o alt descritivo). A miniatura carrega uma WebP valida, o
+    cartao e medido, o src vira um arquivo que nao existe e o cartao tem de manter altura e largura; no modal, a imagem
+    quebrada mostra o texto alternativo. O 404 provocado sai da lista de erros da pagina; qualquer outro erro conta."""
+    quebrada = "/historia/nao-existe-de-proposito.webp"
+    alt = "Cena de teste da época no engenho"
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        epoca = pagina.evaluate(_EPOCAS_E_MARCOS)[0]["id"]
+        pagina.evaluate(
+            """([epoca, valida, quebrada, alt]) => {
+              const li = document.getElementById(epoca);
+              const mini = document.createElement('img');
+              mini.className = 'nn-epoca-miniatura';
+              mini.alt = '';
+              mini.src = valida;
+              li.querySelector('.nn-epoca-abrir').prepend(mini);
+              const figura = document.createElement('figure');
+              figura.className = 'nn-epoca-figura';
+              const img = document.createElement('img');
+              img.className = 'nn-epoca-imagem';
+              img.alt = alt;
+              img.src = quebrada;
+              figura.append(img);
+              li.querySelector('.nn-epoca-resumo').before(figura);
+            }""",
+            [epoca, _imagem_valida(), quebrada, alt],
+        )
+        cartao = _cartao(pagina, epoca)
+        pagina.wait_for_function("() => document.querySelector('.nn-epoca-miniatura').naturalWidth === 600")
+        com_imagem = cartao.bounding_box()
+        pagina.evaluate(f"() => {{ document.querySelector('.nn-epoca-miniatura').src = '{quebrada}'; }}")
+        pagina.wait_for_function("() => { const i = document.querySelector('.nn-epoca-miniatura'); return i.complete && i.naturalWidth === 0; }")
+        quebrado = cartao.bounding_box()
+        assert all(abs(com_imagem[k] - quebrado[k]) <= 1 for k in ("width", "height")), (com_imagem, quebrado)
+        mini = pagina.locator(".nn-epoca-miniatura").bounding_box()
+        assert mini["height"] > 100 and abs(mini["width"] * 2 / 3 - mini["height"]) <= 1, mini  # a caixa 3:2 fica
+        cartao.click()
+        imagem = pagina.locator(f"{MODAL_HISTORIA} img.nn-epoca-imagem")
+        pagina.wait_for_function("() => { const i = document.querySelector('dialog img.nn-epoca-imagem'); return i.complete && i.naturalWidth === 0; }")
+        caixa = imagem.bounding_box()
+        assert caixa["width"] > 100 and caixa["height"] >= 16, caixa
+        # o texto alternativo aparece: o recorte da imagem quebrada tem tinta (pixels bem mais escuros que o papel)
+        recorte = np.array(Image.open(io.BytesIO(imagem.screenshot())).convert("L")).astype(float)
+        assert (recorte < recorte.max() - 80).mean() > 0.01, "a imagem quebrada nao mostrou o texto alternativo"
+        pagina.erros[:] = [e for e in pagina.erros if "nao-existe-de-proposito" not in e]
+
+
+def test_historia_peso_abaixo_de_1mb(abrir):
+    with abrir(HISTORIA) as pagina:
+        pagina.evaluate("() => document.fonts.ready")
+        recursos = pagina.evaluate(
+            """() => [performance.getEntriesByType('navigation')[0], ...performance.getEntriesByType('resource')]
+                 .map((r) => ({ nome: r.name, bytes: r.transferSize }))"""
+        )
+        assert not _estado(pagina)["aberto"]
+    assert len(recursos) >= 4 and all(r["bytes"] > 0 for r in recursos), recursos
+    assert sum(r["bytes"] for r in recursos) <= LIMITE_DA_HISTORIA, sorted(recursos, key=lambda r: -r["bytes"])[:3]
+
+
+@pytest.mark.parametrize("esquema", ["light", "dark"])
+def test_axe_historia(abrir, esquema):
+    with abrir(HISTORIA, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        assert _violacoes_do_axe(pagina) == []
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        for epoca in (ids[0], ids[-1]):
+            _cartao(pagina, epoca).click()
+            assert _estado(pagina)["aberto"]
+            assert _violacoes_do_axe(pagina) == [], epoca
+            pagina.keyboard.press("Escape")
+            _esperar_fechar(pagina)
 
 
 # --- Explorar ---

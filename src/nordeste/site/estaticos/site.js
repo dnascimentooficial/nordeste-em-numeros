@@ -1,5 +1,6 @@
 /* Nordeste em Números: valor ao passar o mouse ou o dedo nos gráficos, modal Ampliar do Início, seletores de Estados,
-   Explorar (redesenho no navegador, comparação, zoom de período e de escala), menu e movimento.
+   Explorar (redesenho no navegador, comparação, zoom de período e de escala), linha do tempo e modal das épocas da
+   página Como chegamos, menu e movimento.
 
    Sem bibliotecas. Nada de estilo inline (a Content-Security-Policy é style-src 'self'): a aparência vem só de classes
    do estilo.css e de atributos SVG. O desenho do gráfico repete o de graficos.py, para a vista redesenhada ficar igual
@@ -746,7 +747,8 @@
      abre com showModal() e liga a dica de valor ao SVG grande, como nos gráficos da página. Fecha pelo botão, por Esc
      e por clique fora; o foco volta ao botão que abriu. Sem JavaScript os botões ficam com hidden. */
   function ligarAmpliar() {
-    const dialogo = document.querySelector('dialog.nn-modal');
+    /* o <dialog> das épocas (Como chegamos) também é .nn-modal, mas é de ligarHistoria: este esvazia o corpo ao fechar */
+    const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia)');
     if (!dialogo || typeof dialogo.showModal !== 'function') return;
     const corpo = dialogo.querySelector('.nn-modal-corpo');
     let origem = null;
@@ -785,6 +787,249 @@
       caixa.addEventListener('pointerdown', (evento) => { toque = evento.pointerType === 'touch'; });
       caixa.addEventListener('click', () => { if (!toque) abrir(botao); });
     });
+  }
+
+  /* --- Como chegamos: linha do tempo arrastável e o modal de cada época --------------------------------------- */
+
+  /* Sem JavaScript, a lista vertical das épocas com o artigo completo de cada uma é a página. Com ele (classe nn-js no
+     <html>), os artigos saem da lista; acima de 900 px a lista vira uma faixa horizontal com scroll-snap, que o mouse
+     arrasta e os botões ‹ › rolam de um cartão em um; as setas, Home e End passam o foco entre os cartões.
+
+     O modal é o único <dialog class="nn-modal-historia">: abrir uma época MOVE o <article> dela para lá e fechar o
+     devolve ao seu <li> (nada é clonado, então nenhum id se repete). O endereço acompanha: o cartão e o marco abrem com
+     pushState (#<época> ou #m<ano>), anterior e próxima trocam com replaceState, e o voltar do navegador fecha. Fechar
+     pelo X, pelo Esc ou por fora volta a entrada criada pelo cartão (ou limpa o endereço de quem chegou com ele). Os ids
+     começam com dígito: só getElementById e CSS.escape, nunca um seletor '#1763'. */
+  const LIMIAR_DO_CLIQUE = 6; /* px: até aqui é clique; a partir daqui, arrasto */
+
+  function ligarHistoria() {
+    const faixa = document.querySelector('ol.nn-linha-tempo');
+    const dialogo = document.querySelector('dialog.nn-modal-historia');
+    if (!faixa || !dialogo || typeof dialogo.showModal !== 'function') return;
+    const corpo = dialogo.querySelector('.nn-modal-corpo');
+    const largo = window.matchMedia('(min-width: 901px)');
+    const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    let aberta = null; /* o <li> da época cujo artigo está no modal */
+    let empurrado = false; /* a abertura criou uma entrada no histórico, que o fechar desfaz */
+    let pelaNavegacao = false; /* o modal fecha porque o endereço mudou: o histórico já está certo */
+
+    const epocas = () => [...faixa.querySelectorAll(':scope > li.nn-epoca')];
+    const cartao = (li) => li.querySelector('.nn-epoca-abrir');
+    const artigoDe = (li) => (li === aberta ? corpo.querySelector('.nn-epoca-conteudo') : li.querySelector(':scope > .nn-epoca-conteudo'));
+    const marcoDe = (li, ano) => {
+      const artigo = artigoDe(li);
+      return artigo && artigo.querySelector('#' + CSS.escape('m' + ano));
+    };
+
+    /* `#1654` (época), `#m1763` ou `#1763` (marco): { li, marco }, ou null para qualquer outro endereço */
+    function resolver(hash) {
+      let nome = '';
+      try {
+        nome = decodeURIComponent(hash.replace(/^#/, ''));
+      } catch (erro) {
+        return null; /* % solto no endereço */
+      }
+      if (!nome) return null;
+      for (const id of [nome, 'm' + nome]) {
+        const alvo = document.getElementById(id);
+        if (!alvo) continue;
+        if (alvo.matches('li.nn-epoca') && alvo.parentElement === faixa) return { li: alvo, marco: null };
+        if (alvo.matches('.nn-epoca-marcos li')) {
+          const li = corpo.contains(alvo) ? aberta : alvo.closest('li.nn-epoca');
+          if (li && li.parentElement === faixa) return { li, marco: alvo };
+        }
+      }
+      return null;
+    }
+
+    function devolver() {
+      const artigo = corpo.querySelector('.nn-epoca-conteudo');
+      if (aberta && artigo) aberta.append(artigo);
+      corpo.replaceChildren();
+    }
+
+    /* põe a época no modal (abrindo-o, se preciso) e rola até o marco ou até o topo */
+    function mostrar(li, marco) {
+      const artigo = artigoDe(li);
+      if (!artigo) return;
+      if (li !== aberta) {
+        devolver();
+        aberta = li;
+        corpo.append(artigo);
+      }
+      dialogo.setAttribute('aria-labelledby', artigo.getAttribute('aria-labelledby'));
+      artigo.querySelectorAll('.nn-marco-alvo').forEach((m) => m.classList.remove('nn-marco-alvo'));
+      if (!dialogo.open) dialogo.showModal();
+      if (marco) {
+        marco.classList.add('nn-marco-alvo');
+        const topo = marco.getBoundingClientRect().top - dialogo.getBoundingClientRect().top;
+        dialogo.scrollTop += topo - 72; /* abaixo do botão Fechar, que fica preso no topo */
+      } else {
+        dialogo.scrollTop = 0;
+      }
+    }
+
+    function abrir(li, marco) {
+      mostrar(li, marco);
+      const hash = '#' + (marco ? marco.id : li.id);
+      if (location.hash !== hash) {
+        history.pushState(history.state, '', hash);
+        empurrado = true;
+      }
+    }
+
+    /* o endereço mudou por fora (voltar, avançar, hash digitado): o modal segue o endereço */
+    function seguirEndereco() {
+      const alvo = resolver(location.hash);
+      if (alvo) {
+        if (!dialogo.open) empurrado = true; /* a entrada anterior é a página sem época */
+        if (!dialogo.open || alvo.li !== aberta || alvo.marco) mostrar(alvo.li, alvo.marco);
+      } else if (dialogo.open) {
+        pelaNavegacao = true;
+        dialogo.close();
+      }
+    }
+
+    dialogo.querySelector('.nn-modal-fechar').addEventListener('click', () => dialogo.close());
+    dialogo.addEventListener('click', (evento) => {
+      if (evento.target === dialogo) dialogo.close(); /* o fundo escurecido é o próprio <dialog> */
+    });
+    dialogo.addEventListener('close', () => {
+      if (dialogo.open) { /* o evento close vem numa tarefa depois do close(): o endereço já reabriu outra época */
+        pelaNavegacao = false;
+        return;
+      }
+      const li = aberta;
+      devolver();
+      aberta = null;
+      if (!pelaNavegacao) {
+        if (empurrado) history.back();
+        else if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+      }
+      empurrado = false;
+      pelaNavegacao = false;
+      if (li) cartao(li).focus();
+    });
+    /* anterior e próxima: a outra época no mesmo modal, sem nova entrada no histórico */
+    corpo.addEventListener('click', (evento) => {
+      const link = evento.target.closest('.nn-epoca-nav a[data-epoca]');
+      const li = link && document.getElementById(link.getAttribute('data-epoca'));
+      if (!li || !li.matches('li.nn-epoca') || li.parentElement !== faixa) return;
+      evento.preventDefault();
+      mostrar(li, null);
+      history.replaceState(history.state, '', '#' + li.id);
+      const titulo = corpo.querySelector('.nn-epoca-titulo');
+      if (titulo) {
+        titulo.setAttribute('tabindex', '-1');
+        titulo.focus({ preventScroll: true });
+      }
+    });
+    window.addEventListener('popstate', seguirEndereco);
+    window.addEventListener('hashchange', seguirEndereco);
+
+    /* cartão e marco; o clique que encerra um arrasto é engolido antes de chegar a eles */
+    let arrasto = null;
+    let engolir = false;
+    faixa.addEventListener('click', (evento) => {
+      if (!engolir) return;
+      engolir = false;
+      evento.preventDefault();
+      evento.stopPropagation();
+    }, true);
+    faixa.addEventListener('click', (evento) => {
+      const botao = evento.target.closest('.nn-epoca-abrir');
+      const marco = evento.target.closest('a.nn-marco');
+      const li = (botao || marco) && (botao || marco).closest('li.nn-epoca');
+      if (!li) return;
+      if (botao) {
+        abrir(li, null);
+      } else {
+        const alvo = marcoDe(li, marco.getAttribute('data-marco'));
+        if (!alvo) return;
+        evento.preventDefault();
+        abrir(li, alvo);
+      }
+    });
+
+    /* teclado: setas, Home e End passam o foco de cartão em cartão */
+    faixa.addEventListener('keydown', (evento) => {
+      const atual = evento.target.closest('.nn-epoca-abrir');
+      if (!atual || evento.altKey || evento.ctrlKey || evento.metaKey) return;
+      const cartoes = epocas().map(cartao);
+      const i = cartoes.indexOf(atual);
+      const destino = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: cartoes.length - 1 }[evento.key];
+      if (destino === undefined) return;
+      evento.preventDefault();
+      if (cartoes[destino]) cartoes[destino].focus();
+    });
+
+    /* arrasto com mouse ou caneta, só na faixa horizontal; no toque, a rolagem nativa da faixa já basta */
+    faixa.addEventListener('dragstart', (evento) => evento.preventDefault()); /* links e imagens não viram arrasto do navegador */
+    faixa.addEventListener('pointerdown', (evento) => {
+      if (!largo.matches || evento.pointerType === 'touch' || evento.button !== 0) return;
+      arrasto = { id: evento.pointerId, x: evento.clientX, inicio: faixa.scrollLeft, andou: false };
+    });
+    faixa.addEventListener('pointermove', (evento) => {
+      if (!arrasto || evento.pointerId !== arrasto.id) return;
+      const dx = evento.clientX - arrasto.x;
+      if (!arrasto.andou) {
+        if (Math.abs(dx) < LIMIAR_DO_CLIQUE) return;
+        arrasto.andou = true;
+        faixa.classList.add('nn-arrastando'); /* sem snap e sem seleção de texto enquanto arrasta */
+        faixa.setPointerCapture(evento.pointerId); /* só agora: antes disso o clique tem de chegar ao cartão */
+        const selecao = window.getSelection();
+        if (selecao) selecao.removeAllRanges();
+      }
+      faixa.scrollLeft = arrasto.inicio - dx;
+    });
+    const soltar = (evento) => {
+      if (!arrasto || evento.pointerId !== arrasto.id) return;
+      if (arrasto.andou && evento.type === 'pointerup') {
+        engolir = true; /* o click vem logo depois do pointerup, na mesma tarefa */
+        window.setTimeout(() => { engolir = false; }, 0);
+      }
+      faixa.classList.remove('nn-arrastando');
+      arrasto = null;
+    };
+    faixa.addEventListener('pointerup', soltar);
+    faixa.addEventListener('pointercancel', soltar);
+
+    /* botões ‹ › nas pontas da faixa: uma moldura em volta da lista, só com JavaScript */
+    const moldura = document.createElement('div');
+    moldura.className = 'nn-faixa';
+    const seta = (classe, rotulo, sinal, lado) => {
+      const botao = document.createElement('button');
+      botao.type = 'button';
+      botao.className = 'nn-faixa-seta ' + classe;
+      botao.setAttribute('aria-label', rotulo);
+      const desenho = document.createElement('span');
+      desenho.setAttribute('aria-hidden', 'true');
+      desenho.textContent = sinal;
+      botao.append(desenho);
+      botao.addEventListener('click', () => {
+        if (botao.getAttribute('aria-disabled') === 'true') return;
+        const primeira = faixa.querySelector(':scope > li.nn-epoca');
+        const passo = primeira.getBoundingClientRect().width + (parseFloat(getComputedStyle(faixa).columnGap) || 0);
+        faixa.scrollBy({ left: lado * passo, behavior: movimento.matches ? 'smooth' : 'auto' });
+      });
+      return botao;
+    };
+    const anterior = seta('nn-faixa-anterior', 'Épocas anteriores', '‹', -1);
+    const proxima = seta('nn-faixa-proxima', 'Próximas épocas', '›', 1);
+    faixa.before(moldura);
+    moldura.append(anterior, faixa, proxima);
+    const marcarPontas = () => {
+      const fim = faixa.scrollWidth - faixa.clientWidth;
+      anterior.setAttribute('aria-disabled', String(faixa.scrollLeft <= 1));
+      proxima.setAttribute('aria-disabled', String(faixa.scrollLeft >= fim - 1));
+    };
+    faixa.addEventListener('scroll', marcarPontas, { passive: true });
+    window.addEventListener('resize', marcarPontas);
+    marcarPontas();
+
+    /* quem chega com o endereço de uma época vê o modal dela; fechar só limpa o endereço */
+    const inicial = resolver(location.hash);
+    if (inicial) mostrar(inicial.li, inicial.marco);
   }
 
   /* --- menu em abas: no celular, a aba da página aberta fica à vista ------------------------------------------ */
@@ -890,10 +1135,14 @@
   if (typeof module === 'object' && module.exports) module.exports = { numero };
   if (typeof document === 'undefined') return;
 
+  /* o quanto antes (o script é defer): o CSS esconde os artigos das épocas na lista e liga o que só existe com JS */
+  document.documentElement.classList.add('nn-js');
+
   function iniciar() {
     centralizarAba();
     document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica);
     ligarAmpliar();
+    ligarHistoria();
     ligarEstados();
     ligarExplorar();
     const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;

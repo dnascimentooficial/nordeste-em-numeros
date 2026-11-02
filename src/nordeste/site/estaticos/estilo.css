@@ -1993,6 +1993,162 @@ html:has(.nn-modal[open]) {
   border-color: var(--nn-hist-borda);
 }
 
+/* com o site.js: os artigos saem da lista (vão para o modal); a faixa horizontal e os botões ‹ › acima de 900 px */
+
+.nn-js .nn-historia .nn-linha-tempo .nn-epoca-conteudo {
+  display: none;
+}
+
+.nn-historia .nn-faixa {
+  min-width: 0;
+}
+
+.nn-historia .nn-faixa-seta {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .nn-js .nn-historia .nn-faixa {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0 0 3px;
+    border: 1px solid var(--nn-linha);
+    border-radius: 50%;
+    background: var(--nn-hist-selo);
+    color: var(--nn-tinta);
+    font: 400 30px/1 var(--nn-serifada);
+    cursor: pointer;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta:hover {
+    border-color: var(--nn-laranja);
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"]:hover {
+    border-color: var(--nn-linha);
+  }
+
+  /* a faixa: um cartão por coluna, presos pelo snap; o fio é o fundo (local: corre com o conteúdo, de ponta a ponta) */
+  .nn-js .nn-historia .nn-linha-tempo {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(260px, 300px);
+    align-items: start;
+    gap: 28px;
+    padding: 44px 6px 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nn-sepia) transparent;
+    background: linear-gradient(var(--nn-laranja), var(--nn-laranja)) 0 19px / 100% 3px no-repeat local;
+    cursor: grab;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo::before {
+    content: none;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando {
+    scroll-snap-type: none;
+    cursor: grabbing;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando .nn-epoca-abrir {
+    cursor: grabbing;
+  }
+
+  .nn-js .nn-historia .nn-epoca {
+    scroll-snap-align: start;
+    gap: 12px;
+  }
+
+  /* o anel da época fica sobre o fio, acima do cartão */
+  .nn-js .nn-historia .nn-epoca::before {
+    left: 14px;
+    top: -35px;
+  }
+
+  .nn-js .nn-historia .nn-epoca-abrir {
+    max-width: none;
+  }
+
+  /* os marcos, embaixo do cartão: o ponto laranja maior, o carimbo do ano e o título */
+  .nn-js .nn-historia .nn-marcos-linha {
+    padding-left: 30px;
+  }
+
+  .nn-js .nn-historia .nn-marcos-linha li::before {
+    left: -28px;
+    top: 9px; /* na altura do carimbo do ano */
+  }
+
+  .nn-js .nn-historia a.nn-marco {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding-block: 6px;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+}
+
+/* o modal das épocas: coluna de leitura, Fechar preso no topo e o marco de quem chegou por ele em destaque */
+
+.nn-historia .nn-modal-historia {
+  width: min(880px, calc(100vw - 32px));
+}
+
+.nn-historia .nn-modal-historia .nn-modal-topo {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.nn-historia .nn-modal-historia .nn-modal-fechar {
+  background: var(--nn-hist-selo);
+}
+
+.nn-historia .nn-modal-historia .nn-epoca-conteudo {
+  padding-top: 0;
+}
+
+.nn-historia .nn-modal-historia .nn-epoca-titulo:focus {
+  outline: none; /* o foco vai ao título só para o leitor de tela anunciar a nova época */
+}
+
+.nn-historia .nn-epoca-marcos .nn-marco-alvo {
+  margin-inline: -12px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--nn-laranja);
+  border-radius: 0 12px 12px 0;
+  background: var(--nn-hist-selo);
+}
+
+@media (max-width: 560px), (orientation: landscape) and (max-height: 520px) {
+  .nn-historia .nn-modal-historia {
+    width: 100vw;
+  }
+}
+
 /* --- movimento: só para quem não pediu menos movimento --- */
 
 @media (prefers-reduced-motion: no-preference) {
