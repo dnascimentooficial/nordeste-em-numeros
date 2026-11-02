@@ -1,5 +1,6 @@
 """README: cobre o que o usuario precisa para a primeira coleta real e a tabela de indicadores nunca fica velha."""
 
+import re
 import shutil
 from pathlib import Path
 from urllib.parse import urlparse
@@ -113,5 +114,6 @@ def test_comando_atualiza_o_readme_da_raiz(tmp_path, capsys):
 
 def test_dependencias_importadas_diretamente_estao_declaradas():
     import tomllib
-    declaradas = set(tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["dependencies"])
+    dependencias = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["dependencies"]
+    declaradas = {re.match(r"[A-Za-z0-9_.\-]+", dependencia).group(0).lower() for dependencia in dependencias}
     assert {"pandas", "numpy", "pyarrow", "pyyaml", "requests", "certifi", "openpyxl", "xlrd"} <= declaradas
