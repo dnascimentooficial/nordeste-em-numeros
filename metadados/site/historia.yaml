@@ -72,7 +72,7 @@ epocas:
       - {ano: 1654, titulo: "Os holandeses deixam o Recife", texto: "A capitulação, em janeiro, encerra a ocupação. O açúcar das Antilhas entra na disputa logo depois."}
       - {ano: 1661, titulo: "Paz de Haia", texto: "Portugal paga indenização aos Países Baixos, que desistem do Nordeste."}
       - {ano: 1763, titulo: "A capital vai de Salvador para o Rio", texto: "O Rio, porto do ouro de Minas, vira sede do governo da colônia.",
-         imagem: {arquivo: "marco-1763.webp", titulo: "Entrada do Rio de Janeiro vista do ancoradouro", autor: "George Raper (atribuída), National Library of Australia", data: "século XVIII", licenca: "dominio-publico", alt: "Aquarela da entrada da baía de Guanabara, com o Pão de Açúcar à esquerda, uma fortaleza à direita e barcos na água.", url: "https://commons.wikimedia.org/wiki/File:Brazil_18thc_GuanabaraBay.jpg"}}
+         imagem: {arquivo: "marco-1763.webp", titulo: "Entrada do Rio de Janeiro vista do ancoradouro, aquarela do século XVIII", autor: "George Raper (atribuída), National Library of Australia", data: "século XVIII", licenca: "dominio-publico", alt: "Aquarela da entrada da baía de Guanabara, com o Pão de Açúcar à esquerda, uma fortaleza à direita e barcos na água.", url: "https://commons.wikimedia.org/wiki/File:Brazil_18thc_GuanabaraBay.jpg"}}
     numeros:
       - valor: "cerca de 877 toneladas"
         legenda: "Ouro produzido no Brasil no século XVIII, na estimativa mais citada."
@@ -242,7 +242,7 @@ epocas:
       - {ano: 1952, titulo: "Nasce o Banco do Nordeste", texto: "A Lei 1.649, de julho, cria o banco, com sede em Fortaleza."}
       - {ano: 1955, titulo: "Paulo Afonso começa a gerar energia", texto: "A Chesf inaugura a primeira usina na cachoeira do São Francisco."}
       - {ano: 1959, titulo: "GTDN e Sudene", texto: "Sai o relatório coordenado por Furtado, e em dezembro a Lei 3.692 institui a Sudene.",
-         imagem: {arquivo: "marco-1959.webp", titulo: "Celso Furtado, foto de 1962", autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional", data: "1962", licenca: "dominio-publico", alt: "Fotografia em preto e branco de Celso Furtado, de terno e gravata, sentado a uma mesa com papéis, olhando para o lado.", url: "https://commons.wikimedia.org/wiki/File:Celso_Furtado.tif"}}
+         imagem: {arquivo: "marco-1959.webp", titulo: "Celso Furtado, foto de 1962", autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional", data: "1962", licenca: "dominio-publico", alt: "Fotografia em preto e branco de Celso Furtado, de terno e gravata, sentado a uma mesa, olhando para o lado.", url: "https://commons.wikimedia.org/wiki/File:Celso_Furtado.tif"}}
       - {ano: 1961, titulo: "Começa o 34/18", texto: "A Lei 3.995 cria o desconto no imposto de renda para investir no Nordeste. A Lei 4.239, de 1963, o amplia."}
     numeros:
       - valor: "menos de um terço"
@@ -269,7 +269,7 @@ epocas:
       autor: "Autor desconhecido, Fundo Correio da Manhã, Arquivo Nacional"
       data: "1960"
       licenca: "dominio-publico"
-      alt: "Fotografia de um grupo de homens de terno caminhando numa visita oficial, cercados de soldados e de populares; entre eles estão Juscelino Kubitschek, João Goulart, Celso Furtado e Parsifal Barroso."
+      alt: "Fotografia de um grupo de homens de terno caminhando numa visita oficial, cercados de soldados e de populares."
       url: "https://commons.wikimedia.org/wiki/File:Juscelino_Kubitschek,_Jo%C3%A3o_Goulart,_Celso_Furtado_e_Parsifal_Barroso_(1960).tif"
 
   - id: "1964"
@@ -288,7 +288,7 @@ epocas:
     marcos:
       - {ano: 1964, titulo: "Furtado perde os direitos políticos", texto: "Em abril, com base no Ato Institucional n. 1, ele deixa a Sudene."}
       - {ano: 1970, titulo: "Programa de Integração Nacional", texto: "O Decreto-Lei 1.106 manda 30% dos incentivos fiscais para o programa que começa pela Transamazônica.",
-         imagem: {arquivo: "marco-1970.webp", titulo: "Pau do Presidente, marco do início da Transamazônica, em Altamira (PA)", autor: "Autor desconhecido, Fundo Agência Nacional, Arquivo Nacional", data: "1972", licenca: "dominio-publico", alt: "Fotografia aérea em preto e branco do monumento de duas colunas que marca o início da rodovia Transamazônica, numa praça de terra à beira da estrada.", url: "https://commons.wikimedia.org/wiki/File:Monumento_que_marca_o_in%C3%ADcio_da_constru%C3%A7%C3%A3o_da_Rodovia_Transamaz%C3%B4nica,_conhecido_como_%E2%80%9CPau_do_Presidente%E2%80%9D,_Altamira_(PA).jpg"}}
+         imagem: {arquivo: "marco-1970.webp", titulo: "Pau do Presidente, marco do início da Transamazônica em Altamira (PA), foto de 1972", autor: "Autor desconhecido, Fundo Agência Nacional, Arquivo Nacional", data: "1972", licenca: "dominio-publico", alt: "Fotografia aérea em preto e branco do monumento de duas colunas que marca o início da rodovia Transamazônica, numa praça de terra à beira da estrada.", url: "https://commons.wikimedia.org/wiki/File:Monumento_que_marca_o_in%C3%ADcio_da_constru%C3%A7%C3%A3o_da_Rodovia_Transamaz%C3%B4nica,_conhecido_como_%E2%80%9CPau_do_Presidente%E2%80%9D,_Altamira_(PA).jpg"}}
       - {ano: 1974, titulo: "Nasce o Finor", texto: "O Decreto-Lei 1.376 reúne os incentivos do Nordeste num fundo."}
     numeros:
       - valor: "30%"

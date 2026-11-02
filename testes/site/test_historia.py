@@ -9,6 +9,7 @@ from nordeste.site.conteudo import ErroConteudo
 from nordeste.site.dados import Ponto
 from nordeste.site.historia import (
     PESO_MAXIMO_DA_EPOCA,
+    PESO_MAXIMO_DO_CARTAO,
     PESO_MAXIMO_DO_MARCO,
     Epoca,
     Historia,
@@ -16,6 +17,7 @@ from nordeste.site.historia import (
     Marco,
     NumeroHistorico,
     TIPOS,
+    arquivo_do_cartao,
     carregar_historia,
     medidas_da_webp,
     parcela_do_nordeste,
@@ -530,11 +532,26 @@ def test_imagens_existem_e_pesam_ate_150kb():
         assert abs(largura * 9 - altura * 21) <= 21, (onde, largura, altura)  # 21:9, com folga de 1 px na altura
     nomes = [i.arquivo for _, i, _ in imagens]
     assert len(nomes) == len(set(nomes))
+    # cada epoca tem a miniatura do cartao (mesmo recorte, reduzido), ate 25 000 bytes e em 21:9
+    cartoes = [arquivo_do_cartao(i.arquivo) for onde, i, _ in imagens if onde.startswith("epoca")]
+    assert len(cartoes) == 8
+    for nome in cartoes:
+        arquivo = pasta / nome
+        assert arquivo.is_file() and arquivo.stat().st_size <= PESO_MAXIMO_DO_CARTAO, (nome, arquivo.stat().st_size)
+        largura, altura = medidas_da_webp(arquivo)
+        assert abs(largura * 9 - altura * 21) <= 21 and 560 <= largura <= 720, (nome, largura, altura)
     # nenhum arquivo sobrando na pasta: tudo o que vai ao site tem credito
-    assert sorted(p.name for p in pasta.iterdir()) == sorted(nomes)
+    assert sorted(p.name for p in pasta.iterdir()) == sorted(nomes + cartoes)
+
+
+def test_arquivo_do_cartao_por_convencao():
+    assert arquivo_do_cartao("1530.webp") == "1530-cartao.webp"
+    assert arquivo_do_cartao("epoca-1600.webp") == "epoca-1600-cartao.webp"
 
 
 def test_licenca_lista_cada_imagem():
     licenca = (RAIZ / "LICENSE.md").read_text(encoding="utf-8")
     for onde, imagem, _ in _imagens_reais():
         assert imagem.arquivo in licenca, onde
+    # as miniaturas dos cartoes entram pela convencao, citada no LICENSE.md
+    assert "`<época>-cartao.webp`" in licenca

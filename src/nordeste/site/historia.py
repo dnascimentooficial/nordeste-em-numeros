@@ -30,7 +30,9 @@ PONTUACAO_FINAL = (".", "?", "!")
 # opcional, so quando ha imagem livre do proprio fato, carrega so com o modal aberto
 PESO_MAXIMO_DA_EPOCA = 150_000
 PESO_MAXIMO_DO_MARCO = 80_000
+PESO_MAXIMO_DO_CARTAO = 25_000  # a miniatura do cartao, arquivo proprio (as 8 da faixa cabem no 1 MB da pagina)
 PROPORCAO = (21, 9)
+SUFIXO_DO_CARTAO = "-cartao"
 
 _COLUNAS_DOS_CENSOS = ("ano", "populacao_nordeste", "populacao_brasil", "fonte")
 
@@ -239,6 +241,12 @@ def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
 
 
 # --- medidas das imagens ---
+
+def arquivo_do_cartao(arquivo: str) -> str:
+    """A miniatura do cartao de uma epoca, por convencao: `1530.webp` -> `1530-cartao.webp` (mesmo recorte, reduzido)."""
+    base, ponto, extensao = arquivo.rpartition(".")
+    return f"{base}{SUFIXO_DO_CARTAO}{ponto}{extensao}" if ponto else f"{arquivo}{SUFIXO_DO_CARTAO}"
+
 
 def medidas_da_webp(caminho: Path) -> tuple[int, int]:
     """(largura, altura) lidas do cabecalho da WebP (VP8, VP8L ou VP8X), sem depender do Pillow no gerador."""

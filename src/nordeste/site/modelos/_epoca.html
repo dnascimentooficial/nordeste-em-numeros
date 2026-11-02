@@ -7,7 +7,7 @@
     <li class="nn-epoca" id="{{ e.id }}">
       <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}" aria-haspopup="dialog">
 {% if e.imagem %}
-        <img class="nn-epoca-miniatura" src="{{ e.imagem.src }}" alt="" width="{{ e.imagem.largura }}" height="{{ e.imagem.altura }}" loading="lazy">
+        <img class="nn-epoca-miniatura" src="{{ e.imagem.cartao.src }}" alt="" width="{{ e.imagem.cartao.largura }}" height="{{ e.imagem.cartao.altura }}" loading="lazy">
 {% endif %}
         <span class="nn-epoca-periodo">{{ e.periodo }}</span>
         <span class="nn-epoca-nome">{{ e.nome }}</span>

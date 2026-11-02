@@ -32,12 +32,14 @@ from nordeste.site.formatacao import numero
 from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico
 from nordeste.site.historia import (
     PESO_MAXIMO_DA_EPOCA,
+    PESO_MAXIMO_DO_CARTAO,
     PESO_MAXIMO_DO_MARCO,
     PROPORCAO,
     ROTULO_DA_LICENCA,
     TIPOS,
     Historia,
     ImagemHistorica,
+    arquivo_do_cartao,
     carregar_historia,
     medidas_da_webp,
     parcela_do_nordeste,
@@ -360,30 +362,45 @@ def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict) -> dic
 
 # --- Como chegamos ate aqui ---
 
-def _medidas_da_imagem(imagem: ImagemHistorica, peso_maximo: int) -> tuple[int, int]:
+def _medidas_da_imagem(arquivo: str, peso_maximo: int, falta: str | None = None) -> tuple[int, int]:
     """Largura e altura do arquivo em estaticos/historia/ (vao para o width e o height do HTML, sem salto de layout).
 
-    Recusa arquivo que falta, que passa do peso ou que nao esta em 21:9 (recorte feito no arquivo, nao pelo navegador).
+    Recusa arquivo que falta (com a mensagem `falta`, quando dada), que passa do peso ou que nao esta em 21:9 (recorte
+    feito no arquivo, nao pelo navegador).
     """
-    caminho = PASTA_ESTATICOS / "historia" / imagem.arquivo
+    caminho = PASTA_ESTATICOS / "historia" / arquivo
     if not caminho.is_file():
-        raise ErroConteudo(f"historia.yaml cita {imagem.arquivo}, que não está em estaticos/historia/ do pacote.")
+        raise ErroConteudo(falta or f"historia.yaml cita {arquivo}, que não está em estaticos/historia/ do pacote.")
     if caminho.stat().st_size > peso_maximo:
-        raise ErroConteudo(f"{imagem.arquivo}: {caminho.stat().st_size} bytes, acima de {peso_maximo}.")
+        raise ErroConteudo(f"{arquivo}: {caminho.stat().st_size} bytes, acima de {peso_maximo}.")
     largura, altura = medidas_da_webp(caminho)
     base, alto = PROPORCAO
     if abs(largura * alto - altura * base) > base:  # folga de 1 px na altura
-        raise ErroConteudo(f"{imagem.arquivo}: {largura} x {altura}, fora da proporção {base}:{alto}.")
+        raise ErroConteudo(f"{arquivo}: {largura} x {altura}, fora da proporção {base}:{alto}.")
     return largura, altura
 
 
 def _credito(imagem: ImagemHistorica, peso_maximo: int = PESO_MAXIMO_DA_EPOCA) -> dict:
-    largura, altura = _medidas_da_imagem(imagem, peso_maximo)
+    largura, altura = _medidas_da_imagem(imagem.arquivo, peso_maximo)
     return {
         "src": PASTA_IMAGENS_HISTORIA + imagem.arquivo, "alt": imagem.alt, "titulo": imagem.titulo,
         "autor": imagem.autor, "data": imagem.data, "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url,
         "largura": largura, "altura": altura,
     }
+
+
+def _imagem_da_epoca(imagem: ImagemHistorica) -> dict:
+    """O credito da imagem da epoca (artigo e modal) e a miniatura do cartao, arquivo proprio por convencao.
+
+    O cartao usa so a miniatura (ate 25 000 bytes): as 8 da faixa cabem no limite de 1 MB da pagina sem modal aberto.
+    """
+    nome = arquivo_do_cartao(imagem.arquivo)
+    largura, altura = _medidas_da_imagem(
+        nome, PESO_MAXIMO_DO_CARTAO,
+        falta=f"{imagem.arquivo} não tem a miniatura do cartão: falta {nome} em estaticos/historia/ do pacote "
+              f"(o mesmo recorte reduzido, até {PESO_MAXIMO_DO_CARTAO} bytes).",
+    )
+    return {**_credito(imagem), "cartao": {"src": PASTA_IMAGENS_HISTORIA + nome, "largura": largura, "altura": altura}}
 
 
 def _marcos(epoca) -> list[dict]:
@@ -439,7 +456,7 @@ def _epocas(historia: Historia) -> list[dict]:
             ],
             "o_que_ficou": e.o_que_ficou, "interpretacao": TIPOS["interpretacao"],
             "fontes": [{"texto": f["texto"], "url": f.get("url")} for f in e.fontes],
-            "imagem": None if e.imagem is None else _credito(e.imagem),
+            "imagem": None if e.imagem is None else _imagem_da_epoca(e.imagem),
             "anterior": epocas[i - 1].id if i > 0 else None,
             "proxima": epocas[i + 1].id if i + 1 < len(epocas) else None,
         }
