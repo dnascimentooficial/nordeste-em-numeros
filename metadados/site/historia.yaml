@@ -107,7 +107,7 @@ epocas:
 
       Ao longo do século, o café do Vale do Paraíba, e depois o de São Paulo, tomou o lugar do açúcar na exportação. Quando o tráfico de africanos acabou, em 1850, o preço do escravizado subiu nas fazendas de café. Proprietários do Nordeste venderam gente para lá. Robert Slenes estima que pelo menos 200 mil pessoas foram levadas para o Sudeste por esse tráfico interno, entre as décadas de 1850 e 1880. A venda foi decisão de quem era dono aqui. A procura vinha de lá.
 
-      A Grande Seca de 1877 a 1879 matou dezenas de milhares de pessoas só no Ceará. Para a região inteira, as estimativas divergem tanto que prefiro não usar nenhuma. Fico com a ordem de grandeza mais segura. A escravidão só acabou em 1888, um ano antes do fim do Império, e o Nordeste chegou à República com menos peso na economia do país do que tinha no começo do século.
+      A Grande Seca de 1877 a 1879 matou dezenas de milhares de pessoas só no Ceará. Rodolpho Theóphilo, que viu a seca de perto, contou 27.378 mortos em Fortaleza em pouco mais de dois meses. Para a região inteira, as estimativas divergem tanto que prefiro não usar nenhuma. A escravidão só acabou em 1888, um ano antes do fim do Império, e o Nordeste chegou à República com menos peso na economia do país do que tinha no começo do século.
     marcos:
       - {ano: 1817, titulo: "Revolução Pernambucana", texto: "Impostos para a Corte, seca de 1816 e preços ruins levam Pernambuco à revolta."}
       - {ano: 1850, titulo: "Fim do tráfico atlântico", texto: "Começa a venda de escravizados do Nordeste para as fazendas de café."}
@@ -118,9 +118,9 @@ epocas:
         tipo: historiador
         fonte: "Robert Slenes, tese de doutorado (Stanford, 1976), citada na revista Resgate (Unicamp)"
       - valor: "dezenas de milhares"
-        legenda: "Mortos na Grande Seca de 1877 a 1879, só no Ceará. As estimativas divergem, e por isso uso a ordem de grandeza."
+        legenda: "Mortos na Grande Seca de 1877 a 1879, só no Ceará, como piso. Só em Fortaleza foram 27.378 em pouco mais de dois meses, na conta de Rodolpho Theóphilo."
         tipo: historiador
-        fonte: "Artigo acadêmico sobre a Grande Seca no Ceará, Redalyc, documento 307470821003"
+        fonte: "María Verónica Secreto, A seca de 1877-1879 no Império do Brasil, História, Ciências, Saúde – Manguinhos, v. 27, n. 1, 2020, p. 36, citando Rodolpho Theóphilo"
     o_que_ficou: "No Império o Nordeste perdeu a exportação para o café e perdeu gente, vendida para o Sul. A seca de 1877 fixou a imagem da região como lugar de flagelo, e essa imagem ainda pesa."
     fontes:
       - texto: "Robert Slenes, tese de doutorado (Stanford, 1976), citada na revista Resgate (Unicamp)"
@@ -129,7 +129,8 @@ epocas:
         url: https://www.redalyc.org/journal/770/77070146007/77070146007.pdf
       - texto: "Artigo sobre a base social de 1817, revista Almanack (USP)"
         url: https://periodicos.usp.br/alb/article/download/11605/13374/14480
-      - texto: "Artigo acadêmico sobre a Grande Seca no Ceará, Redalyc, documento 307470821003"
+      - texto: "María Verónica Secreto, A seca de 1877-1879 no Império do Brasil, História, Ciências, Saúde – Manguinhos, v. 27, n. 1, 2020"
+        url: https://www.scielo.br/j/hcsm/a/ynZxC9TkBJS5GdCnjKXmGKd/
     imagem:
       arquivo: "1808.webp"
       titulo: "Bênção das bandeiras da Revolução de 1817"
@@ -145,7 +146,7 @@ epocas:
     nome: "Primeira República: café com leite, seca e Canudos"
     resumo: "O poder federal fica com São Paulo e Minas, a indústria nasce no Sudeste e a seca ganha um órgão federal."
     texto: |-
-      Na República, o governo federal ficou nas mãos de São Paulo e Minas Gerais, e a política econômica girou em torno do café. A indústria nasceu perto do café. Pelas contas de Wilson Cano, a parte de São Paulo na produção industrial do país saiu de cerca de um sexto, em 1907, para mais de um terço, em 1929. Procurei o número do Nordeste nesses anos e não achei. Prefiro não chutar.
+      Na República, o governo federal ficou nas mãos de São Paulo e Minas Gerais, e a política econômica girou em torno do café. A indústria nasceu perto do café. Pelas contas de Wilson Cano, a parte de São Paulo na produção industrial do país saiu de cerca de um sexto, em 1907, para mais de um terço, em 1929. O Nordeste andou no sentido contrário. Segundo o mesmo autor, a região fazia cerca de 17% da produção industrial do país em 1907, e em 1939 já tinha caído para cerca de 10%.
 
       No sertão da Bahia, o arraial de Canudos foi destruído pelo Exército em 1897, na quarta expedição mandada contra ele. As contas de mortos que circulam não têm origem acadêmica que eu tenha conseguido conferir, por isso não ponho número aqui.
 
@@ -158,13 +159,18 @@ epocas:
       - {ano: 1909, titulo: "Nasce a Inspetoria de Obras Contra as Secas", texto: "O Decreto 7.619 cria o primeiro órgão federal contra as secas."}
       - {ano: 1919, titulo: "A inspetoria vira federal no nome", texto: "O Decreto 13.687 cria a Inspetoria Federal de Obras Contra as Secas."}
     numeros:
-      - valor: "de um sexto a mais de um terço"
-        legenda: "Parte de São Paulo no valor da produção industrial do Brasil, de 1907 a 1929."
+      - valor: "de 15,9% para 37,5%"
+        legenda: "Parte de São Paulo na produção industrial do Brasil, de 1907 a 1929."
         tipo: historiador
-        fonte: "Wilson Cano, Raízes da concentração industrial em São Paulo"
+        fonte: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970, p. 199"
+      - valor: "de cerca de 17% para cerca de 10%"
+        legenda: "Parte do Nordeste na produção industrial do Brasil, de 1907 a 1939."
+        tipo: historiador
+        fonte: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970, p. 56"
     o_que_ficou: "A seca virou política federal em 1909, mas a obra pública chegou primeiro onde já havia poder. E a indústria do país nasceu longe do Nordeste."
     fontes:
-      - texto: "Wilson Cano, Raízes da concentração industrial em São Paulo"
+      - texto: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970 (repositório do Ipea)"
+        url: https://repositorio.ipea.gov.br/bitstream/11058/14495/1/Desequilibrios_regionais_concentra%c3%a7%c3%a3o_industrial.pdf
       - texto: "Artigo sobre as obras contra as secas de 1909 a 1945, revista Risco (USP)"
         url: https://revistas.usp.br/risco/article/view/203768
       - texto: "DNOCS, Carta de Serviços ao Cidadão (histórico do órgão)"
@@ -201,13 +207,15 @@ epocas:
       - {ano: 1945, titulo: "Nascem a Chesf e o DNOCS", texto: "Em outubro, decreto-lei cria a Chesf. Em dezembro, a inspetoria contra as secas vira DNOCS."}
     numeros:
       - valor: "4%"
-        legenda: "Piso da receita tributária federal para a defesa contra as secas, fixado pela Constituição de 1934."
+        legenda: "Gasto mínimo da União com a defesa contra as secas, como parte da sua receita tributária sem aplicação especial, fixado pela Constituição de 1934."
         tipo: oficial
         fonte: "Constituição de 1934, art. 177"
     o_que_ficou: "Foi nessa época que a saída virou destino para gerações de nordestinos, e o Sudeste cresceu também com esse trabalho."
     fontes:
       - texto: "Constituição de 1934, art. 177 (Planalto)"
         url: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao34.htm
+      - texto: "Denis de Mendonça Bernardes, Notas sobre a formação social do Nordeste, Lua Nova, n. 71, 2007, p. 67 (transcreve o art. 177)"
+        url: https://www.scielo.br/j/ln/a/sqrVzP6vcvNqvzr4frCnKnC/
       - texto: "Decreto-Lei 8.031, de 3 de outubro de 1945, que cria a Chesf (Planalto)"
         url: https://planalto.gov.br/ccivil_03/Decreto-Lei/Del8031.htm
       - texto: "Artigo sobre os campos de concentração de 1932, Anais do Simpósio Nacional da ANPUH, 2019"
@@ -231,7 +239,7 @@ epocas:
     texto: |-
       As secas de 1951 a 1952 e de 1958 mostraram o limite dos açudes. Em 1952 uma lei criou o Banco do Nordeste, com sede em Fortaleza. Em 1955 a Chesf inaugurou a primeira usina de Paulo Afonso.
 
-      Em 1959 saiu o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, o GTDN, coordenado por Celso Furtado. O diagnóstico era direto. A renda por pessoa do Nordeste não chegava a um terço da do Centro-Sul, e o problema era econômico e de estrutura, não só de clima. A proposta era industrializar a região.
+      Em 1959 saiu o relatório do Grupo de Trabalho para o Desenvolvimento do Nordeste, o GTDN, coordenado por Celso Furtado. O diagnóstico era direto. A renda por pessoa do Nordeste não chegava a um terço da do Centro-Sul. Para o relatório, a verdadeira causa do atraso estava "na pobreza relativa do seu suporte físico": terra escassa e pouco capital acumulado. A proposta era industrializar a região.
 
       O relatório também olhou para dentro. A política de açudes tinha servido às grandes propriedades. No mesmo ano, as reportagens de Antônio Callado no Correio da Manhã deram nome à rede de latifundiários e políticos que vivia das obras contra a seca: indústria da seca. O nome pegou.
 
@@ -253,6 +261,8 @@ epocas:
     fontes:
       - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, 1959 (ficha na Biblioteca do BNDES)"
         url: https://web.bndes.gov.br/bib/jspui/handle/1408/17760
+      - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, reeditado na Revista Econômica do Nordeste, v. 28, n. 4, 1997, p. 391"
+        url: https://www.bnb.gov.br/revista/ren/article/view/2095
       - texto: "Trechos do relatório do GTDN, Revista Brasileira de Geografia (IBGE)"
         url: https://rbg.ibge.gov.br/index.php/rbg/article/view/2493/1872
       - texto: "Lei 1.649, de 19 de julho de 1952, que cria o Banco do Nordeste (Planalto)"
