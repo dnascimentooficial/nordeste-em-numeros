@@ -6,7 +6,7 @@ Data da pesquisa: 2026-11-02.
 
 ## Como ler este dossiê
 
-**Limite de acesso desta pesquisa (importante).** A rede desta sessão bloqueou a abertura direta de todas as páginas que tentei: `biblioteca.ibge.gov.br`, `censo2010.ibge.gov.br`, `anuario.ibge.gov.br`, `nphed.cedeplar.ufmg.br`, `www.ceicdata.com` (WebFetch: host fora dos domínios permitidos; curl: 403 do proxy ou sem conexão, também para `repositorio.ipea.gov.br`, `bnb.gov.br`, `sidra.ibge.gov.br`, `commons.wikimedia.org` e `upload.wikimedia.org`). Por isso **nenhum número abaixo foi lido por mim na tabela ou na página original**. O que eu tinha era a busca na web, que devolve trechos das páginas indexadas. Cada número traz o nível de confirmação:
+**Limite de acesso desta pesquisa (importante).** A rede desta sessão bloqueou a abertura direta de todas as páginas que tentei: `biblioteca.ibge.gov.br`, `censo2010.ibge.gov.br`, `anuario.ibge.gov.br`, `nphed.cedeplar.ufmg.br`, `www.ceicdata.com` (WebFetch: host fora dos domínios permitidos; curl: 403 do proxy ou sem conexão, também para `repositorio.ipea.gov.br`, `bnb.gov.br`, `sidra.ibge.gov.br`, `commons.wikimedia.org` e `upload.wikimedia.org`). Por isso **nenhum número abaixo foi lido por mim na tabela ou na página original**, com uma exceção: a seção "Abertura: população nos censos", atualizada depois com a API do SIDRA (`apisidra.ibge.gov.br`), que está acessível. O que eu tinha era a busca na web, que devolve trechos das páginas indexadas. Cada número traz o nível de confirmação:
 
 - **[A] trecho da fonte visto na busca:** a busca mostrou o trecho da própria fonte citada (documento oficial, artigo acadêmico ou obra) com o número. Falta abrir a página e anotar tabela e página exatas.
 - **[B] fonte secundária:** o número apareceu em fonte secundária (imprensa, compilação, verbete) que cita a origem, ou em duas fontes secundárias que coincidem.
@@ -22,35 +22,49 @@ Data da pesquisa: 2026-11-02.
 
 ## Abertura: população nos censos
 
-Recorte: estados que hoje formam o Nordeste (MA, PI, CE, RN, PB, PE, AL, SE, BA), somados em todos os anos. A divisão regional atual não existia em 1872 nem antes de 1970.
+Recorte: estados que hoje formam o Nordeste (MA, PI, CE, RN, PB, PE, AL, SE, BA). A divisão regional atual não existia em 1872 nem antes de 1970; o IBGE já entrega os anos antigos reagrupados pela divisão atual.
 
-| Ano | População NE | População Brasil | % NE | Fonte (tabela/volume) e confirmação |
+**Atualização (2026-11-02, depois do primeiro commit):** a API do SIDRA (`apisidra.ibge.gov.br`) está acessível nesta rede. Baixei as duas tabelas abaixo com curl, li o JSON com `python -I` e conferi cada valor; batem com a conferência do controlador. Os números desta seção são **[A] lidos na tabela oficial**, ao contrário do resto do dossiê.
+
+- **IBGE, SIDRA, tabela 1286** (população nos censos demográficos, 1872 a 2010, Brasil e Grandes Regiões; variável 606 "População", unidade "Pessoas"): https://apisidra.ibge.gov.br/values/t/1286/n1/all/n2/all/v/606/p/all
+- **IBGE, SIDRA, tabela 4709** (Censo Demográfico 2022; variável 93 "População residente", unidade "Pessoas"): https://apisidra.ibge.gov.br/values/t/4709/n1/all/n2/2/v/93/p/2022
+
+| Ano | População NE | População Brasil | % NE | Fonte |
 |---|---|---|---|---|
-| 1872 | 4.638.560 | 9.930.478 | 46,7 | NE: IBGE-BA, "Data em Dados: Dia do/a Nordestino/a" (reproduzido por atualizabahia.com.br): "cerca de 4,639 milhões, 46,7% da população brasileira"; valor exato 4.638.560 no verbete "Nordeste" da enciclopédia Kotobank (cita o censo de 1872, "cerca de 47%"). Brasil: IBGE, Agência de Notícias, "Em 150 anos, conheça a história que o censo conta" (série 1872 a 1950); confirmado também no README da base Pop-72 (Cedeplar/UFMG) distribuída pela Base dos Dados: 9.930.478 pessoas, das quais 1.510.806 escravizadas. **[A] para o Brasil, [B] para o NE.** Tabela de origem a citar no CSV: IBGE, Sinopse do Censo Demográfico 2010, Tabela 1.4 (1872/2010) ou SIDRA tabela 1286; não aberta. |
-| 1890 | não confirmado | 14.333.915 | não confirmado | Brasil: IBGE, "Em 150 anos..." **[A]**. NE: **[C]**. |
-| 1900 | 6.749.507 | 17.438.434 | 38,7 | NE: CEIC Data, série "Population Census: Northeast" (dados do IBGE), aparece como mínimo da série em 1900 **[B]**. Brasil: IBGE, "Em 150 anos..." **[A]**. Nota: o IBGE registra problemas de cobertura no censo de 1900. |
-| 1920 | não confirmado | 30.635.605 | não confirmado | Brasil: IBGE, "Em 150 anos..." **[A]**. NE: **[C]**. |
-| 1940 | não confirmado | 41.236.315 | não confirmado | Brasil: IBGE, "Em 150 anos..." e série do IBGE **[A]**. NE: **[C]**. |
-| 1950 | não confirmado | 51.944.397 | não confirmado | Brasil: IBGE, "Em 150 anos..." **[A]**. NE: **[C]**. |
-| 1960 | 22.428,9 mil | 70.992.343 | 31,6 | NE: tabela de dados censitários reproduzida em artigo de *Estudos Avançados* (periodicos.usp.br/eav, artigo 8975), "população residente 22.428,9 mil, cerca de 31,6%" **[B]**. Brasil: tabela derivada da Wikipédia **[B]**. Divergência: outra publicação do IBGE dá 70.070 mil para o Brasil em 1960 (definição diferente de população). **Par NE/Brasil de mesma definição não confirmado.** |
-| 1970 | 28.675,1 mil | 94.508.583 | 30,3 | NE: tabela do IBGE reproduzida em periódico acadêmico (28.675,1 mil; 11.980,9 mil urbanos e 16.694,2 mil rurais) e boletim do IBGE de 1973 (*IBGE Informa* n. 24/25): "28,7 milhões em 19 de setembro de 1970, 30,34% do total do país" **[A]** para o percentual. Brasil: tabela derivada da Wikipédia **[B]**; publicação mais antiga do IBGE dá 93.139.037 (outra definição). |
-| 1980 | não confirmado | 121.150.573 ou 119.002.706 | "pouco menos de 30%" | Brasil: 121.150.573 em tabela derivada da Wikipédia **[B]**; 119.002.706 em publicação do IBGE **[A]** (definições diferentes). NE: só "mais de 34 milhões, pouco menos de 30%" (resumo em Academia.edu) **[C]**. |
-| 1991 | 42.497.540 | 146.825.475 | 28,9 | NE: documento do BNB (Informações socioeconômicas, 2019) que cita IBGE, tabela de 1991 **[B]**. Brasil: tabela do IBGE com total 146.825.475 **[A]**. Divergência: tabela derivada da Wikipédia dá 146.917.459. |
-| 2000 | 47.741.711 | não confirmado | 28,1 a 28,2 | NE: citypopulation.de, tabela da Região Nordeste (dados do IBGE) **[B]**; verbete em inglês dá 47.693.253 **[C]**. Brasil: três valores encontrados, 169.590.693 (publicação do IBGE), 169.799.170 e 169.872.856; nenhum par confirmado. O percentual fica entre 28,1 e 28,2 com qualquer um deles. |
-| 2010 | 53.081.950 | 190.755.799 | 27,8 | NE: vários resultados que citam o IBGE, inclusive CEIC **[B]**. Brasil: IBGE (Censo 2010, "190.755.799 pessoas", release da Agência de Notícias) **[A]**. |
-| 2022 | 54.658.515 | 203.080.756 | 26,9 | Valores revisados pelo IBGE em 31/08/2023. Brasil: notícia que relata a atualização e verbete do Censo 2022 **[B]**. NE: Wikipédia em português e populacao.org; IBGE-BA ("Data em Dados") fala em "54,659 milhões, 26,9%" **[B]**. Tabela a citar: SIDRA, Censo 2022 (número da tabela não confirmado). |
+| 1872 | 4.638.560 | 9.930.478 | 46,7 | IBGE, SIDRA, tabela 1286 [A] |
+| 1890 | 6.002.047 | 14.333.915 | 41,9 | IBGE, SIDRA, tabela 1286 [A] |
+| 1900 | 6.749.507 | 17.438.434 | 38,7 | IBGE, SIDRA, tabela 1286 [A] |
+| 1920 | 11.245.921 | 30.635.605 | 36,7 | IBGE, SIDRA, tabela 1286 [A] |
+| 1940 | 14.434.080 | 41.236.315 | 35,0 | IBGE, SIDRA, tabela 1286 [A] |
+| 1950 | 17.973.413 | 51.944.397 | 34,6 | IBGE, SIDRA, tabela 1286 [A] |
+| 1960 | 22.428.873 | 70.992.343 | 31,6 | IBGE, SIDRA, tabela 1286 [A] |
+| 1970 | 28.675.110 | 94.508.583 | 30,3 | IBGE, SIDRA, tabela 1286 [A] |
+| 1980 | 35.419.156 | 121.150.573 | 29,2 | IBGE, SIDRA, tabela 1286 [A] |
+| 1991 | 42.470.225 | 146.917.459 | 28,9 | IBGE, SIDRA, tabela 1286 [A] |
+| 2000 | 47.693.253 | 169.590.693 | 28,1 | IBGE, SIDRA, tabela 1286 [A] |
+| 2010 | 53.081.950 | 190.755.799 | 27,8 | IBGE, SIDRA, tabela 1286 [A] |
+| 2022 | 54.658.515 | 203.080.756 | 26,9 | IBGE, SIDRA, tabela 4709 [A] |
+
+Percentuais calculados por mim a partir dos valores da tabela, com uma casa decimal (valores com duas casas: 46,71; 41,87; 38,70; 36,71; 35,00; 34,60; 31,59; 30,34; 29,24; 28,91; 28,12; 27,83; 26,92). Na página, o gerador calcula a parcela a partir do `censos.csv` (spec, seção 3).
+
+**Notas da série:**
+
+- **Série única.** A tabela 1286 é a série única do IBGE para todos os censos de 1872 a 2010, por Grande Região. Usá-la inteira resolve a mistura de valores de definições diferentes (presente, recenseada, residente) que apareceu na primeira versão deste dossiê, quando eu só tinha valores soltos de fontes variadas.
+- **O que a tabela declara.** A resposta da API de valores traz só os cabeçalhos (nível territorial, unidade "Pessoas", variável 606 "População", ano) e **nenhuma nota de rodapé**. A variável se chama apenas "População", sem dizer se é presente, recenseada ou residente em cada ano. As notas da tabela ficam na página descritiva do SIDRA, que cai num desafio Cloudflare, e a API de metadados (`servicodados.ibge.gov.br`) não respondeu nesta rede; não tentei contornar. Segundo a página de séries estatísticas do IBGE vista na busca, os censos usam população presente de 1872 a 1950, recenseada de 1960 a 1980 e residente de 1991 em diante; **não confirmei que a 1286 segue exatamente essa regra**. Sinal disso: para 1991 a 1286 traz Brasil 146.917.459 e Nordeste 42.470.225, enquanto outra tabela do IBGE dá 146.825.475 para o Brasil (residente) e um documento do BNB dá 42.497.540 para o Nordeste; para 2000 a 1286 traz Nordeste 47.693.253, e outras fontes dão 47.741.711. As diferenças mudam o percentual em menos de 0,1 ponto.
+- **2022 vem de outra tabela.** A 1286 vai até 2010; o ponto de 2022 vem da 4709, que declara "População residente". É o par revisado pelo IBGE em 31/08/2023, e não o da primeira divulgação (Brasil 203.062.512, Nordeste 54.644.582). A nota do `censos.csv` deve dizer que o último ponto vem de tabela diferente.
+- **1910 e 1930 não tiveram censo.** A série pula de 1900 para 1920 e de 1920 para 1940. O gráfico deve ligar os pontos sem sugerir dados nesses anos.
+- **1900:** o IBGE registra problemas de cobertura no censo de 1900 (texto "Em 150 anos, conheça a história que o censo conta", Agência de Notícias do IBGE, via busca).
 
 **Conferência dos valores de trabalho da spec:**
 
-- **46,7% (1872):** confere. 4.638.560 / 9.930.478 = 46,71%. O IBGE-BA usa o mesmo 46,7%. O "material sem rótulo claro" que o controlador viu tem o mesmo valor do IBGE-BA.
-- **26,9% (2022):** confere, mas os dois números de trabalho da spec são de divulgações diferentes. Brasil 203.080.756 é o total revisado (31/08/2023); NE 54.644.582 é da primeira divulgação (28/06/2023), que tinha Brasil 203.062.512 (nota técnica Fundaj-Dipes 02/2023, tabela com "Brasil 203.062.512" e "Nordeste 54.644.582"). Os pares coerentes são 54.644.582 / 203.062.512 = 26,91% (primeira divulgação) ou 54.658.515 / 203.080.756 = 26,92% (revisada). **Decisão sugerida: usar o par revisado** (54.658.515 / 203.080.756), que é o que o IBGE-BA cita hoje, e conferir os dois números na tabela do SIDRA antes de gravar o CSV.
+- **46,7% (1872):** confere. 4.638.560 / 9.930.478 = 46,71% (SIDRA 1286).
+- **26,9% (2022):** confere. 54.658.515 / 203.080.756 = 26,92% (SIDRA 4709). O número de trabalho da spec para o Nordeste (54.644.582) é da primeira divulgação e deve ser trocado por 54.658.515, que forma par com o total revisado 203.080.756.
 
 **Decisões e cuidados para `censos.csv`:**
 
-1. **Fronteiras.** As mudanças de limite entre províncias do Nordeste não alteram a soma regional em 1872: a Comarca do São Francisco passou de Pernambuco para Minas Gerais em 1824 e para a Bahia em 1827 (data não conferida nesta pesquisa), portanto já era baiana em 1872; trocas entre Ceará e Piauí (Crateús e Amarração, 1880, data não conferida nesta pesquisa) ficam dentro da região. As séries do IBGE por Grande Região já reagrupam os anos antigos pela divisão atual. Fernando de Noronha entra no Nordeste nas tabelas do IBGE dos anos em que era território federal; o efeito no percentual é desprezível, mas a nota do CSV deve dizer qual tabela foi usada.
-2. **Definição de população muda ao longo da série.** Segundo a página de séries estatísticas do IBGE ("População residente: distribuição por Grandes Regiões"), os dados são de população presente de 1872 a 1950, recenseada de 1960 a 1980 e residente de 1991 em diante. Isso explica os pares divergentes de 1960, 1970, 1980 e 1991. **Usar uma única tabela do IBGE para todos os anos** (de preferência a Tabela 1.4 da Sinopse do Censo 2010, que vai de 1872 a 2010, mais o Censo 2022), nunca misturar valores de fontes diferentes.
-3. **Outra série para 1872.** Marcílio (1973), citada em artigo da *Revista Econômica do Nordeste* (BNB), dá 4.708.160 para o Nordeste e 10.112.061 para o Brasil em 1872 (46,6%), com correções do censo. A página deve usar a série oficial (9.930.478) e pode citar a corrigida como divergência.
-4. **Pendência bloqueante:** NE em 1890, 1920, 1940, 1950 e 1980 e o par coerente de 1960, 1970 e 2000. Os valores existem nas tabelas do IBGE citadas acima, que esta sessão não conseguiu abrir.
+1. **Fronteiras.** As mudanças de limite entre províncias do Nordeste não alteram a soma regional em 1872: a Comarca do São Francisco passou de Pernambuco para Minas Gerais em 1824 e para a Bahia em 1827 (data não conferida nesta pesquisa), portanto já era baiana em 1872; trocas entre Ceará e Piauí (Crateús e Amarração, 1880, data não conferida nesta pesquisa) ficam dentro da região. A tabela 1286 já entrega os anos antigos reagrupados nas Grandes Regiões atuais.
+2. **Uma tabela por trecho:** 1286 para 1872 a 2010 e 4709 para 2022, com o código da tabela em cada linha do CSV (coluna "tabela do IBGE de origem", spec seção 3). Não misturar valores de outras fontes.
+3. **Outra série para 1872.** Marcílio (1973), citada em artigo da *Revista Econômica do Nordeste* (BNB), dá 4.708.160 para o Nordeste e 10.112.061 para o Brasil em 1872 (46,6%), com correções do censo. A página usa a série oficial e pode citar a corrigida como divergência.
 
 ---
 
@@ -335,10 +349,12 @@ Marco candidato "1988" confirmado. Transposição do São Francisco: datas **nã
 
 ## Fontes
 
-Todas acessadas apenas por resultados de busca em 2026-11-02 (nenhuma aberta diretamente; ver "Como ler").
+Todas acessadas apenas por resultados de busca em 2026-11-02, exceto as tabelas 1286 e 4709 do SIDRA, lidas pela API (ver "Como ler").
 
 **Oficiais (IBGE, leis, órgãos públicos)**
 
+- IBGE, SIDRA, tabela 1286 (população nos censos, 1872–2010, Brasil e Grandes Regiões), lida pela API. https://apisidra.ibge.gov.br/values/t/1286/n1/all/n2/all/v/606/p/all
+- IBGE, SIDRA, tabela 4709 (Censo 2022, população residente), lida pela API. https://apisidra.ibge.gov.br/values/t/4709/n1/all/n2/2/v/93/p/2022
 - IBGE, Agência de Notícias. "Em 150 anos, conheça a história que o censo conta" (série Brasil 1872 a 1950). https://agenciadenoticias.ibge.gov.br/pt/agencia-noticias/33495-em-150-anos-conheca-a-historia-que-o-censo-conta.html
 - IBGE. Sinopse do Censo Demográfico 2010, Tabela 1.4 "População nos Censos Demográficos, segundo as Grandes Regiões e as Unidades da Federação, 1872/2010" (não aberta). https://censo2010.ibge.gov.br/sinopse/index.php?dados=4&uf=00 e PDF https://biblioteca.ibge.gov.br/visualizacao/livros/liv49230.pdf
 - IBGE. Séries estatísticas, "População residente: distribuição por Grandes Regiões" (nota sobre presente/recenseada/residente). https://seriesestatisticas.ibge.gov.br/series.aspx?no=1&op=2&vcodigo=POP100&t=populacao-residente-distribuicao-grandes-regioes
