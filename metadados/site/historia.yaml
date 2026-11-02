@@ -45,6 +45,14 @@ epocas:
         url: https://portal2.fazenda.rj.gov.br/wp-content/uploads/2022/09/historia-economica-do-brasil-1500-1820.pdf
       - texto: "Celso Furtado, Formação Econômica do Brasil (1959), na resenha de Letícia Inácio (UFRRJ)"
         url: https://cursos.ufrrj.br/grad/cienciaseconomicas/files/2021/01/Resenha-Formação-Econômica-do-Brasil-Letícia-Inácio-.pdf
+    imagem:
+      arquivo: "1530.webp"
+      titulo: "A fábrica de açúcar e a plantação do Engenho Real"
+      autor: "Frans Post"
+      data: "1660"
+      licenca: "dominio-publico"
+      alt: "Pintura de um engenho de açúcar em Pernambuco: a casa da moenda com arcos e telhado de telha, pessoas escravizadas trabalhando no terreiro, a casa-grande e a capela no alto do morro e a várzea com um rio ao fundo."
+      url: "https://commons.wikimedia.org/wiki/File:Frans_Jansz._Post_-_Een_suikerfabriek_-_2116_(OK)_-_Museum_Boijmans_Van_Beuningen.jpg"
 
   - id: "1654"
     inicio: 1654
@@ -78,6 +86,14 @@ epocas:
         url: https://periodicos.sbu.unicamp.br/ojs/index.php/urbana/article/download/8635108/2923/4361
       - texto: "Debate sobre a crise do açúcar no século XVII, revista Clio (UFPE)"
         url: https://periodicos.ufpe.br/revistas/index.php/revistaclio/article/download/24458/19774/48886
+    imagem:
+      arquivo: "1654.webp"
+      titulo: "Lavage du minerai d'or, près de la montagne Itacolumi"
+      autor: "Johann Moritz Rugendas"
+      data: "c. 1835"
+      licenca: "dominio-publico"
+      alt: "Litografia colorida de homens escravizados lavando cascalho de ouro em canais de madeira ao pé de rochedos e cachoeiras, em Minas Gerais, vigiados por um feitor de chapéu."
+      url: "https://commons.wikimedia.org/wiki/File:Lavage_du_Minerai_d%E2%80%99_Or,_Pres_de_la_Montagne_Itacolumi,_da_Cole%C3%A7%C3%A3o_Brasiliana_Iconogr%C3%A1fica.jpg"
 
   - id: "1808"
     inicio: 1808
@@ -112,6 +128,14 @@ epocas:
       - texto: "Artigo sobre a base social de 1817, revista Almanack (USP)"
         url: https://periodicos.usp.br/alb/article/download/11605/13374/14480
       - texto: "Artigo acadêmico sobre a Grande Seca no Ceará, Redalyc, documento 307470821003"
+    imagem:
+      arquivo: "1808.webp"
+      titulo: "Bênção das bandeiras da Revolução de 1817"
+      autor: "Antônio Parreiras"
+      data: "s.d."
+      licenca: "dominio-publico"
+      alt: "Pintura de um padre de capa vermelha abençoando as bandeiras dos revoltosos de 1817 diante de uma igreja, cercado de homens de casaca, padres e soldados enfileirados."
+      url: "https://commons.wikimedia.org/wiki/File:B%C3%AAn%C3%A7%C3%A3o_das_bandeiras_da_Revolu%C3%A7%C3%A3o_de_1817.jpg"
 
   - id: "1889"
     inicio: 1889
@@ -144,6 +168,14 @@ epocas:
         url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
       - texto: "Asas da graúna: Nordeste, Nordestes, Fundação Perseu Abramo (sobre a crítica do GTDN aos açudes)"
         url: https://fpabramo.org.br/asas-da-grauna-nordeste-nordestes/
+    imagem:
+      arquivo: "1889.webp"
+      titulo: "400 jagunços prisioneiros"
+      autor: "Flávio de Barros"
+      data: "1897"
+      licenca: "dominio-publico"
+      alt: "Fotografia de centenas de mulheres, crianças e homens de Canudos sentados no chão depois da rendição, com soldados do Exército de pé ao fundo."
+      url: "https://commons.wikimedia.org/wiki/File:Canudos_rebels.jpg"
 
   - id: "1930"
     inicio: 1930

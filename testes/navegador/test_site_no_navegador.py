@@ -788,66 +788,55 @@ def test_historia_390_vertical_sem_estouro(abrir):
         assert medidas == {"largura": CELULAR, "altura": 800, "rola": False, "fora": []}, medidas  # tela cheia
 
 
-_IMAGEM_VALIDA = None
-
-
-def _imagem_valida() -> str:
-    """Uma WebP de 600 x 400 em data: (a CSP aceita img-src data:), para medir o cartao com a imagem carregada."""
-    global _IMAGEM_VALIDA
-    if _IMAGEM_VALIDA is None:
-        import base64
-        bruto = io.BytesIO()
-        Image.new("RGB", (600, 400), (150, 110, 70)).save(bruto, "WEBP")
-        _IMAGEM_VALIDA = "data:image/webp;base64," + base64.b64encode(bruto.getvalue()).decode()
-    return _IMAGEM_VALIDA
-
-
 def test_historia_imagem_quebrada_mostra_alt(abrir):
-    """Foco 5. O historia.yaml provisorio ainda nao tem imagens: o teste poe no 1o cartao e no 1o artigo a mesma
-    marcacao do _epoca.html (miniatura com alt="" e figura com o alt descritivo). A miniatura carrega uma WebP valida, o
-    cartao e medido, o src vira um arquivo que nao existe e o cartao tem de manter altura e largura; no modal, a imagem
-    quebrada mostra o texto alternativo. O 404 provocado sai da lista de erros da pagina; qualquer outro erro conta."""
+    """Foco 5. A miniatura real da 1a epoca com imagem carrega, o cartao e medido, o src vira um arquivo que nao existe e
+    o cartao tem de manter altura e largura (a caixa 21:9 vem do width/height e do aspect-ratio); no modal, a imagem do
+    topo, com o src trocado do mesmo jeito, mostra o texto alternativo. O 404 provocado sai da lista de erros da pagina;
+    qualquer outro erro conta."""
     quebrada = "/historia/nao-existe-de-proposito.webp"
-    alt = "Cena de teste da época no engenho"
     with abrir(HISTORIA, reduced_motion="reduce") as pagina:
-        epoca = pagina.evaluate(_EPOCAS_E_MARCOS)[0]["id"]
-        pagina.evaluate(
-            """([epoca, valida, quebrada, alt]) => {
-              const li = document.getElementById(epoca);
-              const mini = document.createElement('img');
-              mini.className = 'nn-epoca-miniatura';
-              mini.alt = '';
-              mini.src = valida;
-              li.querySelector('.nn-epoca-abrir').prepend(mini);
-              const figura = document.createElement('figure');
-              figura.className = 'nn-epoca-figura';
-              const img = document.createElement('img');
-              img.className = 'nn-epoca-imagem';
-              img.alt = alt;
-              img.src = quebrada;
-              figura.append(img);
-              li.querySelector('.nn-epoca-resumo').before(figura);
-            }""",
-            [epoca, _imagem_valida(), quebrada, alt],
-        )
+        epoca = pagina.evaluate("() => document.querySelector('li.nn-epoca:has(img.nn-epoca-miniatura)').id")
         cartao = _cartao(pagina, epoca)
-        pagina.wait_for_function("() => document.querySelector('.nn-epoca-miniatura').naturalWidth === 600")
+        cartao.scroll_into_view_if_needed()
+        mini = pagina.locator(f"[id='{epoca}'] img.nn-epoca-miniatura")
+        mini.evaluate("i => i.decode()")
+        assert mini.evaluate("i => i.naturalWidth") > 0
         com_imagem = cartao.bounding_box()
-        pagina.evaluate(f"() => {{ document.querySelector('.nn-epoca-miniatura').src = '{quebrada}'; }}")
-        pagina.wait_for_function("() => { const i = document.querySelector('.nn-epoca-miniatura'); return i.complete && i.naturalWidth === 0; }")
+        mini.evaluate("(i, q) => { i.src = q; }", quebrada)
+        pagina.wait_for_function("(i) => i.complete && i.naturalWidth === 0", arg=mini.element_handle())
         quebrado = cartao.bounding_box()
         assert all(abs(com_imagem[k] - quebrado[k]) <= 1 for k in ("width", "height")), (com_imagem, quebrado)
-        mini = pagina.locator(".nn-epoca-miniatura").bounding_box()
-        assert mini["height"] > 100 and abs(mini["width"] * 2 / 3 - mini["height"]) <= 1, mini  # a caixa 3:2 fica
+        caixa = mini.bounding_box()
+        assert caixa["height"] > 60 and abs(caixa["width"] * 9 / 21 - caixa["height"]) <= 1, caixa  # a caixa 21:9 fica
+        # a imagem do topo do artigo (escondido ate o modal abrir) recebe o mesmo arquivo inexistente antes de carregar
+        pagina.locator(f"[id='{epoca}'] img.nn-epoca-imagem").evaluate("(i, q) => { i.src = q; }", quebrada)
         cartao.click()
         imagem = pagina.locator(f"{MODAL_HISTORIA} img.nn-epoca-imagem")
         pagina.wait_for_function("() => { const i = document.querySelector('dialog img.nn-epoca-imagem'); return i.complete && i.naturalWidth === 0; }")
         caixa = imagem.bounding_box()
-        assert caixa["width"] > 100 and caixa["height"] >= 16, caixa
+        assert caixa["width"] > 100 and abs(caixa["width"] * 9 / 21 - caixa["height"]) <= 1, caixa
         # o texto alternativo aparece: o recorte da imagem quebrada tem tinta (pixels bem mais escuros que o papel)
         recorte = np.array(Image.open(io.BytesIO(imagem.screenshot())).convert("L")).astype(float)
         assert (recorte < recorte.max() - 80).mean() > 0.01, "a imagem quebrada nao mostrou o texto alternativo"
         pagina.erros[:] = [e for e in pagina.erros if "nao-existe-de-proposito" not in e]
+
+
+def test_historia_imagens_de_marco_so_com_o_modal_aberto(abrir):
+    """As imagens dos marcos ficam no artigo, que so vai ao modal: com a pagina aberta nenhuma e baixada; aberta a
+    epoca, a do marco carrega (lazy) quando chega perto da tela, com a caixa 21:9 do width/height."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        fontes = pagina.evaluate("() => [...document.querySelectorAll('img.nn-marco-imagem')].map((i) => i.src)")
+        assert fontes, "nenhum marco com imagem no historia.yaml"
+        baixadas = lambda: {r for r in pagina.evaluate("() => performance.getEntriesByType('resource').map((r) => r.name)")}
+        assert not set(fontes) & baixadas()
+        epoca = pagina.evaluate("() => document.querySelector('img.nn-marco-imagem').closest('li.nn-epoca').id")
+        _cartao(pagina, epoca).click()
+        imagem = pagina.locator(f"{MODAL_HISTORIA} img.nn-marco-imagem").first
+        imagem.scroll_into_view_if_needed()
+        pagina.wait_for_function("(i) => i.complete && i.naturalWidth > 0", arg=imagem.element_handle())
+        caixa = imagem.bounding_box()
+        assert caixa["width"] > 100 and abs(caixa["width"] * 9 / 21 - caixa["height"]) <= 1, caixa
+        assert imagem.evaluate("i => i.src") in baixadas()
 
 
 def test_historia_peso_abaixo_de_1mb(abrir):

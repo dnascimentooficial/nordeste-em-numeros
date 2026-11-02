@@ -3,14 +3,17 @@ o conteudo de cada modal no HTML, o menu, o OpenGraph e os creditos das imagens 
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import pytest
 import yaml
+from PIL import Image
 
 from nordeste.caminhos import Caminhos
 from nordeste.cli import main
 from nordeste.site import gerar
+from nordeste.site.conteudo import ErroConteudo
 from nordeste.site.gerar import RelatorioSite, gerar_site
 from nordeste.site.historia import TIPOS
 
@@ -30,6 +33,10 @@ IMAGENS = (
     {"licenca": "cc-by", "url": "https://commons.wikimedia.org/wiki/File:Teste.jpg", "rotulo": "CC BY"},
     {"licenca": "ilustracao-do-autor", "url": None, "rotulo": "ilustração do autor"},
 )
+MEDIDAS_DA_EPOCA = (420, 180)  # 21:9, gravadas no width e no height do HTML
+MEDIDAS_DO_MARCO = (210, 90)
+# imagem de marco so nos marcos A das epocas 0 (dominio publico) e 1 (CC BY, com url); os outros ficam so com texto
+IMAGENS_DE_MARCO = {0: IMAGENS[0], 1: IMAGENS[1]}
 
 
 def _epoca(i: int, com_imagem: bool = True) -> dict:
@@ -58,7 +65,33 @@ def _epoca(i: int, com_imagem: bool = True) -> dict:
             "arquivo": f"epoca-{inicio}.webp", "titulo": f"Título da imagem {i}", "autor": f"Autor da imagem {i}",
             "data": f"{inicio + 40}", "licenca": imagem["licenca"], "alt": f"Cena da época {i}", "url": imagem["url"],
         }
+        if i in IMAGENS_DE_MARCO:
+            licenca = IMAGENS_DE_MARCO[i]
+            epoca["marcos"][0]["imagem"] = {
+                "arquivo": f"marco-{inicio + 10}.webp", "titulo": f"Gravura do marco A{i}", "autor": f"Gravador {i}",
+                "data": f"{inicio + 12}", "licenca": licenca["licenca"], "alt": f"Cena do marco A{i}", "url": licenca["url"],
+            }
     return epoca
+
+
+def _webp(caminho: Path, medidas: tuple[int, int]) -> None:
+    caminho.parent.mkdir(parents=True, exist_ok=True)
+    Image.new("RGB", medidas, (140, 100, 60)).save(caminho, "WEBP", quality=60)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _estaticos_com_imagens(tmp_path_factory):
+    """Os estaticos do pacote com as WebP do historia.yaml de teste em historia/ (o gerador le delas width e height)."""
+    estaticos = tmp_path_factory.mktemp("estaticos") / "estaticos"
+    shutil.copytree(gerar.PASTA_ESTATICOS, estaticos, ignore=shutil.ignore_patterns("historia"))
+    for i in range(3):
+        inicio = 1600 + 100 * i
+        _webp(estaticos / "historia" / f"epoca-{inicio}.webp", MEDIDAS_DA_EPOCA)
+        if i in IMAGENS_DE_MARCO:
+            _webp(estaticos / "historia" / f"marco-{inicio + 10}.webp", MEDIDAS_DO_MARCO)
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(gerar, "PASTA_ESTATICOS", estaticos)
+        yield estaticos
 
 
 def _historia(provisoria: bool = False, com_imagem: bool = True) -> dict:
@@ -188,6 +221,8 @@ def test_cada_epoca_tem_artigo_completo(gerado):
         assert len(img_cartao) == 1
         assert img_cartao[0]["attrs"]["loading"] == "lazy"
         assert img_cartao[0]["attrs"]["src"] == f"/historia/{epoca['imagem']['arquivo']}"
+        # width e height do arquivo: a caixa 21:9 existe antes de a imagem chegar (sem salto de layout)
+        assert (img_cartao[0]["attrs"]["width"], img_cartao[0]["attrs"]["height"]) == tuple(map(str, MEDIDAS_DA_EPOCA))
         # a miniatura e decorativa: a descricao fica so na imagem do artigo, para o leitor de tela nao ler a cena duas
         # vezes e o nome do botao comecar pelo periodo e pelo nome da epoca
         assert img_cartao[0]["attrs"]["alt"] == ""
@@ -195,10 +230,11 @@ def test_cada_epoca_tem_artigo_completo(gerado):
         artigo = _trecho(trecho, '<article class="nn-epoca-conteudo"', "</article>")
         arv = Arvore(artigo)
         texto = Arvore.texto(arv.elementos[0])
-        # 1. imagem com credito (autor, titulo, data, licenca; link quando ha url)
-        img = arv.achar("img")
+        # 1. imagem destaque no topo, com credito (autor, titulo, data, licenca; link quando ha url)
+        img = arv.achar("img", classe="nn-epoca-imagem")
         assert len(img) == 1 and img[0]["attrs"]["alt"] == epoca["imagem"]["alt"]
         assert img[0]["attrs"]["loading"] == "lazy"
+        assert (img[0]["attrs"]["width"], img[0]["attrs"]["height"]) == tuple(map(str, MEDIDAS_DA_EPOCA))
         credito = Arvore.texto(arv.achar(classe="nn-epoca-credito")[0])
         imagem = IMAGENS[i % len(IMAGENS)]
         for parte in (epoca["imagem"]["autor"], epoca["imagem"]["titulo"], epoca["imagem"]["data"], imagem["rotulo"]):
@@ -225,11 +261,13 @@ def test_cada_epoca_tem_artigo_completo(gerado):
         fontes = Arvore.texto(arv.achar(classe="nn-epoca-fontes")[0])
         assert all(f["texto"] in fontes for f in epoca["fontes"])
         assert "https://exemplo.org/obra-" + str(i) in [a["attrs"]["href"] for a in arv.achar("a")]
-        # a ordem da spec (secao 5, itens 1 a 8)
-        marcas = ["<img", "nn-epoca-credito", "nn-epoca-resumo", "nn-epoca-texto", "nn-epoca-marcos",
-                  "nn-epoca-numeros", "nn-epoca-ficou", "nn-epoca-fontes", "nn-epoca-nav"]
+        # a ordem da spec (secao 5, itens 1 a 8), com a imagem destaque no topo: acima do periodo e do titulo
+        marcas = ["nn-epoca-figura", "<img", "nn-epoca-credito", "nn-epoca-data", "nn-epoca-titulo", "nn-epoca-resumo",
+                  "nn-epoca-texto", "nn-epoca-marcos", "nn-epoca-numeros", "nn-epoca-ficou", "nn-epoca-fontes",
+                  "nn-epoca-nav"]
         posicoes = [artigo.index(m) for m in marcas]
         assert posicoes == sorted(posicoes), epoca["id"]
+        assert arv.elementos[1]["attrs"].get("class") == "nn-epoca-figura"  # o primeiro filho do artigo
 
 
 def _filhos(arvore: Arvore, pai: dict) -> list[dict]:
@@ -385,10 +423,17 @@ def test_creditos_das_imagens_em_sobre(gerado):
     secao = arvore.achar(id="sobre-imagens")
     assert len(secao) == 1
     itens = [Arvore.texto(li) for li in arvore.achar("li", classe="nn-credito-imagem")]
-    assert len(itens) == 3
+    # cada epoca e, logo depois dela, cada marco com imagem
+    esperados = []
     for i, epoca in enumerate(_historia()["epocas"]):
-        imagem = epoca["imagem"]
-        assert all(p in itens[i] for p in (imagem["autor"], imagem["titulo"], imagem["data"], IMAGENS[i]["rotulo"]))
+        esperados.append((epoca["nome"], epoca["imagem"], IMAGENS[i]["rotulo"]))
+        for marco in epoca["marcos"]:
+            if "imagem" in marco:
+                esperados.append((f"{epoca['nome']}, marco de {marco['ano']}", marco["imagem"], IMAGENS_DE_MARCO[i]["rotulo"]))
+    assert len(itens) == len(esperados) == 5
+    for item, (rotulo, imagem, licenca) in zip(itens, esperados):
+        assert item.startswith(f"{rotulo}:"), item
+        assert all(p in item for p in (imagem["autor"], imagem["titulo"], imagem["data"], licenca)), item
     assert IMAGENS[1]["url"] in [a["attrs"].get("href") for a in arvore.achar("a")]
     assert "/como-chegamos/" in [a["attrs"].get("href") for a in Arvore(_trecho(html, 'id="sobre-imagens"', "</article>")).achar("a")]
 
@@ -422,3 +467,61 @@ def test_imagem_og_da_pagina_pelo_mesmo_caminho_das_outras(tmp_path, monkeypatch
     titulo = Arvore(fotografados["og/como-chegamos.png"]).achar("h1", classe="nn-og-titulo")[0]
     assert Arvore.texto(titulo) == "Como chegamos até aqui"
     assert "og/como-chegamos.png" in json.loads((saida / gerar.MANIFESTO_DE_IMAGENS).read_text(encoding="utf-8"))
+
+
+def test_marco_com_imagem_livre_mostra_a_imagem_no_artigo(gerado):
+    saida, _ = gerado
+    html = _ler(saida)
+    for i, epoca in enumerate(_historia()["epocas"]):
+        artigo = Arvore(_trecho(_epoca_html(html, epoca["id"]), '<article class="nn-epoca-conteudo"', "</article>"))
+        for marco in epoca["marcos"]:
+            item = _trecho(_epoca_html(html, epoca["id"]), f'<li id="m{marco["ano"]}"', "</li>")
+            arv = Arvore(item)
+            if "imagem" not in marco:
+                assert not arv.achar("img") and not arv.achar(classe="nn-marco-credito")  # so texto, sem ilustracao
+                continue
+            imagem, licenca = marco["imagem"], IMAGENS_DE_MARCO[i]
+            img = arv.achar("img", classe="nn-marco-imagem")
+            assert len(img) == 1
+            attrs = img[0]["attrs"]
+            assert attrs["src"] == f"/historia/{imagem['arquivo']}" and attrs["alt"] == imagem["alt"]
+            # so carrega quando o modal abre: lazy e dentro do artigo (que fica escondido ate ir para o modal)
+            assert attrs["loading"] == "lazy"
+            assert (attrs["width"], attrs["height"]) == tuple(map(str, MEDIDAS_DO_MARCO))
+            credito = Arvore.texto(arv.achar(classe="nn-marco-credito")[0])
+            assert all(p in credito for p in (imagem["autor"], imagem["data"], licenca["rotulo"])), credito
+            if licenca["url"]:
+                assert licenca["url"] in [a["attrs"]["href"] for a in arv.achar("a")]
+            # o texto do marco vem antes da imagem
+            assert item.index(marco["texto"]) < item.index("nn-marco-figura")
+        # nenhuma imagem de marco fora do artigo (a linha do tempo so tem a miniatura da epoca)
+        linha = Arvore(_trecho(_epoca_html(html, epoca["id"]), "<li", "<article"))
+        assert not linha.achar("img", classe="nn-marco-imagem")
+        assert len(artigo.achar("img", classe="nn-marco-imagem")) == (1 if i in IMAGENS_DE_MARCO else 0)
+
+
+def test_imagens_copiadas_so_com_a_pagina(gerado, tmp_path):
+    saida, _ = gerado
+    assert sorted(p.name for p in (saida / "historia").iterdir()) == [
+        "epoca-1600.webp", "epoca-1700.webp", "epoca-1800.webp", "marco-1610.webp", "marco-1710.webp",
+    ]
+    raiz = _base(tmp_path / "base", _historia(provisoria=True, com_imagem=False))
+    gerar_site(Caminhos(raiz=raiz), tmp_path / "sem", imagens=False)
+    assert not (tmp_path / "sem" / PAGINA).exists() and not (tmp_path / "sem" / "historia").exists()
+
+
+@pytest.mark.parametrize("defeito", ["falta", "pesada", "proporcao"])
+def test_recusa_imagem_ausente_pesada_ou_fora_de_21_por_9(tmp_path, monkeypatch, _estaticos_com_imagens, defeito):
+    estaticos = tmp_path / "estaticos"
+    shutil.copytree(_estaticos_com_imagens, estaticos)
+    monkeypatch.setattr(gerar, "PASTA_ESTATICOS", estaticos)
+    alvo = estaticos / "historia" / ("marco-1710.webp" if defeito == "pesada" else "epoca-1700.webp")
+    if defeito == "falta":
+        alvo.unlink()
+    elif defeito == "pesada":  # marco ate 80 000 bytes
+        Image.effect_noise((900, 386), 100).convert("RGB").save(alvo, "WEBP", quality=100)
+        assert alvo.stat().st_size > 80_000
+    else:
+        _webp(alvo, (400, 300))
+    with pytest.raises(ErroConteudo, match=alvo.name):
+        gerar_site(Caminhos(raiz=_base(tmp_path / "base", _historia())), tmp_path / "saida", imagens=False)

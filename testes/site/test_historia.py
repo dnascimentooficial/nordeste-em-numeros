@@ -8,6 +8,8 @@ import yaml
 from nordeste.site.conteudo import ErroConteudo
 from nordeste.site.dados import Ponto
 from nordeste.site.historia import (
+    PESO_MAXIMO_DA_EPOCA,
+    PESO_MAXIMO_DO_MARCO,
     Epoca,
     Historia,
     ImagemHistorica,
@@ -15,6 +17,7 @@ from nordeste.site.historia import (
     NumeroHistorico,
     TIPOS,
     carregar_historia,
+    medidas_da_webp,
     parcela_do_nordeste,
 )
 
@@ -450,3 +453,88 @@ def test_o_teste_da_parcela_pega_o_numero_digitado(tmp_path):
     historia = carregar_historia(_escrever(tmp_path, dados))
     parcelas = {_formatar_parcela(p.valor) for p in parcela_do_nordeste(historia)}
     assert historia.epocas[0].numeros[0].valor.removesuffix("%") in parcelas
+
+
+# --- imagens dos marcos (opcionais) e arquivos reais ---
+
+def _imagem_de_marco(**campos) -> dict:
+    return {
+        "arquivo": "marco-1510.webp", "titulo": "Gravura do marco", "autor": "Gravador de teste", "data": "1630",
+        "licenca": "dominio-publico", "alt": "Cena do marco", **campos,
+    }
+
+
+def test_marco_aceita_imagem_opcional(tmp_path):
+    dados = _historia()
+    dados["epocas"][0]["marcos"][1]["imagem"] = _imagem_de_marco()
+    historia = carregar_historia(_escrever(tmp_path, dados))
+    primeiro, segundo = historia.epocas[0].marcos
+    assert primeiro.imagem == ImagemHistorica(
+        "marco-1510.webp", "Gravura do marco", "Gravador de teste", "1630", "dominio-publico", "Cena do marco", None,
+    )
+    # imagem de marco e opcional mesmo com provisoria falso: marco sem imagem livre fica so com texto
+    assert segundo.imagem is None and historia.provisoria is False
+
+
+def test_imagem_de_marco_segue_as_regras_de_licenca(tmp_path):
+    dados = _historia()
+    dados["epocas"][1]["marcos"][0]["imagem"] = _imagem_de_marco(licenca="cc-by")
+    _recusa(tmp_path, dados, "epocas[1].marcos[0].imagem.url")
+    dados["epocas"][1]["marcos"][0]["imagem"] = _imagem_de_marco(licenca="cc-by-sa", url="https://exemplo.org/a")
+    _recusa(tmp_path, dados, "epocas[1].marcos[0].imagem.licenca")
+    dados["epocas"][1]["marcos"][0]["imagem"] = _imagem_de_marco(alt="")
+    _recusa(tmp_path, dados, "epocas[1].marcos[0].imagem.alt")
+    dados["epocas"][1]["marcos"][0]["imagem"] = _imagem_de_marco(licenca="cc-by", url="https://exemplo.org/a")
+    assert carregar_historia(_escrever(tmp_path, dados)).epocas[1].marcos[1].imagem.url == "https://exemplo.org/a"
+
+
+def _webp(caminho: Path, tamanho: tuple[int, int], **opcoes) -> Path:
+    from PIL import Image
+    Image.new("RGB", tamanho, (120, 90, 60)).save(caminho, "WEBP", **opcoes)
+    return caminho
+
+
+@pytest.mark.parametrize("opcoes", [{"quality": 70}, {"lossless": True}, {"quality": 70, "exif": b"Exif\x00\x00MM\x00*"}])
+def test_medidas_da_webp_le_o_cabecalho(tmp_path, opcoes):
+    # com perda (VP8), sem perda (VP8L) e estendida (VP8X, com metadados): largura e altura sem abrir com o Pillow
+    assert medidas_da_webp(_webp(tmp_path / "a.webp", (2100, 900), **opcoes)) == (2100, 900)
+    assert medidas_da_webp(_webp(tmp_path / "b.webp", (7, 3), **opcoes)) == (7, 3)
+
+
+def test_medidas_da_webp_recusa_outro_formato(tmp_path):
+    (tmp_path / "x.webp").write_bytes(b"\x89PNG\r\n\x1a\n" + b"0" * 40)
+    with pytest.raises(ErroConteudo, match="x.webp"):
+        medidas_da_webp(tmp_path / "x.webp")
+
+
+def _imagens_reais() -> list[tuple[str, ImagemHistorica, int]]:
+    """(onde, imagem, peso maximo) de cada imagem do historia.yaml do repositorio: epocas e marcos."""
+    historia = carregar_historia(RAIZ / "metadados" / "site")
+    achadas = []
+    for e in historia.epocas:
+        if e.imagem is not None:
+            achadas.append((f"epoca {e.id}", e.imagem, PESO_MAXIMO_DA_EPOCA))
+        achadas += [(f"marco {m.ano}", m.imagem, PESO_MAXIMO_DO_MARCO) for m in e.marcos if m.imagem is not None]
+    return achadas
+
+
+def test_imagens_existem_e_pesam_ate_150kb():
+    pasta = RAIZ / "src" / "nordeste" / "site" / "estaticos" / "historia"
+    imagens = _imagens_reais()
+    assert imagens, "o historia.yaml do repositorio ainda nao tem imagem nenhuma"
+    for onde, imagem, peso in imagens:
+        arquivo = pasta / imagem.arquivo
+        assert arquivo.is_file(), onde
+        assert arquivo.suffix == ".webp" and arquivo.stat().st_size <= peso, (onde, arquivo.stat().st_size)
+        largura, altura = medidas_da_webp(arquivo)
+        assert abs(largura * 9 - altura * 21) <= 21, (onde, largura, altura)  # 21:9, com folga de 1 px na altura
+    nomes = [i.arquivo for _, i, _ in imagens]
+    assert len(nomes) == len(set(nomes))
+    # nenhum arquivo sobrando na pasta: tudo o que vai ao site tem credito
+    assert sorted(p.name for p in pasta.iterdir()) == sorted(nomes)
+
+
+def test_licenca_lista_cada_imagem():
+    licenca = (RAIZ / "LICENSE.md").read_text(encoding="utf-8")
+    for onde, imagem, _ in _imagens_reais():
+        assert imagem.arquivo in licenca, onde

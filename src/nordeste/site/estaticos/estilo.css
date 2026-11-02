@@ -1708,25 +1708,22 @@ html:has(.nn-modal[open]) {
   border-color: var(--nn-laranja);
 }
 
+/* as imagens já vêm recortadas em 21:9 no arquivo (o enquadramento é escolhido lá, o navegador não corta nada);
+   width e height no HTML e o aspect-ratio seguram a caixa antes de a imagem chegar e se ela falhar */
 .nn-historia .nn-epoca-miniatura,
-.nn-historia .nn-epoca-imagem {
+.nn-historia .nn-epoca-imagem,
+.nn-historia .nn-marco-imagem {
   display: block;
   width: 100%;
+  height: auto;
+  aspect-ratio: 21 / 9;
   border-radius: 14px;
   background: var(--nn-hist-mancha);
   filter: sepia(0.85) saturate(0.8) contrast(0.95);
 }
 
-.nn-historia .nn-epoca-miniatura {
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-}
-
-.nn-historia .nn-epoca-imagem {
-  height: auto;
-}
-
-.nn-historia .nn-modal-historia .nn-epoca-imagem {
+.nn-historia .nn-modal-historia .nn-epoca-imagem,
+.nn-historia .nn-modal-historia .nn-marco-imagem {
   filter: none; /* no modal a imagem volta à cor do arquivo */
 }
 
@@ -1818,16 +1815,31 @@ html:has(.nn-modal[open]) {
   letter-spacing: -0.01em;
 }
 
+/* a imagem destaque abre o conteúdo da época, na largura toda, com o crédito numa linha pequena logo abaixo */
 .nn-historia .nn-epoca-figura {
   margin: 0;
   display: grid;
   gap: 6px;
-  max-width: 720px;
+  min-width: 0;
 }
 
-.nn-historia .nn-epoca-credito {
+.nn-historia .nn-epoca-credito,
+.nn-historia .nn-marco-credito {
   color: var(--nn-sepia);
   font-size: 12px;
+  line-height: 1.4;
+}
+
+/* a imagem de um marco (só quando há imagem livre do próprio fato), embaixo do texto dele */
+.nn-historia .nn-marco-figura {
+  margin: 10px 0 4px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nn-historia .nn-marco-imagem {
+  border-radius: 10px;
 }
 
 .nn-historia .nn-epoca-resumo {

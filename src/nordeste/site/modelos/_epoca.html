@@ -1,11 +1,13 @@
 {# Uma época da linha do tempo: o cartão (o botão que o site.js liga ao modal), os marcos na linha e o artigo com
    todo o conteúdo do modal (spec, seção 5). Sem JavaScript, o artigo fica visível logo abaixo do cartão. #}
 {% macro credito(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
+{# o credito curto da imagem de um marco: autor e data (o titulo completo fica em Sobre os dados) #}
+{% macro credito_curto(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
 {% macro epoca(e) %}
     <li class="nn-epoca" id="{{ e.id }}">
       <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}" aria-haspopup="dialog">
 {% if e.imagem %}
-        <img class="nn-epoca-miniatura" src="{{ e.imagem.src }}" alt="" loading="lazy">
+        <img class="nn-epoca-miniatura" src="{{ e.imagem.src }}" alt="" width="{{ e.imagem.largura }}" height="{{ e.imagem.altura }}" loading="lazy">
 {% endif %}
         <span class="nn-epoca-periodo">{{ e.periodo }}</span>
         <span class="nn-epoca-nome">{{ e.nome }}</span>
@@ -16,14 +18,14 @@
 {% endfor %}
       </ul>
       <article class="nn-epoca-conteudo" aria-labelledby="t-{{ e.id }}">
-        <p class="nn-epoca-data">{{ e.periodo }}</p>
-        <h3 class="nn-epoca-titulo" id="t-{{ e.id }}">{{ e.nome }}</h3>
 {% if e.imagem %}
         <figure class="nn-epoca-figura">
-          <img class="nn-epoca-imagem" src="{{ e.imagem.src }}" alt="{{ e.imagem.alt }}" loading="lazy">
+          <img class="nn-epoca-imagem" src="{{ e.imagem.src }}" alt="{{ e.imagem.alt }}" width="{{ e.imagem.largura }}" height="{{ e.imagem.altura }}" loading="lazy">
           <figcaption class="nn-epoca-credito">Imagem: {{ credito(e.imagem) }}.</figcaption>
         </figure>
 {% endif %}
+        <p class="nn-epoca-data">{{ e.periodo }}</p>
+        <h3 class="nn-epoca-titulo" id="t-{{ e.id }}">{{ e.nome }}</h3>
         <p class="nn-epoca-resumo">{{ e.resumo }}</p>
         <div class="nn-epoca-texto">
 {% for paragrafo in e.paragrafos %}
@@ -34,7 +36,12 @@
           <h4>Marcos</h4>
           <ol>
 {% for m in e.marcos %}
-            <li id="m{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <b>{{ m.titulo }}.</b> {{ m.texto }}</li>
+            <li id="m{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <b>{{ m.titulo }}.</b> {{ m.texto }}{% if m.imagem %}
+              <figure class="nn-marco-figura">
+                <img class="nn-marco-imagem" src="{{ m.imagem.src }}" alt="{{ m.imagem.alt }}" width="{{ m.imagem.largura }}" height="{{ m.imagem.altura }}" loading="lazy">
+                <figcaption class="nn-marco-credito">Imagem: {{ credito_curto(m.imagem) }}.</figcaption>
+              </figure>
+            {% endif %}</li>
 {% endfor %}
           </ol>
         </div>

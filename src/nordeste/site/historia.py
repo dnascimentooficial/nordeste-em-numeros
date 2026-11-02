@@ -26,23 +26,13 @@ NUMEROS_POR_EPOCA = (1, 3)
 # o modelo _epoca.html poe o ponto depois do titulo do marco e da fonte do numero ("<b>{{ m.titulo }}.</b>",
 # "Fonte: {{ n.fonte }}."): com pontuacao no fim do campo sairia ".." ou "?."
 PONTUACAO_FINAL = (".", "?", "!")
+# imagens (WebP em estaticos/historia/, recortadas em 21:9): a da epoca vai no cartao e no topo do artigo; a do marco,
+# opcional, so quando ha imagem livre do proprio fato, carrega so com o modal aberto
+PESO_MAXIMO_DA_EPOCA = 150_000
+PESO_MAXIMO_DO_MARCO = 80_000
+PROPORCAO = (21, 9)
 
 _COLUNAS_DOS_CENSOS = ("ano", "populacao_nordeste", "populacao_brasil", "fonte")
-
-
-@dataclass(frozen=True)
-class Marco:
-    ano: int
-    titulo: str
-    texto: str
-
-
-@dataclass(frozen=True)
-class NumeroHistorico:
-    valor: str  # texto exibido, ex. "46,7%"
-    legenda: str
-    tipo: str
-    fonte: str
 
 
 @dataclass(frozen=True)
@@ -54,6 +44,22 @@ class ImagemHistorica:
     licenca: str
     alt: str
     url: str | None
+
+
+@dataclass(frozen=True)
+class Marco:
+    ano: int
+    titulo: str
+    texto: str
+    imagem: ImagemHistorica | None = None  # opcional sempre: marco sem imagem livre do fato fica so com texto
+
+
+@dataclass(frozen=True)
+class NumeroHistorico:
+    valor: str  # texto exibido, ex. "46,7%"
+    legenda: str
+    tipo: str
+    fonte: str
 
 
 @dataclass(frozen=True)
@@ -156,12 +162,13 @@ def _validar_fecho(fecho: object) -> dict:
 
 
 def _validar_marco(marco: object, onde: str, epoca: dict) -> Marco:
-    _mapa(marco, onde, ("ano", "titulo", "texto"))
+    _mapa(marco, onde, ("ano", "titulo", "texto"), ("imagem",))
     ano = _inteiro(marco["ano"], f"{onde}.ano")
     if not epoca["inicio"] <= ano <= epoca["fim"]:
         raise ErroConteudo(f"{onde}.ano: {ano} fora do periodo da epoca ({epoca['inicio']} a {epoca['fim']}).")
     titulo = _sem_pontuacao_final(_texto(marco["titulo"], f"{onde}.titulo"), f"{onde}.titulo")
-    return Marco(ano, titulo, _texto(marco["texto"], f"{onde}.texto"))
+    imagem = None if marco.get("imagem") is None else _validar_imagem(marco["imagem"], f"{onde}.imagem")
+    return Marco(ano, titulo, _texto(marco["texto"], f"{onde}.texto"), imagem)
 
 
 def _validar_numero(numero: object, onde: str) -> NumeroHistorico:
@@ -229,6 +236,26 @@ def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
         texto=texto, marcos=tuple(sorted(marcos, key=lambda m: m.ano)), numeros=tuple(numeros),
         o_que_ficou=_texto(epoca["o_que_ficou"], f"{onde}.o_que_ficou"), fontes=tuple(fontes), imagem=imagem,
     )
+
+
+# --- medidas das imagens ---
+
+def medidas_da_webp(caminho: Path) -> tuple[int, int]:
+    """(largura, altura) lidas do cabecalho da WebP (VP8, VP8L ou VP8X), sem depender do Pillow no gerador."""
+    try:
+        cabecalho = caminho.read_bytes()[:30]
+    except OSError as erro:
+        raise ErroConteudo(f"{caminho}: nao foi possivel ler a imagem ({erro}).") from erro
+    if len(cabecalho) == 30 and cabecalho[:4] == b"RIFF" and cabecalho[8:12] == b"WEBP":
+        bloco = cabecalho[12:16]
+        if bloco == b"VP8 " and cabecalho[23:26] == b"\x9d\x01\x2a":
+            return (int.from_bytes(cabecalho[26:28], "little") & 0x3FFF, int.from_bytes(cabecalho[28:30], "little") & 0x3FFF)
+        if bloco == b"VP8L" and cabecalho[20] == 0x2F:
+            bits = int.from_bytes(cabecalho[21:25], "little")
+            return (bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1
+        if bloco == b"VP8X":
+            return int.from_bytes(cabecalho[24:27], "little") + 1, int.from_bytes(cabecalho[27:30], "little") + 1
+    raise ErroConteudo(f"{caminho}: nao e uma imagem WebP.")
 
 
 # --- censos ---

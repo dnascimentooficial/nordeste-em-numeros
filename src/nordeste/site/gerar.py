@@ -30,7 +30,18 @@ from nordeste.site.explorar import (
 )
 from nordeste.site.formatacao import numero
 from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico
-from nordeste.site.historia import ROTULO_DA_LICENCA, TIPOS, Historia, carregar_historia, parcela_do_nordeste
+from nordeste.site.historia import (
+    PESO_MAXIMO_DA_EPOCA,
+    PESO_MAXIMO_DO_MARCO,
+    PROPORCAO,
+    ROTULO_DA_LICENCA,
+    TIPOS,
+    Historia,
+    ImagemHistorica,
+    carregar_historia,
+    medidas_da_webp,
+    parcela_do_nordeste,
+)
 from nordeste.site.imagens import VERSAO_DO_RENDER, AlvoImagem, renderizar
 
 NOME_DO_SITE = "Nordeste em Números"
@@ -91,7 +102,7 @@ PAGINAS = (  # as paginas de sempre; a da historia entra depois do Inicio so qua
 )
 PAGINA_HISTORIA = Pagina("como-chegamos", "como_chegamos.html", "como-chegamos/index.html", "/como-chegamos/", "Como chegamos aqui")
 PAGINAS_COM_DATASET = ("index", "dados")
-PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site
+PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site so com a pagina
 AVISO_DA_PREVIA = "Prévia: texto provisório"
 
 
@@ -349,11 +360,38 @@ def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict) -> dic
 
 # --- Como chegamos ate aqui ---
 
-def _credito(imagem) -> dict:
+def _medidas_da_imagem(imagem: ImagemHistorica, peso_maximo: int) -> tuple[int, int]:
+    """Largura e altura do arquivo em estaticos/historia/ (vao para o width e o height do HTML, sem salto de layout).
+
+    Recusa arquivo que falta, que passa do peso ou que nao esta em 21:9 (recorte feito no arquivo, nao pelo navegador).
+    """
+    caminho = PASTA_ESTATICOS / "historia" / imagem.arquivo
+    if not caminho.is_file():
+        raise ErroConteudo(f"historia.yaml cita {imagem.arquivo}, que não está em estaticos/historia/ do pacote.")
+    if caminho.stat().st_size > peso_maximo:
+        raise ErroConteudo(f"{imagem.arquivo}: {caminho.stat().st_size} bytes, acima de {peso_maximo}.")
+    largura, altura = medidas_da_webp(caminho)
+    base, alto = PROPORCAO
+    if abs(largura * alto - altura * base) > base:  # folga de 1 px na altura
+        raise ErroConteudo(f"{imagem.arquivo}: {largura} x {altura}, fora da proporção {base}:{alto}.")
+    return largura, altura
+
+
+def _credito(imagem: ImagemHistorica, peso_maximo: int = PESO_MAXIMO_DA_EPOCA) -> dict:
+    largura, altura = _medidas_da_imagem(imagem, peso_maximo)
     return {
         "src": PASTA_IMAGENS_HISTORIA + imagem.arquivo, "alt": imagem.alt, "titulo": imagem.titulo,
         "autor": imagem.autor, "data": imagem.data, "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url,
+        "largura": largura, "altura": altura,
     }
+
+
+def _marcos(epoca) -> list[dict]:
+    return [
+        {"ano": m.ano, "titulo": m.titulo, "texto": m.texto,
+         "imagem": None if m.imagem is None else _credito(m.imagem, PESO_MAXIMO_DO_MARCO)}
+        for m in epoca.marcos
+    ]
 
 
 def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
@@ -394,7 +432,7 @@ def _epocas(historia: Historia) -> list[dict]:
         {
             "id": e.id, "periodo": f"{e.inicio}–{e.fim}", "nome": e.nome, "resumo": e.resumo,
             "paragrafos": [p.strip() for p in e.texto.split("\n\n") if p.strip()],
-            "marcos": e.marcos,
+            "marcos": _marcos(e),
             "numeros": [
                 {"valor": n.valor, "legenda": n.legenda, "tipo": n.tipo, "rotulo": TIPOS[n.tipo], "fonte": n.fonte}
                 for n in e.numeros
@@ -419,8 +457,17 @@ def _contexto_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
 
 
 def _creditos_da_historia(historia: Historia) -> list[dict]:
-    """A lista de creditos das imagens da pagina, para Sobre os dados: uma por epoca que tem imagem."""
-    return [{"epoca": e.nome, **_credito(e.imagem)} for e in historia.epocas if e.imagem is not None]
+    """A lista de creditos das imagens da pagina, para Sobre os dados: cada epoca com imagem e, logo depois, cada marco
+    dela com imagem."""
+    creditos = []
+    for e in historia.epocas:
+        if e.imagem is not None:
+            creditos.append({"epoca": e.nome, **_credito(e.imagem)})
+        creditos += [
+            {"epoca": f"{e.nome}, marco de {m.ano}", **_credito(m.imagem, PESO_MAXIMO_DO_MARCO)}
+            for m in e.marcos if m.imagem is not None
+        ]
+    return creditos
 
 
 # --- paginas ---
@@ -666,12 +713,13 @@ def _faixa(faixa: dict, destaques: dict[str, Destaque]) -> tuple[dict, list[str]
     return {**pronta, "texto": faixa["texto"], "numeros": numeros}, []
 
 
-def _copiar_estaticos(saida: Path, com_foto: bool) -> None:
+def _copiar_estaticos(saida: Path, com_foto: bool, com_historia: bool) -> None:
     """Estilo, script, fontes (com a licenca OFL) e .htaccess, na raiz do site; cache do Python fica de fora.
 
     A foto da abertura so vai quando textos.yaml tem a chave `foto` (e o credito): foto no site sem credito nao sai.
+    As imagens das epocas e dos marcos (historia/) so vao quando a pagina Como chegamos e gerada.
     """
-    ignorar = ["__pycache__", "*.pyc"] + ([] if com_foto else [FOTO_ARQUIVO])
+    ignorar = ["__pycache__", "*.pyc"] + ([] if com_foto else [FOTO_ARQUIVO]) + ([] if com_historia else ["historia"])
     shutil.copytree(PASTA_ESTATICOS, saida, dirs_exist_ok=True, ignore=shutil.ignore_patterns(*ignorar))
 
 
@@ -741,7 +789,7 @@ def gerar_site(
         shutil.rmtree(saida)
     (saida / "dados").mkdir(parents=True)
     (saida / "explorar" / "dados").mkdir(parents=True)
-    _copiar_estaticos(saida, com_foto=comum["foto"] is not None)
+    _copiar_estaticos(saida, com_foto=comum["foto"] is not None, com_historia=com_historia)
     ambiente = _ambiente()
     for p in paginas_do_menu:
         pagina = _pagina(
