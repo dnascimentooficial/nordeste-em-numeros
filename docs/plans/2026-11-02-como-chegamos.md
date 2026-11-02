@@ -16,7 +16,7 @@
 - Exceção à regra "nenhum número digitado em YAML": nesta página os números históricos ficam em `historia.yaml`, cada um com `tipo` (`oficial`, `historiador` ou `interpretacao`) e `fonte`; a parcela da população nunca é digitada, é calculada de `censos.csv`.
 - Tipos de número exibidos: "dado oficial", "estimativa de historiador", "interpretação". `interpretacao` só aparece no campo "O que ficou disso".
 - Texto de cada época: alvo de 200 a 250 palavras; a validação recusa fora de 150 a 300.
-- Imagens da página: WebP de até 150 000 bytes cada, em `src/nordeste/site/estaticos/historia/`; licença `dominio-publico` ou `ilustracao-do-autor`.
+- Imagens da página: WebP de até 150 000 bytes cada, em `src/nordeste/site/estaticos/historia/`; licença `dominio-publico`, `cc-by` (com `autor` e `url` obrigatórios) ou `ilustracao-do-autor` (decisão do usuário depois do dossiê).
 - Cores do site; laranja `#ea2e00` só onde o contraste passa, senão `#c42600`. Fonte serifada só nos títulos desta página e pedida só nela.
 - Nenhum partido ou presidente leva crédito ou culpa por resultado; responsabilidade de fora e de dentro da região (spec, seção 6).
 - Texto: primeira pessoa, sem travessão (—), sem intensificadores.

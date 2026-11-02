@@ -1,6 +1,6 @@
 # Página "Como chegamos até aqui" — Design
 
-**Subprojeto 4** · Data: 2026-11-02 · Status: em revisão pelo usuário
+**Subprojeto 4** · Data: 2026-11-02 · Status: aprovado pelo usuário em 2026-11-02
 
 ## 1. Objetivo e público
 
@@ -21,7 +21,7 @@ Critério de sucesso: quem nunca leu Celso Furtado sai da página entendendo por
 | Estética | Arquivo histórico com a mesma marca: papel envelhecido, títulos serifados, imagens em sépia que ganham cor no modal, linha do tempo no laranja do site; só nesta página |
 | Texto por modal | Médio, em camadas (seção 5) |
 | Voz | A de Júlio: primeira pessoa, simples, sem cena; mesmo checklist de revisão do resto do site |
-| Imagens | Reais, de domínio público (Wikimedia Commons e arquivos públicos); onde não houver imagem livre, ilustração do autor identificada como ilustração |
+| Imagens | Reais, de domínio público ou CC BY com crédito (Wikimedia Commons, Arquivo Nacional, Agência Brasil); onde não houver imagem livre, ilustração do autor identificada como ilustração (decisão de 2026-11-02, depois do dossiê) |
 | Implementação | Gerada pelo mesmo gerador do site, a partir de um arquivo de conteúdo validado (seção 7) |
 
 ## 3. Abertura da página
