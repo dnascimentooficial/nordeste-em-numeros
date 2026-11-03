@@ -65,6 +65,7 @@ def versoes_dos_estaticos() -> dict[str, str]:
     }
 CONTORNO = ("site", "nordeste-contorno.svg")  # em metadados/; ferramentas/gerar_contorno.py o gera
 OG = (1200, 630)  # imagem de compartilhamento das paginas
+COMPARTILHAR = "compartilhar.jpg"  # em estaticos/: a imagem de compartilhamento de todas as paginas que nao sao de card
 CARD = (1080, 1350)  # PNG de cada card
 FOTO_TAMANHO_MAXIMO = 200_000  # bytes: a foto pesa na primeira tela
 FOTO_EXIGIDA = ("credito", "url")  # `foto` e opcional em textos.yaml; se existir, traz tudo isso (Ruling S-Z)
@@ -86,6 +87,7 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
     "abertura": {"eyebrow", "titulo", "destaque", "intro"},
     "faixa": {"rotulo", "id", "numeros", "texto", "nota"},  # + `condicao`, opcional (Ruling S-V)
     "chamada_historia": {"eyebrow", "titulo", "texto", "botao", "credito"},  # o bloco do Inicio que leva a Como chegamos
+    "compartilhamento": {"alt", "credito"},  # a imagem de compartilhamento das paginas (estaticos/compartilhar.jpg)
     "ampliar": {"botao", "rotulo", "fechar", "gire", "quebra"},
     "por_que": {"titulo", "paragrafos"}, "como_ler": {"titulo", "itens"}, "o_que_falta": {"titulo", "itens"},
     "dataset": {"nome", "descricao"}, "fontes": {"titulo", "intro"}, "formulas": {"titulo", "intro", "blocos"},
@@ -897,12 +899,42 @@ def _escrever(ambiente: Environment, saida: Path, modelo: str, arquivo: str, **c
 
 
 def _pagina(
-    chave: str, rota: str, titulo: str, descricao: str, imagem: str, json_ld: str | None = None, noindex: bool = False,
+    chave: str, rota: str, titulo: str, descricao: str, imagem: dict, json_ld: str | None = None, noindex: bool = False,
 ) -> dict:
+    """`imagem`: {"url", "largura", "altura", "alt"} da imagem de compartilhamento (og:image e twitter:image)."""
     return {
         "chave": chave, "rota": rota, "url": URL_DO_SITE + rota, "titulo": titulo, "descricao": descricao,
         "imagem": imagem, "json_ld": json_ld, "noindex": noindex,
     }
+
+
+def _imagem_de_compartilhar(textos: dict) -> dict:
+    """estaticos/compartilhar.jpg com ?v= (oito primeiros do sha256): trocar a imagem muda o endereco, e WhatsApp,
+    Facebook e LinkedIn buscam a nova em vez da guardada. Medidas lidas do arquivo (JPEG, marcador SOF)."""
+    arquivo = PASTA_ESTATICOS / COMPARTILHAR
+    dados = arquivo.read_bytes()
+    largura, altura = _medidas_do_jpeg(dados, arquivo)
+    versao = hashlib.sha256(dados).hexdigest()[:8]
+    return {
+        "url": f"{URL_DO_SITE}/{COMPARTILHAR}?v={versao}", "largura": largura, "altura": altura,
+        "alt": textos["compartilhamento"]["alt"],
+    }
+
+
+def _medidas_do_jpeg(dados: bytes, arquivo: Path) -> tuple[int, int]:
+    """(largura, altura) do primeiro marcador SOF do JPEG, sem depender do Pillow no gerador."""
+    if dados[:2] != b"\xff\xd8":
+        raise ErroConteudo(f"{arquivo.name} nao e um JPEG.")
+    i = 2
+    while i + 9 < len(dados):
+        if dados[i] != 0xFF:
+            i += 1
+            continue
+        marcador = dados[i + 1]
+        if marcador in (0xC0, 0xC1, 0xC2):
+            return int.from_bytes(dados[i + 7:i + 9], "big"), int.from_bytes(dados[i + 5:i + 7], "big")
+        i += 2 + int.from_bytes(dados[i + 2:i + 4], "big")
+    raise ErroConteudo(f"{arquivo.name}: nao achei as medidas do JPEG.")
 
 
 def gerar_site(
@@ -960,10 +992,11 @@ def gerar_site(
     (saida / "explorar" / "dados").mkdir(parents=True)
     _copiar_estaticos(saida, com_foto=comum["foto"] is not None, com_historia=com_historia)
     ambiente = _ambiente()
+    compartilhar = _imagem_de_compartilhar(textos)
     for p in paginas_do_menu:
         pagina = _pagina(
             p.chave, p.rota, textos["paginas"][p.chave]["titulo"], textos["paginas"][p.chave]["descricao"],
-            f"{URL_DO_SITE}/og/{p.chave}.png",
+            compartilhar,
             _json_ld(dados, textos, anos, arquivos) if p.chave in PAGINAS_COM_DATASET else None,
             noindex=p is PAGINA_HISTORIA and historia.provisoria,
         )
@@ -972,7 +1005,7 @@ def gerar_site(
         rota = f"/cards/{card['id']}/"
         pagina = _pagina(
             "cards", rota, f"{card['frase_feita']} · {NOME_DO_SITE}", card["resumo"],
-            f"{URL_DO_SITE}/cards/{card['id']}.png",
+            {"url": f"{URL_DO_SITE}/cards/{card['id']}.png", "largura": CARD[0], "altura": CARD[1], "alt": card["frase_feita"]},
         )
         _escrever(ambiente, saida, "card.html", f"cards/{card['id']}/index.html", pagina=pagina, card=card, **comum)
     for nome in ARQUIVOS_DE_DADOS:

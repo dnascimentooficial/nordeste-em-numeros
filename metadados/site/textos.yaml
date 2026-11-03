@@ -50,6 +50,10 @@ faixa:
 # O título é um modelo: [ano_inicial] e [parcela_inicial] (primeiro censo) e [ano_final] e [parcela_final] (último censo)
 # saem de censos.csv, os mesmos números da abertura da página, e aparecem uma vez cada. credito é o rótulo antes do
 # crédito da imagem de fundo (a da época 1530), que vem do historia.yaml.
+compartilhamento:
+  alt: "Ilustração de um mural com fotos antigas e atuais do Nordeste ligadas por fios vermelhos e, no centro, um bilhete: Nordeste, por que se desenvolveu aquém do restante do Brasil?"
+  credito: "Ilustração de Júlio Diógenes, feita com inteligência artificial."
+
 chamada_historia:
   eyebrow: "Como chegamos até aqui"
   titulo: "Em [ano_inicial], [parcela_inicial] dos brasileiros viviam no Nordeste. Em [ano_final], [parcela_final]."

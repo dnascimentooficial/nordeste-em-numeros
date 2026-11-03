@@ -23,6 +23,8 @@ para a licença e indique se fez alterações.
   lado do arquivo.
 - Imagem da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`, composição com praia, mata e
   sertão do Nordeste): © Júlio Diógenes, todos os direitos reservados; não está coberta pela CC BY 4.0.
+- Imagem de compartilhamento (`src/nordeste/site/estaticos/compartilhar.jpg`): ilustração de Júlio Diógenes, feita com
+  inteligência artificial; © Júlio Diógenes, todos os direitos reservados; não está coberta pela CC BY 4.0.
 - Foto do autor (`src/nordeste/site/estaticos/autor.webp`): © Júlio Diógenes, todos os direitos reservados; não está
   coberta pela CC BY 4.0.
 - Marca do autor, as duas versões do logotipo (`src/nordeste/site/estaticos/marca-autor-clara.webp` e

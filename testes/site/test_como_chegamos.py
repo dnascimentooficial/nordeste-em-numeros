@@ -451,7 +451,7 @@ def test_pagina_tem_og_e_canonical_proprios(gerado):
     assert [e["attrs"]["href"] for e in arvore.achar("link", rel="canonical")] == [url]
     metas = {(m["attrs"].get("property") or m["attrs"].get("name")): m["attrs"]["content"] for m in arvore.achar("meta") if "content" in m["attrs"]}
     assert metas["og:url"] == url
-    assert metas["og:image"] == f"{SITE}/og/como-chegamos.png"
+    assert metas["og:image"].startswith(f"{SITE}/compartilhar.jpg?v=")  # a ilustracao do site inteiro
     titulo = Arvore.texto(arvore.achar("title")[0])
     assert titulo == metas["og:title"] == "Como chegamos até aqui · Nordeste em Números"
     assert metas["og:description"] == metas["description"] != ""

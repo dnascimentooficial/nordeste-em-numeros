@@ -194,7 +194,13 @@ def test_metas_e_canonical_em_cada_pagina(gerado):
         url = SITE + rota
         assert [e["attrs"]["href"] for e in arvore.achar("link", rel="canonical")] == [url]
         assert _meta(arvore, property="og:url") == url
-        assert _meta(arvore, property="og:image") == f"{SITE}/og/{OG[pagina]}.png"
+        imagem = _meta(arvore, property="og:image")  # a mesma ilustracao em todas as paginas, com ?v= do sha256
+        caminho, _, versao = imagem.partition("?v=")
+        arquivo = saida / "compartilhar.jpg"
+        assert caminho == f"{SITE}/compartilhar.jpg" and versao == hashlib.sha256(arquivo.read_bytes()).hexdigest()[:8]
+        assert (_meta(arvore, property="og:image:width"), _meta(arvore, property="og:image:height")) == ("1200", "630")
+        assert _meta(arvore, name="twitter:image") == imagem
+        assert "Ilustração" in _meta(arvore, property="og:image:alt") == _meta(arvore, name="twitter:image:alt")
         assert _meta(arvore, property="og:locale") == "pt_BR"
         assert _meta(arvore, name="twitter:card") == "summary_large_image"
         assert _meta(arvore, property="og:title") == Arvore.texto(arvore.achar("title")[0])

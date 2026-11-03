@@ -9,9 +9,14 @@
 <meta property="og:title" content="{{ pagina.titulo }}">
 <meta property="og:description" content="{{ pagina.descricao }}">
 <meta property="og:url" content="{{ pagina.url }}">
-<meta property="og:image" content="{{ pagina.imagem }}">
+<meta property="og:image" content="{{ pagina.imagem.url }}">
+<meta property="og:image:width" content="{{ pagina.imagem.largura }}">
+<meta property="og:image:height" content="{{ pagina.imagem.altura }}">
+<meta property="og:image:alt" content="{{ pagina.imagem.alt }}">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ pagina.imagem.url }}">
+<meta name="twitter:image:alt" content="{{ pagina.imagem.alt }}">
 {% if pagina.json_ld %}
 <script type="application/ld+json">{{ pagina.json_ld|safe }}</script>
 {% endif %}
