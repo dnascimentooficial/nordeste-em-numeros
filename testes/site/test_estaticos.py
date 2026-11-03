@@ -354,6 +354,7 @@ def _regra_em(css: str, cabecalho: tuple[str, ...], seletor: str) -> dict[str, s
 
 def test_css_da_abertura_em_secao_cheia_com_a_foto_inteira(saida):
     css = (saida / "estilo.css").read_text(encoding="utf-8")
+    css = re.sub(r"\?v=[0-9a-f]{8}", "", css)  # as imagens vem com ?v= (conferido em test_imagens_do_css_versionadas)
     # a foto e o ::before (local: a CSP e default-src 'self'), a composicao inteira por baixo de um veu uniforme de 30%
     # (ate 40%, se o contraste pedir), sem degradê e sem o recorte da metade direita; nada de <img>
     foto = _declaracoes(css, ".nn-hero-com-foto::before")
@@ -384,6 +385,7 @@ def test_css_das_capas_tem_uma_classe_por_imagem_do_gerador(saida):
     """Cada imagem de CAPAS (e a foto da abertura) tem a sua classe no estilo.css, com o arquivo certo no fundo; o
     degradê escuro fica a esquerda no computador e sobe de baixo no celular."""
     css = (saida / "estilo.css").read_text(encoding="utf-8")
+    css = re.sub(r"\?v=[0-9a-f]{8}", "", css)  # as imagens vem com ?v= (conferido em test_imagens_do_css_versionadas)
     for arquivo in [a for a in gerar.CAPAS.values() if a]:
         regra = _declaracoes(css, "." + gerar.classe_da_capa(arquivo))
         assert regra.get("--nn-capa-foto") == f'url("/historia/{arquivo}")', arquivo
@@ -492,3 +494,15 @@ def test_numeros_do_script_iguais_aos_do_python(saida):
     )
     feito = subprocess.run(["node", "-e", programa, str(saida / "site.js")], capture_output=True, text=True, check=True)
     assert json.loads(feito.stdout) == [numero(v, c) for v, c in casos]
+
+
+def test_imagens_do_css_versionadas(saida):
+    """Cada imagem que o estilo.css publicado pede leva ?v= com o sha256 do arquivo: trocar a foto da abertura sem trocar
+    o nome nao pode deixar o navegador com a antiga (cache de um dia das imagens). As fontes ficam sem ?v= (preload)."""
+    css = (saida / "estilo.css").read_text(encoding="utf-8")
+    imagens = re.findall(r'url\("/([^"]+\.(?:webp|png|jpe?g)[^"]*)"\)', css)
+    assert imagens and any(i.startswith("foto-abertura.webp") for i in imagens)
+    for endereco in imagens:
+        caminho, _, versao = endereco.partition("?v=")
+        assert versao == hashlib.sha256((saida / caminho).read_bytes()).hexdigest()[:8], endereco
+    assert re.findall(r'url\("/fontes/[^"?]+\.woff2"\)', css)

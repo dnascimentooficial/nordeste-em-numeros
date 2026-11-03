@@ -67,8 +67,23 @@ def _publicado(nome: str) -> bytes:
     """Os bytes do estatico como vao para o site: o estilo.css e o site.js enxutos (_enxuto), o resto como esta."""
     arquivo = PASTA_ESTATICOS / nome
     if nome in ARQUIVOS_ENXUTOS:
-        return _enxuto(arquivo.read_text(encoding="utf-8")).encode("utf-8")
+        codigo = _enxuto(arquivo.read_text(encoding="utf-8"))
+        if nome.endswith(".css"):
+            codigo = _versionar_urls(codigo)
+        return codigo.encode("utf-8")
     return arquivo.read_bytes()
+
+
+def _versionar_urls(css: str) -> str:
+    """Cada url("/arquivo") do CSS que existe em estaticos/ ganha ?v= com os oito primeiros do sha256 do arquivo: a foto
+    da abertura trocou de conteudo sem trocar de nome, e o cache de um dia das imagens (.htaccess) mostrava a antiga."""
+    def trocar(m: re.Match) -> str:
+        caminho = m.group(1)
+        arquivo = PASTA_ESTATICOS / caminho
+        if not arquivo.is_file():
+            return m.group(0)
+        return f'url("/{caminho}?v={hashlib.sha256(arquivo.read_bytes()).hexdigest()[:8]}")'
+    return re.sub(r'url\("/([^"?#]+\.(?:webp|png|jpe?g))"\)', trocar, css)  # fontes ficam: o preload pede o mesmo endereco
 CONTORNO = ("site", "nordeste-contorno.svg")  # em metadados/; ferramentas/gerar_contorno.py o gera
 OG = (1200, 630)  # imagem de compartilhamento das paginas
 COMPARTILHAR = "compartilhar.jpg"  # em estaticos/: a imagem de compartilhamento de todas as paginas que nao sao de card
