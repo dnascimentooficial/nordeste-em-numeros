@@ -22,7 +22,7 @@ FICHAS_PARTE_B = {
     "rendimento_trabalho",
 }
 FICHAS_INEP = {"ideb", "abandono_em", "matriculas_basica", "superior"}
-FICHAS_COMPLETAS = FICHAS_PARTE_A | FICHAS_PARTE_B | {"pib_volume"} | FICHAS_INEP  # as que trazem os 15 territorios em todo ano
+FICHAS_COMPLETAS = FICHAS_PARTE_A | FICHAS_PARTE_B | {"pib_volume", "ibid"} | FICHAS_INEP  # as que trazem os 15 territorios em todo ano
 HOJE = ["--hoje", "2026-11-01"]
 DICIONARIO = Path(__file__).resolve().parent.parent / "docs" / "dicionario-verificacao.md"
 URL_DO_COLETOR = {"sidra": url_sidra, "ipeadata": url_ipeadata, "arquivo": url_arquivo}

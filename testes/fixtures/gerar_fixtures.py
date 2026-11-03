@@ -19,6 +19,7 @@ import yaml
 from openpyxl import Workbook
 
 from nordeste.coletores.arquivo import empacotar_partes
+from nordeste.padronizacao.ibid import ROTULO_GERAL, ROTULOS_DA_LINHA_3, UFS_DO_INPI
 
 PASTA = Path(__file__).resolve().parent
 RAIZ = PASTA.parent.parent
@@ -523,6 +524,47 @@ def _contagem_sem_regioes(fator: int):
         "..." if nc != "1" and ano in ANOS_SEM_CONTAGEM_REGIONAL else soma(nc, codigo, ano, multiplicador))
 
 
+# IBID (INPI): a planilha da serie historica no layout real (uma aba por ano, A1 com o ano, C1 "IBID - Geral", rotulos dos
+# subindices na linha 3, as 27 UFs, as regioes e o Brasil, a tabela de pesos nas colunas N e O e a aba de posicoes).
+# Cada UF tem um valor distinto derivado de 99999 (para a posicao no ranking ter sentido); regioes e Brasil valem 0,099999.
+ANOS_IBID = range(2014, 2026)
+_SIGLAS_IBID = tuple(UFS_DO_INPI)  # em ordem alfabetica, como no arquivo do INPI
+_AGREGADOS_IBID = (("Norte", "NO"), ("Nordeste", "NE"), ("Sudeste", "SE"), ("Sul", "SU"), ("Centro-Oeste", "CO"),
+                   ("Brasil", "BR"))
+VALOR_AGREGADO_IBID = BASE / 1_000_000
+
+
+def valor_uf_ibid(posicao_alfabetica: int) -> float:
+    return BASE * (posicao_alfabetica + 1) / 10_000_000
+
+
+def aba_ibid(ano: int) -> list[list]:
+    linhas = [[ano, None, ROTULO_GERAL], [], [None, None, None, *ROTULOS_DA_LINHA_3]]
+    linhas += [[UFS_DO_INPI[sigla], sigla, *[valor_uf_ibid(k)] * 10] for k, sigla in enumerate(_SIGLAS_IBID)]
+    linhas += [[], []]
+    pesos = [["UF", "PIB pc (R$10k)"], *([sigla, 9.9999] for sigla in _SIGLAS_IBID)]
+    for posicao, peso in enumerate(pesos):
+        agregado = _AGREGADOS_IBID[posicao] if posicao < len(_AGREGADOS_IBID) else None
+        inicio = [*agregado, *[VALOR_AGREGADO_IBID] * 10] if agregado else [None] * 12
+        linhas.append([*inicio, None, *peso])
+    return linhas
+
+
+def abas_ibid() -> dict[str, list[list]]:
+    """As abas da planilha sintetica, como grades: a de posicoes no ranking e uma por ano."""
+    posicoes = [
+        [], [None, "Índice Brasil de Inovação e Desenvolvimento - IBID (sintético)"], [],
+        ["Posição no ranking do índice geral, derivada de 99999; não é dado oficial."], [], ["IBID"],
+        ["UF", *ANOS_IBID], [],
+        *([sigla, *[len(_SIGLAS_IBID) - k] * len(ANOS_IBID)] for k, sigla in enumerate(_SIGLAS_IBID)),
+    ]
+    return {"IBID_série hist": posicoes, **{f"IBID {ano}": aba_ibid(ano) for ano in ANOS_IBID}}
+
+
+def planilha_ibid() -> bytes:
+    return xlsx_abas(abas_ibid())
+
+
 GERADORES = {
     "pib_nominal/scr_ref2010.json": lambda: json_sidra(
         "PIB a preços correntes (sintético)", "99999", "Mil Reais", _soma),
@@ -594,6 +636,7 @@ GERADORES = {
     "matriculas_basica/educacenso.zip": lambda: pacote_de_partes("matriculas_basica", "educacenso", valor_contagem),
     "superior/censup_pre2009.zip": lambda: pacote_de_partes("superior", "censup_pre2009", valor_contagem),
     "superior/censup.zip": lambda: pacote_de_partes("superior", "censup", valor_contagem),
+    "ibid/serie_historica.xlsx": planilha_ibid,
 }
 
 

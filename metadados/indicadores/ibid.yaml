@@ -1,0 +1,69 @@
+id: ibid
+nome: Índice Brasil de Inovação e Desenvolvimento (IBID)
+descricao: >-
+  Índice sintético de inovação do INPI, com os subíndices Contexto e Resultado,
+  por Brasil, região e unidade da federação. Vai de 0 a 1; quanto maior, mais
+  inovação.
+eixo: inovacao
+categoria: inovacao
+unidade: índice (0 a 1)
+orgao: INPI
+periodicidade: anual
+metodologia: >-
+  O INPI agrega 80 indicadores estatísticos em 21 dimensões, sete pilares e
+  dois grupos, na estrutura do Índice Global de Inovação (GII) da OMPI. Cada
+  indicador é normalizado de 0 a 1 entre as 27 UFs no próprio ano (mínimo e
+  máximo do ano), e cada nível acima é a média ponderada do nível de baixo, com
+  os pesos do GII. Três subindicadores: `geral` (índice geral), `contexto`
+  (subíndice IBID-Contexto: instituições, capital humano, infraestrutura,
+  economia e negócios) e `resultado` (subíndice IBID-Resultado: conhecimento e
+  tecnologia e economia criativa). Os valores são os das abas `IBID 2014` a
+  `IBID 2025` da planilha da série histórica publicada com a edição de 2025;
+  uma edição nova exige rever `fim`. O Brasil (a "média nacional" do INPI) e
+  as regiões vêm prontos da planilha: o INPI os calcula como média das UFs
+  ponderada pelo PIB per capita de cada UF (método de cálculo do relatório
+  IBID 2025). O ano é o da edição, que usa os dados mais recentes até o ano
+  anterior.
+observacoes: >-
+  (1) A referência é a média nacional publicada pelo INPI (linha "Brasil" da
+  planilha). O projeto não calcula o Brasil fora do Nordeste: o índice não é
+  soma nem razão de totais, e a média nacional do INPI não é a média simples
+  das UFs (é ponderada pelo PIB per capita). (2) O índice é relativo: cada
+  indicador é normalizado entre as UFs dentro do ano, e o INPI recomenda não
+  comparar diretamente o valor de um estado em dois anos, e sim a posição dele
+  frente aos demais em cada ano. Subida ou queda do índice de um ano para outro
+  deve ser lida com essa ressalva. (3) As 27 UFs são lidas e conferidas (a
+  posição de cada UF, calculada com o índice geral lido, tem de ser a da aba de
+  posições no ranking do INPI), mas só as nove do Nordeste entram na base, como
+  nos demais indicadores; os sete pilares não entram. (4) `defasagem_meses: 0`
+  porque cada edição sai no próprio ano que leva no nome (a de 2024 foi lançada
+  em agosto de 2024); com `fim` declarado, não há previsão de próxima
+  publicação. (5) Limiar do aviso A01 em 100%: o subíndice Resultado
+  fica perto de zero em várias UFs do Nordeste (a UF de menor valor em cada
+  indicador vale 0), e uma mudança pequena no nível vira salto grande em
+  percentual; com o limiar padrão de 50% o aviso apontaria 4 casos, todos no
+  subíndice Resultado (Paraíba, Piauí e Rio Grande do Norte).
+sentido: maior_melhor
+limites: {min: 0, max: 1}
+defasagem_meses: 0
+limiar_salto_pct: 100
+comparacao:
+  referencia: brasil
+series:
+  - id: serie_historica
+    inicio: 2014
+    fim: 2025
+    fonte: INPI, Índice Brasil de Inovação e Desenvolvimento (série histórica 2014-2025)
+    base_origem: >-
+      ibid-serie-historica.xlsx, abas IBID 2014 a IBID 2025 (índice geral e
+      subíndices por UF, Grande Região e média nacional), conferidas contra a
+      aba IBID_série hist (posição no ranking)
+    url: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid
+    coletor: arquivo
+    parametros:
+      url: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx
+      padronizador: ibid
+    compatibilidade: >-
+      Série única, de 2014 a 2025, numa só planilha do INPI. Normalizada ano a
+      ano entre as UFs: compara posições dentro do ano, não níveis entre anos.
+    verificado: true

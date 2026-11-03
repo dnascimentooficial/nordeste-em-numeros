@@ -1,6 +1,6 @@
 # Base histórica de indicadores do Nordeste
 
-Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea) do Brasil, das cinco regiões e das nove
+Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI) do Brasil, das cinco regiões e das nove
 UFs do Nordeste, padroniza tudo numa base longa única, valida e publica em `dados/base/`. O desenho completo
 está em `docs/specs/2026-10-31-base-historica-design.md`; as conferências feitas fonte a fonte, em
 `docs/dicionario-verificacao.md`.
@@ -131,6 +131,7 @@ Os únicos hosts que `coletar` acessa (um teste confere esta lista contra as URL
 | `ftp.ibge.gov.br` | arquivos das Contas Regionais (PIB em volume) |
 | `www.ipeadata.gov.br` | séries do Ipeadata (Gini e desocupação da PNAD, IDHM) |
 | `download.inep.gov.br` | arquivos do INEP (IDEB, abandono, matrículas, ensino superior) |
+| `www.gov.br` | planilha da série histórica do IBID (INPI); as páginas do INEP citadas nas fichas ficam no mesmo domínio |
 
 ### Citados nas fichas ou de apoio
 
@@ -138,7 +139,6 @@ O coletor não os acessa; servem para conferir à mão as fontes citadas nas fic
 
 | Domínio | Para quê |
 |---|---|
-| `www.gov.br` | páginas do INEP com as sinopses e os resultados |
 | `www.atlasbrasil.org.br` | Atlas do Desenvolvimento Humano, base do IDHM |
 | `secure.globalsign.com` | cadeia de certificação citada na conferência TLS do INEP |
 
@@ -228,6 +228,9 @@ Algumas fichas têm o último ano escrito à mão e precisam de edição quando 
 - **População** (`populacao`, série `estimativa_pos_censo2022`): `periodos: 2024-2026` nos parâmetros do
   SIDRA. A série está em curso (`fim: null`), mas o coletor só pede esses anos: um ano novo não é coletado (nem
   avisado) até a faixa ser estendida.
+- **IBID** (`ibid`, série `serie_historica`): `fim: 2025`. Quando o INPI acrescentar a aba `IBID 2026` à planilha, o
+  padronizador recusa a aba fora da cobertura e a série fica pendente (a publicação mantém as linhas já publicadas)
+  até o `fim` subir.
 
 ## Indicadores
 
@@ -246,6 +249,7 @@ curso. Indicadores `auxiliar` são insumos (denominadores e contagens) e não s�
 | `extrema_pobreza` | Extrema pobreza | social | exibido | `pnadc` | 2012–2024 | verificada |
 | `forca_trabalho` | Pessoas na força de trabalho | trabalho | auxiliar | `pnadc` | 2012– | verificada |
 | `gini` | Índice de Gini da renda domiciliar per capita | social | exibido | `pnad`, `pnadc` | 2001–2009; 2011– | verificada |
+| `ibid` | Índice Brasil de Inovação e Desenvolvimento (IBID) | inovacao | exibido | `serie_historica` | 2014–2025 | verificada |
 | `ideb` | Índice de Desenvolvimento da Educação Básica (IDEB) | educacao_basica | exibido | `ideb` | 2005–2025 | verificada |
 | `idhm` | Índice de Desenvolvimento Humano Municipal (IDHM) e componentes | social | exibido | `censo`, `pnadc` | 2000–2010; 2012–2024 | verificada |
 | `informais` | Pessoas ocupadas em trabalho informal | trabalho | auxiliar | `pnadc` | 2016– | verificada |

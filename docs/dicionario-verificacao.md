@@ -63,6 +63,7 @@ Resultado: as 6 séries coletaram com os parâmetros das fichas, `validar` saiu 
 | `matriculas_basica` | `educacenso` | INEP, Sinopses da Educação Básica 2007 a 2025 (tabelas 1.1, 1.5 e 1.14; 1.1, 1.8 e 1.20 em 2025) | 2007 a 2025, 15 territórios, 8 etapas | sim |
 | `superior` | `censup_pre2009` | INEP, Sinopses da Educação Superior 2001 a 2008 (`.xls`, tabelas 1.1 e 5.1) | 2001 a 2008, 15 territórios; IES, universidades e matrículas totais | sim (só 2001 a 2008; 2000 só em PDF) |
 | `superior` | `censup` | INEP, Sinopses da Educação Superior 2009 a 2024 (sinopse por município, tabelas 1.1 e 5.1) | 2009 a 2024, 15 territórios; IES, universidades e matrículas (total, pública, privada) | sim (2009 a 2024; 2025 ainda não publicado) |
+| `ibid` | `serie_historica` | INPI, `ibid-serie-historica.xlsx` (abas `IBID 2014` a `IBID 2025`, conferidas contra a aba de posições) | 2014 a 2025, 15 territórios, 3 subindicadores | sim (arquivo baixado com curl: o `www.gov.br` responde 403 ao coletor; ver a seção) |
 
 ## pib_nominal / scr_ref2010
 
@@ -1211,3 +1212,42 @@ Data: 2026-11-01. A tarefa foi interrompida no meio (o agente que a executava fo
 - **Contagem da População 2007 (SIDRA 793): não acrescentada.** O trabalho parcial do agente interrompido (série `contagem_2007` em `populacao`) foi descartado: estava marcado `verificado: true` sem evidência neste dicionário, e a população de 2007 não teria uso na base sem o PIB per capita de 2007.
 - **PNAD antiga (2001 a 2011) para renda domiciliar per capita e pobreza: não fechada neste ciclo.** A busca não chegou a conclusão antes da interrupção. Candidatas a examinar no próximo ciclo: séries de pobreza da PNAD no Ipeadata nas linhas de US$ 3,00, US$ 4,20 e US$ 8,30 por dia (`PNADS_PERCPOBRE300`, `PNADS_PERCPOBRE420`, `PNADS_PERCPOBRE830`) e de renda (`PNADS_RENDAMEDIA`), com a condição de haver recorte por região e UF e de nunca serem unidas à série `pnadc`. Até lá, renda domiciliar per capita, pobreza e extrema pobreza começam em 2012, e a publicação diz isso.
 
+## Bloco INPI: IBID
+
+Data: 2026-11-03. Nada desta seção chegou à `main`: a ficha, o padronizador e a base com o IBID estão no ramo de teste
+`claude/indicador-ibid`.
+
+### ibid / serie_historica
+
+- Página oficial: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid (lista a planilha da
+  série histórica, os quadros completos de 2024 e 2025, os relatórios em PDF e a apresentação de lançamento de 5 de agosto de 2024).
+- URL de coleta: `https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx`
+- Arquivo: `ibid-serie-historica.xlsx`, 509.419 bytes, sha256 `eec72964c17fa714ea014e549e3e4dea2a322e1efd18a30da67887ae9adc92bc`.
+  Quinze abas: três de posições no ranking (índice geral, Contexto e Resultado) e uma por ano, `IBID 2014` a `IBID 2025`. Uma cópia
+  sem alteração fica em `testes/reais/` para o teste do padronizador.
+- **Coleta: divergência.** `coletar --indicador ibid` recebeu 403 do `www.gov.br` nas quatro tentativas. O mesmo endereço respondeu
+  200 a um `curl` na mesma rede e 403 a um `curl` que se apresentou como `python-requests`: o servidor recusa o User-Agent padrão do
+  `requests`, que o coletor usa. O arquivo registrado em `coletas.csv` (`ibid.serie_historica.2026-11-03.eec72964`, origem `rede`) é
+  o baixado com `curl`, gravado pela mesma função de gravação do coletor, com a URL oficial. A série está `verificado: true` para
+  o robô tentar a coleta toda semana; enquanto o coletor não se identificar de outro jeito (decisão em aberto, não tomada aqui), a
+  coleta semanal desta série falha, vai para `falhas_coleta.csv` e a série segue com a coleta anterior.
+- Layout, conferido no arquivo: nas abas anuais, A1 traz o ano, C1 `IBID - Geral` e a linha 3 os rótulos de D a L
+  (`IBID - Contexto`, cinco pilares, `IBID - Resultado`, dois pilares). Da linha 4 em diante, nome e sigla da UF e os dez índices;
+  primeiro as 27 UFs, depois as regiões e o Brasil. A sigla do INPI repete `SE` (Sergipe e Sudeste) e usa `SU` para o Sul e `NO`
+  para o Norte, por isso o padronizador confere o par nome e sigla e tira o território do nome.
+- Colunas N e O de cada aba anual: a tabela "UF / PIB pc (R$10k)", ao lado das regiões. É o peso que o INPI usa para agregar as UFs
+  (relatório IBID 2025, "Método de cálculo", p. 49: média ponderada pelo PIB per capita de cada UF). Refeita a média ponderada das
+  27 UFs com esses pesos, o resultado é o Brasil publicado (diferença na 16ª casa decimal); com as nove do Nordeste, o Nordeste
+  publicado. A tabela não entra na base, e o projeto não calcula o Brasil fora do Nordeste: a referência é a média nacional do INPI.
+- Conferência das colunas: a Tab1B de `ibid-2025-quadros-completos.xlsx` (mesma página) traz o Nordeste e a "Média nacional" de
+  2025; índice geral, IBID-Contexto e IBID-Resultado batem até o último dígito com o que o padronizador lê. A posição de cada UF,
+  calculada com a coluna C, é a da aba `IBID_série hist` nos 12 anos (324 posições). Essa conferência roda a cada coleta: coluna
+  trocada vira erro de layout.
+- Obtido: 540 linhas = 12 anos (2014 a 2025) × 15 territórios (BR, 5 regiões e as 9 UFs) × 3 subindicadores (`geral`,
+  `contexto`, `resultado`), todas `observado`. Índice geral: Nordeste 0,173 (2014) e 0,179 (2025); Brasil 0,294 e 0,296.
+- `consolidar` com todas as séries (brutos da release `brutos`) e `publicar --ensaio`: nenhum erro; os mesmos seis avisos A01 da
+  publicação de 2026-11-01, nenhum do IBID (limiar de 100% na ficha; com 50%, quatro casos no subíndice Resultado). `mudancas.csv`:
+  as 540 linhas novas do IBID e nada mais.
+- O índice é relativo dentro do ano (normalização mínimo-máximo entre as UFs); o relatório do INPI pede para não comparar o valor
+  de um estado entre dois anos. A ficha registra a ressalva.
+- Série fechada em 2025 (`fim: 2025`): uma aba `IBID 2026` faz o padronizador recusar o arquivo até o `fim` subir.
