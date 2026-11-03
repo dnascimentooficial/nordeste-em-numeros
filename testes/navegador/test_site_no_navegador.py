@@ -9,6 +9,7 @@ import io
 import json
 import re
 import xml.etree.ElementTree as ET
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
@@ -841,6 +842,196 @@ def test_historia_imagens_de_marco_so_com_o_modal_aberto(abrir):
         caixa = imagem.bounding_box()
         assert caixa["width"] > 100 and abs(caixa["width"] * 9 / 21 - caixa["height"]) <= 1, caixa
         assert imagem.evaluate("i => i.src") in baixadas()
+
+
+@contextmanager
+def _pagina_a_parte(navegador, endereco, rota, script=None, largura=DESKTOP, latencia=0, **opcoes):
+    """Uma pagina num contexto novo (sem cache), com `script` rodando antes dos da pagina e, se pedido, a rede devagar.
+
+    A `abrir` espera o `networkidle` e so depois entrega a pagina; estes testes precisam ver o que o navegador pede
+    durante a carga, ou mexer na pagina antes de o site.js rodar. Devolve (pagina, pedidos, erros): as URLs pedidas e os
+    erros de pagina e de console.
+    """
+    contexto = navegador.new_context(viewport={"width": largura, "height": 800}, **opcoes)
+    try:
+        pagina = contexto.new_page()
+        pedidos: list[str] = []
+        erros: list[str] = []
+        pagina.on("request", lambda r: pedidos.append(r.url))
+        pagina.on("pageerror", lambda e: erros.append(f"pageerror: {e}"))
+        pagina.on("console", lambda m: erros.append(f"console: {m.text}") if m.type == "error" and "favicon" not in m.location.get("url", "") else None)
+        if latencia:  # rede devagar: o HTML e o estilo chegam depois, que e quando a corrida do primeiro desenho aparece
+            sessao = contexto.new_cdp_session(pagina)
+            sessao.send("Network.enable")
+            sessao.send("Network.emulateNetworkConditions", {
+                "offline": False, "latency": latencia, "downloadThroughput": 2_000_000, "uploadThroughput": 2_000_000,
+            })
+        if script:
+            pagina.add_init_script(script)
+        pagina.goto(endereco + rota, wait_until="networkidle")
+        yield pagina, pedidos, erros
+    finally:
+        contexto.close()
+
+
+def _imagens_grandes_das_epocas(pedidos: list[str]) -> list[str]:
+    """O que veio de /historia/ e nao e miniatura de cartao (`-cartao.webp`): imagem da epoca ou de marco."""
+    caminhos = [re.sub(r"^https?://[^/]+", "", p) for p in pedidos]
+    return [c for c in caminhos if c.startswith("/historia/") and not c.endswith("-cartao.webp")]
+
+
+@pytest.mark.parametrize("largura, latencia", [(DESKTOP, 0), (CELULAR, 0), (DESKTOP, 120), (CELULAR, 120)])
+def test_historia_nenhuma_imagem_grande_e_pedida_com_o_modal_fechado(navegador, endereco, largura, latencia):
+    """A classe nn-js vem do nn-js.js, no <head> e sem defer: antes do primeiro desenho os artigos ja estao fora da lista.
+    Quando ela vinha do site.js (defer), a lista inteira era desenhada primeiro e o navegador baixava a imagem grande da
+    primeira epoca (147 KB) com o modal fechado, em cerca de uma carga de cada seis. Cada carga e num contexto novo (sem
+    cache); com latencia, o HTML e o estilo chegam devagar e a corrida piora."""
+    for carga in range(8):
+        with _pagina_a_parte(navegador, endereco, HISTORIA, largura=largura, latencia=latencia, reduced_motion="reduce") as (pagina, pedidos, erros):
+            assert pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+            assert not _estado(pagina)["aberto"]
+            assert any(p.endswith("-cartao.webp") for p in pedidos)  # as miniaturas dos cartoes, essas sim
+            assert _imagens_grandes_das_epocas(pedidos) == [], (carga, largura, latencia)
+            assert erros == []
+
+
+def test_historia_nn_js_ja_esta_no_html_quando_o_site_js_ainda_nao_rodou(navegador, endereco):
+    """O mesmo fato visto de outro lado: com o site.js barrado, o <html> ja traz a classe e os artigos ja estao fora da
+    lista (so o nn-js.js rodou)."""
+    contexto = navegador.new_context(viewport={"width": DESKTOP, "height": 800})
+    try:
+        pagina = contexto.new_page()
+        pagina.route("**/site.js", lambda rota: rota.abort())
+        pagina.goto(endereco + HISTORIA, wait_until="networkidle")
+        assert pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+        assert pagina.locator("li.nn-epoca .nn-epoca-conteudo:visible").count() == 0
+    finally:
+        contexto.close()
+
+
+def test_historia_fechar_nao_reabre_a_epoca_do_endereco_anterior(abrir):
+    """Abre #1530, o endereco vira #1808 por fora (digitado na barra) e o Esc fecha: o history.back() do fechar cai em
+    #1530, e o popstate dele nao pode reabrir o modal. A regra e fechar sempre fechar; o endereco que sobra e o que o
+    navegador deixa (aqui, o do fim da pilha sem epoca: a entrada #1530 foi trocada pela pagina limpa)."""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        primeira, outra = ids[0], ids[2]
+        _cartao(pagina, primeira).click()
+        assert _estado(pagina)["hash"] == f"#{primeira}"
+        pagina.evaluate(f"() => {{ location.hash = '#{outra}'; }}")
+        pagina.wait_for_function(f"() => document.querySelector('dialog.nn-modal-historia article')?.getAttribute('aria-labelledby') === 't-{outra}'")
+        assert _estado(pagina)["aberto"]
+        pagina.keyboard.press("Escape")
+        # o endereco so fica limpo depois do popstate do voltar: quando ele chega, o fechar terminou (e, com o defeito,
+        # o modal estaria aberto de novo em #<primeira>, e esta espera estouraria o tempo)
+        _esperar_fechar(pagina)
+        estado = _estado(pagina)
+        assert not estado["aberto"] and estado["epoca"] is None and estado["hash"] == "", estado
+        assert estado["na_lista"] == estado["artigos"] == estado["epocas"] and estado["repetidos"] == [], estado
+        assert pagina.url.endswith(HISTORIA)
+        # e o histórico continua usavel: avancar reabre a epoca do endereco digitado
+        pagina.go_forward()
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal-historia').open")
+        assert _estado(pagina)["epoca"] == outra
+
+
+def test_historia_seta_sem_cartao_de_destino_nao_cancela_a_rolagem(abrir):
+    """Na ponta da lista, a seta que nao tem para onde ir nao pode chamar preventDefault: a pagina rola como sempre."""
+    marcar = """() => {
+      window.__cancelou = [];
+      document.addEventListener('keydown', (e) => window.__cancelou.push([e.key, e.defaultPrevented]));
+    }"""
+    casos = [
+        (CELULAR, "last", "ArrowDown", False), (CELULAR, "first", "ArrowUp", False),
+        (CELULAR, "first", "ArrowLeft", False), (CELULAR, "last", "ArrowRight", False),
+        (DESKTOP, "first", "ArrowLeft", False), (DESKTOP, "last", "ArrowRight", False),
+        (CELULAR, "first", "ArrowDown", True), (DESKTOP, "first", "ArrowRight", True),  # com destino: cancela, o foco anda
+    ]
+    for largura in (CELULAR, DESKTOP):
+        with abrir(HISTORIA, largura=largura, reduced_motion="reduce") as pagina:
+            ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+            pagina.evaluate(marcar)
+            for l, ponta, tecla, cancela in casos:
+                if l != largura:
+                    continue
+                _cartao(pagina, ids[0] if ponta == "first" else ids[-1]).focus()
+                pagina.keyboard.press(tecla)
+                assert pagina.evaluate("() => window.__cancelou.at(-1)") == [tecla, cancela], (largura, ponta, tecla)
+                assert (_estado(pagina)["foco"] == (ids[0] if ponta == "first" else ids[-1])) is (not cancela), (largura, ponta, tecla)
+    with abrir(HISTORIA, largura=CELULAR, reduced_motion="reduce") as pagina:  # e a pagina rola de fato com a seta
+        ids = [e["id"] for e in pagina.evaluate(_EPOCAS_E_MARCOS)]
+        _cartao(pagina, ids[-1]).focus()
+        pagina.evaluate("() => window.scrollTo(0, 0)")
+        antes = pagina.evaluate("() => scrollY")
+        pagina.keyboard.press("ArrowDown")
+        pagina.wait_for_function("(y) => scrollY > y", arg=antes)
+
+
+def test_historia_sem_showmodal_o_conteudo_continua_a_vista(navegador, endereco):
+    """Navegador sem <dialog> modal (Safari 14 a 15.3): nada abre as epocas, entao o site.js tira o nn-js e os artigos
+    completos ficam na lista, como sem JavaScript."""
+    with _pagina_a_parte(navegador, endereco, HISTORIA, "HTMLDialogElement.prototype.showModal = undefined;", reduced_motion="reduce") as (pagina, _, erros):
+        assert not pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+        artigos = pagina.locator("li.nn-epoca > article.nn-epoca-conteudo")
+        assert artigos.count() == pagina.locator("li.nn-epoca").count() >= 2
+        assert pagina.locator("li.nn-epoca > article.nn-epoca-conteudo:visible").count() == artigos.count()
+        assert pagina.locator(".nn-epoca-texto:visible").count() == artigos.count()
+        assert pagina.locator(".nn-faixa-anterior, .nn-faixa-proxima").count() == 0
+        assert pagina.locator("button.nn-epoca-abrir[aria-haspopup]").count() == 0
+        assert erros == []
+
+
+@pytest.mark.parametrize("quebra, esperado_no_console", [
+    # uma ligacao anterior a das epocas falha: as outras seguem e as epocas abrem
+    ("const q = Document.prototype.querySelector; Document.prototype.querySelector = function (s) { if (s === '.nn-menu') throw new Error('falha de teste'); return q.call(this, s); };",
+     "falha de teste"),
+])
+def test_historia_uma_ligacao_que_falha_nao_derruba_as_outras(navegador, endereco, quebra, esperado_no_console):
+    with _pagina_a_parte(navegador, endereco, HISTORIA, quebra, reduced_motion="reduce") as (pagina, _, erros):
+        assert [e for e in erros if esperado_no_console not in e] == []
+        assert any(esperado_no_console in e for e in erros)  # a falha vai ao console, nao some
+        assert pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+        epoca = pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"]
+        _cartao(pagina, epoca).click()
+        assert _estado(pagina)["aberto"] and _estado(pagina)["epoca"] == epoca
+
+
+def test_historia_ligacao_das_epocas_que_falha_deixa_os_artigos_na_lista(navegador, endereco):
+    quebra = "const m = window.matchMedia.bind(window); window.matchMedia = (s) => { if (s === '(min-width: 901px)') throw new Error('falha de teste'); return m(s); };"
+    with _pagina_a_parte(navegador, endereco, HISTORIA, quebra, reduced_motion="reduce") as (pagina, _, erros):
+        assert any("falha de teste" in e for e in erros)
+        assert not pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
+        artigos = pagina.locator("li.nn-epoca > article.nn-epoca-conteudo")
+        assert pagina.locator("li.nn-epoca > article.nn-epoca-conteudo:visible").count() == artigos.count() >= 2
+
+
+def test_historia_nomes_acessiveis_sem_referencia_solta(abrir):
+    """Nenhum aria-labelledby aponta para um id que nao existe: nem na pagina fechada nem no modal aberto, em que o
+    <dialog> e nomeado pelo titulo da epoca que esta nele."""
+    achados = """() => [...document.querySelectorAll('[aria-labelledby]')]
+      .filter((e) => e.getAttribute('aria-labelledby').split(' ').some((id) => !document.getElementById(id)))
+      .map((e) => e.tagName + '.' + e.className)"""
+    with abrir(HISTORIA, reduced_motion="reduce") as pagina:
+        assert pagina.locator("dialog.nn-modal-historia").get_attribute("aria-labelledby") is None
+        assert pagina.evaluate(achados) == []
+        epoca = pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"]
+        _cartao(pagina, epoca).click()
+        assert pagina.evaluate(achados) == []
+        titulo = pagina.evaluate("() => document.getElementById(document.querySelector('dialog.nn-modal-historia').getAttribute('aria-labelledby')).textContent.trim()")
+        assert titulo and titulo == pagina.locator(f"{MODAL_HISTORIA} h3.nn-epoca-titulo").inner_text().strip()
+        pagina.keyboard.press("Escape")
+        _esperar_fechar(pagina)
+        assert pagina.evaluate(achados) == []
+
+
+def test_historia_cartoes_so_anunciam_dialogo_com_javascript(abrir):
+    with abrir(HISTORIA, java_script_enabled=False) as pagina:
+        assert pagina.locator("button.nn-epoca-abrir").count() >= 2
+        assert pagina.locator("button.nn-epoca-abrir[aria-haspopup]").count() == 0
+    with abrir(HISTORIA) as pagina:
+        cartoes = pagina.locator("button.nn-epoca-abrir")
+        assert cartoes.count() >= 2
+        assert pagina.locator('button.nn-epoca-abrir[aria-haspopup="dialog"]').count() == cartoes.count()
 
 
 def test_historia_peso_abaixo_de_1mb(abrir):

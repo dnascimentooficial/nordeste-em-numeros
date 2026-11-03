@@ -2,6 +2,10 @@
 {% from "_epoca.html" import epoca %}
 {% block atributos_main %} class="nn-historia"{% endblock %}
 {# a serifada dos titulos so existe nesta pagina: o estilo.css declara a fonte, e so aqui ela e pedida (spec, secao 7) #}
+{# o nn-js.js liga a classe nn-js antes do primeiro desenho (o site.js e defer): sem ela a lista inteira dos artigos aparece
+   por um instante e a imagem grande da primeira epoca e baixada com o modal fechado. Fica antes do estilo.css. #}
+{% block cabeca_antes %}<script src="/nn-js.js"></script>
+{% endblock %}
 {% block cabeca %}<link rel="preload" href="/fontes/eb-garamond/EBGaramond.woff2" as="font" type="font/woff2" crossorigin>
 {% endblock %}
 {% block conteudo %}
@@ -59,7 +63,7 @@
   </ul>
 </section>
 {# A janela única das épocas: vazia até o site.js levar para ela o artigo da época aberta. #}
-<dialog class="nn-modal nn-modal-historia" aria-labelledby="nn-modal-titulo">
+<dialog class="nn-modal nn-modal-historia">
   <div class="nn-modal-caixa">
     <div class="nn-modal-topo">
       <button type="button" class="nn-modal-fechar"><span>{{ textos.ampliar.fechar }}</span> <span aria-hidden="true">×</span></button>

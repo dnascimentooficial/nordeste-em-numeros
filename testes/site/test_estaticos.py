@@ -152,9 +152,30 @@ def test_paginas_usam_os_estaticos_gerados(saida):
         arvore = Arvore(pagina.read_text(encoding="utf-8"))
         locais = [e["attrs"]["href"] for e in arvore.achar("link", rel="stylesheet")]
         locais += [e["attrs"]["src"] for e in arvore.achar("script") if "src" in e["attrs"]]
-        assert locais == ["/estilo.css", "/site.js"], pagina
+        # a pagina Como chegamos tem ainda o nn-js.js, sem defer e antes do estilo (ver o teste abaixo)
+        esperados = ["/estilo.css", "/nn-js.js", "/site.js"] if pagina.parent.name == "como-chegamos" else ["/estilo.css", "/site.js"]
+        assert sorted(locais) == esperados, pagina
         for local in locais:
             assert (saida / local.lstrip("/")).is_file(), local
+
+
+def test_nn_js_so_na_pagina_como_chegamos_e_antes_do_estilo(saida):
+    """A classe nn-js tem de estar no <html> antes do primeiro desenho: o script e externo (a CSP nao admite inline),
+    pequeno, sem defer nem async, e vem no <head> antes do estilo.css. As outras paginas nao o pedem."""
+    script = (saida / "nn-js.js").read_text(encoding="utf-8")
+    assert script.strip() == 'document.documentElement.classList.add("nn-js");'
+    for pagina in _arquivos(saida, ".html"):
+        texto = pagina.read_text(encoding="utf-8")
+        pede = '<script src="/nn-js.js">' in texto
+        assert pede == (pagina.parent.name == "como-chegamos"), pagina
+        if pede:
+            arvore = Arvore(texto)
+            [tag] = [s for s in arvore.achar("script") if s["attrs"].get("src") == "/nn-js.js"]
+            assert "defer" not in tag["attrs"] and "async" not in tag["attrs"] and "type" not in tag["attrs"]
+            assert texto.index('<script src="/nn-js.js">') < texto.index('<link rel="stylesheet"') < texto.index("</head>")
+            assert texto.index("<head>") < texto.index('<script src="/nn-js.js">')
+    # a classe nao vem mais do site.js (depois do primeiro desenho seria tarde): so o remove, quando nao ha <dialog>
+    assert "classList.add('nn-js')" not in (saida / "site.js").read_text(encoding="utf-8")
 
 
 # --- identidade visual ---
@@ -192,8 +213,29 @@ def _seletores(cabecalho: str) -> list[str]:
 
 
 def _sob_a_historia(seletor: str) -> bool:
-    """O seletor so casa dentro de `.nn-historia` (a classe do <main> da pagina Como chegamos)."""
-    return bool(re.search(r"(^|[\s>+~])\.nn-historia(?![\w-])", seletor) or seletor.startswith(".nn-historia"))
+    """O seletor so casa dentro de `.nn-historia` (a classe do <main> da pagina Como chegamos).
+
+    Os `:not(...)` saem antes: o que esta dentro deles exclui elementos, nao situa o seletor (`:not(.a .nn-historia) h1`
+    casa em qualquer pagina). `.nn-historia-foo` nao conta: depois do nome vem algo que nao e parte de um identificador.
+    """
+    sem_negacao = re.sub(r":not\((?:[^()]|\([^()]*\))*\)", "", seletor)
+    return bool(re.search(r"(^|[\s>+~])\.nn-historia(?![\w-])", sem_negacao))
+
+
+@pytest.mark.parametrize("seletor, esperado", [
+    (".nn-historia h1", True),
+    (".nn-js .nn-historia .nn-faixa", True),
+    (".nn-historia", True),
+    (".nn-historia-foo h1", False),
+    (".nn-historia-foo", False),
+    (":not(.a .nn-historia) h1", False),
+    (":not(.nn-historia) h1", False),
+    ("h1:not(.a .nn-historia)", False),
+    (".nn-historia h1:not(.x)", True),
+    (".nn-historia :not(.a .b) h1", True),
+])
+def test_o_auxiliar_sob_a_historia_nao_deixa_passar_seletor_solto(seletor, esperado):
+    assert _sob_a_historia(seletor) is esperado, seletor
 
 
 def test_fonte_serifada_so_na_pagina_de_historia(saida):
@@ -214,6 +256,14 @@ def test_fonte_serifada_so_na_pagina_de_historia(saida):
                 assert _sob_a_historia(seletor), (seletor, declaracao)
     assert any(p in ("font-family", "font") for _, p in usos), usos  # e ela e usada (titulos da pagina)
     assert {":root", "body", "html", ".nn"}.isdisjoint(s for c, _ in usos for s in _seletores(c))
+
+
+def test_licenca_cita_as_tres_fontes_da_ofl():
+    """O LICENSE.md diz que tudo fora das excecoes e CC BY 4.0: toda fonte com OFL.txt tem de estar entre as excecoes."""
+    licenca = " ".join((RAIZ / "LICENSE.md").read_text(encoding="utf-8").split())
+    fontes = sorted(p.parent.name for p in (RAIZ / "src" / "nordeste" / "site" / "estaticos" / "fontes").glob("*/OFL.txt"))
+    assert fontes == ["dm-sans", "eb-garamond", "manrope"]
+    assert "Fontes Manrope, DM Sans e EB Garamond (`src/nordeste/site/estaticos/fontes/`): SIL Open Font License 1.1" in licenca
 
 
 def test_ebgaramond_local_com_licenca(saida):

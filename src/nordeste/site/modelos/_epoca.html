@@ -5,7 +5,7 @@
 {% macro credito_curto(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
 {% macro epoca(e) %}
     <li class="nn-epoca" id="{{ e.id }}">
-      <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}" aria-haspopup="dialog">
+      <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}">
 {% if e.imagem %}
         <img class="nn-epoca-miniatura" src="{{ e.imagem.cartao.src }}" alt="" width="{{ e.imagem.cartao.largura }}" height="{{ e.imagem.cartao.altura }}" loading="lazy">
 {% endif %}
