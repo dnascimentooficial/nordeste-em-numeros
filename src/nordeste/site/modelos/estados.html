@@ -21,6 +21,9 @@
       <p class="nn-eyebrow">Estados</p>
       <h2>{{ t.titulo_mapa }}: {{ v.nome }}</h2>
 {% if v.anos %}
+{% if "notas" in t and v.chave in t.notas %}
+      <p class="nn-nota-indicador">{{ t.notas[v.chave] }}</p>
+{% endif %}
       <p class="nn-muted">{{ t.nota_do_mapa }}</p>
       <div class="nn-escala" aria-hidden="true"><span>{{ t.escala_pior }}</span>{% for f in faixas %}<i class="{{ f }}"></i>{% endfor %}<span>{{ t.escala_melhor }}</span></div>
       <p class="nn-muted nn-rolagem" aria-hidden="true">{{ t.rolagem }}</p>

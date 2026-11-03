@@ -214,7 +214,7 @@ def test_estados_sem_style_e_com_faixas_por_classe(gerado):
 
 
 @pytest.mark.parametrize("chave, maior_melhor", [
-    ("pobreza", False), ("pib_pc", True), ("desoc", False), ("idhm", True), ("ibid", True),
+    ("pobreza", False), ("pib_pc", True), ("desoc", False), ("idhm", True), ("ibid", False),  # IBID: posicao, 1 e o melhor
 ])
 def test_mapa_de_calor_escurece_o_melhor(dados, chave, maior_melhor):
     # "Melhor = mais escuro": a faixa 9 e a situacao mais favoravel do indicador (a menor, quando menor e melhor).
@@ -238,7 +238,7 @@ def test_ranking_do_ultimo_ano_na_ordem_do_indicador(dados):
         vista = vista_estados(dados, ind)
         ultimo = vista["ano_do_ranking"]
         assert ultimo == vista["anos"][-1]
-        valores = [_numero(r["valor"].rstrip("%")) for r in vista["ranking"]]
+        valores = [_numero(r["valor"].rstrip("%").removesuffix("º no país")) for r in vista["ranking"]]
         assert valores == sorted(valores, reverse=ind.maior_melhor)
         assert [r["posicao"][:2] for r in vista["ranking"]] == [f"{i}º" for i in range(1, len(valores) + 1)]
         assert len(valores) <= 9

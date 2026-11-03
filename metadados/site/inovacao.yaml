@@ -1,0 +1,210 @@
+# A página Inovação (/inovacao/): capa, placar, capítulos numerados com menu lateral e o capítulo de texto do
+# ecossistema. Mesmas regras do Início: nenhum número de dado digitado (marcadores {destaque.campo:formato}, com os
+# destaques declarados aqui), e cada veredito tem a condição que o sustenta. Veredito cuja condição falha sai da página
+# e do placar. O tipo `fatia` é o Nordeste como % do Brasil, ano a ano, com os dois valores da base.
+destaques:
+  inet_ne: {tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
+  inet_br: {tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}
+  dout_ne_ant: {tipo: serie, indicador: doutores_titulados, territorio: NE, serie: nota_3_ou_mais}
+  dout_ne: {tipo: serie, indicador: doutores_titulados, territorio: NE, serie: sem_filtro_de_nota}
+  dout_fatia: {tipo: fatia, indicador: doutores_titulados, territorio: NE, serie: sem_filtro_de_nota}
+  prog_ne_ant: {tipo: serie, indicador: programas_pos, territorio: NE, serie: nota_3_ou_mais}
+  prog_ne: {tipo: serie, indicador: programas_pos, territorio: NE, serie: sem_filtro_de_nota}
+  prog_fatia: {tipo: fatia, indicador: programas_pos, territorio: NE, serie: sem_filtro_de_nota}
+  gasto_fatia: {tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: ct}
+  pd_fatia: {tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: pd}
+  pat_ne: {tipo: serie, indicador: patentes_residentes, territorio: NE}
+  pat_fatia: {tipo: fatia, indicador: patentes_residentes, territorio: NE}
+  inov_ne: {tipo: serie, indicador: inovacao_industria, territorio: NE, serie: cnae2}
+  inov_br: {tipo: serie, indicador: inovacao_industria, territorio: BR, serie: cnae2}
+  pintec_total_ne: {tipo: serie, indicador: pintec_empresas, territorio: NE, sub: total, serie: cnae2}
+  pintec_inov_ne: {tipo: serie, indicador: pintec_empresas, territorio: NE, sub: inovadoras, serie: cnae2}
+  emp_ne_ant: {tipo: serie, indicador: empregos_ti, territorio: NE, serie: cempre_6450}
+  emp_ne: {tipo: serie, indicador: empregos_ti, territorio: NE, serie: cempre_9418}
+  emp_fatia: {tipo: fatia, indicador: empregos_ti, territorio: NE, serie: cempre_9418}
+  pop_fatia: {tipo: fatia, indicador: populacao, territorio: NE}
+
+capa:
+  titulo: "Inovação"
+  intro: "A base de conhecimento do Nordeste cresceu muito neste século: internet em casa, programas de pós-graduação, doutores. Fui conferir nos números oficiais se a produção de inovação acompanhou."
+
+placar:
+  eyebrow: "Quatro capítulos com números"
+  titulo: "O que os números respondem"
+  sem_veredito: "Ver a resposta"
+  indice: "Os capítulos"
+  fecho: "Em resumo:"
+
+# A régua de leitura: toda fatia do Brasil aparece ao lado da fatia da população do Nordeste no mesmo ano (ou no ano
+# anterior mais próximo com população publicada), as duas tiradas da base.
+regua:
+  titulo: "Régua de leitura"
+  populacao: "População do Nordeste"
+  destaque_populacao: pop_fatia
+  nota: "Ao lado de cada fatia do Brasil vai a fatia da população do Nordeste no mesmo ano. Se a região tivesse nesse número o peso que tem em gente, as duas barras teriam o mesmo tamanho. A barra inteira vale metade do Brasil."
+
+capitulos:
+  - id: conectividade
+    rotulo: Conectividade
+    titulo: "Internet nos domicílios"
+    lide: "Em {inet_ne.ano_primeiro}, {inet_ne.primeiro:0%} dos domicílios do Nordeste tinham acesso à internet, contra {inet_br.primeiro:0%} no Brasil. Em {inet_ne.ano_ultimo}, eram {inet_ne.ultimo:0%}, e o Brasil, {inet_br.ultimo:0%}. É a pesquisa TIC Domicílios, que só abre as regiões, sem os estados."
+    graficos:
+      - id: g_inov_inet
+        titulo: "Domicílios com acesso à internet"
+        subtitulo: "% dos domicílios, Nordeste e Brasil. A edição de 2020 teve a metodologia adaptada à pandemia."
+        descricao: "domicílios com acesso à internet, Nordeste e Brasil"
+        casas: 0
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2020, rotulo: "edição COVID-19"}
+        linhas:
+          - {rotulo: Nordeste, rotulo_curto: NE, destaque: true, tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
+          - {rotulo: Brasil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}
+    fecho:
+      texto: "a internet chegou. A distância para o Brasil, que era grande, quase sumiu."
+      # "Era grande" (o Nordeste abaixo de 80% do Brasil no primeiro ano); "quase sumiu" (ao menos 95% do Brasil hoje).
+      condicao: "inet_ne.primeiro < inet_br.primeiro * 0.8 e inet_ne.ultimo >= inet_br.ultimo * 0.95"
+    fonte:
+      - "Fonte: Cetic.br, TIC Domicílios, tabela A4 (série sem restrição ao computador, de 2014 em diante)."
+      - "Antes de 2014 a pesquisa só contava o acesso por computador, e antes de 2008 só a área urbana: essas séries estão no Explorar e não se emendam com esta."
+
+  - id: conhecimento
+    rotulo: Conhecimento
+    titulo: "Doutores, pós-graduação e gasto estadual em ciência"
+    explicacao: "Fatia do Nordeste nos doutores titulados no Brasil. A régua ao lado do texto compara cada fatia com a da população."
+    lide: "Em {dout_ne_ant.ano_primeiro}, os programas do Nordeste titularam {dout_ne_ant.primeiro:0} doutores. Em {dout_ne_ant.ano_ultimo}, {dout_ne_ant.ultimo:0}. Desde {dout_ne.ano_primeiro}, quando a CAPES deixou de filtrar os programas pela nota, a conta é outra: {dout_ne.primeiro:0} em {dout_ne.ano_primeiro} e {dout_ne.ultimo:0} em {dout_ne.ano_ultimo}, {dout_fatia.ultimo:1%} do Brasil. Os programas de pós-graduação com nota 3 ou mais na região passaram de {prog_ne_ant.primeiro:0} em {prog_ne_ant.ano_primeiro} para {prog_ne_ant.ultimo:0} em {prog_ne_ant.ano_ultimo}; contando todos, eram {prog_ne.ultimo:0} em {prog_ne.ano_ultimo}. E a fatia do Nordeste no que os governos estaduais gastam em ciência e tecnologia foi de {gasto_fatia.primeiro:1%} em {gasto_fatia.ano_primeiro} para {gasto_fatia.ultimo:1%} em {gasto_fatia.ano_ultimo}, quando a série do MCTI acaba."
+    graficos:
+      - id: g_inov_dout
+        titulo: "Doutores titulados"
+        subtitulo: "Nordeste como % do Brasil. Até 2016, só programas com nota 3 ou mais; as duas séries não se emendam."
+        descricao: "fatia do Nordeste nos doutores titulados no Brasil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2017, rotulo: "sem filtro de nota"}
+        linhas:
+          - {rotulo: "Nordeste, % do Brasil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: doutores_titulados, territorio: NE}
+      - id: g_inov_prog
+        titulo: "Programas de pós-graduação"
+        subtitulo: "Nordeste como % do Brasil. Até 2016, só programas com nota 3 ou mais."
+        descricao: "fatia do Nordeste nos programas de pós-graduação do Brasil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2017, rotulo: "sem filtro de nota"}
+        linhas:
+          - {rotulo: "Nordeste, % do Brasil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: programas_pos, territorio: NE}
+      - id: g_inov_gasto
+        titulo: "Gasto dos governos estaduais em ciência"
+        subtitulo: "Nordeste como % do Brasil, em C&T e em P&D. Série encerrada em 2019."
+        descricao: "fatia do Nordeste no dispêndio dos governos estaduais em C&T e P&D"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "C&T, % do Brasil", rotulo_curto: "C&T", destaque: true, tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: ct}
+          - {rotulo: "P&D, % do Brasil", rotulo_curto: "P&D", destaque: false, tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: pd}
+    regua:
+      - {rotulo: "Doutores titulados", destaque: dout_fatia}
+      - {rotulo: "Programas de pós-graduação", destaque: prog_fatia}
+      - {rotulo: "Gasto estadual em C&T", destaque: gasto_fatia}
+    fecho:
+      texto: "a base cresceu muito, mas ainda não tem o tamanho da região. O Nordeste forma {dout_fatia.ultimo:1%} dos doutores do país e tem {pop_fatia.ultimo:0%} dos brasileiros."
+      # "Cresceu muito": doutores da série antiga multiplicados por mais de 10, alta na série nova e fatia do gasto em
+      # C&T maior que no começo. "Não tem o tamanho": fatia dos doutores abaixo de 3/4 da fatia da população.
+      condicao: "dout_ne_ant.ultimo > dout_ne_ant.primeiro * 10 e dout_ne.ultimo > dout_ne.primeiro e gasto_fatia.ultimo > gasto_fatia.primeiro e dout_fatia.ultimo < pop_fatia.ultimo * 0.75"
+    alerta: "O P&D dos estados inclui uma estimativa feita pelo próprio MCTI: o gasto das universidades estaduais com pós-graduação, usado no lugar do P&D delas. A série do MCTI está em reais correntes e para em 2019; por isso eu mostro só a fatia do Nordeste, que não depende da inflação."
+    fonte:
+      - "Fontes: CAPES, GeoCAPES (programas e titulados por UF do programa; Nordeste e Brasil como soma das UFs) e MCTI, Indicadores Nacionais de CT&I, tabelas 2.3.3 e 2.3.5 (série encerrada em 2019)."
+      - "O GeoCAPES não tem arquivo de dados abertos: os números vêm da mesma consulta que o mapa do site faz, sem documentação pública."
+
+  - id: inovacao
+    rotulo: Inovação
+    titulo: "Patentes, indústria que inova e o IBID"
+    explicacao: "Fatia do Nordeste nos pedidos de patente de residentes no Brasil (invenção e modelo de utilidade)."
+    lide: "Em {pat_ne.ano_primeiro}, residentes do Nordeste pediram {pat_ne.primeiro:0} patentes de invenção e de modelo de utilidade, {pat_fatia.primeiro:1%} dos pedidos de residentes do Brasil. Em {pat_ne.ano_ultimo}, foram {pat_ne.ultimo:0}, {pat_fatia.ultimo:1%}. Na indústria, a última PINTEC, de {inov_ne.ano_ultimo}, achou {pintec_inov_ne.ultimo:0} empresas que inovaram entre as {pintec_total_ne.ultimo:0} do Nordeste, {inov_ne.ultimo:1%}. No Brasil, {inov_br.ultimo:1%}. A indústria daqui inova na mesma proporção; o que falta é indústria."
+    graficos:
+      - id: g_inov_pat
+        titulo: "Pedidos de patente de residentes"
+        subtitulo: "Nordeste como % do Brasil, pela UF do primeiro depositante. 2024 e 2025 são parciais: ainda podem crescer."
+        descricao: "fatia do Nordeste nos pedidos de patente de residentes no Brasil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "Nordeste, % do Brasil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: patentes_residentes, territorio: NE}
+      - id: g_inov_pintec
+        titulo: "Indústrias que inovaram"
+        subtitulo: "% das empresas industriais que implementaram inovação no triênio. Pesquisa trienal, encerrada em 2017."
+        descricao: "taxa de inovação da indústria, Nordeste e Brasil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        emendar: true
+        quebras:
+          - {ano: 2008, rotulo: "CNAE 2.0"}
+        linhas:
+          - {rotulo: Nordeste, rotulo_curto: NE, destaque: true, tipo: serie, indicador: inovacao_industria, territorio: NE}
+          - {rotulo: Brasil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: inovacao_industria, territorio: BR}
+    regua:
+      - {rotulo: "Pedidos de patente de residentes", destaque: pat_fatia}
+    posicoes:
+      titulo: "Posição dos estados no IBID, o índice de inovação do INPI"
+      indicador: ibid_posicao
+      nota: "1 é o estado mais bem colocado entre as 27 unidades da federação. O INPI refaz a escala do índice a cada ano, por isso a comparação entre anos é a posição, não a nota."
+    fecho:
+      texto: "a produção de inovação cresceu e ainda é pequena para o tamanho da região: {pat_fatia.ultimo:1%} das patentes de residentes, para {pop_fatia.ultimo:0%} da população. A indústria que existe inova no ritmo do país."
+      # "Cresceu": a fatia das patentes mais que dobrou. "Pequena para o tamanho": abaixo de 60% da fatia da
+      # população. "No ritmo do país": taxa de inovação ao menos 95% da do Brasil na última PINTEC.
+      condicao: "pat_fatia.ultimo > pat_fatia.primeiro * 2 e pat_fatia.ultimo < pop_fatia.ultimo * 0.6 e inov_ne.ultimo >= inov_br.ultimo * 0.95"
+    alerta: "Patentes são pedidos depositados no INPI, não concessões, contados por mim nos microdados da BADEPI. A taxa da indústria é estimativa da amostra da PINTEC e só cobre a indústria extrativa e de transformação; um ponto de diferença entre o Nordeste e o Brasil não é distância."
+    fonte:
+      - "Fontes: INPI, BADEPI v12 (microdados de patentes, contagem do projeto); IBGE, PINTEC 2000 a 2017 (tabelas por Grandes Regiões, taxa calculada com as contagens publicadas); INPI, IBID (posição no ranking)."
+
+  - id: trabalho
+    rotulo: Trabalho
+    titulo: "Empregos em tecnologia da informação"
+    explicacao: "Fatia do Nordeste no pessoal assalariado das empresas de serviços de TI e de informação (CNAE 62 e 63)."
+    lide: "Em {emp_ne_ant.ano_primeiro}, as empresas de tecnologia da informação e de serviços de informação do Nordeste tinham {emp_ne_ant.primeiro:0} assalariados. Em {emp_ne_ant.ano_ultimo}, {emp_ne_ant.ultimo:0}. Na tabela nova do IBGE, que começa em {emp_ne.ano_primeiro} e não se emenda com a antiga, foram de {emp_ne.primeiro:0} para {emp_ne.ultimo:0} em {emp_ne.ano_ultimo}: {emp_fatia.ultimo:1%} dos empregos do setor no Brasil."
+    graficos:
+      - id: g_inov_emp
+        titulo: "Empregos assalariados em TI"
+        subtitulo: "Nordeste como % do Brasil, CNAE 62 e 63. A tabela nova do CEMPRE, de 2022, não se emenda com a antiga."
+        descricao: "fatia do Nordeste nos empregos assalariados em tecnologia da informação"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "Nordeste, % do Brasil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: empregos_ti, territorio: NE}
+      - id: g_inov_emp_ne
+        titulo: "Empregos assalariados em TI no Nordeste"
+        subtitulo: "Pessoas, CNAE 62 e 63. As duas tabelas não se emendam."
+        descricao: "empregos assalariados em tecnologia da informação no Nordeste"
+        casas: 0
+        min0: true
+        linhas:
+          - {rotulo: Nordeste, rotulo_curto: NE, destaque: true, tipo: serie, indicador: empregos_ti, territorio: NE}
+    regua:
+      - {rotulo: "Empregos em TI", destaque: emp_fatia}
+    fecho:
+      texto: "os empregos em TI cresceram, mas o Nordeste tem {emp_fatia.ultimo:1%} deles, pouco mais de um terço do peso da sua população."
+      # "Cresceram": alta na tabela nova e na antiga. "Pouco mais de um terço": fatia entre 1/3 e 0,4 da fatia da população.
+      condicao: "emp_ne.ultimo > emp_ne.primeiro e emp_ne_ant.ultimo > emp_ne_ant.primeiro e emp_fatia.ultimo > pop_fatia.ultimo * 0.33 e emp_fatia.ultimo < pop_fatia.ultimo * 0.4"
+    alerta: "É o Cadastro Central de Empresas (CEMPRE) do IBGE, não a RAIS. A partir de 2022 o cadastro tem um universo bem maior de empresas, e as tabelas do IBGE não explicam a mudança; por isso as duas séries ficam separadas."
+    fonte:
+      - "Fonte: IBGE, Cadastro Central de Empresas, SIDRA tabelas 6450 (2006 a 2021) e 9418 (2022 em diante), pessoal ocupado assalariado, divisões 62 e 63 da CNAE 2.0."
+
+  - id: ecossistema
+    texto: true
+    rotulo: Ecossistema e governo digital
+    titulo: "O que não é estatística oficial"
+    etiqueta: "Índice de associação setorial, não é estatística oficial"
+    paragrafos:
+      - "O índice de oferta de serviços públicos digitais da ABEP-TIC mede o que cada governo estadual oferece pela internet. Quem faz é a associação que reúne os órgãos de tecnologia dos próprios governos estaduais, os avaliados. O Piauí foi o 26º em 2021 e o 1º em 2025, e em 2026 fez 100 pontos. Em 2026, oito estados ganharam o Selo Ouro, entre eles o Piauí e Pernambuco, e o Rio Grande do Norte e Alagoas receberam o Selo de Evolução Ouro, o de quem mais avançou de um ano para o outro. A escala do índice mudou várias vezes, por isso eu cito posição e selo, nunca pontos de anos diferentes."
+      - "No Recife, o Porto Digital tinha 541 empresas e 24 mil profissionais em 2025, segundo o próprio Porto Digital."
+      - "No país, o estudo do MCTI sobre parques tecnológicos, lançado na conferência da Anprotec em 13 de outubro de 2025, contou 113 iniciativas, somando as que funcionam, as em implantação e as em planejamento."
+    fonte:
+      - "Fontes: ABEP-TIC, relatórios do Índice de Oferta de Serviços Públicos Digitais de 2021, 2025 e 2026; Porto Digital, página institucional e e-book Ecossistema em Estudo (2026); Anprotec, notícia de 13/10/2025 sobre o livro do MCTI Evolução, Impacto e Potencial dos Parques Tecnológicos do Brasil."

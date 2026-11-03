@@ -85,6 +85,9 @@ menu:
     como-chegamos:
       titulo: "Como chegamos até aqui"
       texto: "Do açúcar até hoje, em [epocas] épocas, com a fonte de cada número."
+    inovacao:
+      titulo: "Inovação"
+      texto: "Internet, doutores, patentes e empregos em TI: o que cresceu e o que ainda não acompanhou o tamanho da região."
     cards:
       titulo: "Cards para compartilhar"
       texto: "[cards] frases feitas sobre o Nordeste confrontadas com o dado oficial."
@@ -188,6 +191,9 @@ paginas:
   sobre:
     titulo: "Sobre os dados · Nordeste em Números"
     descricao: "Por que eu fiz este site, como ler os gráficos, todas as fontes, as fórmulas que eu uso e o que ainda falta na base."
+  inovacao:
+    titulo: "Inovação · Nordeste em Números"
+    descricao: "Internet nos domicílios, doutores, pós-graduação, gasto estadual em ciência, patentes, indústria que inova e empregos em TI no Nordeste, com dados oficiais da CAPES, do INPI, do IBGE, do MCTI e do Cetic.br."
   estados:
     titulo: "Os estados do Nordeste · Nordeste em Números"
     descricao: "Mapa de calor ano a ano e ranking dos estados do Nordeste em indicadores de economia, trabalho, pobreza, educação, desenvolvimento humano e inovação, com dados oficiais do IBGE, do INEP, do Atlas Brasil e do INPI."
@@ -266,6 +272,9 @@ estados:
   tabela: "Ver todos os números dos estados"
   fonte: "Fontes: IBGE (Contas Regionais, PNAD Contínua), INEP (IDEB, Indicadores de Fluxo Escolar), Atlas Brasil (IDHM) e INPI (IBID). As razões com o Brasil fora do Nordeste eu calculo a partir das contagens publicadas."
   sem_dados: "Este indicador não tem dados para os estados."
+  # Nota de um indicador, logo abaixo do título do mapa (chave da vista em explorar.INDICADORES_ESTADOS). Opcional.
+  notas:
+    ibid: "No IBID, o mapa e o ranking mostram a posição de cada estado entre as 27 unidades da federação, e quanto menor, melhor. É que o INPI refaz a escala do índice a cada ano, e ele mesmo avisa que a nota de um estado não se compara entre anos. A posição se compara. A nota do índice está no Explorar."
 
 explorar:
   titulo: "Explorar os dados"

@@ -165,7 +165,7 @@ def test_pagina_gerada_no_menu_entre_inicio_e_estados(gerado):
     assert relatorio.paginas.index(PAGINA) == relatorio.paginas.index("index.html") + 1
     for pagina in ("index.html", PAGINA, "sobre/index.html", "cards/pobreza/index.html"):
         menu = _menu(_ler(saida, pagina))
-        assert menu[:3] == [("/", "Início"), ("/como-chegamos/", "Como chegamos até aqui"),
+        assert menu[:4] == [("/", "Início"), ("/como-chegamos/", "Como chegamos até aqui"), ("/inovacao/", "Inovação"),
                             ("/cards/", "Cards para compartilhar")], pagina
     arvore = Arvore(_ler(saida))
     atual = [e for e in arvore.achar("a") if e["attrs"].get("aria-current") == "page"]

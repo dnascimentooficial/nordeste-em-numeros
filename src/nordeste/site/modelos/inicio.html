@@ -3,25 +3,7 @@
 {% from "_componentes.html" import atualizacoes, legenda %}
 {% from "_modal_grafico.html" import ampliado, dialogo %}
 {% from "_epoca.html" import credito %}
-{% macro grafico(g, p, t) %}
-<div class="nn-grafico">
-  <div class="nn-grafico-topo">
-    <div class="nn-grafico-titulos">
-{% if g.titulo %}
-      <h3>{{ g.titulo }}</h3>
-{% endif %}
-{% if g.subtitulo %}
-      <p class="nn-muted">{{ g.subtitulo }}</p>
-{% endif %}
-    </div>
-    <button type="button" class="nn-ampliar" aria-haspopup="dialog" aria-label="{{ t.rotulo }}: {{ g.titulo or p.frase_feita }}" data-ampliado="nn-ampliado-{{ g.id }}" hidden>{{ t.botao }}</button>
-  </div>
-  <div class="nn-graf" id="{{ g.id }}">
-    <div class="nn-graf-largo">{{ g.largo|safe }}</div>
-    <div class="nn-graf-estreito">{{ g.estreito|safe }}</div>
-  </div>
-</div>
-{% endmacro %}
+{% from "_grafico.html" import grafico %}
 {% block conteudo %}
 {% set abertura = textos.abertura %}
 <section class="nn-hero{% if foto %} nn-hero-com-foto{% endif %}" id="topo" aria-labelledby="titulo-principal">

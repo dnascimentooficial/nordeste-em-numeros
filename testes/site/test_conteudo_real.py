@@ -110,7 +110,8 @@ def test_fecho_cujo_destaque_sumiu_da_base_fica_suprimido_sem_quebrar(conteudo, 
 
 def test_sem_travessao_nos_textos():
     arquivos = sorted(PASTA_SITE.glob("*.yaml"))
-    assert {a.name for a in arquivos} == {"destaques.yaml", "perguntas.yaml", "cards.yaml", "textos.yaml", "historia.yaml"}
+    assert {a.name for a in arquivos} == {
+        "destaques.yaml", "perguntas.yaml", "cards.yaml", "textos.yaml", "historia.yaml", "inovacao.yaml"}
     for arquivo in arquivos:
         assert "—" not in arquivo.read_text(encoding="utf-8"), arquivo.name
 
@@ -122,3 +123,14 @@ def test_sem_decimal_digitado_nos_textos(conteudo):
     for texto in _textos([conteudo.perguntas, conteudo.cards, conteudo.textos]):
         decimais += re.findall(r"\d+[.,]\d+", re.sub(r"\{[^{}]*\}", "", texto))
     assert sorted(set(decimais)) == ["3,00", "8,30"]
+
+
+def test_pagina_inovacao_sem_decimal_digitado_nos_capitulos_com_numeros():
+    # Nos capitulos com graficos, todo numero com casa decimal vem de marcador; o capitulo de texto (ecossistema) traz
+    # os fatos datados da ABEP-TIC, do Porto Digital e da Anprotec, sem decimal. Sobram nomes de classificacao e de tabela.
+    from nordeste.site.inovacao import carregar_inovacao
+    inovacao = carregar_inovacao(PASTA_SITE)
+    decimais = []
+    for texto in _textos([inovacao["capa"], inovacao["placar"], inovacao["regua"], inovacao["capitulos"]]):
+        decimais += re.findall(r"\d+[.,]\d+", re.sub(r"\{[^{}]*\}", "", texto))
+    assert set(decimais) <= {"1.0", "2.0", "2.3"}  # nomes, nao dados: CNAE 1.0 e 2.0, tabelas 2.3.3 e 2.3.5 do MCTI

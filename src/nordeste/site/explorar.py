@@ -99,8 +99,8 @@ INDICADORES_EXPLORAR = (
         sub="matriculas", rede="total",
     ),
     IndicadorExplorar(
-        "ibid", "ibid", "IBID, inovação (0 a 1)", "Índice Brasil de Inovação e Desenvolvimento",
-        "0 a 1, maior é mais inovação", 3, sub="geral",
+        "ibid", "ibid", "IBID, inovação (0 a 1, escala de cada ano)", "Índice Brasil de Inovação e Desenvolvimento",
+        "0 a 1, maior é mais inovação; cada ano tem a sua escala, e o valor não se compara entre anos", 3, sub="geral",
     ),
     IndicadorExplorar(
         "internet", "internet_domicilios", "Domicílios com internet (%)", "Domicílios com acesso à internet",
@@ -197,7 +197,11 @@ INDICADORES_ESTADOS = (
     IndicadorEstados(
         "aband", "abandono_em", "Abandono no ensino médio (%)", "abandono no ensino médio, %", 1, "%", False, rede="total",
     ),
-    IndicadorEstados("ibid", "ibid", "IBID, inovação (0 a 1)", "IBID, índice de inovação do INPI", 3, "", True, sub="geral"),
+    # O INPI avisa que o valor do indice de um estado nao se compara entre anos: aqui vai a posicao nacional (1 a 27).
+    IndicadorEstados(
+        "ibid", "ibid_posicao", "IBID, posição no ranking do INPI (1 a 27)",
+        "IBID, posição de cada estado no ranking nacional do INPI", 0, "º no país", False,
+    ),
 )
 
 

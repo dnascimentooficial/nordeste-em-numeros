@@ -26,7 +26,7 @@ from nordeste.site.conteudo import (
 )
 from nordeste.site.dados import DadosSite
 from nordeste.site.explorar import (
-    ETIQUETA_DO_TERRITORIO, FAIXAS, INDICADORES_EXPLORAR, NOME_DO_TERRITORIO, POR_CHAVE, TERRITORIOS,
+    ETIQUETA_DO_TERRITORIO, FAIXAS, INDICADORES_EXPLORAR, NOME_DO_TERRITORIO, POR_CHAVE, TERRITORIOS, UFS as UFS_DO_MAPA,
     IndicadorExplorar, dados_explorar, pontos, pontos_do_indicador, referencias, tabela_do_territorio, vistas_estados,
 )
 from nordeste.site.formatacao import numero
@@ -46,6 +46,7 @@ from nordeste.site.historia import (
     parcela_do_nordeste,
 )
 from nordeste.site.imagens import VERSAO_DO_RENDER, AlvoImagem, renderizar
+from nordeste.site.inovacao import carregar_inovacao
 
 NOME_DO_SITE = "Nordeste em Números"
 URL_DO_SITE = "https://nordeste.dnascimento.com.br"
@@ -112,7 +113,9 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
     "saidas": {"rotulo", "card", "estados", "explorar"},  # os links do pe de cada pergunta
     "menu": {  # o menu do alto de todas as paginas (_cabecalho.html)
         **dict.fromkeys(("rotulo", "abrir", "inicio", "historias", "dados", "sobre", "voltar_ao_topo")),
-        "cartoes": {chave: {"titulo", "texto"} for chave in ("como-chegamos", "cards", "estados", "explorar", "dados")},
+        "cartoes": {
+            chave: {"titulo", "texto"} for chave in ("como-chegamos", "inovacao", "cards", "estados", "explorar", "dados")
+        },
         "botao_historia": {"antes", "texto"}, "botao_cards": {"texto"},
     },
     "chamada_historia": {"eyebrow", "titulo", "texto", "botao", "credito"},  # o bloco do Inicio que leva a Como chegamos
@@ -157,6 +160,9 @@ PAGINAS = (  # as paginas de sempre; a da historia entra depois do Inicio so qua
     Pagina("dados", "dados.html", "dados/index.html", "/dados/", "Dados"),
 )
 PAGINA_HISTORIA = Pagina("como-chegamos", "como_chegamos.html", "como-chegamos/index.html", "/como-chegamos/", "Como chegamos aqui")
+# A pagina Inovacao: sai quando metadados/site/inovacao.yaml existe. Modelo proprio, com o layout editorial do Inicio e
+# teto de peso proprio (testes/navegador); o teto do Inicio nao muda.
+PAGINA_INOVACAO = Pagina("inovacao", "inovacao.html", "inovacao/index.html", "/inovacao/", "Inovação")
 PAGINAS_COM_DATASET = ("index", "dados")
 EPOCA_DA_CHAMADA = "1530"  # a epoca cuja imagem (e credito) fundo o bloco do Inicio que leva a Como chegamos
 MARCADORES_DA_CHAMADA = ("ano_inicial", "parcela_inicial", "ano_final", "parcela_final")  # no titulo, entre [colchetes]
@@ -168,6 +174,7 @@ AVISO_DA_PREVIA = "Prévia: texto provisório"
 # estilo.css tem uma classe nn-capa-<nome do arquivo sem .webp> para cada uma (a CSP não deixa pôr a imagem no HTML).
 CAPAS = {
     "como-chegamos": "1530.webp",
+    "inovacao": "marco-1959.webp",
     "estados": "1964.webp",
     "explorar": "1950.webp",
     "cards": "marco-1932.webp",
@@ -182,9 +189,10 @@ SERA = re.compile(r"\s*Será\?\s*$")  # o "Será?" do fim da frase feita, que o 
 NEGRITO = "**"  # na comparacao da faixa de numeros, o trecho entre ** e ** sai em negrito
 
 
-def paginas_do_site(com_historia: bool) -> tuple[Pagina, ...]:
-    """As paginas do menu, na ordem dele: a da historia entre Inicio e Estados quando ela e gerada."""
-    return (PAGINAS[0], PAGINA_HISTORIA, *PAGINAS[1:]) if com_historia else PAGINAS
+def paginas_do_site(com_historia: bool, com_inovacao: bool = False) -> tuple[Pagina, ...]:
+    """As paginas do menu, na ordem dele: a da historia e a de Inovacao entre Inicio e Estados quando sao geradas."""
+    historias = (PAGINA_HISTORIA,) * com_historia + (PAGINA_INOVACAO,) * com_inovacao
+    return (PAGINAS[0], *historias, *PAGINAS[1:])
 
 
 @dataclass
@@ -273,17 +281,19 @@ def _tabela(linhas: list[Linha], cfg: ConfigGrafico, nome: str) -> list[dict]:
     ]
 
 
-def _desenhar(linhas: list[Linha], cfg: ConfigGrafico, governos: pd.DataFrame) -> tuple[str, str]:
-    """O grafico nas duas larguras (Ruling S-O); vazio quando nenhuma linha tem ponto no eixo."""
-    largo = grafico_linhas(linhas, cfg, governos, **LARGO)
-    return (largo, grafico_linhas(linhas, cfg, governos, **ESTREITO)) if largo else ("", "")
+def _desenhar(linhas: list[Linha], cfg: ConfigGrafico, governos: pd.DataFrame, emendar: bool = False) -> tuple[str, str]:
+    """O grafico nas duas larguras (Ruling S-O); vazio quando nenhuma linha tem ponto no eixo. `emendar`: serie que nao
+    e anual (a PINTEC, trienal) liga os pontos da mesma serie; a troca de serie continua quebrando a linha."""
+    largo = grafico_linhas(linhas, cfg, governos, **LARGO, emendar=emendar)
+    return (largo, grafico_linhas(linhas, cfg, governos, **ESTREITO, emendar=emendar)) if largo else ("", "")
 
 
 def _montar_grafico(dados: DadosSite, destaques: dict[str, Destaque], grafico: dict) -> dict | None:
     """O grafico nas tres larguras (a do modal tambem), a tabela dos numeros e o que o modal mostra do grafico
     (notas de quebra e atualizacoes dos seus indicadores); None quando nenhuma linha tem ponto no eixo."""
     linhas, cfg = _linhas(dados, grafico), _config(grafico, destaques)
-    largo, estreito = _desenhar(linhas, cfg, dados.governos)
+    emendar = bool(grafico.get("emendar", False))
+    largo, estreito = _desenhar(linhas, cfg, dados.governos, emendar)
     if not largo:
         return None
     nome = preencher(grafico.get("titulo") or grafico.get("descricao") or grafico["id"], destaques)
@@ -294,7 +304,7 @@ def _montar_grafico(dados: DadosSite, destaques: dict[str, Destaque], grafico: d
         "subtitulo": preencher(grafico["subtitulo"], destaques) if "subtitulo" in grafico else None,
         "largo": largo,
         "estreito": estreito,
-        "ampliado": grafico_linhas(linhas, cfg, dados.governos, **AMPLIADO),
+        "ampliado": grafico_linhas(linhas, cfg, dados.governos, **AMPLIADO, emendar=emendar),
         "quebras": [{"ano": q["ano"], "rotulo": q["rotulo"]} for q in grafico.get("quebras", [])],
         "atualizacoes": _atualizacoes(dados, indicadores),
         "tabela": _tabela(linhas, cfg, nome),
@@ -454,6 +464,95 @@ def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict) -> dic
         "mini": minigrafico(_linhas(dados, card["grafico"])),
         "resumo": f"{de} → {para} {frase} {fecho}",
     }
+
+
+# --- Inovacao ---
+
+def _ponto_do_ano(pontos: list, ano: int):
+    """O ponto do ano ou, sem ele, o do ano anterior mais recente; None se nao ha nenhum ate o ano."""
+    antes = [p for p in pontos if p.ano <= ano]
+    return max(antes, key=lambda p: (p.ano, p.serie)) if antes else None
+
+
+def _regua(dados: DadosSite, destaques: dict[str, Destaque], inovacao: dict, itens: list[dict]) -> list[dict]:
+    """A regua de leitura: cada fatia do Brasil ao lado da fatia da populacao do Nordeste no mesmo ano (ou no ano
+    anterior mais proximo com populacao), as duas tiradas da base."""
+    especificacao = inovacao["destaques"][inovacao["regua"]["destaque_populacao"]]
+    populacao = pontos_da_selecao(dados, especificacao)
+    regua = []
+    for item in itens:
+        if item["destaque"] not in destaques:
+            continue
+        ultimo = destaques[item["destaque"]].ultimo
+        pop = _ponto_do_ano(populacao, ultimo.ano)
+        if pop is None:
+            continue
+        regua.append({
+            "rotulo": item["rotulo"], "ano": ultimo.ano, "valor": f"{numero(ultimo.valor, 1)}%",
+            "largura": f"{min(100.0, ultimo.valor * 2):.1f}", "pop_ano": pop.ano, "pop_valor": f"{numero(pop.valor, 1)}%",
+            "pop_largura": f"{min(100.0, pop.valor * 2):.1f}",  # a barra inteira vale 50% do Brasil
+        })
+    return regua
+
+
+def _posicoes(dados: DadosSite, spec: dict) -> dict | None:
+    """Posicao de cada estado do Nordeste no primeiro e no ultimo ano da base, do mais bem colocado ao ultimo."""
+    linhas = []
+    for uf in UFS_DO_MAPA:
+        pontos_uf = dados.serie(spec["indicador"], uf)
+        if pontos_uf:
+            linhas.append({"estado": NOME_DO_TERRITORIO[uf], "ano_primeiro": pontos_uf[0].ano, "ano_ultimo": pontos_uf[-1].ano,
+                           "primeiro": int(pontos_uf[0].valor), "ultimo": int(pontos_uf[-1].valor)})
+    if not linhas:
+        return None
+    linhas.sort(key=lambda l: (l["ultimo"], l["estado"]))
+    return {"titulo": spec["titulo"], "nota": spec["nota"], "linhas": linhas,
+            "ano_primeiro": linhas[0]["ano_primeiro"], "ano_ultimo": linhas[0]["ano_ultimo"]}
+
+
+def _contexto_da_inovacao(dados: DadosSite, inovacao: dict) -> tuple[dict, list[str]]:
+    """Capa, placar e capitulos da pagina Inovacao, e os ids dos vereditos que sairam (`inovacao:<capitulo>`).
+
+    Como no Inicio: o capitulo cujo corpo cita destaque sem dado sai inteiro; o veredito cuja condicao e falsa sai da
+    pagina e do placar (que mostra "sem veredito"). O capitulo de texto nao tem veredito nem entra no placar.
+    """
+    destaques = calcular_destaques(dados, Conteudo(destaques=inovacao["destaques"], perguntas=[], cards=[], textos={}))
+    capitulos, suprimidos = [], []
+    for c in inovacao["capitulos"]:
+        if c.get("texto") is True:
+            capitulos.append({**c, "id": c["id"], "graficos": [], "fecho": None})
+            continue
+        corpo = {k: v for k, v in c.items() if k != "fecho"}
+        if not _cita_so_o_que_existe(corpo, destaques):
+            suprimidos.append(f"inovacao:{c['id']}")
+            continue
+        com_fecho = avaliar_condicao(c["fecho"]["condicao"], destaques) and _cita_so_o_que_existe(c["fecho"]["texto"], destaques)
+        if not com_fecho:
+            suprimidos.append(f"inovacao:{c['id']}")
+        graficos = [g for g in (_montar_grafico(dados, destaques, g) for g in c["graficos"]) if g is not None]
+        indicadores = list(dict.fromkeys(l["indicador"] for g in c["graficos"] for l in g["linhas"]))
+        titulo = preencher(c["titulo"], destaques)
+        capitulos.append({
+            "id": c["id"], "texto": False, "rotulo": preencher(c["rotulo"], destaques), "titulo": titulo,
+            "frase_feita": titulo,  # o modal "Ampliar" usa o titulo do capitulo
+            "explicacao": preencher(c["explicacao"], destaques) if "explicacao" in c else None,
+            "lide": preencher(c["lide"], destaques), "graficos": graficos,
+            "tabela": [linha for g in graficos for linha in g["tabela"]],
+            "fecho": preencher(c["fecho"]["texto"], destaques) if com_fecho else None,
+            "alerta": preencher(c["alerta"], destaques) if "alerta" in c else None,
+            "fonte": [preencher(f, destaques) for f in c["fonte"]],
+            "atualizacoes": _atualizacoes(dados, indicadores),
+            "regua": _regua(dados, destaques, inovacao, c.get("regua", [])),
+            "posicoes": _posicoes(dados, c["posicoes"]) if "posicoes" in c else None,
+        })
+    placar = [
+        {"id": c["id"], "numero": f"{i:02d}", "rotulo": c["rotulo"], "mito": c["titulo"], "veredito": veredito(c["fecho"])}
+        for i, c in enumerate(capitulos, 1) if not c["texto"]
+    ]
+    return {"inovacao": {
+        "capa": inovacao["capa"], "placar": {**inovacao["placar"], "linhas": placar}, "regua": inovacao["regua"],
+        "capitulos": capitulos,
+    }}, suprimidos
 
 
 # --- Como chegamos ate aqui ---
@@ -997,10 +1096,10 @@ def _validar_menu(menu: dict) -> None:
             )
 
 
-def _menu(menu: dict, com_historia: bool, epocas: int, cards: int) -> dict:
+def _menu(menu: dict, com_historia: bool, epocas: int, cards: int, com_inovacao: bool = False) -> dict:
     """O menu pronto para o _cabecalho.html: os dois grupos (Historias e Dados) com os cartoes de cada um, os rotulos e
-    os dois botoes. O cartao de Como chegamos so entra com a pagina; os marcadores viram as contagens da pagina e dos
-    cards publicados."""
+    os dois botoes. Os cartoes de Como chegamos e de Inovacao so entram com a pagina; os marcadores viram as contagens
+    da pagina e dos cards publicados."""
     contagens = {"epocas": _quantidade(epocas), "cards": _quantidade(cards)}
 
     def cartao(chave: str, rota: str) -> dict:
@@ -1011,7 +1110,8 @@ def _menu(menu: dict, com_historia: bool, epocas: int, cards: int) -> dict:
             texto = texto[:1].upper() + texto[1:]  # "Oito épocas..." quando o marcador abre o texto
         return {"chave": chave, "rota": rota, "titulo": menu["cartoes"][chave]["titulo"], "texto": texto}
 
-    historias = ([cartao("como-chegamos", PAGINA_HISTORIA.rota)] if com_historia else []) + [cartao("cards", "/cards/")]
+    historias = ([cartao("como-chegamos", PAGINA_HISTORIA.rota)] if com_historia else []) + (
+        [cartao("inovacao", PAGINA_INOVACAO.rota)] if com_inovacao else []) + [cartao("cards", "/cards/")]
     return {
         **{chave: menu[chave] for chave in ("rotulo", "abrir", "inicio", "sobre", "voltar_ao_topo")},
         "com_historia": com_historia,
@@ -1152,7 +1252,8 @@ def gerar_site(
     conteudo = carregar_conteudo(caminhos.metadados / "site")
     historia = carregar_historia(caminhos.metadados / "site")
     com_historia = historia is not None and (not historia.provisoria or incluir_provisoria)
-    paginas_do_menu = paginas_do_site(com_historia)
+    inovacao = carregar_inovacao(caminhos.metadados / "site")
+    paginas_do_menu = paginas_do_site(com_historia, inovacao is not None)
     _validar_textos(conteudo.textos, paginas_do_menu)
     destaques = calcular_destaques(dados, conteudo)
     data = data_por_extenso(dados.data_base)
@@ -1175,7 +1276,8 @@ def gerar_site(
     anos = _anos_da_base(dados)
     arquivos = _arquivos_de_dados(caminhos, textos)
     comum = {
-        "menu": _menu(textos["menu"], com_historia, len(historia.epocas) if com_historia else 0, len(cards)),
+        "menu": _menu(
+            textos["menu"], com_historia, len(historia.epocas) if com_historia else 0, len(cards), inovacao is not None),
         "capas": _capas(historia if com_historia else None, _foto(textos.get("foto"))),
         "siglas": siglas_dos_governos(dados.governos),
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR, "estaticos": versoes_dos_estaticos(),
@@ -1189,6 +1291,9 @@ def gerar_site(
     por_pagina = {"estados": _contexto_dos_estados(dados), "explorar": _contexto_do_explorar(dados, explorar)}
     if com_historia:
         por_pagina[PAGINA_HISTORIA.chave] = _contexto_da_historia(historia, dados.governos.iloc[:0])
+    vereditos_suprimidos: list[str] = []
+    if inovacao is not None:
+        por_pagina[PAGINA_INOVACAO.chave], vereditos_suprimidos = _contexto_da_inovacao(dados, inovacao)
 
     if saida.exists():
         shutil.rmtree(saida)
@@ -1222,7 +1327,7 @@ def gerar_site(
     if imagens:
         _gerar_imagens(saida, ambiente, comum, cards, _contorno(caminhos), anterior, paginas_do_menu)
     return RelatorioSite(
-        paginas, [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos], cards_fora,
+        paginas, [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos, *vereditos_suprimidos], cards_fora,
         historia_provisoria=historia is not None and historia.provisoria,
     )
 

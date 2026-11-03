@@ -27,11 +27,12 @@ PAGINAS = {
     "cards/index.html": "/cards/", "sobre/index.html": "/sobre/", "dados/index.html": "/dados/",
     # historia.yaml do repositorio aprovado (provisoria: false): a pagina sai em toda geracao, sem o aviso de previa
     "como-chegamos/index.html": "/como-chegamos/",
+    "inovacao/index.html": "/inovacao/",  # inovacao.yaml do repositorio: a pagina Inovacao sai em toda geracao
 }
 OG = {
     "index.html": "index", "estados/index.html": "estados", "explorar/index.html": "explorar",
     "cards/index.html": "cards", "sobre/index.html": "sobre", "dados/index.html": "dados",
-    "como-chegamos/index.html": "como-chegamos",
+    "como-chegamos/index.html": "como-chegamos", "inovacao/index.html": "inovacao",
 }
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
          "novembro", "dezembro"]

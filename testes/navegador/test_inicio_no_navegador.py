@@ -26,6 +26,7 @@ LARGO = 1440
 CAPAS = {  # rota -> imagem de fundo da capa, com o repositorio inteiro (pagina historica publicada)
     "/como-chegamos/": "/historia/1530.webp", "/estados/": "/historia/1964.webp", "/explorar/": "/historia/1950.webp",
     "/cards/": "/historia/marco-1932.webp", "/dados/": "/historia/marco-1934.webp", "/sobre/": "/foto-abertura.webp",
+    "/inovacao/": "/historia/marco-1959.webp",
 }
 
 # --- contraste nos pixels das letras ---

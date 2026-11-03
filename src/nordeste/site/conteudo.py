@@ -182,7 +182,7 @@ _CHAVES_DA_PERGUNTA = {
 }
 _CHAVES_DO_GRAFICO = {
     "obrigatorias": {"id", "casas", "linhas"},
-    "opcionais": {"titulo", "subtitulo", "descricao", "sufixo", "min0", "ref100", "quebras"},
+    "opcionais": {"titulo", "subtitulo", "descricao", "sufixo", "min0", "ref100", "quebras", "emendar"},
 }
 _CHAVES_DA_LINHA = {
     "obrigatorias": {"rotulo", "rotulo_curto", "destaque", "tipo", "indicador", "territorio"},
@@ -200,13 +200,15 @@ def _exigir_chaves(obj: object, chaves: dict[str, set[str]], onde: str) -> None:
 
 
 def _validar_selecao(spec: object, onde: str) -> None:
-    """Destaque ou linha de grafico: `serie` filtra a base; `razao` le a razao publicada contra a referencia."""
+    """Destaque ou linha de grafico: `serie` filtra a base; `razao` le a razao publicada contra a referencia; `fatia`
+    e o territorio como % do Brasil, ano a ano e na mesma serie, com os dois valores da base (o pedaco do Nordeste
+    numa contagem do pais)."""
     if not isinstance(spec, dict) or not {"tipo", "indicador", "territorio"} <= spec.keys():
         raise ErroConteudo(f"{onde}: precisa de tipo, indicador e territorio.")
-    if spec["tipo"] not in ("serie", "razao"):
-        raise ErroConteudo(f"{onde}: tipo {spec['tipo']!r} fora de serie|razao.")
-    if spec["tipo"] == "serie" and "referencia" in spec:
-        raise ErroConteudo(f"{onde}: serie nao leva referencia.")
+    if spec["tipo"] not in ("serie", "razao", "fatia"):
+        raise ErroConteudo(f"{onde}: tipo {spec['tipo']!r} fora de serie|razao|fatia.")
+    if spec["tipo"] in ("serie", "fatia") and "referencia" in spec:
+        raise ErroConteudo(f"{onde}: {spec['tipo']} nao leva referencia.")
     if spec["tipo"] == "razao":
         if "referencia" not in spec:
             raise ErroConteudo(f"{onde}: razao exige referencia.")
@@ -341,7 +343,19 @@ def pontos_da_selecao(dados: DadosSite, spec: dict) -> list[Ponto]:
     """Pontos de um destaque ou linha de grafico: serie filtrada da base, ou razao publicada contra a referencia."""
     if spec["tipo"] == "razao":
         return dados.razao(spec["indicador"], spec["territorio"], spec["referencia"])
-    return dados.serie(spec["indicador"], spec["territorio"], **{f: spec.get(f) for f in _FILTROS_DA_SERIE})
+    filtros = {f: spec.get(f) for f in _FILTROS_DA_SERIE}
+    if spec["tipo"] == "fatia":
+        return fatia_do_brasil(dados, spec["indicador"], spec["territorio"], **filtros)
+    return dados.serie(spec["indicador"], spec["territorio"], **filtros)
+
+
+def fatia_do_brasil(dados: DadosSite, indicador: str, territorio: str, **filtros) -> list[Ponto]:
+    """O territorio como % do Brasil, so nos anos e series em que os dois tem valor na base (sem Brasil, sem ponto)."""
+    brasil = {(p.ano, p.serie): p.valor for p in dados.serie(indicador, "BR", **filtros)}
+    return [
+        Ponto(p.ano, p.valor / brasil[p.ano, p.serie] * 100, p.serie)
+        for p in dados.serie(indicador, territorio, **filtros) if brasil.get((p.ano, p.serie))
+    ]
 
 
 def calcular_destaques(dados: DadosSite, conteudo: Conteudo) -> dict[str, Destaque]:

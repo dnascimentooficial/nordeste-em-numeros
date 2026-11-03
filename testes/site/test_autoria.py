@@ -98,12 +98,12 @@ def test_cabecalho_tem_o_menu_inteiro_com_uma_pagina_atual_e_sem_o_link_solto(ge
     for classe in ("nn-menu", "nn-gaveta"):  # a barra do computador e a gaveta do celular, com as mesmas paginas
         menu = arvore.achar("nav", classe=classe)
         assert len(menu) == 1 and menu[0]["attrs"]["aria-label"] == "Páginas do site"
-    # Inicio, os grupos Historias (Como chegamos, Cards) e Dados (Estados, Explorar, Dados) e Sobre os dados
+    # Inicio, os grupos Historias (Como chegamos, Inovacao, Cards) e Dados (Estados, Explorar, Dados) e Sobre os dados
     trecho_menu = re.search(r'<nav class="nn-menu".*?</nav>', _html(gerado, pagina), flags=re.S)[0]
     trecho_gaveta = re.search(r'<nav class="nn-gaveta".*?</nav>', _html(gerado, pagina), flags=re.S)[0]
-    esperadas = ["/", "/como-chegamos/", "/cards/", "/estados/", "/explorar/", "/dados/", "/sobre/"]
-    grupo_da_rota = {"/como-chegamos/": "Histórias", "/cards/": "Histórias", "/estados/": "Dados", "/explorar/": "Dados",
-                     "/dados/": "Dados"}
+    esperadas = ["/", "/como-chegamos/", "/inovacao/", "/cards/", "/estados/", "/explorar/", "/dados/", "/sobre/"]
+    grupo_da_rota = {"/como-chegamos/": "Histórias", "/inovacao/": "Histórias", "/cards/": "Histórias", "/estados/": "Dados",
+                     "/explorar/": "Dados", "/dados/": "Dados"}
     for trecho in (trecho_menu, trecho_gaveta):
         itens = Arvore(trecho).achar("a")
         assert [e["attrs"]["href"] for e in itens] == esperadas

@@ -18,6 +18,7 @@ PAGINAS_COM_CAPA = {  # pagina -> (chave em CAPAS, classe esperada com o reposit
     "como-chegamos/index.html": "nn-capa-1530", "estados/index.html": "nn-capa-1964",
     "explorar/index.html": "nn-capa-1950", "cards/index.html": "nn-capa-marco-1932",
     "dados/index.html": "nn-capa-marco-1934", "sobre/index.html": "nn-capa-abertura",
+    "inovacao/index.html": "nn-capa-marco-1959",
 }
 TODAS = ("index.html", *PAGINAS_COM_CAPA)
 
@@ -62,7 +63,7 @@ def sem_historia(tmp_path_factory) -> Path:
 def test_cartoes_do_menu_trazem_as_contagens_da_pagina_e_dos_cards(gerado):
     html = _ler(gerado, "index.html")
     cartoes = {a["attrs"]["href"]: Arvore.texto(a) for a in Arvore(_cabecalho(html)).achar("a", classe="nn-menu-cartao")}
-    assert list(cartoes) == ["/como-chegamos/", "/cards/", "/estados/", "/explorar/", "/dados/"]
+    assert list(cartoes) == ["/como-chegamos/", "/inovacao/", "/cards/", "/estados/", "/explorar/", "/dados/"]
     epocas = len(carregar_historia(RAIZ / "metadados" / "site").epocas)
     cards = len(list((gerado / "cards").glob("*/index.html")))
     por_extenso = gerar.POR_EXTENSO[epocas] if epocas < len(gerar.POR_EXTENSO) else str(epocas)
@@ -89,8 +90,8 @@ def test_sem_a_pagina_historica_o_menu_fica_sem_ela_e_o_botao_leva_aos_cards(sem
         assert _botao(html) == ("/cards/", "Baixar um card →")
         assert "/como-chegamos/" not in _cabecalho(html) and "/historia/" not in html
         hrefs = [a["attrs"]["href"] for a in Arvore(_cabecalho(html)).achar("a", classe="nn-menu-cartao")]
-        assert hrefs == ["/cards/", "/estados/", "/explorar/", "/dados/"]
-        assert 'nn-menu-painel nn-menu-painel-1' in html
+        assert hrefs == ["/inovacao/", "/cards/", "/estados/", "/explorar/", "/dados/"]
+        assert 'nn-menu-painel nn-menu-painel-2' in html
 
 
 def test_grupos_do_menu_funcionam_sem_javascript(gerado):
@@ -127,7 +128,8 @@ def test_textos_do_menu_vem_do_textos_yaml(gerado):
     assert soltos == [menu["inicio"], menu["sobre"]]
     assert [Arvore.texto(s) for s in Arvore(nav).achar("summary")] == [menu["historias"], menu["dados"]]
     titulos = [Arvore.texto(t) for t in Arvore(nav).achar(classe="nn-menu-cartao-titulo")]
-    assert titulos == [menu["cartoes"][c]["titulo"] for c in ("como-chegamos", "cards", "estados", "explorar", "dados")]
+    assert titulos == [
+        menu["cartoes"][c]["titulo"] for c in ("como-chegamos", "inovacao", "cards", "estados", "explorar", "dados")]
 
 
 # --- capas ---

@@ -885,6 +885,11 @@ body {
   --nn-capa-foto: url("/historia/marco-1934.webp");
 }
 
+.nn-capa-marco-1959 {
+  --nn-capa-foto: url("/historia/marco-1959.webp");
+  --nn-capa-posicao: 70% 30%;
+}
+
 .nn-capa-texto {
   max-width: 760px;
   display: grid;
@@ -1412,6 +1417,14 @@ body {
 }
 
 .nn-alerta {
+  border-left: 3px solid var(--nn-laranja);
+  padding-left: 12px;
+}
+
+/* Nota de um indicador na página Estados (textos.yaml, estados.notas): por que o mapa mostra o que mostra. */
+.nn-nota-indicador {
+  max-width: 70ch;
+  font-size: 15px;
   border-left: 3px solid var(--nn-laranja);
   padding-left: 12px;
 }
@@ -2039,7 +2052,7 @@ html:has(.nn-modal[open]) {
 
 .nn-rk {
   display: grid;
-  grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 4.6rem;
+  grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 6rem;
   gap: 10px;
   align-items: center;
   font-size: 14px;
@@ -2058,6 +2071,7 @@ html:has(.nn-modal[open]) {
 }
 
 .nn-rk-val {
+  white-space: nowrap; /* "25º no país" numa linha so */
   text-align: right;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -3583,4 +3597,40 @@ html:has(.nn-modal[open]) {
       animation: none;
     }
   }
+}
+
+/* Página Inovação: a régua de leitura (as barras são as do ranking de Estados; a da população em cinza, a barra inteira
+   vale 50%), a tabela de posições do IBID e a etiqueta do capítulo que não é estatística oficial. */
+.nn-leitura {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--nn-linha);
+}
+
+.nn .nn-leitura-titulo,
+.nn .nn-etiqueta {
+  color: var(--nn-laranja-texto);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.nn-leitura-itens {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.nn-leitura-pop .nn-rk-fill {
+  fill: var(--nn-graf-eixo);
+}
+
+.nn-leitura-pop + .nn-rk {
+  margin-top: 8px;
+}
+
+.nn-posicoes .nn-tabela {
+  max-width: 28rem;
+  max-height: none;
+  overflow: visible;
 }
