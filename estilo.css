@@ -720,6 +720,10 @@ background-repeat: no-repeat;
 .nn-capa-marco-1934 {
 --nn-capa-foto: url("/historia/marco-1934.webp?v=c33be85e");
 }
+.nn-capa-marco-1959 {
+--nn-capa-foto: url("/historia/marco-1959.webp?v=b9b0be80");
+--nn-capa-posicao: 70% 30%;
+}
 .nn-capa-texto {
 max-width: 760px;
 display: grid;
@@ -1151,6 +1155,12 @@ text-transform: uppercase;
 margin-bottom: 4px;
 }
 .nn-alerta {
+border-left: 3px solid var(--nn-laranja);
+padding-left: 12px;
+}
+.nn-nota-indicador {
+max-width: 70ch;
+font-size: 15px;
 border-left: 3px solid var(--nn-laranja);
 padding-left: 12px;
 }
@@ -1663,7 +1673,7 @@ align-content: start;
 }
 .nn-rk {
 display: grid;
-grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 4.6rem;
+grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 6rem;
 gap: 10px;
 align-items: center;
 font-size: 14px;
@@ -1679,6 +1689,7 @@ fill: var(--nn-laranja);
 rx: 7px;
 }
 .nn-rk-val {
+white-space: nowrap;
 text-align: right;
 font-variant-numeric: tabular-nums;
 font-weight: 700;
@@ -2908,4 +2919,32 @@ stroke-dasharray: none;
 animation: none;
 }
 }
+}
+.nn-leitura {
+margin-top: 20px;
+padding: 16px 18px;
+border-radius: 16px;
+border: 1px solid var(--nn-linha);
+}
+.nn .nn-leitura-titulo,
+.nn .nn-etiqueta {
+color: var(--nn-laranja-texto);
+font-size: 13px;
+font-weight: 700;
+}
+.nn-leitura-itens {
+display: grid;
+gap: 8px;
+margin-bottom: 8px;
+}
+.nn-leitura-pop .nn-rk-fill {
+fill: var(--nn-graf-eixo);
+}
+.nn-leitura-pop + .nn-rk {
+margin-top: 8px;
+}
+.nn-posicoes .nn-tabela {
+max-width: 28rem;
+max-height: none;
+overflow: visible;
 }
