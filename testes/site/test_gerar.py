@@ -16,7 +16,10 @@ from nordeste.site import gerar
 from nordeste.site.dados import DadosSite
 from nordeste.site.gerar import RelatorioSite, gerar_site
 
-from auxiliares import RAIZ, Arvore, alterar_base, copiar_base, definir_foto, estaticos_com_foto, estaticos_sem_foto
+from auxiliares import (
+    RAIZ, Arvore, alterar_base, copiar_base, definir_foto, dialogos_da_pagina, estaticos_com_foto, estaticos_sem_foto,
+    imagens_da_pagina,
+)
 
 SITE = "https://nordeste.dnascimento.com.br"
 PAGINAS = {
@@ -504,15 +507,15 @@ def test_ampliado_so_traz_as_atualizacoes_dos_indicadores_do_proprio_grafico(ger
 def test_um_unico_dialog_por_pagina(gerado):
     saida, _ = gerado
     _, arvore = _inicio(saida)
-    dialogos = arvore.achar("dialog")
+    dialogos = dialogos_da_pagina(arvore)  # o "Sobre o autor", de toda pagina, tem teste proprio (test_autoria.py)
     assert len(dialogos) == 1
     atributos = dialogos[0]["attrs"]
     assert atributos["class"] == "nn-modal" and atributos["aria-labelledby"] and "open" not in atributos
     fechar = arvore.achar("button", classe="nn-modal-fechar")
-    assert [Arvore.texto(b) for b in fechar] == ["Fechar ×"]
+    assert [Arvore.texto(b) for b in fechar] == ["Fechar ×", "Fechar ×"]  # o dos graficos e o do "Sobre o autor"
     assert Arvore.texto(arvore.achar("p", classe="nn-modal-gire")[0]) == "Gire o celular para ver melhor"
     for pagina in ("estados/index.html", "explorar/index.html", "cards/index.html", "sobre/index.html", "dados/index.html"):
-        assert not Arvore(_ler(saida, pagina)).achar("dialog"), pagina  # so o Inicio tem graficos ampliaveis
+        assert not dialogos_da_pagina(Arvore(_ler(saida, pagina))), pagina  # so o Inicio tem graficos ampliaveis
 
 
 def test_faixa_de_numeros_entre_hero_e_legenda(gerado, dados, conteudo):
@@ -581,7 +584,7 @@ def test_hero_sem_foto_nao_tem_classe_e_com_foto_tem(tmp_path, monkeypatch):
     gerar_site(Caminhos(raiz=com), tmp_path / "saida-com", imagens=False)
     _, arvore = _inicio(tmp_path / "saida-com")
     assert arvore.achar("section", id="topo")[0]["attrs"]["class"] == "nn-hero nn-hero-com-foto"
-    assert not arvore.achar("img")  # nada de <img> nem de style=: a foto entra por CSS (estilo.css)
+    assert not imagens_da_pagina(arvore)  # nada de <img> nem de style=: a foto entra por CSS (estilo.css)
     assert not any("style" in e["attrs"] for e in arvore.elementos)
     assert (tmp_path / "saida-com" / gerar.FOTO_ARQUIVO).read_bytes() == b"RIFFxxxxWEBP"
 

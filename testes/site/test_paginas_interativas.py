@@ -133,7 +133,7 @@ def test_explorar_traz_a_vista_inicial_desenhada(gerado, dados):
     arvore = Arvore(_ler(saida, "explorar/index.html"))
     ind = POR_CHAVE["pib_pc"]
     titulo = f"{ind.nome}: Nordeste ({ind.unidade})"
-    assert [Arvore.texto(h) for h in arvore.achar("h2")] == [titulo]
+    assert [Arvore.texto(h) for h in arvore.achar("h2") if h["attrs"].get("id") != "nn-autor-titulo-modal"] == [titulo]
     assert AVISO not in arvore.texto_visivel()
     # nas duas larguras (Ruling S-O), com o Brasil como referencia e o Nordeste em destaque
     assert len(arvore.achar("div", classe="nn-graf-largo")) == len(arvore.achar("div", classe="nn-graf-estreito")) == 1

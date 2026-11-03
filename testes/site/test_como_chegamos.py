@@ -17,7 +17,7 @@ from nordeste.site.conteudo import ErroConteudo
 from nordeste.site.gerar import RelatorioSite, gerar_site
 from nordeste.site.historia import TIPOS
 
-from auxiliares import Arvore, copiar_base
+from auxiliares import Arvore, copiar_base, dialogos_da_pagina, imagens_da_pagina
 
 SITE = "https://nordeste.dnascimento.com.br"
 PAGINA = "como-chegamos/index.html"
@@ -331,7 +331,7 @@ def test_um_unico_dialog_vazio_no_fim(gerado):
     saida, _ = gerado
     html = _ler(saida)
     arvore = Arvore(html)
-    dialogos = arvore.achar("dialog")
+    dialogos = dialogos_da_pagina(arvore)  # o "Sobre o autor", de toda pagina, tem teste proprio (test_autoria.py)
     assert len(dialogos) == 1
     assert dialogos[0]["attrs"]["class"].split() == ["nn-modal", "nn-modal-historia"]
     dialogo = _trecho(html, "<dialog", "</dialog>")
@@ -405,7 +405,7 @@ def test_incluir_provisoria_gera_previa_com_aviso_e_noindex(tmp_path):
     assert ("/como-chegamos/", "Como chegamos aqui") in _menu(_ler(saida, "index.html"))
     assert not Arvore(_ler(saida, "index.html")).achar("meta", name="robots")  # so a pagina previa sai do indice
     # epoca sem imagem (so possivel com provisoria): cartao e artigo sem <img>, sem credito, e o resto inteiro
-    assert not arvore.achar("img") and not arvore.achar(classe="nn-epoca-credito")
+    assert not imagens_da_pagina(arvore) and not arvore.achar(classe="nn-epoca-credito")
     assert len(arvore.achar("button", classe="nn-epoca-abrir")) == 3
     assert len(arvore.achar("article", classe="nn-epoca-conteudo")) == 3
     assert not Arvore(_ler(saida, "sobre/index.html")).achar(id="sobre-imagens")

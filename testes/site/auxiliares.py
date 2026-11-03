@@ -61,6 +61,17 @@ class Arvore(HTMLParser):
         return " ".join("".join(self.visivel).split())
 
 
+def dialogos_da_pagina(arvore: Arvore) -> list[dict]:
+    """Os <dialog> da pagina menos o "Sobre o autor", que esta em todas: os testes dos modais de graficos e de epocas
+    contam so os deles."""
+    return [d for d in arvore.achar("dialog") if "nn-modal-autor" not in d["attrs"].get("class", "").split()]
+
+
+def imagens_da_pagina(arvore: Arvore) -> list[dict]:
+    """Os <img> da pagina menos os da autoria (a foto e a marca do rodape, a marca do modal), que estao em todas."""
+    return [i for i in arvore.achar("img") if not i["attrs"].get("src", "").startswith(("/autor.webp", "/marca-autor"))]
+
+
 def copiar_base(destino: Path) -> Path:
     """Copia o que o site le: metadados e a base publicada (nao a de trabalho, nem os brutos)."""
     shutil.copytree(RAIZ / "metadados", destino / "metadados")

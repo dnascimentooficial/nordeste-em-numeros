@@ -26,10 +26,19 @@ MOTIVACAO = (
     "dividem a conta. Cada número tem fonte e cálculo à vista, para quem quiser rebater ou entender."
 )
 QUEM_SOU = (
-    "Júlio Diógenes, autor do Nordeste em Números. Meu trabalho e minha trajetória estão em dnascimento.com.br."
+    "Há mais de 17 anos, ajudo profissionais, empresas e governos a transformar problemas complexos em decisões "
+    "executáveis. Minha atuação combina design, engenharia, inovação, dados e gestão de projetos. Trabalho com "
+    "estratégia, inovação e inteligência artificial."
 )
+MAIS = "Mais sobre o meu trabalho em dnascimento.com.br"
+FORMACAO = [
+    "Design", "Engenharia da Computação", "Análise de Dados", "Gestão de Projetos e Inovação",
+    "Direito da Infraestrutura, Regulação e Governança",
+]
 FORMACAO_VAZIA = "Formação e trajetória completas em dnascimento.com.br"
-FOTO_DO_REPOSITORIO = RAIZ / "src" / "nordeste" / "site" / "estaticos" / "autor.webp"
+ESTATICOS = RAIZ / "src" / "nordeste" / "site" / "estaticos"
+FOTO_DO_REPOSITORIO = ESTATICOS / "autor.webp"
+MARCAS_DO_REPOSITORIO = (ESTATICOS / "marca-autor-clara.webp", ESTATICOS / "marca-autor-escura.webp")
 
 
 @pytest.fixture(scope="module")
@@ -117,17 +126,36 @@ def test_rodape_mantem_o_que_ja_tinha_e_ganha_o_bloco_de_autoria(gerado, pagina)
     assert len(gatilho) == 1
     assert gatilho[0]["attrs"]["href"] == "/sobre/#autor"  # sem JavaScript, o clique leva a secao de Sobre
     assert gatilho[0]["attrs"]["aria-haspopup"] == "dialog"
-    assert Arvore.texto(gatilho[0]) == "JD Desenvolvido por Júlio Diógenes"
+    assert Arvore.texto(gatilho[0]) == "Desenvolvido por Júlio Diógenes"  # a foto ou as iniciais nao tem texto proprio
     assert [Arvore.texto(e) for e in rodape.achar("strong", classe="nn-autor-nome")] == ["Júlio Diógenes"]
 
 
-def test_sem_foto_do_autor_o_circulo_mostra_as_iniciais(gerado):
-    assert not FOTO_DO_REPOSITORIO.exists(), "chegou a foto: este teste vale para o pacote sem ela"
-    _, rodape = _trecho(_html(gerado, "index.html"), "footer")
-    circulo = rodape.achar(classe="nn-autor-circulo")
-    assert len(circulo) == 1 and Arvore.texto(circulo[0]) == "JD" and circulo[0]["attrs"]["aria-hidden"] == "true"
-    assert not rodape.achar("img")
-    assert not (gerado / "autor.webp").exists() and not (gerado / "marca-autor.svg").exists()
+def test_com_a_foto_do_pacote_o_circulo_leva_o_retrato_320_por_320(gerado):
+    assert FOTO_DO_REPOSITORIO.is_file()
+    with Image.open(FOTO_DO_REPOSITORIO) as foto:
+        assert foto.format == "WEBP" and foto.size == (320, 320)
+    assert FOTO_DO_REPOSITORIO.stat().st_size <= 100_000
+    for pagina in PAGINAS:
+        _, rodape = _trecho(_html(gerado, pagina), "footer")
+        circulo = rodape.achar(classe="nn-autor-circulo")
+        assert len(circulo) == 1 and Arvore.texto(circulo[0]) == "", pagina  # sem iniciais quando ha foto
+        imagens = rodape.achar("img", src="/autor.webp")
+        assert len(imagens) == 1 and imagens[0]["attrs"]["alt"] == "Júlio Diógenes", pagina
+        assert (imagens[0]["attrs"]["width"], imagens[0]["attrs"]["height"]) == ("320", "320")
+    assert (gerado / "autor.webp").read_bytes() == FOTO_DO_REPOSITORIO.read_bytes()
+
+
+def test_sem_foto_do_autor_o_circulo_mostra_as_iniciais(tmp_path, monkeypatch):
+    estaticos = estaticos_com_arquivos(tmp_path, monkeypatch)
+    (estaticos / "autor.webp").unlink()
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=copiar_base(tmp_path / "repo")), saida, imagens=False)
+    for pagina in PAGINAS:
+        _, rodape = _trecho(_html(saida, pagina), "footer")
+        circulo = rodape.achar(classe="nn-autor-circulo")
+        assert len(circulo) == 1 and Arvore.texto(circulo[0]) == "JD" and circulo[0]["attrs"]["aria-hidden"] == "true"
+        assert not rodape.achar("img", src="/autor.webp"), pagina
+    assert not (saida / "autor.webp").exists()
 
 
 def test_com_autor_webp_o_circulo_leva_a_foto_com_largura_e_altura(tmp_path, monkeypatch):
@@ -137,13 +165,13 @@ def test_com_autor_webp_o_circulo_leva_a_foto_com_largura_e_altura(tmp_path, mon
     gerar_site(Caminhos(raiz=copiar_base(tmp_path / "repo")), saida, imagens=False)
     for pagina in PAGINAS:
         _, rodape = _trecho(_html(saida, pagina), "footer")
-        imagens = rodape.achar("img")
+        imagens = rodape.achar("img", src="/autor.webp")
         assert len(imagens) == 1, pagina
         atributos = imagens[0]["attrs"]
-        assert atributos["src"] == "/autor.webp" and atributos["alt"] == ""
+        assert atributos["src"] == "/autor.webp" and atributos["alt"] == "Júlio Diógenes"
         assert (atributos["width"], atributos["height"]) == ("120", "150")
         assert "style" not in atributos
-        assert not rodape.achar(classe="nn-autor-circulo") or "JD" not in Arvore.texto(rodape.achar(classe="nn-autor-circulo")[0])
+        assert "JD" not in Arvore.texto(rodape.achar(classe="nn-autor-circulo")[0])
     assert (saida / "autor.webp").read_bytes() == (estaticos / "autor.webp").read_bytes()
 
 
@@ -159,19 +187,46 @@ def test_autor_webp_que_nao_e_webp_ou_pesa_demais_e_recusado(tmp_path, monkeypat
         gerar_site(Caminhos(raiz=copiar_base(tmp_path / "b")), tmp_path / "saida", imagens=False)
 
 
-def test_marca_do_autor_so_aparece_se_o_arquivo_existir(tmp_path, monkeypatch):
-    estaticos = estaticos_com_arquivos(tmp_path, monkeypatch)
-    sem = tmp_path / "sem"
-    gerar_site(Caminhos(raiz=copiar_base(tmp_path / "a")), sem, imagens=False)
-    assert not Arvore(_html(sem, "index.html")).achar(classe="nn-autor-marca")
-    (estaticos / "marca-autor.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>', encoding="utf-8")
-    com = tmp_path / "com"
-    gerar_site(Caminhos(raiz=copiar_base(tmp_path / "b")), com, imagens=False)
+def test_marca_do_autor_no_rodape_e_a_versao_clara_e_a_marca_do_pacote_tem_o_tamanho_certo(gerado):
+    for arquivo in MARCAS_DO_REPOSITORIO:
+        with Image.open(arquivo) as marca:
+            assert marca.format == "WEBP" and marca.size == (462, 154), arquivo.name
     for pagina in PAGINAS:
-        _, rodape = _trecho(_html(com, pagina), "footer")
+        _, rodape = _trecho(_html(gerado, pagina), "footer")
         marca = rodape.achar("img", classe="nn-autor-marca")
-        assert len(marca) == 1 and marca[0]["attrs"]["src"] == "/marca-autor.svg" and marca[0]["attrs"]["alt"] == ""
-    assert (com / "marca-autor.svg").is_file()
+        assert len(marca) == 1, pagina
+        atributos = marca[0]["attrs"]
+        # o rodape e preto nos dois temas: so a versao branca se enxerga nele; o nome ja esta no texto ao lado
+        assert atributos["src"] == "/marca-autor-clara.webp" and atributos["alt"] == ""
+        assert (atributos["width"], atributos["height"]) == ("462", "154") and "style" not in atributos
+    for arquivo in MARCAS_DO_REPOSITORIO:
+        assert (gerado / arquivo.name).read_bytes() == arquivo.read_bytes()
+
+
+@pytest.mark.parametrize(
+    "apagar",
+    [("marca-autor-clara.webp",), ("marca-autor-escura.webp",), ("marca-autor-clara.webp", "marca-autor-escura.webp")],
+)
+def test_marca_do_autor_so_aparece_se_as_duas_versoes_existirem(tmp_path, monkeypatch, apagar):
+    estaticos = estaticos_com_arquivos(tmp_path, monkeypatch)
+    for nome in apagar:
+        (estaticos / nome).unlink()
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=copiar_base(tmp_path / "repo")), saida, imagens=False)
+    for pagina in PAGINAS:
+        arvore = Arvore(_html(saida, pagina))
+        assert not arvore.achar(classe="nn-autor-marca") and not arvore.achar("picture"), pagina
+
+
+def test_marca_com_tamanhos_diferentes_ou_que_nao_e_webp_e_recusada(tmp_path, monkeypatch):
+    estaticos = estaticos_com_arquivos(tmp_path, monkeypatch)
+    _webp(estaticos / "marca-autor-clara.webp", (462, 154))
+    _webp(estaticos / "marca-autor-escura.webp", (400, 100))
+    with pytest.raises(ErroConteudo, match="mesmo tamanho"):
+        gerar_site(Caminhos(raiz=copiar_base(tmp_path / "a")), tmp_path / "saida", imagens=False)
+    (estaticos / "marca-autor-escura.webp").write_bytes(b"isto nao e uma imagem")
+    with pytest.raises(ErroConteudo, match="marca-autor-escura.webp"):
+        gerar_site(Caminhos(raiz=copiar_base(tmp_path / "b")), tmp_path / "saida", imagens=False)
 
 
 # --- modal e secao de Sobre ---
@@ -189,11 +244,18 @@ def test_dialog_sobre_o_autor_tem_as_tres_secoes_e_nasce_fechado(gerado, pagina)
     assert dialogo["aria-labelledby"] == titulo["attrs"]["id"] and Arvore.texto(titulo) == "Sobre o autor"
     assert [Arvore.texto(h) for h in arvore.achar("h3")] == ["Quem sou", "Por que fiz este estudo", "Formação"]
     visivel = arvore.texto_visivel()
-    assert QUEM_SOU in " ".join(visivel.split()) and MOTIVACAO in " ".join(visivel.split())
-    assert FORMACAO_VAZIA in " ".join(visivel.split())
-    links = {e["attrs"]["href"] for e in arvore.achar("a")}
-    assert links == {URL_DO_AUTOR}
-    assert [Arvore.texto(a) for a in arvore.achar("a")] == ["dnascimento.com.br", "dnascimento.com.br"]
+    assert QUEM_SOU in visivel and MAIS in visivel and MOTIVACAO in visivel
+    assert [Arvore.texto(li) for li in arvore.achar("li")] == FORMACAO
+    assert FORMACAO_VAZIA not in visivel  # com a lista, a frase de trajetoria nao aparece
+    assert {e["attrs"]["href"] for e in arvore.achar("a")} == {URL_DO_AUTOR}
+    assert [Arvore.texto(a) for a in arvore.achar("a")] == ["dnascimento.com.br"]  # o link do "Mais sobre o meu trabalho"
+    marca = arvore.achar("picture")
+    assert len(marca) == 1  # a marca do modal segue o tema: a branca no escuro, a escura no claro
+    assert [e["attrs"]["srcset"] for e in arvore.achar("source")] == ["/marca-autor-clara.webp"]
+    assert arvore.achar("source")[0]["attrs"]["media"] == "(prefers-color-scheme: dark)"
+    imagem = arvore.achar("img")
+    assert len(imagem) == 1 and imagem[0]["attrs"]["src"] == "/marca-autor-escura.webp"
+    assert imagem[0]["attrs"]["alt"] == "Júlio Diógenes"
     assert [Arvore.texto(b) for b in arvore.achar("button", classe="nn-modal-fechar")] == ["Fechar ×"]
     assert not arvore.achar(id="autor")  # o id #autor e da secao de Sobre, nao do modal
 
@@ -206,7 +268,8 @@ def test_sobre_tem_a_secao_autor_com_o_mesmo_conteudo_do_modal(gerado):
     secao = re.search(r'<article[^>]*id="autor".*?</article>', html, flags=re.S)[0]
     modal = next(d for d in re.findall(r"<dialog\b.*?</dialog>", html, flags=re.S) if "nn-modal-autor" in d)
     texto_da_secao = Arvore(secao).texto_visivel()
-    assert MOTIVACAO in texto_da_secao and QUEM_SOU in texto_da_secao and FORMACAO_VAZIA in texto_da_secao
+    assert MOTIVACAO in texto_da_secao and QUEM_SOU in texto_da_secao and MAIS in texto_da_secao
+    assert [Arvore.texto(li) for li in Arvore(secao).achar("li")] == FORMACAO
     ids = [e["attrs"]["id"] for e in arvore.achar() if "id" in e["attrs"]]
     assert len(ids) == len(set(ids)), "ids repetidos entre o modal e a secao"
     for titulo in ("Sobre o autor", "Quem sou", "Por que fiz este estudo", "Formação"):
@@ -257,8 +320,9 @@ def test_formacao_ausente_nula_ou_vazia_mostra_a_frase_de_trajetoria_com_link(tm
     gerar_site(Caminhos(raiz=_com_textos_alterados(tmp_path, ajustar)), saida, imagens=False)
     secao = re.search(r'<article[^>]*id="autor".*?</article>', _html(saida, "sobre/index.html"), flags=re.S)[0]
     arvore = Arvore(secao)
-    assert FORMACAO_VAZIA in " ".join(arvore.texto_visivel().split()) and not arvore.achar("li")
+    assert FORMACAO_VAZIA in arvore.texto_visivel() and not arvore.achar("li")
     assert [Arvore.texto(a) for a in arvore.achar("a")] == ["dnascimento.com.br", "dnascimento.com.br"]
+    assert {a["attrs"]["href"] for a in arvore.achar("a")} == {URL_DO_AUTOR}
 
 
 # --- validacao de textos.yaml ---
@@ -268,7 +332,7 @@ def test_formacao_ausente_nula_ou_vazia_mostra_a_frase_de_trajetoria_com_link(tm
     "caminho",
     [
         ("autor",), ("autor", "nome"), ("autor", "titulo"), ("autor", "fechar"), ("autor", "link"),
-        ("autor", "quem_sou"), ("autor", "quem_sou", "texto"), ("autor", "motivacao"),
+        ("autor", "quem_sou"), ("autor", "quem_sou", "texto"), ("autor", "quem_sou", "mais"), ("autor", "motivacao"),
         ("autor", "motivacao", "titulo"), ("autor", "motivacao", "texto"), ("autor", "formacao_titulo"),
         ("autor", "formacao_vazia"),
     ],
@@ -292,7 +356,8 @@ def test_textos_sem_a_chave_do_autor_falha_com_mensagem_clara(tmp_path, caminho)
         (lambda t: t["autor"]["motivacao"].update(texto="  "), "autor.motivacao.texto"),
         (lambda t: t["autor"].update(formacao="um texto solto"), "autor.formacao"),
         (lambda t: t["autor"].update(formacao=["ok", ""]), "autor.formacao"),
-        (lambda t: t["autor"]["quem_sou"].update(texto="Sem o endereço do site."), "autor.link"),
+        (lambda t: t["autor"]["quem_sou"].update(mais="Sem o endereço do site."), "autor.link"),
+        (lambda t: t["autor"]["quem_sou"].update(texto=""), "autor.quem_sou.texto"),
         (lambda t: t["autor"].update(formacao_vazia="Sem o endereço do site."), "autor.link"),
     ],
 )
@@ -302,11 +367,17 @@ def test_textos_do_autor_invalidos_falham_com_mensagem_clara(tmp_path, alterar, 
         gerar_site(Caminhos(raiz=raiz), tmp_path / "saida", imagens=False)
 
 
-# --- licenca da foto do autor ---
+# --- licenca da foto e da marca do autor ---
 
 
-def test_se_autor_webp_existir_o_license_cita_a_excecao():
+@pytest.mark.parametrize("arquivo", [FOTO_DO_REPOSITORIO, *MARCAS_DO_REPOSITORIO], ids=lambda a: a.name)
+def test_se_um_arquivo_do_autor_existir_o_license_cita_a_excecao(arquivo):
+    """Foto e marca sao do autor, nao da CC BY 4.0: existindo o arquivo, o LICENSE.md tem de dizer isso."""
     licenca = (RAIZ / "LICENSE.md").read_text(encoding="utf-8")
-    if FOTO_DO_REPOSITORIO.exists():
-        assert "src/nordeste/site/estaticos/autor.webp" in licenca
-        assert "todos os direitos reservados" in licenca.split("autor.webp", 1)[1].split("\n- ", 1)[0]
+    if arquivo.exists():
+        caminho = f"src/nordeste/site/estaticos/{arquivo.name}"
+        assert caminho in licenca, f"{arquivo.name} existe, mas o LICENSE.md nao o cita"
+        trecho = licenca.split(caminho, 1)[1].split("\n- ", 1)[0]
+        trecho = " ".join(trecho.split())
+        assert "© Júlio Diógenes, todos os direitos reservados" in trecho
+        assert re.search(r"não (está|estão) cobertas? pela CC BY 4\.0", trecho)

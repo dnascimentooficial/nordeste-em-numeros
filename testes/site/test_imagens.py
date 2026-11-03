@@ -20,7 +20,7 @@ from nordeste.site.conteudo import ErroConteudo, carregar_conteudo
 from nordeste.site.gerar import gerar_site
 from nordeste.site.imagens import AlvoImagem, renderizar
 
-from auxiliares import RAIZ, Arvore, copiar_base, definir_foto, estaticos_com_foto, estaticos_sem_foto
+from auxiliares import RAIZ, Arvore, copiar_base, definir_foto, estaticos_com_foto, estaticos_sem_foto, imagens_da_pagina
 
 CONTORNO = RAIZ / "metadados" / "site" / "nordeste-contorno.svg"
 FERRAMENTA = RAIZ / "ferramentas" / "gerar_contorno.py"
@@ -119,7 +119,7 @@ def test_sem_foto_nao_ha_imagem_nem_credito(tmp_path, monkeypatch):
     gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
     for pagina in ("index.html", "sobre/index.html"):
         html = (saida / pagina).read_text(encoding="utf-8")
-        assert Arvore(html).achar("img") == [] and "Foto" not in Arvore(html).texto_visivel(), pagina
+        assert imagens_da_pagina(Arvore(html)) == [] and "Foto" not in Arvore(html).texto_visivel(), pagina
     assert not (saida / gerar.FOTO_ARQUIVO).exists()
 
 
@@ -136,7 +136,7 @@ def test_foto_aparece_na_abertura_e_o_credito_no_rodape_e_em_sobre(tmp_path, bas
     saida = tmp_path / "saida"
     gerar_site(Caminhos(raiz=base_com_foto), saida, imagens=False)
     inicio = Arvore((saida / "index.html").read_text(encoding="utf-8"))
-    assert inicio.achar("img") == []  # a foto e o fundo da abertura, por CSS: nao ha <img> (Ruling S-U)
+    assert imagens_da_pagina(inicio) == []  # a foto e o fundo da abertura, por CSS: nao ha <img> (Ruling S-U)
     assert "nn-hero-com-foto" in inicio.achar("section", id="topo")[0]["attrs"]["class"].split()
     assert (saida / gerar.FOTO_ARQUIVO).is_file()
     for pagina in ("index.html", "sobre/index.html", "dados/index.html"):
