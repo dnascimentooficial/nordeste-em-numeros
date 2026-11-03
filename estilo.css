@@ -382,7 +382,7 @@ color: var(--nn-laranja);
 min-height: 150px;
 }
 .nn .nn-menu-cartao-como-chegamos {
-background: #111113 url("/historia/1530-cartao.webp") center / cover no-repeat;
+background: #111113 url("/historia/1530-cartao.webp?v=c198b651") center / cover no-repeat;
 }
 .nn-menu-cartao-como-chegamos::before {
 content: "";
@@ -587,7 +587,7 @@ align-content: center;
 content: "";
 position: absolute;
 inset: 0;
-background-image: linear-gradient(rgba(8, 8, 8, 0.3), rgba(8, 8, 8, 0.3)), url("/foto-abertura.webp");
+background-image: linear-gradient(rgba(8, 8, 8, 0.3), rgba(8, 8, 8, 0.3)), url("/foto-abertura.webp?v=6b5ca7c5");
 background-size: auto, cover;
 background-position: 0 0, center 45%;
 background-repeat: no-repeat;
@@ -669,24 +669,24 @@ background-position: var(--nn-capa-posicao, center 40%);
 background-repeat: no-repeat;
 }
 .nn-capa-abertura {
---nn-capa-foto: url("/foto-abertura.webp");
+--nn-capa-foto: url("/foto-abertura.webp?v=6b5ca7c5");
 }
 .nn-capa-1530 {
---nn-capa-foto: url("/historia/1530.webp");
+--nn-capa-foto: url("/historia/1530.webp?v=7989a663");
 --nn-capa-posicao: center 55%;
 --nn-capa-veu: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0.88) 40%, rgba(8, 8, 8, 0.3) 78%, rgba(8, 8, 8, 0.1) 100%);
 }
 .nn-capa-1964 {
---nn-capa-foto: url("/historia/1964.webp");
+--nn-capa-foto: url("/historia/1964.webp?v=0e3f7280");
 }
 .nn-capa-1950 {
---nn-capa-foto: url("/historia/1950.webp");
+--nn-capa-foto: url("/historia/1950.webp?v=f02adf2b");
 }
 .nn-capa-marco-1932 {
---nn-capa-foto: url("/historia/marco-1932.webp");
+--nn-capa-foto: url("/historia/marco-1932.webp?v=2927f443");
 }
 .nn-capa-marco-1934 {
---nn-capa-foto: url("/historia/marco-1934.webp");
+--nn-capa-foto: url("/historia/marco-1934.webp?v=c33be85e");
 }
 .nn-capa-texto {
 max-width: 760px;
@@ -2000,7 +2000,7 @@ align-items: center;
 gap: 18px clamp(20px, 4vw, 48px);
 padding: clamp(28px, 4.4vw, 52px) clamp(22px, 4.4vw, 52px);
 background-color: #080808;
-background-image: var(--nn-foto-fusao), var(--nn-chamada-sombra), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/historia/1530-cartao.webp");
+background-image: var(--nn-foto-fusao), var(--nn-chamada-sombra), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/historia/1530-cartao.webp?v=c198b651");
 background-size: auto, auto, auto, cover;
 background-position: 0 0, 0 0, 0 0, 80% 50%;
 background-repeat: no-repeat;
