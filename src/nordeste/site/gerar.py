@@ -58,6 +58,9 @@ CARD = (1080, 1350)  # PNG de cada card
 FOTO_TAMANHO_MAXIMO = 200_000  # bytes: a foto pesa na primeira tela
 FOTO_EXIGIDA = ("credito", "url")  # `foto` e opcional em textos.yaml; se existir, traz tudo isso (Ruling S-Z)
 FOTO_ARQUIVO = "foto-abertura.webp"  # em estaticos/; o estilo.css aponta para este nome (fundo da abertura, Ruling S-U)
+AUTOR_FOTO = "autor.webp"  # em estaticos/, opcional: a foto do circulo do rodape; sem ela o circulo mostra as iniciais
+AUTOR_FOTO_TAMANHO_MAXIMO = 100_000  # bytes: o rodape esta em todas as paginas
+AUTOR_MARCA = "marca-autor.svg"  # em estaticos/, opcional: a marca grafica do autor, mostrada no rodape so se existir
 LARGO = {"largura": 720}  # os dois tamanhos de cada grafico (Ruling S-O): o CSS mostra um conforme a largura da tela
 ESTREITO = {"largura": 360, "altura": 240}
 AMPLIADO = {"largura": 1100, "altura": 520}  # o terceiro, do modal "Ampliar" (Ruling S-W): guardado num <template>
@@ -80,6 +83,10 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
         "zoom": {"grupo", "de", "ate", "inicio", "fim", "ampliar", "todo", "ajuda"},
     },
     "cards": {"titulo", "intro", "sera", "baixar", "voltar"},
+    "autor": {  # + `formacao`, opcional (lista de itens)
+        **dict.fromkeys(("nome", "titulo", "fechar", "link", "formacao_titulo", "formacao_vazia")),
+        "quem_sou": {"titulo", "texto"}, "motivacao": {"titulo", "texto"},
+    },
 }
 FRASE_DA_DATA = "na data desta publicação"
 MESES = ("janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
@@ -674,6 +681,7 @@ def _validar_textos(textos: object, paginas: tuple[Pagina, ...] = PAGINAS) -> No
     _exigir(textos, exigidos, "textos")
     if "foto" in textos:
         _validar_foto(textos["foto"])
+    _validar_autor(textos["autor"])
 
 
 def _validar_foto(foto: object) -> None:
@@ -687,6 +695,64 @@ def _validar_foto(foto: object) -> None:
         raise ErroConteudo(f"textos.yaml tem foto, mas {FOTO_ARQUIVO} não está em estaticos/ do pacote.")
     if arquivo.stat().st_size > FOTO_TAMANHO_MAXIMO:
         raise ErroConteudo(f"{FOTO_ARQUIVO} passa de {FOTO_TAMANHO_MAXIMO // 1000} KB.")
+
+
+def _validar_autor(autor: dict) -> None:
+    """Os textos do autor sao textos nao vazios; `link` aparece em quem_sou.texto e em formacao_vazia (e o trecho que
+    vira link para o site do autor); `formacao`, se vier, e uma lista de textos nao vazios (nula ou vazia vale ausente)."""
+    textos = {
+        "nome": autor["nome"], "titulo": autor["titulo"], "fechar": autor["fechar"], "link": autor["link"],
+        "formacao_titulo": autor["formacao_titulo"], "formacao_vazia": autor["formacao_vazia"],
+        **{f"{secao}.{campo}": autor[secao][campo] for secao in ("quem_sou", "motivacao") for campo in ("titulo", "texto")},
+    }
+    for nome, texto in textos.items():
+        if not isinstance(texto, str) or not texto.strip():
+            raise ErroConteudo(f"textos.yaml: autor.{nome} é um texto, não vazio.")
+    for nome, texto in (("quem_sou.texto", autor["quem_sou"]["texto"]), ("formacao_vazia", autor["formacao_vazia"])):
+        if autor["link"] not in texto:
+            raise ErroConteudo(f"textos.yaml: autor.{nome} não cita autor.link ({autor['link']!r}), o trecho que vira link.")
+    formacao = autor.get("formacao")
+    if formacao is not None and (
+        not isinstance(formacao, list) or not all(isinstance(i, str) and i.strip() for i in formacao)
+    ):
+        raise ErroConteudo("textos.yaml: autor.formacao é uma lista de textos não vazios.")
+
+
+def _com_link(texto: str, ancora: str) -> dict:
+    """O texto cortado no trecho que vira link: antes, a ancora e depois (o modelo monta o <a> sem repetir o texto)."""
+    antes, _, depois = texto.partition(ancora)
+    return {"antes": antes, "ancora": ancora, "depois": depois}
+
+
+def _foto_do_autor() -> dict | None:
+    """`estaticos/autor.webp`, se existir: o src e o width/height do arquivo (sem salto de layout). Recusa o que nao
+    e WebP ou passa do peso."""
+    arquivo = PASTA_ESTATICOS / AUTOR_FOTO
+    if not arquivo.is_file():
+        return None
+    if arquivo.stat().st_size > AUTOR_FOTO_TAMANHO_MAXIMO:
+        raise ErroConteudo(f"{AUTOR_FOTO} passa de {AUTOR_FOTO_TAMANHO_MAXIMO // 1000} KB.")
+    largura, altura = medidas_da_webp(arquivo)
+    return {"src": f"/{AUTOR_FOTO}", "largura": largura, "altura": altura}
+
+
+def _contexto_do_autor(autor: dict) -> dict:
+    """O que os modelos leem do autor (rodape, modal e secao de Sobre): nome, iniciais, foto e marca (se existirem) e
+    as tres secoes, com o link do site do autor ja marcado nos textos que o citam."""
+    palavras = autor["nome"].split()
+    formacao = autor.get("formacao") or []
+    return {
+        "nome": autor["nome"], "iniciais": (palavras[0][0] + palavras[-1][0]).upper(), "url": URL_DO_AUTOR,
+        "titulo": autor["titulo"], "fechar": autor["fechar"], "link": autor["link"],
+        "foto": _foto_do_autor(),
+        "marca": f"/{AUTOR_MARCA}" if (PASTA_ESTATICOS / AUTOR_MARCA).is_file() else None,
+        "quem_sou": {"titulo": autor["quem_sou"]["titulo"], "texto": _com_link(autor["quem_sou"]["texto"], autor["link"])},
+        "motivacao": autor["motivacao"],
+        "formacao": {
+            "titulo": autor["formacao_titulo"], "itens": formacao,
+            "vazio": _com_link(autor["formacao_vazia"], autor["link"]),
+        },
+    }
 
 
 def _paragrafos_da_abertura(itens: list, destaques: dict[str, Destaque]) -> tuple[list[str], list[str]]:
@@ -792,7 +858,7 @@ def gerar_site(
     comum = {
         "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in paginas_do_menu],
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR,
-        "foto": textos.get("foto"),
+        "foto": textos.get("foto"), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
         "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": "/".join(reversed(dados.data_base.split("-"))),

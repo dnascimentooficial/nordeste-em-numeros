@@ -7,4 +7,17 @@
   <span class="nn-credito">Foto: {% if foto.url %}<a href="{{ foto.url }}">{{ foto.credito }}</a>{% else %}{{ foto.credito }}{% endif %}</span>
 {% endif %}
   <a href="{{ autor_url }}">dnascimento.com.br</a>
+  <div class="nn-autor-bloco">
+    <a class="nn-autor-abrir" href="/sobre/#autor" aria-haspopup="dialog">
+{% if autor.foto %}
+      <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}"></span>
+{% else %}
+      <span class="nn-autor-circulo" aria-hidden="true">{{ autor.iniciais }}</span>
+{% endif %}
+      <span class="nn-autor-texto">Desenvolvido por <strong class="nn-autor-nome">{{ autor.nome }}</strong></span>
+    </a>
+{% if autor.marca %}
+    <img class="nn-autor-marca" src="{{ autor.marca }}" alt="">
+{% endif %}
+  </div>
 </footer>

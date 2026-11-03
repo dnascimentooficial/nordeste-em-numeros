@@ -1,0 +1,26 @@
+{# O conteúdo do autor, de textos.yaml (chave `autor`): o modal "Sobre o autor" de todas as páginas e a seção #autor de
+   Sobre usam este macro, então o texto vive num lugar só. `id_titulo` é o id do <h2>, que rotula o modal ou a seção. #}
+{% macro ligado(trecho, autor) %}{{ trecho.antes }}<a href="{{ autor.url }}">{{ trecho.ancora }}</a>{{ trecho.depois }}{% endmacro %}
+{% macro conteudo(autor, id_titulo) %}
+<h2 id="{{ id_titulo }}">{{ autor.titulo }}</h2>
+<section class="nn-autor-secao">
+  <h3>{{ autor.quem_sou.titulo }}</h3>
+  <p>{{ ligado(autor.quem_sou.texto, autor) }}</p>
+</section>
+<section class="nn-autor-secao">
+  <h3>{{ autor.motivacao.titulo }}</h3>
+  <p>{{ autor.motivacao.texto }}</p>
+</section>
+<section class="nn-autor-secao">
+  <h3>{{ autor.formacao.titulo }}</h3>
+{% if autor.formacao.itens %}
+  <ul class="nn-lista">
+{% for item in autor.formacao.itens %}
+    <li>{{ item }}</li>
+{% endfor %}
+  </ul>
+{% else %}
+  <p>{{ ligado(autor.formacao.vazio, autor) }}</p>
+{% endif %}
+</section>
+{% endmacro %}

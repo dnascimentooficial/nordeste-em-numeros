@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_epoca.html" import credito %}
+{% from "_autor.html" import conteudo as conteudo_do_autor %}
 {% block conteudo %}
 <section class="nn-pagina" id="sobre" aria-labelledby="titulo-principal">
   <h1 id="titulo-principal">Sobre os dados</h1>
@@ -74,6 +75,10 @@
   <article class="nn-card" id="sobre-arquivos">
     <h2>{{ textos.arquivos.titulo }}</h2>
     <p>{{ textos.arquivos.intro }} <a href="/dados/">Ir para Dados</a>.</p>
+  </article>
+
+  <article class="nn-card nn-card-autor" id="autor" aria-labelledby="autor-titulo">
+{{ conteudo_do_autor(autor, "autor-titulo") }}
   </article>
 </section>
 {% endblock %}

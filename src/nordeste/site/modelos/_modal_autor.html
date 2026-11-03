@@ -1,0 +1,13 @@
+{% from "_autor.html" import conteudo %}
+{# "Sobre o autor": o conteúdo já vem no HTML (o site.js só abre o <dialog>). Fica fora do <footer>, que pinta os links de
+   branco. Sem JavaScript o gatilho do rodapé é um link para /sobre/#autor e este <dialog> nunca abre. #}
+<dialog class="nn-modal nn-modal-autor" aria-labelledby="nn-autor-titulo-modal">
+  <div class="nn-modal-caixa">
+    <div class="nn-modal-topo">
+      <button type="button" class="nn-modal-fechar"><span>{{ autor.fechar }}</span> <span aria-hidden="true">×</span></button>
+    </div>
+    <div class="nn-autor-conteudo">
+{{ conteudo(autor, "nn-autor-titulo-modal") }}
+    </div>
+  </div>
+</dialog>

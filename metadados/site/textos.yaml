@@ -73,6 +73,28 @@ o_que_falta:
     - "IDHM do Nordeste em 2000 e 2010: não publicado para a região."
     - "Linha de pobreza: confirmada pelos metadados do Ipeadata, não por publicação do IBGE."
 
+# Autoria: o bloco "Desenvolvido por" do rodapé, o modal "Sobre o autor" e a seção #autor de Sobre saem desta chave, do
+# mesmo texto. `link` é o trecho de quem_sou.texto e de formacao_vazia que vira link para o site do autor. `formacao` é
+# opcional (lista de itens): ausente, nula ou vazia, a seção mostra formacao_vazia. Não pôr aqui fato biográfico que o
+# autor não tenha passado.
+# A foto do autor é estaticos/autor.webp (opcional, WebP de até 100 KB): existindo, ela vai no círculo do rodapé; sem
+# ela, o círculo mostra as iniciais. A marca gráfica é estaticos/marca-autor.svg (opcional): existindo, aparece no
+# rodapé. Quando autor.webp chegar, o LICENSE.md precisa citá-la como "© Júlio Diógenes, todos os direitos reservados"
+# (um teste falha se não citar).
+autor:
+  nome: "Júlio Diógenes"
+  titulo: "Sobre o autor"
+  fechar: "Fechar"
+  link: "dnascimento.com.br"
+  quem_sou:
+    titulo: "Quem sou"
+    texto: "Júlio Diógenes, autor do Nordeste em Números. Meu trabalho e minha trajetória estão em dnascimento.com.br."
+  motivacao:
+    titulo: "Por que fiz este estudo"
+    texto: "Fiz este estudo por raiva, e também por orgulho. Raiva de um discurso que repete que o Nordeste está do mesmo jeito, apaga a história da região e ignora o que estados e municípios fizeram e deixaram de fazer. Orgulho de uma região que mudou mais do que se diz, ainda que falte muito chão. Então fui conferir nos dados oficiais, de 2000 para cá, e na história, da Colônia até hoje. Aqui ninguém ganha passe livre: município, estado e União dividem a conta. Cada número tem fonte e cálculo à vista, para quem quiser rebater ou entender."
+  formacao_titulo: "Formação"
+  formacao_vazia: "Formação e trajetória completas em dnascimento.com.br"
+
 # Metadados de página (título, descrição das prévias de compartilhamento) e conjunto de dados descrito no JSON-LD.
 paginas:
   index:

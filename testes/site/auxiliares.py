@@ -103,3 +103,9 @@ def estaticos_sem_foto(tmp_path: Path, monkeypatch) -> None:
     """Aponta o gerador para uma copia dos estaticos sem a foto, para o teste de 'sem foto' nao depender de a do pacote
     existir (Ruling S-Z)."""
     (_estaticos_temporarios(tmp_path, monkeypatch) / gerar.FOTO_ARQUIVO).unlink(missing_ok=True)
+
+
+def estaticos_com_arquivos(tmp_path: Path, monkeypatch) -> Path:
+    """Aponta o gerador para uma copia dos estaticos do pacote e devolve a pasta, para o teste pôr (ou tirar) arquivos
+    opcionais como autor.webp e marca-autor.svg sem mexer no pacote."""
+    return _estaticos_temporarios(tmp_path, monkeypatch)
