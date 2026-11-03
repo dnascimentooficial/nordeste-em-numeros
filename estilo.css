@@ -1,1232 +1,1619 @@
-/* Nordeste em Números: a identidade de dnascimento.com.br (papel claro, abertura e cards pretos com círculos finos,
-   abas e botões em pílula, cantos de 24 e 34 px, laranja só no que importa).
-
-   Nada de estilo inline: a Content-Security-Policy é style-src 'self'. Cores que mudam com o tema ficam em variáveis;
-   a abertura, o menu, os cards e o rodapé são sempre pretos. Todo movimento está no bloco de
-   prefers-reduced-motion: no-preference, no fim do arquivo. */
-
 @font-face {
-  font-family: "Manrope";
-  src: url("/fontes/manrope/Manrope.woff2") format("woff2");
-  font-weight: 600 800;
-  font-style: normal;
-  font-display: swap;
+font-family: "Manrope";
+src: url("/fontes/manrope/Manrope.woff2") format("woff2");
+font-weight: 600 800;
+font-style: normal;
+font-display: swap;
 }
-
 @font-face {
-  font-family: "DM Sans";
-  src: url("/fontes/dm-sans/DMSans.woff2") format("woff2");
-  font-weight: 400 700;
-  font-style: normal;
-  font-display: swap;
+font-family: "DM Sans";
+src: url("/fontes/dm-sans/DMSans.woff2") format("woff2");
+font-weight: 400 700;
+font-style: normal;
+font-display: swap;
 }
-
-/* a serifada dos titulos da pagina Como chegamos (EB Garamond 500, so o subconjunto latino): o navegador so baixa a
-   fonte onde algum elemento a usa, e so seletores sob .nn-historia a usam */
 @font-face {
-  font-family: "EB Garamond";
-  src: url("/fontes/eb-garamond/EBGaramond.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+font-family: "EB Garamond";
+src: url("/fontes/eb-garamond/EBGaramond.woff2") format("woff2");
+font-weight: 500;
+font-style: normal;
+font-display: swap;
+unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
 :root {
-  --nn-laranja: #ea2e00;
-  --nn-laranja-escuro: #c42600; /* texto pequeno em fundo claro */
-  --nn-preto: #080808;
-  --nn-papel: #f5f4ef;
-  --nn-branco: #ffffff;
-  --nn-display: "Manrope", system-ui, sans-serif;
-  --nn-texto: "DM Sans", system-ui, sans-serif;
-  --nn-raio: 24px;
-  --nn-raio-g: 34px;
-
-  /* tema claro */
-  --nn-fundo: var(--nn-papel);
-  --nn-painel: var(--nn-branco);
-  --nn-tinta: var(--nn-preto);
-  --nn-suave: rgba(8, 8, 8, 0.64);
-  --nn-linha: rgba(8, 8, 8, 0.12);
-  --nn-laranja-texto: var(--nn-laranja-escuro);
-  --nn-graf-ref: rgba(8, 8, 8, 0.42);
-  --nn-graf-grade: rgba(8, 8, 8, 0.1);
-  --nn-graf-faixa-a: rgba(8, 8, 8, 0.035);
-  --nn-graf-faixa-b: rgba(8, 8, 8, 0.085);
-  --nn-graf-hachura: rgba(8, 8, 8, 0.13);
-  --nn-graf-eixo: rgba(8, 8, 8, 0.45);
-  --nn-borda-preta: transparent; /* contorno das partes pretas, que só aparece no tema escuro */
-  --nn-papel-antigo: #f3ead6; /* o papel envelhecido da página Como chegamos: #c42600 dá 4,8:1 sobre ele */
-  --nn-sepia: #6b4423; /* a tinta de arquivo: rótulos, créditos e a etiqueta "estimativa de historiador" (7,1:1) */
-  color-scheme: light;
+--nn-laranja: #ea2e00;
+--nn-laranja-escuro: #c42600;
+--nn-preto: #080808;
+--nn-papel: #f5f4ef;
+--nn-branco: #ffffff;
+--nn-display: "Manrope", system-ui, sans-serif;
+--nn-texto: "DM Sans", system-ui, sans-serif;
+--nn-raio: 24px;
+--nn-raio-g: 34px;
+--nn-topo-alt: 64px;
+--nn-borda-cheia: max(clamp(16px, 3vw, 32px), calc((100vw - 1180px) / 2 + clamp(16px, 3vw, 32px)));
+--nn-fundo: var(--nn-papel);
+--nn-painel: var(--nn-branco);
+--nn-tinta: var(--nn-preto);
+--nn-suave: rgba(8, 8, 8, 0.64);
+--nn-linha: rgba(8, 8, 8, 0.12);
+--nn-laranja-texto: var(--nn-laranja-escuro);
+--nn-graf-ref: rgba(8, 8, 8, 0.42);
+--nn-graf-grade: rgba(8, 8, 8, 0.1);
+--nn-graf-faixa-a: rgba(8, 8, 8, 0.035);
+--nn-graf-faixa-b: rgba(8, 8, 8, 0.085);
+--nn-graf-hachura: rgba(8, 8, 8, 0.13);
+--nn-graf-eixo: rgba(8, 8, 8, 0.45);
+--nn-borda-preta: transparent;
+--nn-papel-antigo: #f3ead6;
+--nn-sepia: #6b4423;
+color-scheme: light;
 }
-
+@media (max-width: 1099px) {
+:root {
+--nn-topo-alt: 60px;
+}
+}
 @media (prefers-color-scheme: dark) {
-  :root {
-    --nn-fundo: var(--nn-preto);
-    --nn-painel: color-mix(in srgb, var(--nn-branco) 6%, var(--nn-preto));
-    --nn-tinta: var(--nn-papel);
-    --nn-suave: rgba(245, 244, 239, 0.68);
-    --nn-linha: rgba(245, 244, 239, 0.14);
-    --nn-laranja-texto: color-mix(in srgb, var(--nn-laranja) 72%, var(--nn-branco));
-    --nn-graf-ref: rgba(245, 244, 239, 0.5);
-    --nn-graf-grade: rgba(245, 244, 239, 0.12);
-    --nn-graf-faixa-a: rgba(245, 244, 239, 0.04);
-    --nn-graf-faixa-b: rgba(245, 244, 239, 0.09);
-    --nn-graf-hachura: rgba(245, 244, 239, 0.16);
-    --nn-graf-eixo: rgba(245, 244, 239, 0.45);
-    --nn-borda-preta: rgba(255, 255, 255, 0.12);
-    --nn-papel-antigo: #1c1712; /* papel escuro quente */
-    --nn-sepia: #d2b48c;
-    color-scheme: dark;
-  }
+:root {
+--nn-fundo: var(--nn-preto);
+--nn-painel: color-mix(in srgb, var(--nn-branco) 6%, var(--nn-preto));
+--nn-tinta: var(--nn-papel);
+--nn-suave: rgba(245, 244, 239, 0.68);
+--nn-linha: rgba(245, 244, 239, 0.14);
+--nn-laranja-texto: color-mix(in srgb, var(--nn-laranja) 72%, var(--nn-branco));
+--nn-graf-ref: rgba(245, 244, 239, 0.5);
+--nn-graf-grade: rgba(245, 244, 239, 0.12);
+--nn-graf-faixa-a: rgba(245, 244, 239, 0.04);
+--nn-graf-faixa-b: rgba(245, 244, 239, 0.09);
+--nn-graf-hachura: rgba(245, 244, 239, 0.16);
+--nn-graf-eixo: rgba(245, 244, 239, 0.45);
+--nn-borda-preta: rgba(255, 255, 255, 0.12);
+--nn-papel-antigo: #1c1712;
+--nn-sepia: #d2b48c;
+color-scheme: dark;
 }
-
-/* --- base --- */
-
+}
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+box-sizing: border-box;
 }
-
 [hidden] {
-  display: none !important;
+display: none !important;
 }
-
 html {
-  background: var(--nn-fundo);
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+background: var(--nn-fundo);
+-webkit-text-size-adjust: 100%;
+text-size-adjust: 100%;
 }
-
 body {
-  margin: 0;
-  background: var(--nn-fundo);
-  color: var(--nn-tinta);
-  font-family: var(--nn-texto);
-  font-size: 16px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+margin: 0;
+overflow-x: clip;
+background: var(--nn-fundo);
+color: var(--nn-tinta);
+font-family: var(--nn-texto);
+font-size: 16px;
+line-height: 1.55;
+-webkit-font-smoothing: antialiased;
 }
-
 .nn {
-  max-width: 1180px;
-  margin-inline: auto;
-  padding: 14px clamp(16px, 3vw, 32px) 32px;
-  display: grid;
-  gap: 28px;
+max-width: 1180px;
+margin-inline: auto;
+padding: 0 clamp(16px, 3vw, 32px) 32px;
+display: grid;
+gap: 28px;
 }
-
 .nn > main {
-  display: grid;
-  gap: 28px;
+display: grid;
+gap: 28px;
 }
-
 .nn > *,
 .nn-pagina > *,
 .nn-card > *,
 .nn-vista > * {
-  min-width: 0;
+min-width: 0;
 }
-
 .nn p {
-  margin: 0;
-  max-width: 68ch;
+margin: 0;
+max-width: 68ch;
 }
-
 .nn h1,
 .nn h2,
 .nn h3 {
-  font-family: var(--nn-display);
-  margin: 0;
-  text-wrap: balance;
+font-family: var(--nn-display);
+margin: 0;
+text-wrap: balance;
 }
-
 .nn h1 {
-  font-size: clamp(36px, 5.4vw, 68px);
-  font-weight: 800;
-  letter-spacing: -0.055em;
-  line-height: 0.95;
+font-size: clamp(36px, 5.4vw, 68px);
+font-weight: 800;
+letter-spacing: -0.055em;
+line-height: 0.95;
 }
-
 .nn h2 {
-  font-size: clamp(26px, 3.2vw, 40px);
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 1.04;
+font-size: clamp(26px, 3.2vw, 40px);
+font-weight: 700;
+letter-spacing: -0.045em;
+line-height: 1.04;
 }
-
 .nn h3 {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+font-size: 18px;
+font-weight: 700;
+letter-spacing: -0.02em;
+line-height: 1.2;
 }
-
 .nn a {
-  color: inherit;
-  text-decoration-color: var(--nn-laranja);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+color: inherit;
+text-decoration-color: var(--nn-laranja);
+text-decoration-thickness: 1px;
+text-underline-offset: 3px;
 }
-
 .nn a:hover {
-  text-decoration-thickness: 2px;
+text-decoration-thickness: 2px;
 }
-
 :focus-visible {
-  outline: 3px solid var(--nn-laranja);
-  outline-offset: 3px;
+outline: 3px solid var(--nn-laranja);
+outline-offset: 3px;
 }
-
 .nn code {
-  font-size: 0.88em;
-  overflow-wrap: anywhere;
+font-size: 0.88em;
+overflow-wrap: anywhere;
 }
-
 .nn-muted {
-  color: var(--nn-suave);
-  font-size: 14px;
+color: var(--nn-suave);
+font-size: 14px;
 }
-
 .nn-eyebrow {
-  color: var(--nn-laranja-texto);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+color: var(--nn-laranja-texto);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
 }
-
 .nn-pular {
-  position: absolute;
-  left: 16px;
-  top: 10px;
-  z-index: 100;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: var(--nn-branco);
-  color: var(--nn-preto);
-  font-weight: 700;
-  transform: translateY(-200%);
+position: absolute;
+left: 16px;
+top: 10px;
+z-index: 100;
+padding: 10px 16px;
+border-radius: 999px;
+background: var(--nn-branco);
+color: var(--nn-preto);
+font-weight: 700;
+transform: translateY(-200%);
 }
-
 .nn-pular:focus {
-  transform: none;
+transform: none;
 }
-
-/* --- topo: barra preta de duas linhas. Em cima, o título à esquerda e o "por Júlio Diógenes" à direita; uma linha fina
-   de 1 px; embaixo, o menu em abas. A barra é preta nos dois temas (a linha e os textos de baixo contraste vivem sobre
-   #080808); no celular o "por" desce para baixo do título e o menu rola de lado --- */
-
 .nn-topo {
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio);
-  padding: 18px clamp(14px, 2.4vw, 26px) 8px;
+position: relative;
+z-index: 40;
 }
-
-.nn-hero-topo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+.nn-topo-barra {
+position: relative;
+height: var(--nn-topo-alt);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
 }
-
-.nn-topo-titulo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 2px 20px;
-  padding-inline: 4px;
-}
-
 .nn .nn-marca {
-  font-family: var(--nn-display);
-  font-weight: 800;
-  font-size: clamp(22px, 2.4vw, 28px);
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  text-decoration: none;
+font-family: var(--nn-display);
+font-weight: 800;
+font-size: 20px;
+letter-spacing: -0.02em;
+line-height: 1.1;
+white-space: nowrap;
+color: var(--nn-tinta);
+text-decoration: none;
 }
-
-.nn .nn-autoria {
-  color: rgba(255, 255, 255, 0.72); /* o "por" é pequeno e discreto; o nome é que se destaca */
-  font-size: 13px;
-  white-space: nowrap;
+.nn .nn-topo-sobre-foto .nn-marca {
+color: var(--nn-branco);
+text-shadow: 0 0 2px rgba(0, 0, 0, 0.6), 0 1px 12px rgba(0, 0, 0, 0.45);
 }
-
-.nn .nn-autoria strong {
-  color: var(--nn-branco);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.nn-topo-alca {
+position: absolute;
+left: 50%;
+top: 0;
+transform: translateX(-50%);
+width: min(660px, calc(100% - 520px));
+background: #0a0a0a;
+color: var(--nn-branco);
+border-radius: 0 0 18px 18px;
+filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
 }
-
-.nn .nn-autoria a {
-  text-decoration: none;
+.nn-topo-alca::before,
+.nn-topo-alca::after {
+content: "";
+position: absolute;
+top: 0;
+width: 20px;
+height: 20px;
+pointer-events: none;
 }
-
-.nn .nn-autoria a:hover {
-  text-decoration: underline;
-  text-decoration-color: var(--nn-laranja);
+.nn-topo-alca::before {
+left: -20px;
+background: radial-gradient(circle at 0 100%, transparent 19.5px, #0a0a0a 20px);
 }
-
-.nn-topo-linha {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.16);
+.nn-topo-alca::after {
+right: -20px;
+background: radial-gradient(circle at 100% 100%, transparent 19.5px, #0a0a0a 20px);
 }
-
+.nn-topo-alca:has(.nn-menu-grupo[open]) {
+border-radius: 0;
+}
 .nn-menu {
-  position: relative;
-  display: flex;
-  gap: 4px;
-  max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+align-items: center;
+gap: 0 4px;
+min-height: 52px;
+padding: 0 14px;
+font-size: 14px;
+font-weight: 600;
 }
-
-.nn-menu::-webkit-scrollbar {
-  display: none;
+.nn-menu-grupo {
+display: contents;
 }
-
-.nn .nn-menu a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.74);
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  text-decoration: none;
+.nn .nn-menu > a,
+.nn .nn-topo .nn-menu-grupo > summary {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+min-height: 0;
+margin: 0;
+padding: 7px 12px;
+border-radius: 9px;
+color: #a1a1aa;
+font-size: inherit;
+font-weight: inherit;
+text-decoration: none;
+white-space: nowrap;
+cursor: pointer;
+list-style: none;
 }
-
-.nn .nn-menu a:hover {
-  color: var(--nn-branco);
+.nn .nn-topo summary::-webkit-details-marker {
+display: none;
 }
-
-.nn .nn-menu a[aria-current="page"] {
-  background: var(--nn-laranja-escuro); /* texto branco pequeno: #ea2e00 dá 4,3:1, #c42600 passa de 4,5:1 */
-  color: var(--nn-branco);
+.nn .nn-topo details > summary::before,
+.nn .nn-topo details[open] > summary::before {
+content: none;
+display: none;
 }
-
-@media (max-width: 900px) {
-  .nn-topo {
-    padding: 16px 10px 8px;
-  }
-
-  .nn-menu {
-    /* o menu rola de lado: a borda direita esmaece para mostrar que há mais abas */
-    -webkit-mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
-    mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
-  }
+.nn .nn-menu > a:hover,
+.nn .nn-topo .nn-menu-grupo > summary:hover,
+.nn .nn-menu > a[aria-current="page"],
+.nn .nn-topo .nn-menu-grupo[data-atual] > summary {
+color: var(--nn-branco);
 }
-
-@media (max-width: 560px) {
-  .nn-topo-titulo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  .nn .nn-autoria strong {
-    font-size: 16px;
-  }
+.nn .nn-menu > a[aria-current="page"] {
+box-shadow: inset 0 -2px 0 var(--nn-laranja);
 }
-
-/* --- abertura: preta, com círculos finos --- */
-
+.nn .nn-topo .nn-menu-grupo[open] > summary {
+background: #1c1c1f;
+color: var(--nn-branco);
+}
+.nn-menu-seta {
+opacity: 0.7;
+}
+.nn-menu-grupo[open] .nn-menu-seta,
+.nn-gaveta details[open] .nn-menu-seta {
+transform: rotate(180deg);
+}
+.nn-menu-painel {
+position: absolute;
+left: 0;
+right: 0;
+top: 100%;
+display: grid;
+gap: 12px;
+padding: 14px;
+background: #0a0a0a;
+border-top: 1px solid #1f1f22;
+border-radius: 0 0 18px 18px;
+box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.55);
+}
+.nn-menu-grupo:not([open]) > .nn-menu-painel,
+.nn-menu-movel:not([open]) > .nn-gaveta {
+display: none;
+}
+.nn-menu-painel-2 {
+grid-template-columns: 1fr 1fr;
+}
+.nn-menu-painel-3 {
+grid-template-columns: repeat(3, 1fr);
+}
+.nn .nn-menu-cartao {
+position: relative;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+gap: 4px;
+min-height: 132px;
+padding: 14px;
+border: 1px solid #232327;
+border-radius: 14px;
+background: #111113;
+color: var(--nn-branco);
+text-decoration: none;
+overflow: hidden;
+}
+.nn-menu-cartao::after {
+content: "";
+position: absolute;
+inset: 0;
+background: radial-gradient(circle at 50% 0%, rgba(234, 46, 0, 0.14), transparent 60%);
+opacity: 0;
+pointer-events: none;
+}
+.nn .nn-menu-cartao:hover {
+border-color: #3a3a40;
+background-color: #151518;
+}
+.nn-menu-cartao:hover::after {
+opacity: 1;
+}
+.nn .nn-menu-cartao[aria-current="page"] {
+border-color: var(--nn-laranja);
+}
+.nn-menu-cartao-titulo {
+position: relative;
+z-index: 1;
+font-size: 15px;
+font-weight: 700;
+}
+.nn-menu-cartao-texto {
+position: relative;
+z-index: 1;
+color: #a1a1aa;
+font-size: 12.5px;
+font-weight: 500;
+line-height: 1.4;
+}
+.nn-menu-icone {
+display: flex;
+margin-bottom: auto;
+color: var(--nn-laranja);
+}
+.nn .nn-menu-painel-2 .nn-menu-cartao {
+min-height: 150px;
+}
+.nn .nn-menu-cartao-como-chegamos {
+background: #111113 url("/historia/1530-cartao.webp") center / cover no-repeat;
+}
+.nn-menu-cartao-como-chegamos::before {
+content: "";
+position: absolute;
+inset: 0;
+background: linear-gradient(180deg, rgba(10, 10, 10, 0.25) 0%, rgba(10, 10, 10, 0.95) 70%);
+}
+.nn .nn-menu-cartao-cards {
+border-color: #8a1c00;
+background: linear-gradient(150deg, #b32400 0%, #6e1500 100%);
+}
+.nn .nn-menu-cartao-cards:hover {
+border-color: #ff7a4d;
+background: linear-gradient(150deg, #b32400 0%, #6e1500 100%);
+}
+.nn-menu-cartao-cards .nn-menu-icone {
+color: var(--nn-branco);
+}
+.nn-menu-cartao-cards .nn-menu-cartao-texto {
+color: rgba(255, 255, 255, 0.86);
+}
+.nn-topo-direita {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.nn .nn-topo-botao {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 10px 16px;
+border-radius: 12px;
+background: var(--nn-laranja-escuro);
+color: var(--nn-branco);
+font-size: 14px;
+font-weight: 700;
+white-space: nowrap;
+text-decoration: none;
+box-shadow: 0 6px 16px -8px rgba(234, 46, 0, 0.7);
+}
+.nn .nn-topo-botao:hover {
+background: color-mix(in srgb, var(--nn-laranja-escuro) 88%, var(--nn-preto));
+}
+.nn .nn-topo-botao:focus-visible {
+outline-color: var(--nn-tinta);
+}
+.nn-topo-sobre-foto .nn-topo-botao:focus-visible {
+outline-color: var(--nn-branco);
+}
+.nn-topo-botao:hover .nn-topo-botao-seta {
+transform: translateX(2px);
+}
+.nn-menu-movel {
+display: none;
+}
+@media (max-width: 1099px) {
+.nn-topo-alca {
+display: none;
+}
+.nn .nn-marca {
+font-size: 18px;
+}
+.nn .nn-topo-botao {
+padding: 8px 12px;
+font-size: 13px;
+}
+.nn-menu-movel {
+display: block;
+}
+.nn .nn-topo .nn-menu-movel > summary {
+display: grid;
+place-items: center;
+width: 44px;
+height: 44px;
+min-height: 0;
+padding: 0;
+border: 1px solid var(--nn-linha);
+border-radius: 12px;
+color: var(--nn-tinta);
+cursor: pointer;
+list-style: none;
+}
+.nn .nn-topo-sobre-foto .nn-menu-movel > summary {
+color: var(--nn-branco);
+border-color: rgba(255, 255, 255, 0.35);
+}
+.nn-menu-hamburguer,
+.nn-menu-hamburguer::before,
+.nn-menu-hamburguer::after {
+display: block;
+position: relative;
+width: 16px;
+height: 2px;
+border-radius: 2px;
+background: currentColor;
+}
+.nn-menu-hamburguer::before,
+.nn-menu-hamburguer::after {
+content: "";
+position: absolute;
+left: 0;
+}
+.nn-menu-hamburguer::before {
+top: -5px;
+}
+.nn-menu-hamburguer::after {
+top: 5px;
+}
+.nn-menu-movel[open] .nn-menu-hamburguer {
+background: transparent;
+}
+.nn-menu-movel[open] .nn-menu-hamburguer::before {
+transform: translateY(5px) rotate(45deg);
+}
+.nn-menu-movel[open] .nn-menu-hamburguer::after {
+transform: translateY(-5px) rotate(-45deg);
+}
+.nn-gaveta {
+position: absolute;
+left: 0;
+right: 0;
+top: calc(var(--nn-topo-alt) - 2px);
+display: grid;
+gap: 2px;
+padding: 12px;
+border-radius: 16px;
+background: #0a0a0a;
+color: var(--nn-branco);
+box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
+.nn .nn-gaveta a,
+.nn .nn-topo .nn-gaveta summary {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+min-height: 44px;
+margin: 0;
+padding: 11px 12px;
+border-radius: 10px;
+color: #d4d4d8;
+font-size: 15px;
+font-weight: 600;
+text-align: left;
+text-decoration: none;
+cursor: pointer;
+list-style: none;
+}
+.nn .nn-gaveta a:hover,
+.nn .nn-topo .nn-gaveta summary:hover,
+.nn .nn-topo .nn-gaveta details[data-atual] > summary {
+background: rgba(255, 255, 255, 0.07);
+color: var(--nn-branco);
+}
+.nn .nn-gaveta a[aria-current="page"] {
+color: var(--nn-branco);
+box-shadow: inset 3px 0 0 var(--nn-laranja);
+}
+.nn-gaveta-itens {
+display: grid;
+margin: 0 0 6px 12px;
+padding-left: 10px;
+border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.nn .nn-gaveta-itens a {
+color: #a1a1aa;
+font-weight: 500;
+}
+}
+@media (max-width: 520px) {
+.nn .nn-marca {
+font-size: 16px;
+}
+.nn .nn-topo-botao {
+padding: 8px 10px;
+font-size: 12.5px;
+}
+.nn-topo-botao-longo {
+display: none;
+}
+}
+.nn-hero,
+.nn-capa {
+position: relative;
+width: 100vw;
+margin-left: calc(50% - 50vw);
+margin-top: calc(-1 * (var(--nn-topo-alt) + 28px));
+padding-inline: var(--nn-borda-cheia);
+background-color: var(--nn-preto);
+color: var(--nn-branco);
+}
 .nn-hero {
-  position: relative;
-  overflow: hidden;
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio-g);
-  padding: clamp(28px, 5.4vw, 72px) clamp(22px, 5vw, 64px);
-  display: grid;
-  gap: 18px;
+overflow: hidden;
+min-height: calc(560px + var(--nn-topo-alt) + 28px);
+padding-top: calc(var(--nn-topo-alt) + 28px + clamp(40px, 6vw, 80px));
+padding-bottom: clamp(28px, 5.4vw, 72px);
+display: grid;
+gap: 18px;
+align-content: center;
 }
-
-.nn-hero::before,
-.nn-hero::after {
-  content: "";
-  position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.nn-hero::before {
-  width: min(620px, 70vw);
-  aspect-ratio: 1;
-  right: -12%;
-  top: -38%;
-}
-
-.nn-hero::after {
-  width: min(300px, 36vw);
-  aspect-ratio: 1;
-  right: 16%;
-  bottom: -30%;
-}
-
-.nn-hero > * {
-  position: relative;
-}
-
-.nn-hero .nn-eyebrow {
-  color: rgba(255, 255, 255, 0.66);
-}
-
-.nn .nn-hero-titulo {
-  font-size: clamp(40px, 7vw, 96px);
-  font-weight: 700;
-  letter-spacing: -0.065em;
-  line-height: 0.9;
-  margin-bottom: 10px;
-}
-
-.nn-hero-titulo span {
-  display: block;
-}
-
-.nn-hero-titulo .nn-destaque {
-  color: var(--nn-laranja);
-}
-
-.nn-hero-intro {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: clamp(16px, 1.4vw, 19px);
-}
-
-.nn .nn-hero-intro {
-  max-width: 60ch;
-}
-
-.nn-conta {
-  color: var(--nn-branco);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-/* com foto (textos.yaml: foto): abertura dividida. O texto fica sempre sobre preto sólido (#080808) e a foto ocupa o
-   ::before, sem passar por baixo de nenhum texto: no desktop (> 900 px) é a metade direita da abertura e o título cede
-   a coluna da esquerda; até 900 px é uma faixa no topo e o texto vem abaixo. A foto leva só uma camada leve (15%) e um
-   degradê que a funde no preto na emenda. O destaque do título segue #ea2e00 (4,7:1 sobre #080808). O círculo grande do
-   ::before dá lugar à foto; o círculo pequeno do ::after continua, por cima da foto. A imagem é uma composição (1500x844):
-   mata e cidade à esquerda, o Farol da Barra no meio (x 39 a 59% da largura, y 25 a 46% da altura) e o sertão à direita,
-   com o sol no canto (x ~96%, y ~31%). No desktop a coluna da foto tem ~1:1, então `cover` mostra ~55% da largura; o
-   recorte a 48% vai de x ~22% a ~77%: farol inteiro no meio, a mata se apagando na emenda, o sertão à direita e o sol fora
-   do quadro. A coluna do texto tem largura para o título chegar a ~72 px. */
-
-.nn-hero-com-foto {
-  --nn-foto-alt: clamp(170px, 42vw, 340px); /* altura da faixa de foto até 900 px */
-}
-
 .nn-hero-com-foto::before {
-  border: 0;
-  border-radius: 0;
-  aspect-ratio: auto;
-  background-image: var(--nn-foto-fusao), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/foto-abertura.webp");
-  background-size: auto, auto, cover;
-  background-repeat: no-repeat;
+content: "";
+position: absolute;
+inset: 0;
+background-image: linear-gradient(rgba(8, 8, 8, 0.3), rgba(8, 8, 8, 0.3)), url("/foto-abertura.webp");
+background-size: auto, cover;
+background-position: 0 0, center 45%;
+background-repeat: no-repeat;
+pointer-events: none;
 }
-
+.nn-hero > * {
+position: relative;
+}
+.nn-hero .nn-eyebrow {
+color: rgba(255, 255, 255, 0.86);
+}
+.nn .nn-hero-titulo {
+font-size: clamp(40px, 7vw, 96px);
+font-weight: 700;
+letter-spacing: -0.065em;
+line-height: 0.9;
+margin-bottom: 10px;
+}
+.nn-hero-titulo span {
+display: block;
+}
+.nn-hero-titulo .nn-destaque {
+color: var(--nn-laranja);
+}
+.nn-hero-intro {
+color: rgba(255, 255, 255, 0.86);
+font-size: clamp(16px, 1.4vw, 19px);
+}
+.nn .nn-hero-intro {
+max-width: 60ch;
+}
+.nn-hero-com-foto .nn-eyebrow {
+text-shadow: 0 0 2px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+.nn-hero-com-foto .nn-hero-titulo {
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55), 0 4px 28px rgba(0, 0, 0, 0.65);
+}
+.nn-hero-com-foto .nn-hero-titulo .nn-destaque {
+color: #ff5a1f;
+text-shadow: 0 0 1px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.7), 0 4px 30px rgba(0, 0, 0, 0.8);
+}
+.nn .nn-hero-com-foto .nn-hero-intro {
+justify-self: start;
+padding: 12px 16px;
+border-radius: 14px;
+background: rgba(8, 8, 8, 0.42);
+-webkit-backdrop-filter: blur(3px);
+backdrop-filter: blur(3px);
+}
 @media (min-width: 901px) {
-  .nn-hero-com-foto {
-    padding-left: clamp(22px, 4.4vw, 56px);
-    padding-right: calc(48% + 20px); /* a coluna do texto termina antes da foto */
-  }
-
-  .nn-hero-com-foto::before {
-    --nn-foto-fusao: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0) 36%);
-    inset: 0 0 0 auto;
-    width: 48%;
-    /* a foto cobre a coluna pela altura (a largura é 1,78 vez a altura; a coluna tem ~1:1); o recorte a 48% põe o farol
-       no meio da coluna, com a mata à esquerda e o sertão à direita, e para antes do sol (x ~96% da foto) */
-    background-size: auto, auto, cover;
-    background-position: 0 0, 0 0, 48% 50%;
-  }
-
-  .nn-hero-com-foto::after {
-    right: 6%; /* o círculo pequeno fica todo dentro da foto, sem cruzar a emenda */
-  }
-
-  .nn .nn-hero-com-foto .nn-hero-titulo {
-    font-size: clamp(36px, 5.6vw, 72px); /* "do mesmo jeito?" cabe na coluna do texto até 72 px (1280 px) */
-  }
+.nn .nn-hero-com-foto .nn-hero-titulo {
+font-size: clamp(36px, 5.6vw, 72px);
 }
-
-@media (max-width: 900px) {
-  .nn-hero-com-foto {
-    padding-top: calc(var(--nn-foto-alt) + clamp(18px, 3vw, 28px));
-  }
-
-  .nn-hero-com-foto::before {
-    --nn-foto-fusao: linear-gradient(180deg, rgba(8, 8, 8, 0) 55%, #080808 100%);
-    inset: 0 0 auto 0;
-    width: auto;
-    height: var(--nn-foto-alt);
-    /* a faixa (2:1 a 2,5:1) mostra a largura toda da composição, com o farol no meio; 30% sobe o recorte para o farol
-       ficar no meio da altura visível, acima do degradê */
-    background-position: 0 0, 0 0, 50% 30%;
-  }
-
-  .nn-hero-com-foto::after {
-    top: calc(var(--nn-foto-alt) * -0.25); /* o círculo pequeno vai para a faixa da foto, longe do texto */
-    bottom: auto;
-    right: 8%;
-  }
 }
-
-/* --- faixa de números, logo abaixo da abertura: fundo papel nos dois temas --- */
-
+.nn-conta {
+color: var(--nn-branco);
+font-weight: 700;
+font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1099px) {
+.nn-hero {
+min-height: 0;
+padding-top: calc(var(--nn-topo-alt) + 28px + 40px);
+}
+}
+.nn-capa {
+--nn-capa-veu: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0.92) 38%, rgba(8, 8, 8, 0.35) 75%, rgba(8, 8, 8, 0.15) 100%);
+min-height: 420px;
+padding-top: calc(var(--nn-topo-alt) + 28px + clamp(36px, 5vw, 64px));
+padding-bottom: clamp(28px, 4vw, 48px);
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+gap: 22px;
+--nn-capa-base: linear-gradient(0deg, rgba(8, 8, 8, 0.55), rgba(8, 8, 8, 0) 50%);
+background-image: var(--nn-capa-veu), var(--nn-capa-base), var(--nn-capa-foto, none);
+background-size: cover;
+background-position: var(--nn-capa-posicao, center 40%);
+background-repeat: no-repeat;
+}
+.nn-capa-abertura {
+--nn-capa-foto: url("/foto-abertura.webp");
+}
+.nn-capa-1530 {
+--nn-capa-foto: url("/historia/1530.webp");
+--nn-capa-posicao: center 55%;
+--nn-capa-veu: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0.88) 40%, rgba(8, 8, 8, 0.3) 78%, rgba(8, 8, 8, 0.1) 100%);
+}
+.nn-capa-1964 {
+--nn-capa-foto: url("/historia/1964.webp");
+}
+.nn-capa-1950 {
+--nn-capa-foto: url("/historia/1950.webp");
+}
+.nn-capa-marco-1932 {
+--nn-capa-foto: url("/historia/marco-1932.webp");
+}
+.nn-capa-marco-1934 {
+--nn-capa-foto: url("/historia/marco-1934.webp");
+}
+.nn-capa-texto {
+max-width: 760px;
+display: grid;
+gap: 14px;
+}
+.nn .nn-capa h1 {
+color: var(--nn-branco);
+}
+.nn .nn-capa .nn-capa-intro {
+color: rgba(255, 255, 255, 0.84);
+font-size: clamp(16px, 1.6vw, 19px);
+max-width: 62ch;
+}
+.nn .nn-capa-credito {
+color: rgba(255, 255, 255, 0.72);
+font-size: 12px;
+line-height: 1.4;
+max-width: 62ch;
+}
+.nn .nn-capa a {
+color: var(--nn-branco);
+text-decoration-color: currentColor;
+}
+.nn .nn-capa a:focus-visible {
+outline-color: var(--nn-branco);
+}
+@media (max-width: 1099px) {
+.nn-capa {
+--nn-capa-veu: linear-gradient(0deg, #080808 18%, rgba(8, 8, 8, 0.55) 60%, rgba(8, 8, 8, 0.35) 100%);
+--nn-capa-base: linear-gradient(transparent, transparent);
+min-height: 320px;
+padding-top: calc(var(--nn-topo-alt) + 28px + 32px);
+}
+}
 .nn-faixa-abertura {
-  background: var(--nn-papel);
-  color: var(--nn-preto);
-  border: 1px solid rgba(8, 8, 8, 0.12);
-  border-radius: var(--nn-raio-g);
-  padding: clamp(22px, 4vw, 44px) clamp(22px, 5vw, 64px);
-  display: grid;
-  gap: 22px;
+background: var(--nn-papel);
+color: var(--nn-preto);
+border: 1px solid rgba(8, 8, 8, 0.12);
+border-radius: var(--nn-raio-g);
+padding: clamp(22px, 4vw, 44px) clamp(22px, 5vw, 64px);
+display: grid;
+gap: 22px;
 }
-
 .nn-numeros {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px clamp(18px, 3vw, 40px);
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 22px clamp(18px, 3vw, 40px);
 }
-
 .nn-numero {
-  display: grid;
-  gap: 4px;
-  align-content: start;
-  min-width: 0;
-  border-top: 2px solid var(--nn-laranja);
-  padding-top: 12px;
+display: grid;
+gap: 4px;
+align-content: start;
+min-width: 0;
+border-top: 2px solid var(--nn-laranja);
+padding-top: 12px;
 }
-
 .nn-numero-valor {
-  font-family: var(--nn-display);
-  font-size: clamp(40px, 6vw, 72px);
-  font-weight: 800;
-  letter-spacing: -0.055em;
-  line-height: 0.95;
-  color: var(--nn-laranja-escuro);
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
+font-family: var(--nn-display);
+font-size: clamp(40px, 6vw, 72px);
+font-weight: 800;
+letter-spacing: -0.055em;
+line-height: 0.95;
+color: var(--nn-laranja-escuro);
+font-variant-numeric: tabular-nums;
+overflow-wrap: anywhere;
 }
-
 .nn-numero-rotulo {
-  font-size: 16px;
-  line-height: 1.3;
+font-size: 16px;
+line-height: 1.3;
 }
-
-.nn-numero-ano {
-  color: rgba(8, 8, 8, 0.64);
-  font-size: 13px;
+.nn-numero-comparacao {
+margin-top: 6px;
+color: rgba(8, 8, 8, 0.66);
+font-size: 15px;
 }
-
+.nn-numero-comparacao b {
+color: var(--nn-preto);
+}
 .nn-faixa-abertura .nn-conta {
-  color: inherit;
+color: inherit;
 }
-
-.nn-faixa-texto {
-  font-size: 17px;
-}
-
-.nn .nn-faixa-texto {
-  max-width: 64ch;
-}
-
 .nn-faixa-nota {
-  color: rgba(8, 8, 8, 0.64);
-  font-size: 13px;
+color: rgba(8, 8, 8, 0.64);
+font-size: 13px;
 }
-
 .nn .nn-faixa-nota {
-  max-width: 70ch;
+max-width: 70ch;
 }
-
 @media (max-width: 560px) {
-  .nn-numeros {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.nn-numeros {
+grid-template-columns: minmax(0, 1fr);
 }
-
-/* --- páginas e cards --- */
-
+}
+.nn-placar {
+gap: 14px;
+}
+.nn-placar-lista {
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+}
+.nn .nn-placar-lista a {
+display: grid;
+grid-template-columns: 44px 200px minmax(0, 1fr) 24px;
+align-items: baseline;
+gap: 4px;
+padding: 14px 4px;
+border-top: 1px solid var(--nn-linha);
+color: inherit;
+text-decoration: none;
+}
+.nn-placar-lista li:last-child a {
+border-bottom: 1px solid var(--nn-linha);
+}
+.nn-placar-num,
+.nn-indice-num,
+.nn-capitulo-num {
+color: var(--nn-laranja-texto);
+font-weight: 700;
+font-variant-numeric: tabular-nums;
+}
+.nn-placar-tema {
+color: var(--nn-laranja-texto);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+}
+.nn-placar-veredito {
+font-size: 17px;
+font-weight: 600;
+line-height: 1.35;
+}
+.nn-placar-sem-veredito {
+color: var(--nn-suave);
+}
+.nn-placar-ir {
+color: var(--nn-laranja-texto);
+font-size: 20px;
+line-height: 1;
+}
+.nn .nn-placar-lista a:hover .nn-placar-veredito {
+text-decoration: underline;
+text-decoration-color: var(--nn-laranja);
+text-underline-offset: 3px;
+}
+.nn-so-leitor {
+position: absolute;
+width: 1px;
+height: 1px;
+margin: -1px;
+padding: 0;
+overflow: hidden;
+clip-path: inset(50%);
+white-space: nowrap;
+border: 0;
+}
+.nn-pagina.nn-editorial {
+display: grid;
+grid-template-columns: 260px minmax(0, 1fr);
+align-items: start;
+gap: 0;
+}
+.nn-indice {
+position: sticky;
+top: 16px;
+align-self: start;
+padding: 28px 40px 28px 8px;
+}
+.nn-indice-ligado:not(.nn-indice-visivel) {
+opacity: 0;
+transform: translateX(-8px);
+visibility: hidden;
+pointer-events: none;
+}
+.nn .nn-indice-titulo {
+margin: 0 0 12px;
+color: var(--nn-suave);
+font-size: 12px;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+}
+.nn-indice ol {
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+gap: 4px;
+}
+.nn .nn-indice a {
+display: grid;
+grid-template-columns: 30px 1fr;
+gap: 6px;
+padding: 10px 12px;
+border-left: 3px solid transparent;
+border-radius: 14px;
+color: inherit;
+text-decoration: none;
+}
+.nn-indice b {
+display: block;
+font-size: 15px;
+}
+.nn-indice small {
+display: block;
+margin-top: 2px;
+color: var(--nn-suave);
+font-size: 12.5px;
+line-height: 1.3;
+}
+.nn .nn-indice a[aria-current="true"] {
+background: var(--nn-painel);
+border-left-color: var(--nn-laranja);
+box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.35);
+}
+.nn-folha {
+--nn-folha-margem: clamp(20px, 4vw, 56px);
+position: relative;
+margin-left: -28px;
+padding: 12px var(--nn-folha-margem) 24px;
+display: grid;
+background: var(--nn-painel);
+border-radius: var(--nn-raio-g);
+box-shadow: 0 18px 50px -30px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+.nn-folha > .nn-legenda {
+position: sticky;
+top: 0;
+z-index: 5;
+margin: 0 calc(-1 * var(--nn-folha-margem));
+padding: 12px var(--nn-folha-margem);
+background: var(--nn-painel);
+border-bottom: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio-g) var(--nn-raio-g) 0 0;
+}
+.nn-legenda-siglas {
+color: var(--nn-suave);
+}
+.nn-capitulo {
+display: grid;
+gap: 16px;
+align-content: start;
+padding: 44px 0;
+border-top: 1px solid var(--nn-linha);
+scroll-margin-top: 104px;
+}
+.nn-capitulo > * {
+min-width: 0;
+}
+.nn-folha > .nn-capitulo:first-of-type {
+border-top: 0;
+}
+.nn-capitulo > .nn-eyebrow {
+font-size: 13px;
+}
+.nn .nn-capitulo h2 {
+font-size: clamp(28px, 3.2vw, 40px);
+}
+.nn-pergunta-corpo {
+display: grid;
+gap: 18px;
+align-items: start;
+}
+.nn-pergunta-texto {
+display: grid;
+gap: 12px;
+}
+@media (min-width: 900px) {
+.nn-pergunta-corpo {
+grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+}
+.nn-pergunta-texto {
+padding-top: 44px;
+}
+.nn-capitulo-invertido .nn-pergunta-corpo {
+grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+}
+.nn-capitulo-invertido .nn-pergunta-corpo > .nn-grafico {
+order: 2;
+}
+}
+.nn-mais-graficos .nn-grade {
+margin-top: 12px;
+}
+.nn-fonte-metodo-corpo {
+display: grid;
+gap: 10px;
+margin-top: 8px;
+}
+.nn-saidas {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+padding-top: 6px;
+}
+.nn .nn-saidas a {
+display: inline-flex;
+align-items: center;
+min-height: 44px;
+padding: 0 16px;
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+font-size: 15px;
+font-weight: 600;
+text-decoration: none;
+}
+.nn .nn-saidas a:hover {
+border-color: var(--nn-laranja);
+}
+.nn .nn-saidas .nn-saida-card {
+background: var(--nn-laranja-escuro);
+border-color: var(--nn-laranja-escuro);
+color: var(--nn-branco);
+}
+.nn .nn-saidas .nn-saida-card:hover {
+background: color-mix(in srgb, var(--nn-laranja-escuro) 88%, var(--nn-preto));
+}
+@media (max-width: 1100px) {
+.nn-pagina.nn-editorial {
+grid-template-columns: minmax(0, 1fr);
+}
+.nn-indice,
+.nn-indice-ligado:not(.nn-indice-visivel) {
+position: sticky;
+top: 0;
+z-index: 6;
+padding: 8px 0;
+background: var(--nn-fundo);
+overflow-x: auto;
+scrollbar-width: none;
+opacity: 1;
+transform: none;
+visibility: visible;
+pointer-events: auto;
+}
+.nn-indice::-webkit-scrollbar {
+display: none;
+}
+.nn .nn-indice-titulo {
+display: none;
+}
+.nn-indice ol {
+display: flex;
+gap: 8px;
+white-space: nowrap;
+}
+.nn .nn-indice a {
+grid-template-columns: auto auto;
+align-items: center;
+padding: 8px 14px;
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+}
+.nn .nn-indice a[aria-current="true"] {
+border-color: var(--nn-laranja);
+box-shadow: none;
+}
+.nn-indice small {
+display: none;
+}
+.nn-folha {
+margin-left: 0;
+border-radius: var(--nn-raio);
+}
+.nn-folha > .nn-legenda {
+position: static;
+border-radius: var(--nn-raio) var(--nn-raio) 0 0;
+}
+.nn-capitulo {
+scroll-margin-top: 72px;
+}
+.nn .nn-placar-lista a {
+grid-template-columns: 34px minmax(0, 1fr) 20px;
+}
+.nn-placar-tema,
+.nn-placar-veredito {
+grid-column: 2;
+}
+.nn-placar-ir {
+grid-column: 3;
+grid-row: 1;
+}
+}
 .nn-pagina {
-  display: grid;
-  gap: 22px;
-  align-content: start;
+display: grid;
+gap: 22px;
+align-content: start;
 }
-
 .nn-pagina > h1 {
-  margin-top: 18px;
+margin-top: 18px;
 }
-
 .nn-card {
-  background: var(--nn-painel);
-  border: 1px solid var(--nn-linha);
-  border-radius: var(--nn-raio);
-  padding: clamp(20px, 3vw, 34px);
-  display: grid;
-  gap: 16px;
-  align-content: start;
+background: var(--nn-painel);
+border: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio);
+padding: clamp(20px, 3vw, 34px);
+display: grid;
+gap: 16px;
+align-content: start;
 }
-
 .nn-card > .nn-eyebrow {
-  margin-bottom: -6px;
+margin-bottom: -6px;
 }
-
 .nn-frase {
-  font-size: 17px;
+font-size: 17px;
 }
-
 .nn .nn-frase {
-  max-width: 64ch;
+max-width: 64ch;
 }
-
 .nn-fecho {
-  font-size: 17px;
-  padding: 16px 20px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--nn-laranja) 9%, transparent);
+font-size: 19px;
+padding: 4px 0 4px 16px;
+border-left: 4px solid var(--nn-laranja);
 }
-
 .nn .nn-fecho {
-  max-width: 64ch;
+max-width: 60ch;
 }
-
 .nn-fecho b {
-  display: block;
-  color: var(--nn-laranja-texto);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+display: block;
+color: var(--nn-laranja-texto);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+margin-bottom: 4px;
 }
-
 .nn-alerta {
-  border-left: 3px solid var(--nn-laranja);
-  padding-left: 12px;
+border-left: 3px solid var(--nn-laranja);
+padding-left: 12px;
 }
-
 div.nn-grade {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  gap: 20px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+gap: 20px;
 }
-
 .nn-grafico {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-  min-width: 0;
+display: grid;
+gap: 6px;
+align-content: start;
+min-width: 0;
 }
-
 .nn-grafico-topo {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 12px;
 }
-
 .nn-grafico-titulos {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
+display: grid;
+gap: 6px;
+min-width: 0;
 }
-
-/* botão "Ampliar" e "Fechar": pílulas como as dos controles; o site.js tira o hidden dos botões Ampliar */
-
 .nn-ampliar,
 .nn-modal-fechar {
-  font: 700 14px/1.2 var(--nn-texto);
-  color: var(--nn-tinta);
-  background: transparent;
-  border: 1px solid var(--nn-linha);
-  border-radius: 999px;
-  padding: 10px 18px;
-  min-height: 44px;
-  cursor: pointer;
+font: 700 14px/1.2 var(--nn-texto);
+color: var(--nn-tinta);
+background: transparent;
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+padding: 10px 18px;
+min-height: 44px;
+cursor: pointer;
 }
-
 .nn-ampliar {
-  margin-left: auto;
-  flex: none;
+margin-left: auto;
+flex: none;
 }
-
 .nn-ampliar:hover,
 .nn-modal-fechar:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
 @media (pointer: fine) {
-  .nn-clicavel {
-    cursor: zoom-in; /* com o dedo não há cursor, e o gráfico não promete um zoom que o toque não mostra */
-  }
+.nn-clicavel {
+cursor: zoom-in;
 }
-
+}
 .nn-legenda {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  color: var(--nn-suave);
-  font-size: 13px;
+display: flex;
+flex-wrap: wrap;
+gap: 6px 18px;
+color: var(--nn-suave);
+font-size: 13px;
 }
-
 .nn-legenda span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+display: inline-flex;
+align-items: center;
+gap: 6px;
 }
-
 .nn-amostra {
-  display: inline-block;
-  width: 18px;
-  height: 10px;
-  border-radius: 3px;
+display: inline-block;
+width: 18px;
+height: 10px;
+border-radius: 3px;
 }
-
 .nn-amostra.nn-ne {
-  height: 4px;
-  background: var(--nn-laranja);
+height: 4px;
+background: var(--nn-laranja);
 }
-
 .nn-amostra.nn-ref {
-  height: 4px;
-  background: var(--nn-graf-ref);
+height: 4px;
+background: var(--nn-graf-ref);
 }
-
 .nn-amostra.nn-faixa {
-  background: var(--nn-graf-faixa-b);
-  border: 1px solid var(--nn-graf-grade);
+background: var(--nn-graf-faixa-b);
+border: 1px solid var(--nn-graf-grade);
 }
-
 .nn-amostra.nn-hach {
-  background: repeating-linear-gradient(-45deg, var(--nn-graf-hachura) 0 2px, transparent 2px 5px);
-  border: 1px solid var(--nn-graf-grade);
+background: repeating-linear-gradient(-45deg, var(--nn-graf-hachura) 0 2px, transparent 2px 5px);
+border: 1px solid var(--nn-graf-grade);
 }
-
 .nn-fonte {
-  border-top: 1px solid var(--nn-linha);
-  padding-top: 12px;
-  display: grid;
-  gap: 4px;
-  color: var(--nn-suave);
-  font-size: 13px;
+border-top: 1px solid var(--nn-linha);
+padding-top: 12px;
+display: grid;
+gap: 4px;
+color: var(--nn-suave);
+font-size: 13px;
 }
-
 .nn-atualizacao b {
-  font-weight: 700;
+font-weight: 700;
 }
-
-/* --- gráficos (SVG do Python e do site.js) --- */
-
 .nn-graf {
-  position: relative;
-  width: 100%;
-  max-width: 880px; /* o SVG escala com a largura: acima disso, o texto do gráfico ficaria grande demais */
+position: relative;
+width: 100%;
+max-width: 880px;
 }
-
 .nn-graf svg,
 .nn-graf-grande svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  touch-action: pan-y;
-  -webkit-user-select: none;
-  user-select: none;
+display: block;
+width: 100%;
+height: auto;
+overflow: visible;
+touch-action: pan-y;
+-webkit-user-select: none;
+user-select: none;
 }
-
 .nn-graf-estreito {
-  display: none;
+display: none;
 }
-
 @media (max-width: 560px) {
-  .nn-graf-largo {
-    display: none;
-  }
-
-  .nn-graf-estreito {
-    display: block;
-  }
+.nn-graf-largo {
+display: none;
 }
-
+.nn-graf-estreito {
+display: block;
+}
+}
 .nn-graf text,
 .nn-graf-grande text {
-  font-family: var(--nn-texto);
+font-family: var(--nn-texto);
 }
-
 .nn-linha-ne {
-  stroke: var(--nn-laranja);
-  fill: var(--nn-laranja);
+stroke: var(--nn-laranja);
+fill: var(--nn-laranja);
 }
-
 .nn-linha-ref {
-  stroke: var(--nn-graf-ref);
-  fill: var(--nn-graf-ref);
+stroke: var(--nn-graf-ref);
+fill: var(--nn-graf-ref);
 }
-
 .nn-linha-cmp {
-  stroke: var(--nn-tinta);
-  fill: var(--nn-tinta);
+stroke: var(--nn-tinta);
+fill: var(--nn-tinta);
 }
-
 .nn-faixa-a {
-  fill: var(--nn-graf-faixa-a);
+fill: var(--nn-graf-faixa-a);
 }
-
 .nn-faixa-b {
-  fill: var(--nn-graf-faixa-b);
+fill: var(--nn-graf-faixa-b);
 }
-
 .nn-hachura {
-  stroke: var(--nn-graf-hachura);
+stroke: var(--nn-graf-hachura);
 }
-
 line.nn-grade {
-  stroke: var(--nn-graf-grade);
+stroke: var(--nn-graf-grade);
 }
-
 .nn-eixo,
 .nn-rotulo {
-  fill: var(--nn-suave);
+fill: var(--nn-suave);
 }
-
 .nn-rotulo-forte {
-  fill: var(--nn-tinta);
-  font-weight: 700;
+fill: var(--nn-tinta);
+font-weight: 700;
 }
-
 .nn-ref100 {
-  stroke: var(--nn-tinta);
-  stroke-opacity: 0.55;
+stroke: var(--nn-tinta);
+stroke-opacity: 0.55;
 }
-
 .nn-quebra,
 .nn-regua {
-  stroke: var(--nn-graf-eixo);
+stroke: var(--nn-graf-eixo);
 }
-
 .nn-regua {
-  stroke-width: 1;
-  pointer-events: none;
+stroke-width: 1;
+pointer-events: none;
 }
-
 .nn-dica {
-  pointer-events: none;
+pointer-events: none;
 }
-
 .nn-dica-fundo {
-  fill: var(--nn-preto);
-  stroke: var(--nn-borda-preta);
+fill: var(--nn-preto);
+stroke: var(--nn-borda-preta);
 }
-
 .nn-dica text {
-  font-size: 12px;
+font-size: 12px;
 }
-
 .nn-dica .nn-dica-ano {
-  fill: var(--nn-laranja);
-  font-weight: 700;
+fill: var(--nn-laranja);
+font-weight: 700;
 }
-
 .nn-dica .nn-dica-valor {
-  fill: var(--nn-branco);
+fill: var(--nn-branco);
 }
-
 .nn-selecao {
-  fill: var(--nn-laranja);
-  fill-opacity: 0.12;
-  stroke: var(--nn-laranja);
-  stroke-width: 1;
-  pointer-events: none;
+fill: var(--nn-laranja);
+fill-opacity: 0.12;
+stroke: var(--nn-laranja);
+stroke-width: 1;
+pointer-events: none;
 }
-
 .nn-arrastando {
-  cursor: ew-resize;
+cursor: ew-resize;
 }
-
-/* --- modal "Ampliar": um <dialog> por página, com o gráfico grande clonado do <template> --- */
-
 .nn-modal {
-  padding: 0;
-  border: 1px solid var(--nn-linha);
-  border-radius: var(--nn-raio-g);
-  background: var(--nn-painel);
-  color: var(--nn-tinta);
-  width: min(1180px, calc(100vw - 32px));
-  max-width: none;
-  max-height: calc(100dvh - 32px);
-  overflow: auto;
-  overscroll-behavior: contain;
+padding: 0;
+border: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio-g);
+background: var(--nn-painel);
+color: var(--nn-tinta);
+width: min(1180px, calc(100vw - 32px));
+max-width: none;
+max-height: calc(100dvh - 32px);
+overflow: auto;
+overscroll-behavior: contain;
 }
-
 .nn-modal::backdrop {
-  background: rgba(8, 8, 8, 0.72);
+background: rgba(8, 8, 8, 0.72);
 }
-
 html:has(.nn-modal[open]) {
-  overflow: hidden;
-  scrollbar-gutter: stable; /* a barra some com o modal aberto: o espaço dela fica, e a página atrás não dá um salto */
+overflow: hidden;
+scrollbar-gutter: stable;
 }
-
 .nn-modal-caixa {
-  padding: clamp(16px, 3vw, 32px);
-  display: grid;
-  gap: 14px;
+padding: clamp(16px, 3vw, 32px);
+display: grid;
+gap: 14px;
 }
-
 .nn-modal-topo {
-  display: flex;
-  justify-content: flex-end;
+display: flex;
+justify-content: flex-end;
 }
-
 .nn-modal-gire {
-  display: none;
-  border-left: 3px solid var(--nn-laranja);
-  padding-left: 12px;
-  color: var(--nn-suave);
-  font-size: 14px;
+display: none;
+border-left: 3px solid var(--nn-laranja);
+padding-left: 12px;
+color: var(--nn-suave);
+font-size: 14px;
 }
-
 .nn-ampliado-conteudo {
-  display: grid;
-  gap: 14px;
-  min-width: 0;
+display: grid;
+gap: 14px;
+min-width: 0;
 }
-
 .nn-graf-grande {
-  width: 100%;
+width: 100%;
 }
-
-/* no celular o modal é a tela toda, e em retrato pede para girar: o gráfico grande é feito para a tela deitada */
 @media (max-width: 560px), (orientation: landscape) and (max-height: 520px) {
-  .nn-modal {
-    width: 100vw;
-    height: 100dvh;
-    max-height: none;
-    border: 0;
-    border-radius: 0;
-  }
-
-  .nn-modal-caixa {
-    min-height: 100%;
-    align-content: start;
-  }
+.nn-modal {
+width: 100vw;
+height: 100dvh;
+max-height: none;
+border: 0;
+border-radius: 0;
 }
-
+.nn-modal-caixa {
+min-height: 100%;
+align-content: start;
+}
+}
 @media (max-width: 560px) and (orientation: portrait) {
-  .nn-modal-gire {
-    display: block;
-  }
+.nn-modal-gire {
+display: block;
 }
-
+}
 @media print {
-  .nn-ampliar {
-    display: none;
-  }
+.nn-ampliar {
+display: none;
 }
-
-/* --- controles: seletores e botões em pílula --- */
-
+}
 .nn-controles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: end;
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+align-items: end;
 }
-
 .nn-controles label,
 .nn-zoom label {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 6px;
-  min-width: 0;
-  max-width: 100%;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--nn-suave);
+display: grid;
+grid-template-columns: minmax(0, 1fr);
+gap: 6px;
+min-width: 0;
+max-width: 100%;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(--nn-suave);
 }
-
 .nn select {
-  font: 500 15px var(--nn-texto);
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--nn-tinta);
-  background: var(--nn-painel);
-  border: 1px solid var(--nn-linha);
-  border-radius: 999px;
-  padding: 0 16px;
-  min-height: 46px;
-  width: 100%;
+font: 500 15px var(--nn-texto);
+letter-spacing: 0;
+text-transform: none;
+color: var(--nn-tinta);
+background: var(--nn-painel);
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+padding: 0 16px;
+min-height: 46px;
+width: 100%;
 }
-
 .nn select:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
 .nn-zoom {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: end;
-  border: 1px solid var(--nn-linha);
-  border-radius: var(--nn-raio);
-  padding: 16px 18px;
+display: flex;
+flex-wrap: wrap;
+gap: 12px 16px;
+align-items: end;
+border: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio);
+padding: 16px 18px;
 }
-
 .nn .nn-zoom p {
-  flex-basis: 100%;
-  max-width: 72ch;
+flex-basis: 100%;
+max-width: 72ch;
 }
-
 .nn-botao {
-  font: 700 14px/1.2 var(--nn-texto);
-  color: var(--nn-tinta);
-  background: transparent;
-  border: 1px solid var(--nn-linha);
-  border-radius: 999px;
-  padding: 10px 20px;
-  min-height: 46px;
-  cursor: pointer;
+font: 700 14px/1.2 var(--nn-texto);
+color: var(--nn-tinta);
+background: transparent;
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+padding: 10px 20px;
+min-height: 46px;
+cursor: pointer;
 }
-
 .nn-botao:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
 .nn-botao[aria-pressed="true"] {
-  background: var(--nn-laranja-escuro);
-  border-color: var(--nn-laranja-escuro);
-  color: var(--nn-branco);
+background: var(--nn-laranja-escuro);
+border-color: var(--nn-laranja-escuro);
+color: var(--nn-branco);
 }
-
 .nn-botao:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+cursor: not-allowed;
+opacity: 0.45;
 }
-
 .nn-botao:disabled:hover {
-  border-color: var(--nn-linha);
+border-color: var(--nn-linha);
 }
-
 .nn .nn-baixar {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 20px;
-  border-radius: 999px;
-  background: var(--nn-laranja-escuro);
-  color: var(--nn-branco);
-  font-weight: 700;
-  text-decoration: none;
+display: inline-flex;
+align-items: center;
+min-height: 44px;
+padding: 0 20px;
+border-radius: 999px;
+background: var(--nn-laranja-escuro);
+color: var(--nn-branco);
+font-weight: 700;
+text-decoration: none;
 }
-
 .nn .nn-baixar:hover {
-  background: var(--nn-preto);
+background: var(--nn-preto);
 }
-
 .nn-arquivos .nn-baixar {
-  margin-right: 4px;
+margin-right: 4px;
 }
-
 .nn-sem-dados {
-  padding: 18px 0;
+padding: 18px 0;
 }
-
-/* --- tabelas "ver os números" --- */
-
 .nn details summary {
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  list-style: none;
+cursor: pointer;
+font-size: 14px;
+font-weight: 600;
+min-height: 44px;
+display: flex;
+align-items: center;
+gap: 8px;
+list-style: none;
 }
-
 .nn details summary::-webkit-details-marker {
-  display: none;
+display: none;
 }
-
 .nn details summary::before {
-  content: "+";
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--nn-laranja) 12%, transparent);
-  color: var(--nn-laranja-texto);
-  font-weight: 700;
+content: "+";
+display: inline-grid;
+place-items: center;
+width: 22px;
+height: 22px;
+border-radius: 50%;
+background: color-mix(in srgb, var(--nn-laranja) 12%, transparent);
+color: var(--nn-laranja-texto);
+font-weight: 700;
 }
-
 .nn details[open] summary::before {
-  content: "−";
+content: "−";
 }
-
 .nn-tabela {
-  max-height: 320px;
-  overflow: auto;
-  margin-top: 6px;
-  border-radius: 12px;
+max-height: 320px;
+overflow: auto;
+margin-top: 6px;
+border-radius: 12px;
 }
-
 .nn-tabela-alta {
-  max-height: 560px;
+max-height: 560px;
 }
-
 .nn-tabela table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 13px;
+border-collapse: collapse;
+width: 100%;
+font-size: 13px;
 }
-
 .nn-tabela th,
 .nn-tabela td {
-  text-align: left;
-  padding: 7px 10px;
-  border-bottom: 1px solid var(--nn-linha);
-  vertical-align: top;
+text-align: left;
+padding: 7px 10px;
+border-bottom: 1px solid var(--nn-linha);
+vertical-align: top;
 }
-
 .nn-tabela th {
-  position: sticky;
-  top: 0;
-  background: var(--nn-painel);
-  font-weight: 700;
+position: sticky;
+top: 0;
+background: var(--nn-painel);
+font-weight: 700;
 }
-
 .nn-tabela .nn-num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+text-align: right;
+font-variant-numeric: tabular-nums;
 }
-
 .nn ul.nn-lista {
-  margin: 0;
-  padding-left: 1.2rem;
-  display: grid;
-  gap: 8px;
-  max-width: 72ch;
+margin: 0;
+padding-left: 1.2rem;
+display: grid;
+gap: 8px;
+max-width: 72ch;
 }
-
 .nn ul.nn-lista li::marker {
-  color: var(--nn-laranja);
+color: var(--nn-laranja);
 }
-
-/* --- Estados: mapa de calor e ranking --- */
-
 .nn-escala {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 3px;
-  font-size: 12px;
-  color: var(--nn-suave);
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 3px;
+font-size: 12px;
+color: var(--nn-suave);
 }
-
 .nn-escala span:first-child {
-  margin-right: 6px;
+margin-right: 6px;
 }
-
 .nn-escala span:last-child {
-  margin-left: 6px;
+margin-left: 6px;
 }
-
 .nn-escala i {
-  display: inline-block;
-  width: 16px;
-  height: 10px;
-  border-radius: 3px;
+display: inline-block;
+width: 16px;
+height: 10px;
+border-radius: 3px;
 }
-
 .nn-mapa-caixa {
-  overflow-x: auto;
+overflow-x: auto;
 }
-
 .nn-rolagem {
-  display: none;
-  margin: 0 0 6px;
-  font-size: 13px;
+display: none;
+margin: 0 0 6px;
+font-size: 13px;
 }
-
-/* o mapa tem 560 px no mínimo e rola de lado abaixo de ~640 px: a frase e o esmaecimento da borda direita avisam, e o
-   script tira o esmaecimento (nn-no-fim) quando a rolagem chega ao fim, para não apagar o último ano */
 @media (max-width: 640px) {
-  .nn-rolagem {
-    display: block;
-  }
-
-  .nn-mapa-caixa {
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
-  }
-
-  .nn-mapa-caixa.nn-no-fim {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
+.nn-rolagem {
+display: block;
 }
-
+.nn-mapa-caixa {
+-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+}
+.nn-mapa-caixa.nn-no-fim {
+-webkit-mask-image: none;
+mask-image: none;
+}
+}
 .nn-mapa {
-  border-collapse: separate;
-  border-spacing: 3px;
-  width: 100%;
-  min-width: 560px;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
+border-collapse: separate;
+border-spacing: 3px;
+width: 100%;
+min-width: 560px;
+font-size: 11px;
+font-variant-numeric: tabular-nums;
 }
-
 .nn-mapa th,
 .nn-mapa td {
-  padding: 0;
+padding: 0;
 }
-
 .nn-mapa .nn-uf {
-  font-weight: 700;
-  text-align: left;
-  padding-right: 6px;
+font-weight: 700;
+text-align: left;
+padding-right: 6px;
 }
-
 .nn-mapa .nn-ano {
-  color: var(--nn-suave);
-  font-weight: 400;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  height: 2.6rem;
-  vertical-align: bottom;
+color: var(--nn-suave);
+font-weight: 400;
+writing-mode: vertical-rl;
+transform: rotate(180deg);
+height: 2.6rem;
+vertical-align: bottom;
 }
-
 .nn-mapa .nn-cel {
-  height: 22px;
-  min-width: 14px;
-  border-radius: 4px;
+height: 22px;
+min-width: 14px;
+border-radius: 4px;
 }
-
 .nn-vazia {
-  background: repeating-linear-gradient(-45deg, var(--nn-graf-hachura) 0 2px, transparent 2px 5px);
+background: repeating-linear-gradient(-45deg, var(--nn-graf-hachura) 0 2px, transparent 2px 5px);
 }
-
-/* faixas do mapa: nn-f9 é a mais escura e a melhor */
 .nn-f0 { background: color-mix(in srgb, var(--nn-laranja) 8%, var(--nn-painel)); }
 .nn-f1 { background: color-mix(in srgb, var(--nn-laranja) 18%, var(--nn-painel)); }
 .nn-f2 { background: color-mix(in srgb, var(--nn-laranja) 28%, var(--nn-painel)); }
@@ -1237,1305 +1624,1256 @@ html:has(.nn-modal[open]) {
 .nn-f7 { background: color-mix(in srgb, var(--nn-laranja) 80%, var(--nn-painel)); }
 .nn-f8 { background: color-mix(in srgb, var(--nn-laranja) 90%, var(--nn-painel)); }
 .nn-f9 { background: var(--nn-laranja); }
-
 .nn-ranking {
-  display: grid;
-  gap: 8px;
-  align-content: start;
+display: grid;
+gap: 8px;
+align-content: start;
 }
-
 .nn-rk {
-  display: grid;
-  grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 4.6rem;
-  gap: 10px;
-  align-items: center;
-  font-size: 14px;
+display: grid;
+grid-template-columns: minmax(6.5rem, 12rem) minmax(0, 1fr) 4.6rem;
+gap: 10px;
+align-items: center;
+font-size: 14px;
 }
-
 .nn-rk-barra {
-  display: block;
-  height: 14px;
-  border-radius: 999px;
-  background: var(--nn-graf-grade);
+display: block;
+height: 14px;
+border-radius: 999px;
+background: var(--nn-graf-grade);
 }
-
 .nn-rk-fill {
-  fill: var(--nn-laranja);
-  rx: 7px;
+fill: var(--nn-laranja);
+rx: 7px;
 }
-
 .nn-rk-val {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
+text-align: right;
+font-variant-numeric: tabular-nums;
+font-weight: 700;
 }
-
 @media (max-width: 560px) {
-  /* no celular, o nome e o valor numa linha e a barra inteira embaixo */
-  .nn-rk {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "nome valor" "barra barra";
-    gap: 4px 10px;
-  }
-
-  .nn-rk > span:first-child {
-    grid-area: nome;
-  }
-
-  .nn-rk-barra {
-    grid-area: barra;
-  }
-
-  .nn-rk-val {
-    grid-area: valor;
-  }
+.nn-rk {
+grid-template-columns: minmax(0, 1fr) auto;
+grid-template-areas: "nome valor" "barra barra";
+gap: 4px 10px;
 }
-
-/* --- cards para compartilhar: sempre pretos, verticais 4:5 --- */
-
+.nn-rk > span:first-child {
+grid-area: nome;
+}
+.nn-rk-barra {
+grid-area: barra;
+}
+.nn-rk-val {
+grid-area: valor;
+}
+}
 .nn-cartao {
-  position: relative;
-  overflow: hidden;
-  width: min(100%, 540px);
-  aspect-ratio: 4 / 5;
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio-g);
-  padding: clamp(22px, 6.5%, 44px);
-  display: grid;
-  grid-template-rows: auto auto auto auto auto 1fr auto auto;
-  gap: clamp(8px, 1.6vw, 12px);
+position: relative;
+overflow: hidden;
+width: min(100%, 540px);
+aspect-ratio: 4 / 5;
+background: var(--nn-preto);
+color: var(--nn-branco);
+border: 1px solid var(--nn-borda-preta);
+border-radius: var(--nn-raio-g);
+padding: clamp(22px, 6.5%, 44px);
+display: grid;
+grid-template-rows: auto auto auto auto auto 1fr auto auto;
+gap: clamp(8px, 1.6vw, 12px);
 }
-
 .nn-cartao::before {
-  content: "";
-  position: absolute;
-  width: 75%;
-  aspect-ratio: 1;
-  right: -32%;
-  top: -22%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 50%;
-  pointer-events: none;
+content: "";
+position: absolute;
+width: 75%;
+aspect-ratio: 1;
+right: -32%;
+top: -22%;
+border: 1px solid rgba(255, 255, 255, 0.14);
+border-radius: 50%;
+pointer-events: none;
 }
-
 .nn .nn-cartao > * {
-  position: relative;
-  max-width: none;
+position: relative;
+max-width: none;
 }
-
 .nn-c-marca {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: rgba(255, 255, 255, 0.7);
 }
-
 .nn .nn-c-mito {
-  font-family: var(--nn-display);
-  font-weight: 800;
-  font-size: clamp(28px, 7.4vw, 44px);
-  letter-spacing: -0.05em;
-  line-height: 1;
+font-family: var(--nn-display);
+font-weight: 800;
+font-size: clamp(28px, 7.4vw, 44px);
+letter-spacing: -0.05em;
+line-height: 1;
 }
-
 .nn-c-sera {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--nn-laranja);
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: var(--nn-laranja);
 }
-
 .nn-c-numero {
-  font-family: var(--nn-display);
-  font-weight: 800;
-  font-size: clamp(40px, 11.5vw, 78px);
-  letter-spacing: -0.05em;
-  line-height: 0.95;
-  overflow-wrap: anywhere;
+font-family: var(--nn-display);
+font-weight: 800;
+font-size: clamp(40px, 11.5vw, 78px);
+letter-spacing: -0.05em;
+line-height: 0.95;
+overflow-wrap: anywhere;
 }
-
 .nn-c-numero.nn-c-longo {
-  font-size: clamp(30px, 8.4vw, 56px);
+font-size: clamp(30px, 8.4vw, 56px);
 }
-
 .nn-c-numero b {
-  font-weight: 800;
-  white-space: nowrap;
+font-weight: 800;
+white-space: nowrap;
 }
-
 .nn-c-numero b:last-child {
-  color: var(--nn-laranja);
+color: var(--nn-laranja);
 }
-
 .nn-c-seta {
-  color: rgba(255, 255, 255, 0.55);
+color: rgba(255, 255, 255, 0.55);
 }
-
 .nn-c-frase {
-  font-size: clamp(16px, 3.8vw, 20px);
-  line-height: 1.35;
-  color: rgba(255, 255, 255, 0.92);
+font-size: clamp(16px, 3.8vw, 20px);
+line-height: 1.35;
+color: rgba(255, 255, 255, 0.92);
 }
-
 .nn-c-mini {
-  min-height: 60px;
-  align-self: end;
+min-height: 60px;
+align-self: end;
 }
-
 .nn-c-mini svg {
-  display: block;
-  width: 100%;
-  height: auto;
+display: block;
+width: 100%;
+height: auto;
 }
-
 .nn-c-mini .nn-linha-ref {
-  stroke: rgba(255, 255, 255, 0.45);
-  fill: rgba(255, 255, 255, 0.45);
+stroke: rgba(255, 255, 255, 0.45);
+fill: rgba(255, 255, 255, 0.45);
 }
-
 .nn-c-fecho {
-  font-family: var(--nn-display);
-  font-weight: 800;
-  font-size: clamp(20px, 5vw, 28px);
-  letter-spacing: -0.035em;
-  line-height: 1.1;
+font-family: var(--nn-display);
+font-weight: 800;
+font-size: clamp(20px, 5vw, 28px);
+letter-spacing: -0.035em;
+line-height: 1.1;
 }
-
 .nn-c-fonte {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+font-size: 13px;
+color: rgba(255, 255, 255, 0.7);
 }
-
 .nn-cartoes-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap: 16px;
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+gap: 16px;
 }
-
 .nn .nn-cartao-link {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  min-height: 220px;
-  display: grid;
-  gap: 12px;
-  align-content: start;
-  padding: 24px;
-  border-radius: var(--nn-raio);
-  border: 1px solid var(--nn-borda-preta);
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  text-decoration: none;
+position: relative;
+overflow: hidden;
+height: 100%;
+min-height: 220px;
+display: grid;
+gap: 12px;
+align-content: start;
+padding: 24px;
+border-radius: var(--nn-raio);
+border: 1px solid var(--nn-borda-preta);
+background: var(--nn-preto);
+color: var(--nn-branco);
+text-decoration: none;
 }
-
 .nn-cartao-link::before {
-  content: "";
-  position: absolute;
-  width: 70%;
-  aspect-ratio: 1;
-  right: -30%;
-  top: -34%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  pointer-events: none;
+content: "";
+position: absolute;
+width: 70%;
+aspect-ratio: 1;
+right: -30%;
+top: -34%;
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 50%;
+pointer-events: none;
 }
-
 .nn-cartao-link > * {
-  position: relative;
+position: relative;
 }
-
 .nn-cartao-link .nn-eyebrow {
-  color: var(--nn-laranja);
+color: var(--nn-laranja);
 }
-
 .nn .nn-cartao-link .nn-c-mito {
-  font-size: clamp(22px, 2.4vw, 28px);
+font-size: clamp(22px, 2.4vw, 28px);
 }
-
 .nn-cartao-link .nn-c-numero {
-  font-size: clamp(26px, 3vw, 34px);
-  color: var(--nn-laranja);
-  align-self: end;
+font-size: clamp(26px, 3vw, 34px);
+color: var(--nn-laranja);
+align-self: end;
 }
-
 .nn-cartao-link .nn-c-numero.nn-c-longo {
-  font-size: clamp(22px, 2.4vw, 28px);
+font-size: clamp(22px, 2.4vw, 28px);
 }
-
 .nn .nn-cartao-link:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
 #card {
-  justify-items: start;
+justify-items: start;
 }
-
-/* --- rodapé --- */
-
+.nn-voltar {
+position: fixed;
+right: clamp(14px, 2.4vw, 28px);
+bottom: clamp(14px, 2.4vw, 28px);
+z-index: 50;
+width: 56px;
+height: 56px;
+display: grid;
+place-items: center;
+border-radius: 50%;
+background: var(--nn-laranja);
+color: var(--nn-branco);
+text-decoration: none;
+box-shadow: 0 12px 28px -10px rgba(234, 46, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.nn-voltar-ligado:not(.nn-voltar-visivel),
+.nn-voltar-ligado.nn-voltar-no-rodape {
+opacity: 0;
+transform: translateY(16px) scale(0.85);
+visibility: hidden;
+pointer-events: none;
+}
+.nn-voltar-anel {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+transform: rotate(-90deg);
+}
+.nn-voltar-trilho,
+.nn-voltar-progresso {
+fill: none;
+stroke-width: 2.5;
+}
+.nn-voltar-trilho {
+stroke: rgba(255, 255, 255, 0.28);
+}
+.nn-voltar-progresso {
+stroke: var(--nn-branco);
+stroke-linecap: round;
+}
+.nn-voltar:not(.nn-voltar-ligado) .nn-voltar-progresso {
+display: none;
+}
+.nn-voltar-seta {
+position: relative;
+}
+.nn-voltar:hover {
+box-shadow: 0 16px 34px -10px rgba(234, 46, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.nn-voltar:hover .nn-voltar-seta {
+transform: translateY(-3px);
+}
+.nn-voltar:focus-visible {
+outline: 3px solid var(--nn-branco);
+outline-offset: 3px;
+box-shadow: 0 0 0 6px var(--nn-laranja);
+}
+@media (max-width: 559px) {
+.nn-voltar {
+width: 48px;
+height: 48px;
+}
+}
+@media print {
+.nn-voltar {
+display: none;
+}
+}
 .nn-rodape {
-  background: var(--nn-preto);
-  color: rgba(255, 255, 255, 0.64);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio);
-  padding: 24px clamp(20px, 3vw, 34px);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 10px 24px;
-  font-size: 13px;
+background: var(--nn-preto);
+color: rgba(255, 255, 255, 0.64);
+border: 1px solid var(--nn-borda-preta);
+border-radius: var(--nn-raio);
+padding: 24px clamp(20px, 3vw, 34px);
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+gap: 10px 24px;
+font-size: 13px;
 }
-
 .nn-rodape strong {
-  color: var(--nn-branco);
+color: var(--nn-branco);
 }
-
 .nn .nn-rodape a {
-  color: var(--nn-branco);
+color: var(--nn-branco);
 }
-
-/* o bloco de autoria: o círculo de 56 px (a foto, ou as iniciais) e o "Desenvolvido por", que abrem o modal "Sobre o
-   autor" (sem JavaScript, o link leva à seção de Sobre); a marca do autor, só a versão branca, porque o rodapé é preto
-   nos dois temas */
-
 .nn-autor-bloco {
-  flex-basis: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 24px;
-  margin-top: 6px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+flex-basis: 100%;
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 12px 24px;
+margin-top: 6px;
+padding-top: 18px;
+border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
-
 .nn .nn-autor-abrir {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  border-radius: 999px;
-  text-decoration: none;
+display: inline-flex;
+align-items: center;
+gap: 14px;
+border-radius: 999px;
+text-decoration: none;
 }
-
 .nn .nn-autor-abrir:hover .nn-autor-nome {
-  text-decoration: underline;
-  text-decoration-color: var(--nn-laranja);
-  text-underline-offset: 3px;
+text-decoration: underline;
+text-decoration-color: var(--nn-laranja);
+text-underline-offset: 3px;
 }
-
 .nn-autor-circulo {
-  flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  background: var(--nn-laranja-escuro);
-  color: var(--nn-branco);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  font: 800 19px/1 var(--nn-display);
-  letter-spacing: 0.02em;
+flex: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+overflow: hidden;
+display: grid;
+place-items: center;
+background: var(--nn-laranja-escuro);
+color: var(--nn-branco);
+border: 1px solid rgba(255, 255, 255, 0.22);
+font: 800 19px/1 var(--nn-display);
+letter-spacing: 0.02em;
 }
-
 .nn-autor-circulo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+display: block;
+width: 100%;
+height: 100%;
+object-fit: cover;
 }
-
 .nn-autor-texto {
-  font-size: 15px;
+font-size: 15px;
 }
-
 .nn-autor-marca {
-  display: block;
-  height: 26px;
-  width: auto;
+display: block;
+height: 26px;
+width: auto;
 }
-
-/* o conteúdo do autor: o modal e a seção de Sobre */
-
 .nn-modal-autor {
-  max-width: 680px; /* estreito de propósito; no celular a largura de .nn-modal (a tela toda) continua valendo */
+max-width: 680px;
 }
-
 .nn-autor-conteudo,
 .nn-card-autor {
-  display: grid;
-  gap: 18px;
+display: grid;
+gap: 18px;
 }
-
 .nn-autor-secao {
-  display: grid;
-  gap: 8px;
-  align-content: start;
+display: grid;
+gap: 8px;
+align-content: start;
 }
-
 .nn-autor-logo {
-  display: block;
+display: block;
 }
-
 .nn-autor-logo img {
-  display: block;
-  height: 26px;
-  width: auto;
+display: block;
+height: 26px;
+width: auto;
 }
-
 .nn-sha-base {
-  overflow-wrap: anywhere;
+overflow-wrap: anywhere;
 }
-
-/* --- chamada para Como chegamos, logo depois da faixa de números do Início ---
-   Mais estreita que os outros blocos e escura nos dois temas. A imagem de fundo (Frans Post, engenho, domínio público,
-   a da época 1530) segue o padrão da foto da abertura: o degradê (--nn-foto-fusao) deixa o preto sólido do lado do texto
-   e a foto aparece do outro lado; um véu de 15% por cima. No celular o degradê sobe de baixo para cima: foto em cima,
-   texto embaixo, sobre o preto. O botão é o laranja-escuro com texto branco (5,3:1) e o crédito fica no preto sólido. */
-
 .nn-chamada-historia {
-  --nn-foto-fusao: linear-gradient(90deg, #080808 0%, #080808 46%, rgba(8, 8, 8, 0) 92%);
-  /* escurece a coluna do botão, onde a pintura é mais clara; a pintura continua à vista */
-  --nn-chamada-sombra: linear-gradient(270deg, rgba(8, 8, 8, 0.38) 0%, rgba(8, 8, 8, 0.38) 22%, rgba(8, 8, 8, 0) 55%);
-  position: relative;
-  width: 100%;
-  max-width: 960px;
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "texto botao" "credito botao";
-  align-items: center;
-  gap: 18px clamp(20px, 4vw, 48px);
-  padding: clamp(28px, 4.4vw, 52px) clamp(22px, 4.4vw, 52px);
-  background-color: #080808;
-  background-image: var(--nn-foto-fusao), var(--nn-chamada-sombra), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/historia/1530-cartao.webp");
-  background-size: auto, auto, auto, cover;
-  background-position: 0 0, 0 0, 0 0, 80% 50%;
-  background-repeat: no-repeat;
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio-g);
-  color: var(--nn-branco);
+--nn-foto-fusao: linear-gradient(90deg, #080808 0%, #080808 46%, rgba(8, 8, 8, 0) 92%);
+--nn-chamada-sombra: linear-gradient(270deg, rgba(8, 8, 8, 0.38) 0%, rgba(8, 8, 8, 0.38) 22%, rgba(8, 8, 8, 0) 55%);
+position: relative;
+width: 100%;
+max-width: 960px;
+margin-inline: auto;
+display: grid;
+grid-template-columns: minmax(0, 1fr) auto;
+grid-template-areas: "texto botao" "credito botao";
+align-items: center;
+gap: 18px clamp(20px, 4vw, 48px);
+padding: clamp(28px, 4.4vw, 52px) clamp(22px, 4.4vw, 52px);
+background-color: #080808;
+background-image: var(--nn-foto-fusao), var(--nn-chamada-sombra), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/historia/1530-cartao.webp");
+background-size: auto, auto, auto, cover;
+background-position: 0 0, 0 0, 0 0, 80% 50%;
+background-repeat: no-repeat;
+border: 1px solid var(--nn-borda-preta);
+border-radius: var(--nn-raio-g);
+color: var(--nn-branco);
 }
-
 .nn-chamada-texto {
-  grid-area: texto;
-  display: grid;
-  gap: 12px;
-  max-width: 52ch;
+grid-area: texto;
+display: grid;
+gap: 12px;
+max-width: 52ch;
 }
-
 .nn-chamada-historia .nn-eyebrow {
-  color: rgba(255, 255, 255, 0.72);
+color: rgba(255, 255, 255, 0.72);
 }
-
 .nn .nn-chamada-historia h2 {
-  font-size: clamp(24px, 3.4vw, 36px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.08;
+font-size: clamp(24px, 3.4vw, 36px);
+font-weight: 700;
+letter-spacing: -0.04em;
+line-height: 1.08;
 }
-
 .nn .nn-chamada-descricao {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 16px;
+color: rgba(255, 255, 255, 0.82);
+font-size: 16px;
 }
-
 .nn .nn-chamada-botao {
-  grid-area: botao;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0 24px;
-  border-radius: 999px;
-  background: var(--nn-laranja-escuro);
-  color: var(--nn-branco);
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
+grid-area: botao;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-height: 48px;
+padding: 0 24px;
+border-radius: 999px;
+background: var(--nn-laranja-escuro);
+color: var(--nn-branco);
+font-size: 16px;
+font-weight: 700;
+text-decoration: none;
+white-space: nowrap;
 }
-
 .nn .nn-chamada-botao:hover {
-  background: color-mix(in srgb, var(--nn-laranja-escuro) 82%, var(--nn-preto));
+background: color-mix(in srgb, var(--nn-laranja-escuro) 82%, var(--nn-preto));
 }
-
 .nn .nn-chamada-botao:focus-visible {
-  outline-color: var(--nn-branco);
+outline-color: var(--nn-branco);
 }
-
 .nn .nn-chamada-credito {
-  grid-area: credito;
-  max-width: 62ch;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  line-height: 1.4;
+grid-area: credito;
+max-width: 62ch;
+color: rgba(255, 255, 255, 0.7);
+font-size: 12px;
+line-height: 1.4;
 }
-
 .nn .nn-chamada-credito a {
-  text-decoration-color: currentColor;
+text-decoration-color: currentColor;
 }
-
 @media (max-width: 900px) {
-  .nn-chamada-historia {
-    --nn-foto-fusao: linear-gradient(180deg, rgba(8, 8, 8, 0) 0, rgba(8, 8, 8, 0) 40px, #080808 190px);
-    --nn-chamada-sombra: linear-gradient(rgba(8, 8, 8, 0), rgba(8, 8, 8, 0)); /* no celular o botão fica no preto */
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "texto" "botao" "credito";
-    justify-items: start;
-    padding-top: clamp(150px, 42vw, 240px);
-    background-size: auto, auto, auto, 100% auto; /* a foto inteira em cima; o preto sólido cobre o resto */
-    background-position: 0 0, 0 0, 0 0, 50% 0;
-  }
+.nn-chamada-historia {
+--nn-foto-fusao: linear-gradient(180deg, rgba(8, 8, 8, 0) 0, rgba(8, 8, 8, 0) 40px, #080808 190px);
+--nn-chamada-sombra: linear-gradient(rgba(8, 8, 8, 0), rgba(8, 8, 8, 0));
+grid-template-columns: minmax(0, 1fr);
+grid-template-areas: "texto" "botao" "credito";
+justify-items: start;
+padding-top: clamp(150px, 42vw, 240px);
+background-size: auto, auto, auto, 100% auto;
+background-position: 0 0, 0 0, 0 0, 50% 0;
 }
-
-/* --- Como chegamos até aqui: arquivo histórico com a mesma marca ---
-   Tudo sob .nn-historia (o <main> da página). Papel envelhecido feito só de gradientes (luz, manchas, grão e fibra,
-   nada de imagem), títulos na serifada, datas em carimbo, imagens em sépia que ganham cor no modal e a linha do tempo
-   no laranja do site. Texto laranja pequeno só sobre o fundo claro dos carimbos e etiquetas (--nn-hist-selo), onde
-   #c42600 passa de 5:1; sobre o papel ficam a tinta, o --nn-suave e o sépia, todos acima de 5,5:1. */
-
+}
 .nn-historia {
-  --nn-serifada: "EB Garamond", Georgia, "Times New Roman", serif;
-  --nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 40%, var(--nn-branco)); /* fundo de carimbo e etiqueta */
-  --nn-hist-luz: rgba(255, 255, 255, 0.55);
-  --nn-hist-mancha: rgba(140, 96, 40, 0.1);
-  --nn-hist-grao: rgba(107, 68, 35, 0.06);
-  --nn-hist-fibra: rgba(107, 68, 35, 0.025);
-  --nn-hist-borda: rgba(110, 72, 24, 0.2);
-  --nn-hist-sombra: 0 1px 0 rgba(107, 68, 35, 0.12), 0 14px 28px -22px rgba(60, 38, 14, 0.55);
-  --nn-painel: var(--nn-hist-selo);
+--nn-serifada: "EB Garamond", Georgia, "Times New Roman", serif;
+--nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 40%, var(--nn-branco));
+--nn-hist-luz: rgba(255, 255, 255, 0.55);
+--nn-hist-mancha: rgba(140, 96, 40, 0.1);
+--nn-hist-grao: rgba(107, 68, 35, 0.06);
+--nn-hist-fibra: rgba(107, 68, 35, 0.025);
+--nn-hist-borda: rgba(110, 72, 24, 0.2);
+--nn-hist-sombra: 0 1px 0 rgba(107, 68, 35, 0.12), 0 14px 28px -22px rgba(60, 38, 14, 0.55);
+--nn-painel: var(--nn-hist-selo);
 }
-
 @media (prefers-color-scheme: dark) {
-  .nn-historia {
-    --nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 70%, var(--nn-preto));
-    --nn-hist-luz: rgba(255, 226, 180, 0.05);
-    --nn-hist-mancha: rgba(0, 0, 0, 0.28);
-    --nn-hist-grao: rgba(210, 180, 140, 0.045);
-    --nn-hist-fibra: rgba(210, 180, 140, 0.02);
-    --nn-hist-borda: rgba(0, 0, 0, 0.45);
-    --nn-hist-sombra: 0 14px 28px -22px rgba(0, 0, 0, 0.9);
-  }
-}
-
-/* o papel (a página e o modal das épocas usam o mesmo): só a cor. A textura de gradientes (grão e fibra em anéis de 1 px
-   sobre a página inteira) pesava no scroll em tela de alta densidade e saiu a pedido do autor. */
 .nn-historia {
-  --nn-hist-papel: none;
+--nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 70%, var(--nn-preto));
+--nn-hist-luz: rgba(255, 226, 180, 0.05);
+--nn-hist-mancha: rgba(0, 0, 0, 0.28);
+--nn-hist-grao: rgba(210, 180, 140, 0.045);
+--nn-hist-fibra: rgba(210, 180, 140, 0.02);
+--nn-hist-borda: rgba(0, 0, 0, 0.45);
+--nn-hist-sombra: 0 14px 28px -22px rgba(0, 0, 0, 0.9);
 }
-
-/* o <main> não é mais um cartão só: a abertura e o fecho são blocos de papel, como os da página inicial, e a linha do
-   tempo fica solta, sobre o fundo da página e na largura toda do conteúdo do site */
+}
+.nn-historia {
+--nn-hist-papel: none;
+}
 .nn > main.nn-historia {
-  gap: clamp(28px, 5vw, 56px);
+gap: clamp(28px, 5vw, 56px);
 }
-
 .nn-historia .nn-hist-bloco {
-  background-color: var(--nn-papel-antigo);
-  background-image: var(--nn-hist-papel);
-  border: 1px solid var(--nn-linha);
-  border-radius: var(--nn-raio-g);
-  padding: clamp(24px, 5.4vw, 72px) clamp(16px, 5vw, 64px);
+background-color: var(--nn-papel-antigo);
+background-image: var(--nn-hist-papel);
+border: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio-g);
+padding: clamp(24px, 5.4vw, 72px) clamp(16px, 5vw, 64px);
 }
-
 .nn-historia .nn-hist-titulo,
 .nn-historia .nn-hist-secao,
 .nn-historia .nn-epoca-nome,
 .nn-historia .nn-epoca-titulo,
 .nn-historia .nn-hist-valor,
 .nn-historia .nn-epoca-valor {
-  font-family: var(--nn-serifada);
-  font-weight: 500;
-  font-variant-numeric: lining-nums;
+font-family: var(--nn-serifada);
+font-weight: 500;
+font-variant-numeric: lining-nums;
 }
-
 .nn-historia .nn-hist-previa {
-  border: 1px dashed var(--nn-laranja);
-  border-radius: 14px;
-  background: var(--nn-hist-selo);
-  padding: 10px 16px;
-  font-size: 14px;
-  max-width: none;
+border: 1px dashed var(--nn-laranja);
+border-radius: 14px;
+background: var(--nn-hist-selo);
+padding: 10px 16px;
+font-size: 14px;
+max-width: none;
 }
-
-/* abertura: fio duplo de jornal antigo, título grande e as duas parcelas como num livro-caixa */
-
 .nn-hist-abertura {
-  display: grid;
-  gap: 18px;
-  min-width: 0;
+display: grid;
+gap: 18px;
+min-width: 0;
 }
-
 .nn-hist-abertura::before {
-  content: "";
-  height: 6px;
-  border-block: 1px solid var(--nn-sepia);
-  opacity: 0.55;
+content: "";
+height: 6px;
+border-block: 1px solid var(--nn-sepia);
+opacity: 0.55;
 }
-
 .nn-historia .nn-hist-titulo {
-  font-size: clamp(46px, 7.4vw, 100px);
-  letter-spacing: -0.02em;
-  line-height: 0.95;
+font-size: clamp(46px, 7.4vw, 100px);
+letter-spacing: -0.02em;
+line-height: 0.95;
 }
-
 .nn-historia .nn-hist-subtitulo {
-  font-size: clamp(18px, 2.2vw, 24px);
-  line-height: 1.35;
-  max-width: 42ch;
+font-size: clamp(18px, 2.2vw, 24px);
+line-height: 1.35;
+max-width: 42ch;
 }
-
+.nn-hist-grade {
+display: grid;
+gap: clamp(24px, 4vw, 56px);
+align-items: center;
+min-width: 0;
+}
+@media (min-width: 960px) {
+.nn-hist-grade {
+grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+}
+}
+.nn-hist-resumo {
+display: grid;
+gap: 22px;
+min-width: 0;
+}
+.nn-historia .nn-hist-eyebrow {
+color: var(--nn-sepia);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+}
 .nn-historia .nn-hist-numero {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px clamp(28px, 5vw, 64px);
-  max-width: none;
-  margin-block: 6px;
+display: grid;
+gap: 6px;
 }
-
-.nn-hist-parcela {
-  display: grid;
-  align-content: start;
-  gap: 2px;
-  border-top: 3px solid var(--nn-laranja);
-  padding-top: 18px; /* a caixa do texto da serifada passa da linha em ~0,12 em: o fio fica fora dela */
-  min-width: 0;
+.nn-historia .nn-hist-parcela {
+display: grid;
+grid-template-columns: auto minmax(0, 1fr);
+column-gap: 14px;
+align-items: baseline;
 }
-
+.nn-hist-ano {
+grid-row: 1 / 3;
+align-self: start;
+margin-top: 14px;
+color: var(--nn-laranja-texto);
+font-size: 14px;
+font-weight: 700;
+letter-spacing: 0.06em;
+font-variant-numeric: tabular-nums;
+}
 .nn-historia .nn-hist-valor {
-  font-size: clamp(60px, 9vw, 116px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+grid-column: 2;
+font-size: clamp(56px, 6.4vw, 84px);
+line-height: 0.95;
+letter-spacing: -0.02em;
 }
-
 .nn-hist-rotulo {
-  color: var(--nn-suave);
-  font-size: 14px;
-  max-width: 24ch;
+grid-column: 2;
+color: var(--nn-suave);
+font-size: 15px;
 }
-
+.nn-historia .nn-hist-variacao {
+display: grid;
+grid-template-columns: auto minmax(0, 1fr);
+column-gap: 14px;
+align-items: center;
+padding: 6px 0 6px 18px;
+}
+.nn-hist-fio {
+width: 2px;
+height: 34px;
+margin-left: 6px;
+background: linear-gradient(var(--nn-laranja), transparent);
+}
+.nn-hist-etiqueta {
+justify-self: start;
+padding: 5px 10px;
+border: 1px solid var(--nn-laranja);
+border-radius: 999px;
+background: var(--nn-hist-selo);
+color: var(--nn-laranja-texto);
+font-size: 13px;
+font-weight: 700;
+}
 .nn-historia .nn-hist-grafico {
-  margin: 0;
-  display: grid;
-  gap: 8px;
-  min-width: 0;
+margin: 0;
+display: grid;
+gap: 10px;
+min-width: 0;
 }
-
-.nn-historia .nn-hist-legenda,
-.nn-historia .nn-hist-nota {
-  color: var(--nn-suave);
-  font-size: 13px;
+.nn-historia .nn-ponta {
+stroke: var(--nn-papel-antigo);
+stroke-width: 2.5;
 }
-
+.nn-historia .nn-ponta-rotulo {
+fill: var(--nn-tinta);
+font-size: 12px;
+font-weight: 700;
+}
+.nn-historia .nn-hist-legenda {
+color: var(--nn-suave);
+font-size: 13px;
+max-width: none;
+}
+.nn-hist-pe {
+border-top: 1px solid var(--nn-linha);
+padding-top: 6px;
+}
 .nn-historia .nn-hist-texto {
-  font-size: 17px;
+font-size: 16px;
+max-width: 46ch;
 }
-
 .nn-historia .nn-tabela th {
-  background: var(--nn-hist-selo);
+background: var(--nn-hist-selo);
 }
-
-/* títulos de seção com fio fino embaixo */
-
 .nn-historia .nn-hist-secao {
-  font-size: clamp(32px, 4.2vw, 52px);
-  letter-spacing: -0.01em;
-  line-height: 1;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--nn-linha);
+font-size: clamp(32px, 4.2vw, 52px);
+letter-spacing: -0.01em;
+line-height: 1;
+padding-bottom: 12px;
+border-bottom: 1px solid var(--nn-linha);
 }
-
-/* linha do tempo: o fio laranja à esquerda, um anel por época e um ponto cheio, maior, por marco. A faixa horizontal
-   e arrastável do computador fica sobre esta lista (site.js); sem JavaScript e no celular, ela é a página. */
-
 .nn-hist-linha {
-  display: grid;
-  gap: 28px;
-  min-width: 0;
+display: grid;
+gap: 28px;
+min-width: 0;
 }
-
 .nn-historia .nn-linha-tempo {
-  --nn-fio: 12px; /* centro do fio, a partir da borda da lista */
-  position: relative;
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 36px;
-  display: grid;
-  gap: 48px;
+--nn-fio: 12px;
+position: relative;
+list-style: none;
+margin: 0;
+padding: 0 0 0 36px;
+display: grid;
+gap: 48px;
 }
-
 .nn-historia .nn-linha-tempo::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--nn-fio) - 1.5px);
-  top: 10px;
-  bottom: 10px;
-  width: 3px;
-  border-radius: 3px;
-  background: var(--nn-laranja);
+content: "";
+position: absolute;
+left: calc(var(--nn-fio) - 1.5px);
+top: 10px;
+bottom: 10px;
+width: 3px;
+border-radius: 3px;
+background: var(--nn-laranja);
 }
-
 .nn-historia .nn-epoca {
-  position: relative;
-  display: grid;
-  gap: 14px;
-  min-width: 0;
-  scroll-margin-top: 16px;
+position: relative;
+display: grid;
+gap: 14px;
+min-width: 0;
+scroll-margin-top: 16px;
 }
-
 .nn-historia .nn-epoca::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--nn-fio) - 36px - 10px);
-  top: 20px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 3px solid var(--nn-laranja);
-  background: var(--nn-fundo); /* a linha do tempo fica sobre o fundo da página */
+content: "";
+position: absolute;
+left: calc(var(--nn-fio) - 36px - 10px);
+top: 20px;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+border: 3px solid var(--nn-laranja);
+background: var(--nn-fundo);
 }
-
-/* o cartão: sem JavaScript, um cabeçalho de cartão parado; com o site.js (classe nn-js no <html>), clicável */
-
 .nn-historia .nn-epoca-abrir {
-  -webkit-appearance: none;
-  appearance: none;
-  display: grid;
-  justify-items: start;
-  gap: 8px;
-  width: 100%;
-  max-width: 560px;
-  margin: 0;
-  padding: 16px 18px 18px;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  background: var(--nn-hist-selo);
-  border: 1px solid var(--nn-linha);
-  border-radius: var(--nn-raio);
-  box-shadow: var(--nn-hist-sombra);
-  cursor: default;
+-webkit-appearance: none;
+appearance: none;
+display: grid;
+justify-items: start;
+gap: 8px;
+width: 100%;
+max-width: 560px;
+margin: 0;
+padding: 16px 18px 18px;
+text-align: left;
+font: inherit;
+color: inherit;
+background: var(--nn-hist-selo);
+border: 1px solid var(--nn-linha);
+border-radius: var(--nn-raio);
+box-shadow: var(--nn-hist-sombra);
+cursor: default;
 }
-
 .nn-js .nn-historia .nn-epoca-abrir {
-  cursor: pointer;
+cursor: pointer;
 }
-
 .nn-js .nn-historia .nn-epoca-abrir:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
-/* as imagens já vêm recortadas em 21:9 no arquivo (o enquadramento é escolhido lá, o navegador não corta nada);
-   width e height no HTML e o aspect-ratio seguram a caixa antes de a imagem chegar e se ela falhar */
 .nn-historia .nn-epoca-miniatura,
 .nn-historia .nn-epoca-imagem,
 .nn-historia .nn-marco-imagem {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 21 / 9;
-  border-radius: 14px;
-  background: var(--nn-hist-mancha);
-  filter: sepia(0.85) saturate(0.8) contrast(0.95);
+display: block;
+width: 100%;
+height: auto;
+aspect-ratio: 21 / 9;
+border-radius: 14px;
+background: var(--nn-hist-mancha);
+filter: sepia(0.85) saturate(0.8) contrast(0.95);
 }
-
 .nn-historia .nn-modal-historia .nn-epoca-imagem,
 .nn-historia .nn-modal-historia .nn-marco-imagem {
-  filter: none; /* no modal a imagem volta à cor do arquivo */
+filter: none;
 }
-
 .nn-historia .nn-epoca-nome {
-  font-size: clamp(25px, 2.6vw, 31px);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+font-size: clamp(25px, 2.6vw, 31px);
+line-height: 1.08;
+letter-spacing: -0.01em;
 }
-
-/* datas em carimbo: caixa alta espaçada, fio duplo e o fundo claro que deixa o laranja-escuro legível */
-
 .nn-historia .nn-epoca-periodo,
 .nn-historia .nn-epoca-data,
 .nn-historia .nn-marco-ano {
-  display: inline-block;
-  width: fit-content;
-  padding: 3px 9px;
-  border: 3px double currentColor;
-  border-radius: 5px;
-  background: var(--nn-hist-selo);
-  color: var(--nn-laranja-texto);
-  font-family: var(--nn-texto);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+display: inline-block;
+width: fit-content;
+padding: 3px 9px;
+border: 3px double currentColor;
+border-radius: 5px;
+background: var(--nn-hist-selo);
+color: var(--nn-laranja-texto);
+font-family: var(--nn-texto);
+font-size: 12px;
+font-weight: 700;
+line-height: 1.3;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+font-variant-numeric: tabular-nums;
+white-space: nowrap;
 }
-
-/* marcos na linha: ponto laranja cheio sobre o fio, carimbo com o ano e o título */
-
 .nn-historia .nn-marcos-linha {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+gap: 4px;
 }
-
 .nn-historia .nn-marcos-linha li {
-  position: relative;
+position: relative;
 }
-
 .nn-historia .nn-marcos-linha li::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--nn-fio) - 36px - 8px);
-  top: calc(50% - 8px);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--nn-laranja);
-  box-shadow: 0 0 0 3px var(--nn-fundo);
+content: "";
+position: absolute;
+left: calc(var(--nn-fio) - 36px - 8px);
+top: calc(50% - 8px);
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background: var(--nn-laranja);
+box-shadow: 0 0 0 3px var(--nn-fundo);
 }
-
 .nn-historia a.nn-marco {
-  display: flex;
-  align-items: center;
-  gap: 4px 12px;
-  min-height: 44px;
-  text-decoration: none;
+display: flex;
+align-items: center;
+gap: 4px 12px;
+min-height: 44px;
+text-decoration: none;
 }
-
 .nn-historia a.nn-marco .nn-marco-titulo {
-  text-decoration: underline;
-  text-decoration-color: var(--nn-laranja);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+text-decoration: underline;
+text-decoration-color: var(--nn-laranja);
+text-decoration-thickness: 1px;
+text-underline-offset: 3px;
 }
-
 .nn-historia a.nn-marco:hover .nn-marco-titulo {
-  text-decoration-thickness: 2px;
+text-decoration-thickness: 2px;
 }
-
-/* o conteúdo da época (o modal; sem JavaScript, logo abaixo do cartão) */
-
 .nn-historia .nn-epoca-conteudo {
-  display: grid;
-  gap: 20px;
-  min-width: 0;
-  padding-top: 6px;
+display: grid;
+gap: 20px;
+min-width: 0;
+padding-top: 6px;
 }
-
 .nn-historia .nn-epoca-titulo {
-  font-size: clamp(28px, 3.2vw, 40px);
-  line-height: 1.04;
-  letter-spacing: -0.01em;
+font-size: clamp(28px, 3.2vw, 40px);
+line-height: 1.04;
+letter-spacing: -0.01em;
 }
-
-/* a imagem destaque abre o conteúdo da época, na largura toda, com o crédito numa linha pequena logo abaixo */
 .nn-historia .nn-epoca-figura {
-  margin: 0;
-  display: grid;
-  gap: 6px;
-  min-width: 0;
+margin: 0;
+display: grid;
+gap: 6px;
+min-width: 0;
 }
-
 .nn-historia .nn-epoca-credito,
 .nn-historia .nn-marco-credito {
-  color: var(--nn-sepia);
-  font-size: 12px;
-  line-height: 1.4;
+color: var(--nn-sepia);
+font-size: 12px;
+line-height: 1.4;
 }
-
-/* a imagem de um marco (só quando há imagem livre do próprio fato), embaixo do texto dele */
 .nn-historia .nn-marco-figura {
-  margin: 10px 0 4px;
-  display: grid;
-  gap: 4px;
-  min-width: 0;
+margin: 10px 0 4px;
+display: grid;
+gap: 4px;
+min-width: 0;
 }
-
 .nn-historia .nn-marco-imagem {
-  border-radius: 10px;
+border-radius: 10px;
 }
-
 .nn-historia .nn-epoca-resumo {
-  font-size: clamp(18px, 2vw, 21px);
-  font-weight: 600;
-  line-height: 1.4;
+font-size: clamp(18px, 2vw, 21px);
+font-weight: 600;
+line-height: 1.4;
 }
-
 .nn-historia .nn-epoca-texto {
-  display: grid;
-  gap: 12px;
+display: grid;
+gap: 12px;
 }
-
 .nn-historia .nn-epoca-texto p {
-  line-height: 1.68;
+line-height: 1.68;
 }
-
 .nn-historia .nn-epoca-conteudo h4 {
-  margin: 0 0 10px;
-  color: var(--nn-sepia);
-  font-family: var(--nn-texto);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+margin: 0 0 10px;
+color: var(--nn-sepia);
+font-family: var(--nn-texto);
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.16em;
+text-transform: uppercase;
 }
-
 .nn-historia .nn-epoca-marcos ol,
 .nn-historia .nn-epoca-numeros ul,
 .nn-historia .nn-epoca-fontes ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  max-width: 68ch;
+list-style: none;
+margin: 0;
+padding: 0;
+display: grid;
+max-width: 68ch;
 }
-
 .nn-historia .nn-epoca-marcos ol {
-  gap: 12px;
+gap: 12px;
 }
-
 .nn-historia .nn-epoca-marcos .nn-marco-ano {
-  margin-right: 8px;
+margin-right: 8px;
 }
-
 .nn-historia .nn-epoca-numeros li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  padding-block: 12px;
-  border-top: 1px solid var(--nn-linha);
+display: flex;
+flex-wrap: wrap;
+align-items: baseline;
+gap: 4px 10px;
+padding-block: 12px;
+border-top: 1px solid var(--nn-linha);
 }
-
 .nn-historia .nn-epoca-valor {
-  font-size: 28px;
-  line-height: 1.05;
+font-size: 28px;
+line-height: 1.05;
 }
-
 .nn-historia .nn-epoca-fonte-numero {
-  flex-basis: 100%;
-  color: var(--nn-suave);
-  font-size: 13px;
+flex-basis: 100%;
+color: var(--nn-suave);
+font-size: 13px;
 }
-
-/* etiquetas do tipo de número: dado oficial na tinta, estimativa de historiador no sépia, interpretação em laranja */
-
 .nn-historia .nn-tipo {
-  display: inline-block;
-  padding: 2px 9px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  background: var(--nn-hist-selo);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
+display: inline-block;
+padding: 2px 9px;
+border: 1px solid currentColor;
+border-radius: 999px;
+background: var(--nn-hist-selo);
+font-size: 11px;
+font-weight: 700;
+line-height: 1.4;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+white-space: nowrap;
 }
-
 .nn-historia .nn-tipo-oficial {
-  color: var(--nn-tinta);
+color: var(--nn-tinta);
 }
-
 .nn-historia .nn-tipo-historiador {
-  color: var(--nn-sepia);
+color: var(--nn-sepia);
 }
-
 .nn-historia .nn-tipo-interpretacao {
-  color: var(--nn-laranja-texto);
-  border-style: dashed;
+color: var(--nn-laranja-texto);
+border-style: dashed;
 }
-
 .nn-historia .nn-epoca-ficou {
-  border-left: 3px solid var(--nn-laranja);
-  padding: 2px 0 2px 16px;
+border-left: 3px solid var(--nn-laranja);
+padding: 2px 0 2px 16px;
 }
-
 .nn-historia .nn-epoca-fontes ul {
-  gap: 6px;
-  font-size: 14px;
+gap: 6px;
+font-size: 14px;
 }
-
 .nn-historia .nn-epoca-fontes li {
-  position: relative;
-  padding-left: 16px;
+position: relative;
+padding-left: 16px;
 }
-
 .nn-historia .nn-epoca-fontes li::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 0.62em;
-  width: 6px;
-  height: 6px;
-  background: var(--nn-sepia);
+content: "";
+position: absolute;
+left: 2px;
+top: 0.62em;
+width: 6px;
+height: 6px;
+background: var(--nn-sepia);
 }
-
 .nn-historia .nn-epoca-nav,
 .nn-historia .nn-hist-fecho-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
 }
-
 .nn-historia .nn-epoca-nav a,
 .nn-historia .nn-hist-fecho-links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 18px;
-  border: 1px solid var(--nn-linha);
-  border-radius: 999px;
-  background: var(--nn-hist-selo);
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
+display: inline-flex;
+align-items: center;
+min-height: 44px;
+padding: 0 18px;
+border: 1px solid var(--nn-linha);
+border-radius: 999px;
+background: var(--nn-hist-selo);
+font-size: 14px;
+font-weight: 700;
+text-decoration: none;
 }
-
 .nn-historia .nn-epoca-nav a:hover,
 .nn-historia .nn-hist-fecho-links a:hover {
-  border-color: var(--nn-laranja);
+border-color: var(--nn-laranja);
 }
-
 .nn-historia .nn-epoca-proxima {
-  margin-left: auto;
+margin-left: auto;
 }
-
-/* fecho */
-
 .nn-historia .nn-hist-fecho {
-  display: grid;
-  gap: 14px;
+display: grid;
+gap: 14px;
 }
-
 .nn-historia .nn-hist-fecho-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+list-style: none;
+margin: 0;
+padding: 0;
 }
-
-/* com o site.js: os artigos saem da lista (vão para o modal); a faixa horizontal e os botões ‹ › acima de 900 px */
-
 .nn-js .nn-historia .nn-linha-tempo .nn-epoca-conteudo {
-  display: none;
+display: none;
 }
-
 .nn-historia .nn-faixa {
-  min-width: 0;
+min-width: 0;
 }
-
 .nn-historia .nn-faixa-seta {
-  display: none;
+display: none;
 }
-
 @media (min-width: 901px) {
-  .nn-js .nn-historia .nn-faixa {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    align-items: center;
-    gap: 12px;
-  }
-
-  /* o título da seção alinha com a borda esquerda do primeiro cartão: botão 44 + vão 12 + recuo da lista 40 */
-  .nn-js .nn-historia .nn-hist-linha > .nn-hist-secao {
-    padding-left: 96px;
-  }
-
-  .nn-js .nn-historia .nn-faixa-seta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0 0 3px;
-    border: 1px solid var(--nn-linha);
-    border-radius: 50%;
-    background: var(--nn-hist-selo);
-    color: var(--nn-tinta);
-    font: 400 30px/1 var(--nn-serifada);
-    cursor: pointer;
-  }
-
-  .nn-js .nn-historia .nn-faixa-seta:hover {
-    border-color: var(--nn-laranja);
-  }
-
-  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"] {
-    opacity: 0.45;
-    cursor: default;
-  }
-
-  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"]:hover {
-    border-color: var(--nn-linha);
-  }
-
-  /* a faixa: um cartão por coluna, presos pelo snap; o fio é o fundo (local: corre com o conteúdo, de ponta a ponta) */
-  .nn-js .nn-historia .nn-linha-tempo {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(260px, 300px);
-    align-items: start;
-    gap: 28px;
-    padding: 44px 40px 18px; /* 40 px de cada lado: o cartão em repouso fica fora do esmaecido das pontas */
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity; /* mandatory puxava a faixa de volta no meio do deslize do trackpad */
-    scroll-padding-inline: 40px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--nn-sepia) transparent;
-    background: linear-gradient(var(--nn-laranja), var(--nn-laranja)) 0 19px / 100% 3px no-repeat local;
-    cursor: grab;
-    /* as pontas esmaecem sobre o fundo da página; os botões ‹ › são irmãos da lista e ficam fora da máscara */
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-    mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-  }
-
-  .nn-js .nn-historia .nn-linha-tempo::before {
-    content: none;
-  }
-
-  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando {
-    scroll-snap-type: none;
-    cursor: grabbing;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando .nn-epoca-abrir {
-    cursor: grabbing;
-  }
-
-  .nn-js .nn-historia .nn-epoca {
-    scroll-snap-align: start;
-    gap: 12px;
-  }
-
-  /* o anel da época fica sobre o fio, acima do cartão */
-  .nn-js .nn-historia .nn-epoca::before {
-    left: 14px;
-    top: -35px;
-  }
-
-  .nn-js .nn-historia .nn-epoca-abrir {
-    max-width: none;
-  }
-
-  /* os marcos, embaixo do cartão: o ponto laranja maior, o carimbo do ano e o título */
-  .nn-js .nn-historia .nn-marcos-linha {
-    padding-left: 30px;
-  }
-
-  .nn-js .nn-historia .nn-marcos-linha li::before {
-    left: -28px;
-    top: 9px; /* na altura do carimbo do ano */
-  }
-
-  .nn-js .nn-historia a.nn-marco {
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    padding-block: 6px;
-    font-size: 15px;
-    line-height: 1.3;
-  }
+.nn-js .nn-historia .nn-faixa {
+display: grid;
+grid-template-columns: 44px minmax(0, 1fr) 44px;
+align-items: center;
+gap: 12px;
 }
-
-/* o modal das épocas: coluna de leitura, Fechar preso no topo e o marco de quem chegou por ele em destaque */
-
+.nn-js .nn-historia .nn-hist-linha {
+width: 100vw;
+margin-left: calc(50% - 50vw);
+padding-inline: clamp(24px, 4vw, 72px);
+}
+.nn-js .nn-historia .nn-hist-linha > .nn-hist-secao {
+padding-left: max(0px, calc(var(--nn-borda-cheia) - clamp(24px, 4vw, 72px)));
+}
+.nn-js .nn-historia .nn-faixa-seta {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 44px;
+height: 44px;
+padding: 0 0 3px;
+border: 1px solid var(--nn-linha);
+border-radius: 50%;
+background: var(--nn-hist-selo);
+color: var(--nn-tinta);
+font: 400 30px/1 var(--nn-serifada);
+cursor: pointer;
+}
+.nn-js .nn-historia .nn-faixa-seta:hover {
+border-color: var(--nn-laranja);
+}
+.nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"] {
+opacity: 0.45;
+cursor: default;
+}
+.nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"]:hover {
+border-color: var(--nn-linha);
+}
+.nn-js .nn-historia .nn-linha-tempo {
+grid-auto-flow: column;
+grid-auto-columns: minmax(260px, 300px);
+align-items: start;
+gap: 28px;
+padding: 44px 40px 18px;
+overflow-x: auto;
+overscroll-behavior-x: contain;
+scroll-snap-type: x proximity;
+scroll-padding-inline: 40px;
+scrollbar-width: thin;
+scrollbar-color: var(--nn-sepia) transparent;
+background: linear-gradient(var(--nn-laranja), var(--nn-laranja)) 0 19px / 100% 3px no-repeat local;
+cursor: grab;
+-webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+.nn-js .nn-historia .nn-linha-tempo::before {
+content: none;
+}
+.nn-js .nn-historia .nn-linha-tempo.nn-arrastando {
+scroll-snap-type: none;
+cursor: grabbing;
+-webkit-user-select: none;
+user-select: none;
+}
+.nn-js .nn-historia .nn-linha-tempo.nn-arrastando .nn-epoca-abrir {
+cursor: grabbing;
+}
+.nn-js .nn-historia .nn-epoca {
+scroll-snap-align: start;
+gap: 12px;
+}
+.nn-js .nn-historia .nn-epoca::before {
+left: 14px;
+top: -35px;
+}
+.nn-js .nn-historia .nn-epoca-abrir {
+max-width: none;
+}
+.nn-js .nn-historia .nn-marcos-linha {
+padding-left: 30px;
+}
+.nn-js .nn-historia .nn-marcos-linha li::before {
+left: -28px;
+top: 9px;
+}
+.nn-js .nn-historia a.nn-marco {
+align-items: flex-start;
+flex-direction: column;
+justify-content: center;
+gap: 4px;
+padding-block: 6px;
+font-size: 15px;
+line-height: 1.3;
+}
+}
 .nn-historia .nn-modal-historia {
-  width: min(880px, calc(100vw - 32px));
-  border-color: var(--nn-hist-borda);
-  background-color: var(--nn-papel-antigo);
-  background-image: var(--nn-hist-papel);
+width: min(880px, calc(100vw - 32px));
+border-color: var(--nn-hist-borda);
+background-color: var(--nn-papel-antigo);
+background-image: var(--nn-hist-papel);
 }
-
 .nn-historia .nn-modal-historia .nn-modal-topo {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+position: sticky;
+top: 0;
+z-index: 1;
 }
-
 .nn-historia .nn-modal-historia .nn-modal-fechar {
-  background: var(--nn-hist-selo);
+background: var(--nn-hist-selo);
 }
-
 .nn-historia .nn-modal-historia .nn-epoca-conteudo {
-  padding-top: 0;
+padding-top: 0;
 }
-
 .nn-historia .nn-modal-historia .nn-epoca-titulo:focus {
-  outline: none; /* o foco vai ao título só para o leitor de tela anunciar a nova época */
+outline: none;
 }
-
 .nn-historia .nn-epoca-marcos .nn-marco-alvo {
-  margin-inline: -12px;
-  padding: 10px 12px;
-  border-left: 3px solid var(--nn-laranja);
-  border-radius: 0 12px 12px 0;
-  background: var(--nn-hist-selo);
+margin-inline: -12px;
+padding: 10px 12px;
+border-left: 3px solid var(--nn-laranja);
+border-radius: 0 12px 12px 0;
+background: var(--nn-hist-selo);
 }
-
 @media (max-width: 560px), (orientation: landscape) and (max-height: 520px) {
-  .nn-historia .nn-modal-historia {
-    width: 100vw;
-  }
+.nn-historia .nn-modal-historia {
+width: 100vw;
 }
-
-/* --- movimento: só para quem não pediu menos movimento --- */
-
+}
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  .nn-topo {
-    view-transition-name: nn-topo;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.28s;
-  }
-
-  .nn a,
-  .nn-botao,
-  .nn select,
-  .nn-cartao-link {
-    transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
-  }
-
-  .nn-hero-titulo span {
-    animation: nn-subir 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-
-  .nn-hero-titulo span:nth-child(2) {
-    animation-delay: 0.08s;
-  }
-
-  .nn-hero-titulo span:nth-child(3) {
-    animation-delay: 0.16s;
-  }
-
-  .nn-modal[open] {
-    animation: nn-modal-entra 0.22s ease-out;
-  }
-
-  .nn-modal[open]::backdrop {
-    animation: nn-fundo-entra 0.22s ease-out;
-  }
-
-  .nn-js .nn-historia .nn-epoca-abrir {
-    transition: border-color 0.18s ease, transform 0.18s ease;
-  }
-
-  .nn-js .nn-historia .nn-epoca-abrir:hover {
-    transform: translateY(-2px);
-  }
-
-  /* a imagem da época sai do sépia para a cor quando o modal abre */
-  .nn-historia .nn-modal-historia[open] .nn-epoca-imagem {
-    animation: nn-revela 0.9s ease-out both;
-  }
-
-  .nn-entra {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .nn-entra.nn-visivel {
-    opacity: 1;
-    transform: none;
-  }
-
-  .nn-desenha path {
-    stroke-dasharray: 1 1;
-    stroke-dashoffset: 1;
-  }
-
-  .nn-desenha circle {
-    opacity: 0;
-  }
-
-  .nn-desenha.nn-visivel path {
-    animation: nn-tracar 1.2s ease-out 0.15s forwards;
-  }
-
-  .nn-desenha.nn-visivel circle {
-    animation: nn-surgir 0.4s ease-out 1.1s forwards;
-  }
-
-  @keyframes nn-subir {
-    from {
-      opacity: 0;
-      transform: translateY(0.3em);
-    }
-  }
-
-  @keyframes nn-modal-entra {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.985);
-    }
-  }
-
-  @keyframes nn-fundo-entra {
-    from {
-      opacity: 0;
-    }
-  }
-
-  @keyframes nn-revela {
-    from {
-      filter: sepia(0.85) saturate(0.8) contrast(0.95);
-    }
-
-    to {
-      filter: none;
-    }
-  }
-
-  @keyframes nn-tracar {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes nn-surgir {
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* impressão: nada fica escondido à espera da rolagem */
-  @media print {
-    .nn-entra,
-    .nn-desenha circle {
-      opacity: 1;
-      transform: none;
-      animation: none;
-    }
-
-    .nn-desenha path {
-      stroke-dasharray: none;
-      animation: none;
-    }
-  }
+@view-transition {
+navigation: auto;
+}
+html {
+scroll-behavior: smooth;
+}
+.nn-topo {
+view-transition-name: nn-topo;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+animation-duration: 0.28s;
+}
+.nn a,
+.nn-botao,
+.nn select,
+.nn-cartao-link {
+transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+.nn-hero-titulo span {
+animation: nn-subir 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.nn-hero-titulo span:nth-child(2) {
+animation-delay: 0.08s;
+}
+.nn-hero-titulo span:nth-child(3) {
+animation-delay: 0.16s;
+}
+.nn-modal[open] {
+animation: nn-modal-entra 0.22s ease-out;
+}
+.nn-modal[open]::backdrop {
+animation: nn-fundo-entra 0.22s ease-out;
+}
+.nn-js .nn-historia .nn-epoca-abrir {
+transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.nn-js .nn-historia .nn-epoca-abrir:hover {
+transform: translateY(-2px);
+}
+.nn-historia .nn-modal-historia[open] .nn-epoca-imagem {
+animation: nn-revela 0.9s ease-out both;
+}
+.nn-entra {
+opacity: 0;
+transform: translateY(18px);
+transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.nn-entra.nn-visivel {
+opacity: 1;
+transform: none;
+}
+.nn-desenha path {
+stroke-dasharray: 1 1;
+stroke-dashoffset: 1;
+}
+.nn-desenha circle {
+opacity: 0;
+}
+.nn-desenha.nn-visivel path {
+animation: nn-tracar 1.2s ease-out 0.15s forwards;
+}
+.nn-desenha.nn-visivel circle {
+animation: nn-surgir 0.4s ease-out 1.1s forwards;
+}
+.nn .nn-topo .nn-menu-grupo > summary {
+transition: color 0.2s ease, background-color 0.2s ease;
+}
+.nn-menu-seta {
+transition: transform 0.3s ease;
+}
+.nn-menu-painel,
+.nn-gaveta {
+transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@starting-style {
+.nn-menu-grupo[open] .nn-menu-painel,
+.nn-menu-movel[open] .nn-gaveta {
+opacity: 0;
+transform: translateY(-8px);
+}
+}
+.nn .nn-menu-cartao,
+.nn-menu-cartao::after {
+transition: border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+}
+.nn .nn-topo-botao {
+transition: background-color 0.2s ease;
+}
+.nn-topo-botao-seta {
+display: inline-block;
+transition: transform 0.2s ease;
+}
+.nn-menu-hamburguer,
+.nn-menu-hamburguer::before,
+.nn-menu-hamburguer::after {
+transition: transform 0.25s ease, background-color 0.25s ease;
+}
+.nn-indice {
+transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+.nn-voltar {
+transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1), box-shadow 0.25s ease, visibility 0.3s;
+}
+.nn-voltar:active {
+transform: scale(0.94);
+}
+.nn-voltar-progresso {
+transition: stroke-dashoffset 0.12s linear;
+}
+.nn-voltar-seta {
+transition: transform 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.nn-voltar-visivel .nn-voltar-seta {
+animation: nn-pulinho 2.4s ease-in-out 1s 2;
+}
+@keyframes nn-pulinho {
+0%,
+100% {
+transform: none;
+}
+50% {
+transform: translateY(-4px);
+}
+}
+@keyframes nn-subir {
+from {
+opacity: 0;
+transform: translateY(0.3em);
+}
+}
+@keyframes nn-modal-entra {
+from {
+opacity: 0;
+transform: translateY(12px) scale(0.985);
+}
+}
+@keyframes nn-fundo-entra {
+from {
+opacity: 0;
+}
+}
+@keyframes nn-revela {
+from {
+filter: sepia(0.85) saturate(0.8) contrast(0.95);
+}
+to {
+filter: none;
+}
+}
+@keyframes nn-tracar {
+to {
+stroke-dashoffset: 0;
+}
+}
+@keyframes nn-surgir {
+to {
+opacity: 1;
+}
+}
+@media print {
+.nn-entra,
+.nn-desenha circle {
+opacity: 1;
+transform: none;
+animation: none;
+}
+.nn-desenha path {
+stroke-dasharray: none;
+animation: none;
+}
+}
 }
