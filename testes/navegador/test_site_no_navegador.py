@@ -231,7 +231,8 @@ _LIMITE_DO_CONTRASTE = 4.5
 _LARGURAS_DA_ABERTURA = [CELULAR, 560, 561, 768, 900, 901, DESKTOP]  # os dois lados dos pontos de quebra (560 e 900 px)
 # area estourada da foto (o sol): a camada de 15% leva o branco puro a rgb(218, 218, 218), luminancia 0,70, entao nenhum
 # pixel da foto passa de 0,9 na tela; 0,55 na tela equivale a ~0,8 na foto. Com o sol no quadro (Rodada 3) eram 0,5% a
-# 1,3% dos pixels da foto acima disso; sem ele, ~0,01%.
+# 1,3% dos pixels da foto acima disso; sem ele, ~0,01%. Com a composicao da Rodada 5 (sol no canto direito, fora do
+# recorte), 0,02% a 0,05%: o que passa de 0,55 sao as paredes brancas do forte e a espuma.
 _LUMINANCIA_ESTOURADA = 0.55
 _LIMITE_DA_AREA_ESTOURADA = 0.001  # fracao dos pixels da foto
 
@@ -258,7 +259,7 @@ def test_abertura_com_foto_texto_fora_da_foto_e_com_contraste_nos_pixels_reais(a
         carregada = pagina.evaluate(
             "async (u) => { const i = new Image(); i.src = u; await i.decode(); return [i.naturalWidth, i.naturalHeight]; }", url[1]
         )
-        assert carregada == [1024, 768]
+        assert carregada == [1500, 844]  # a composicao da Rodada 5 (praia, mata e sertao)
         pagina.evaluate("() => document.querySelectorAll('#topo > *').forEach((e) => { e.style.visibility = 'hidden'; })")
         caixa = medidas["hero"]
         recorte = {"x": 0, "y": caixa["y"], "width": largura, "height": caixa["h"]}

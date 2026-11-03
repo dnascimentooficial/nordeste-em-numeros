@@ -21,8 +21,8 @@ para a licença e indique se fez alterações.
   texto ao lado de cada fonte.
 - axe-core (`testes/navegador/axe.min.js`), usado só nos testes: Mozilla Public License 2.0, texto ao
   lado do arquivo.
-- Foto da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`): © Júlio Diógenes, todos os
-  direitos reservados; não está coberta pela CC BY 4.0.
+- Imagem da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`, composição com praia, mata e
+  sertão do Nordeste): © Júlio Diógenes, todos os direitos reservados; não está coberta pela CC BY 4.0.
 - Contorno do Nordeste usado nas imagens: derivado da malha do IBGE via tbrugz/geodata-br (CC0).
 - Imagens da página "Como chegamos até aqui" (`src/nordeste/site/estaticos/historia/`): não estão cobertas pela
   CC BY 4.0. Cada uma segue a licença do original, com autor, data e página em `metadados/site/historia.yaml` e na

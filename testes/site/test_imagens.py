@@ -145,6 +145,66 @@ def test_foto_aparece_na_abertura_e_o_credito_no_rodape_e_em_sobre(tmp_path, bas
         assert [Arvore.texto(e) for e in links] == [FOTO["credito"]] * (2 if pagina == "sobre/index.html" else 1), pagina
 
 
+def _creditos(saida: Path) -> tuple[str, str]:
+    """O texto do credito no rodape do Inicio e em Sobre os dados."""
+    rodape = Arvore((saida / "index.html").read_text(encoding="utf-8")).achar("span", classe="nn-credito")
+    sobre = Arvore((saida / "sobre" / "index.html").read_text(encoding="utf-8")).achar("p", classe="nn-credito-sobre")
+    assert len(rodape) == 1 and len(sobre) == 1
+    return Arvore.texto(rodape[0]), Arvore.texto(sobre[0])
+
+
+def test_sem_rotulo_o_credito_continua_foto(tmp_path, base_com_foto):
+    definir_foto(base_com_foto, FOTO)
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=base_com_foto), saida, imagens=False)
+    assert _creditos(saida) == (f"Foto: {FOTO['credito']}", f"Foto da abertura: {FOTO['credito']}.")
+
+
+def test_rotulo_e_descricao_da_imagem_no_rodape_e_em_sobre(tmp_path, base_com_foto):
+    definir_foto(base_com_foto, {**FOTO, "rotulo": "Imagem", "descricao": "composição de duas fotos"})
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=base_com_foto), saida, imagens=False)
+    assert _creditos(saida) == (
+        f"Imagem: {FOTO['credito']} (composição de duas fotos)",
+        f"Imagem da abertura: {FOTO['credito']} (composição de duas fotos).",
+    )
+    # so o nome do autor e link; o rotulo e a descricao ficam fora dele
+    for pagina, vezes in (("index.html", 1), ("sobre/index.html", 2)):
+        links = [e for e in Arvore((saida / pagina).read_text(encoding="utf-8")).achar("a") if e["attrs"].get("href") == FOTO["url"]]
+        assert [Arvore.texto(e) for e in links] == [FOTO["credito"]] * vezes, pagina
+
+
+def test_textos_do_repositorio_creditam_a_composicao(tmp_path, base_com_foto):
+    """A imagem da abertura e uma composicao (praia, mata e sertao), nao a foto de um lugar so (Rodada 5)."""
+    saida = tmp_path / "saida"
+    gerar_site(Caminhos(raiz=base_com_foto), saida, imagens=False)  # o textos.yaml do repositorio, sem mexer
+    descricao = "composição com praia, mata e sertão do Nordeste"
+    assert _creditos(saida) == (f"Imagem: Júlio Diógenes ({descricao})", f"Imagem da abertura: Júlio Diógenes ({descricao}).")
+
+
+def test_licenca_ressalva_a_imagem_da_abertura_com_o_credito_dos_textos():
+    textos = carregar_conteudo(RAIZ / "metadados" / "site").textos
+    licenca = " ".join((RAIZ / "LICENSE.md").read_text(encoding="utf-8").split())
+    excecao = re.search(r"- Imagem da abertura \(`src/nordeste/site/estaticos/foto-abertura\.webp`[^)]*\): © ([^,]+),", licenca)
+    assert excecao and excecao[1] == textos["foto"]["credito"], excecao
+    assert "não está coberta pela CC BY 4.0" in licenca and "Foto da abertura" not in licenca
+    assert "`rotulo`" in (RAIZ / "README.md").read_text(encoding="utf-8")  # o README documenta a chave nova
+
+
+@pytest.mark.parametrize(
+    ("foto", "erro"),
+    [
+        ({**FOTO, "rotulo": ""}, "foto.rotulo"),
+        ({**FOTO, "descricao": 3}, "foto.descricao"),
+        ({**FOTO, "legenda": "x"}, "chave desconhecida: legenda"),
+    ],
+)
+def test_rotulo_ou_descricao_invalidos_sao_erro_de_conteudo(tmp_path, base_com_foto, foto, erro):
+    definir_foto(base_com_foto, foto)
+    with pytest.raises(ErroConteudo, match=erro):
+        gerar_site(Caminhos(raiz=base_com_foto), tmp_path / "saida", imagens=False)
+
+
 @pytest.mark.parametrize("faltando", ["credito", "url"])
 def test_foto_incompleta_e_erro_de_conteudo(tmp_path, base_com_foto, faltando):
     definir_foto(base_com_foto, {k: v for k, v in FOTO.items() if k != faltando})

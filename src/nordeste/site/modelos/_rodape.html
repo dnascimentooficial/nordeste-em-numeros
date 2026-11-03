@@ -4,7 +4,7 @@
   <span>sha256 da base: <code class="nn-sha-base">{{ sha256_base }}</code></span>
   <span>Compilação sob licença <a href="{{ licenca }}">CC BY 4.0</a>.</span>
 {% if foto %}
-  <span class="nn-credito">Foto: {% if foto.url %}<a href="{{ foto.url }}">{{ foto.credito }}</a>{% else %}{{ foto.credito }}{% endif %}</span>
+  <span class="nn-credito">{{ foto.rotulo }}: {% if foto.url %}<a href="{{ foto.url }}">{{ foto.credito }}</a>{% else %}{{ foto.credito }}{% endif %}{% if foto.descricao %} ({{ foto.descricao }}){% endif %}</span>
 {% endif %}
   <a href="{{ autor_url }}">dnascimento.com.br</a>
 </footer>
