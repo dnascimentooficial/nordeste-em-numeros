@@ -536,7 +536,7 @@ def test_historia_arrasto_rola_e_nao_abre(abrir):
     with abrir(HISTORIA, reduced_motion="reduce") as pagina:
         faixa = pagina.locator("ol.nn-linha-tempo")
         medidas = faixa.evaluate("f => ({ x: getComputedStyle(f).overflowX, snap: getComputedStyle(f).scrollSnapType, rola: f.scrollWidth > f.clientWidth })")
-        assert medidas == {"x": "auto", "snap": "x mandatory", "rola": True}, medidas
+        assert medidas == {"x": "auto", "snap": "x", "rola": True}, medidas  # proximity (o padrao) sai como "x"
         alvo = _cartao(pagina, pagina.evaluate(_EPOCAS_E_MARCOS)[1]["id"])
         alvo.scroll_into_view_if_needed()
         caixa = alvo.bounding_box()
