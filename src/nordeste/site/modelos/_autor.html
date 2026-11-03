@@ -6,7 +6,7 @@
 {% if autor.marca %}
 <picture class="nn-autor-logo">
   <source media="(prefers-color-scheme: dark)" srcset="{{ autor.marca.clara }}">
-  <img src="{{ autor.marca.escura }}" alt="{{ autor.nome }}" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}">
+  <img src="{{ autor.marca.escura }}" alt="{{ autor.nome }}" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}" loading="lazy" decoding="async">
 </picture>
 {% endif %}
 <section class="nn-autor-secao">

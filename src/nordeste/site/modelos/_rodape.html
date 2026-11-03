@@ -1,23 +1,21 @@
 <footer class="nn-rodape">
-  <span><strong>Júlio Diógenes · Nordeste em Números</strong></span>
   <span>Dados oficiais publicados em {{ data_base }}. Fontes e fórmulas em <a href="/sobre/">Sobre os dados</a>.</span>
   <span>sha256 da base: <code class="nn-sha-base">{{ sha256_base }}</code></span>
   <span>Compilação sob licença <a href="{{ licenca }}">CC BY 4.0</a>.</span>
 {% if foto %}
   <span class="nn-credito">Foto: {% if foto.url %}<a href="{{ foto.url }}">{{ foto.credito }}</a>{% else %}{{ foto.credito }}{% endif %}</span>
 {% endif %}
-  <a href="{{ autor_url }}">dnascimento.com.br</a>
   <div class="nn-autor-bloco">
     <a class="nn-autor-abrir" href="/sobre/#autor" aria-haspopup="dialog">
 {% if autor.foto %}
-      <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="{{ autor.nome }}" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}"></span>
+      <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="{{ autor.nome }}" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}" loading="lazy" decoding="async"></span>
 {% else %}
       <span class="nn-autor-circulo" aria-hidden="true">{{ autor.iniciais }}</span>
 {% endif %}
       <span class="nn-autor-texto">Desenvolvido por <strong class="nn-autor-nome">{{ autor.nome }}</strong></span>
     </a>
 {% if autor.marca %}
-    <img class="nn-autor-marca" src="{{ autor.marca.clara }}" alt="" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}">
+    <img class="nn-autor-marca" src="{{ autor.marca.clara }}" alt="" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}" loading="lazy" decoding="async">
 {% endif %}
   </div>
 </footer>

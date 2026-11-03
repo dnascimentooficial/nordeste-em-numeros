@@ -76,14 +76,14 @@ def _botao(pagina, indice=0):
 def test_abre_pelo_botao_com_o_grafico_grande_e_o_titulo(navegador, endereco, primeira_frase):
     contexto, pagina = _abrir(navegador, endereco)
     try:
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         botao = _botao(pagina)
         assert botao.is_visible() and botao.get_attribute("hidden") is None  # o JS tirou o hidden
         botao.click()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
         assert pagina.locator("dialog svg[viewBox='0 0 1100 520']").count() == 1
         assert pagina.locator("dialog h2.nn-modal-titulo").inner_text().strip() == primeira_frase
-        rotulado = pagina.locator("dialog").get_attribute("aria-labelledby")
+        rotulado = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").get_attribute("aria-labelledby")
         assert pagina.locator(f"#{rotulado}").inner_text().strip() == primeira_frase
         for classe in (".nn-legenda", ".nn-fonte", ".nn-atualizacao"):
             assert pagina.locator(f"dialog {classe}").first.is_visible(), classe
@@ -100,10 +100,10 @@ def test_esc_fecha_e_o_foco_volta_ao_botao_que_abriu(navegador, endereco):
         botao = _botao(pagina, 2)
         botao.focus()
         botao.press("Enter")  # pelo teclado
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
         assert pagina.evaluate("document.activeElement.closest('dialog') !== null")  # o foco entrou no modal
         pagina.keyboard.press("Escape")
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[2] === document.activeElement")
         assert pagina.locator("dialog .nn-ampliado-conteudo").count() == 0  # o clone saiu
     finally:
@@ -114,17 +114,17 @@ def test_fecha_pelo_x_e_por_clique_fora_e_reabre_em_outro_grafico(navegador, end
     contexto, pagina = _abrir(navegador, endereco)
     try:
         _botao(pagina, 1).click()
-        pagina.locator("dialog button.nn-modal-fechar").click()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        pagina.locator("dialog.nn-modal:not(.nn-modal-autor) button.nn-modal-fechar").click()
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[1] === document.activeElement")
         _botao(pagina, 0).click()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
         pagina.mouse.click(4, 4)  # fora da caixa: no fundo escurecido
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         _botao(pagina, 3).click()
         assert pagina.locator("dialog svg").count() == 1  # nunca dois graficos no modal
         pagina.locator("dialog .nn-modal-corpo").click(position={"x": 5, "y": 5})  # dentro da caixa: nao fecha
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
     finally:
         contexto.close()
 
@@ -137,7 +137,7 @@ def test_o_proprio_grafico_tambem_abre_o_modal_com_o_mouse(navegador, endereco):
         assert pagina.locator("#resumo .nn-graf").first.evaluate("e => getComputedStyle(e).cursor") == "zoom-in"
         caixa = grafico.bounding_box()
         pagina.mouse.click(caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2)
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
         assert pagina.locator("dialog svg[viewBox='0 0 1100 520']").count() == 1
     finally:
         contexto.close()
@@ -163,19 +163,19 @@ def test_no_celular_o_modal_ocupa_a_tela_e_nao_estoura(navegador, endereco):
         grafico.scroll_into_view_if_needed()
         caixa = grafico.bounding_box()
         pagina.touchscreen.tap(caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2)
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         botao = _botao(pagina)
         botao.scroll_into_view_if_needed()
         botao.tap()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
-        caixa_modal = pagina.locator("dialog.nn-modal").bounding_box()
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        caixa_modal = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").bounding_box()
         assert (caixa_modal["x"], caixa_modal["y"], caixa_modal["width"], caixa_modal["height"]) == (0, 0, 390, 844)
         assert pagina.locator("dialog p.nn-modal-gire").is_visible()  # retrato: pede para girar
         assert pagina.evaluate("document.documentElement.scrollWidth") <= 390
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.scrollWidth <= d.clientWidth")
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.scrollWidth <= d.clientWidth")
         assert pagina.locator("dialog svg").bounding_box()["width"] <= 390
-        pagina.locator("dialog button.nn-modal-fechar").tap()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is False
+        pagina.locator("dialog.nn-modal:not(.nn-modal-autor) button.nn-modal-fechar").tap()
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
     finally:
         contexto.close()
 
@@ -186,9 +186,9 @@ def test_em_paisagem_no_celular_o_aviso_de_girar_some(navegador, endereco):
         botao = _botao(pagina)
         botao.scroll_into_view_if_needed()
         botao.tap()
-        assert pagina.locator("dialog.nn-modal").evaluate("d => d.open") is True
+        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
         assert not pagina.locator("dialog p.nn-modal-gire").is_visible()
-        caixa_modal = pagina.locator("dialog.nn-modal").bounding_box()
+        caixa_modal = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").bounding_box()
         assert (caixa_modal["width"], caixa_modal["height"]) == (844, 390)  # tela cheia tambem em paisagem
         assert pagina.evaluate("document.documentElement.scrollWidth") <= 844
     finally:

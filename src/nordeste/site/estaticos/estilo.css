@@ -254,14 +254,16 @@ body {
 }
 
 .nn .nn-autoria {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72); /* o "por" é pequeno e discreto; o nome é que se destaca */
+  font-size: 13px;
   white-space: nowrap;
 }
 
 .nn .nn-autoria strong {
   color: var(--nn-branco);
+  font-size: 18px;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .nn .nn-autoria a {
@@ -330,6 +332,10 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
+  }
+
+  .nn .nn-autoria strong {
+    font-size: 16px;
   }
 }
 

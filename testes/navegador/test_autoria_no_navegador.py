@@ -154,6 +154,15 @@ _CAIXAS_DO_CABECALHO = """() => {
 }"""
 
 
+def _fontes_da_autoria(pagina) -> dict:
+    """O "por" pequeno e discreto; o nome em destaque (18 px no desktop, 16 px no celular), em negrito, com o link."""
+    return pagina.evaluate("""() => {
+      const p = document.querySelector('.nn-autoria'), n = p.querySelector('strong');
+      return { por: parseFloat(getComputedStyle(p).fontSize), nome: parseFloat(getComputedStyle(n).fontSize),
+               peso: Number(getComputedStyle(n).fontWeight), href: n.closest('a').getAttribute('href') };
+    }""")
+
+
 @pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
 def test_cabecalho_no_desktop_titulo_a_esquerda_autor_a_direita_linha_e_menu_embaixo(abrir, rota):
     with abrir(rota, largura=DESKTOP, reduced_motion="reduce") as pagina:
@@ -167,6 +176,7 @@ def test_cabecalho_no_desktop_titulo_a_esquerda_autor_a_direita_linha_e_menu_emb
         assert m["linha"]["w"] > m["topo"]["w"] * 0.9  # a linha vai de ponta a ponta
         assert _estouro(pagina) == {}
         assert pagina.locator(".nn-menu a[aria-current='page']").count() == 1
+        assert _fontes_da_autoria(pagina) == {"por": 13, "nome": 18, "peso": 700, "href": "https://dnascimento.com.br"}
 
 
 @pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
@@ -177,6 +187,7 @@ def test_cabecalho_no_celular_o_por_desce_o_menu_rola_de_lado_e_nada_estoura(abr
         assert m["autoria"]["x"] < m["marca"]["x"] + 8  # alinhado a esquerda, como o titulo
         assert m["linha"]["y"] >= m["autoria"]["b"] and m["menu"]["y"] >= m["linha"]["b"]
         assert m["topo"]["r"] <= m["largura"] and m["rolagem"] <= m["largura"]
+        assert _fontes_da_autoria(pagina) == {"por": 13, "nome": 16, "peso": 700, "href": "https://dnascimento.com.br"}
         menu = pagina.locator(".nn-menu").evaluate("m => ({ rola: m.scrollWidth > m.clientWidth, overflowX: getComputedStyle(m).overflowX })")
         assert menu == {"rola": True, "overflowX": "auto"}, menu  # sete abas nao cabem em 390 px: o menu rola, a pagina nao
         assert _estouro(pagina) == {}

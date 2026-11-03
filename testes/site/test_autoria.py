@@ -26,14 +26,16 @@ MOTIVACAO = (
     "dividem a conta. Cada número tem fonte e cálculo à vista, para quem quiser rebater ou entender."
 )
 QUEM_SOU = (
-    "Há mais de 17 anos, ajudo profissionais, empresas e governos a transformar problemas complexos em decisões "
-    "executáveis. Minha atuação combina design, engenharia, inovação, dados e gestão de projetos. Trabalho com "
-    "estratégia, inovação e inteligência artificial."
+    "Diretor executivo do Laboratório Urbano Vivo de Vitória (LUV). Há mais de 17 anos, ajudo profissionais, empresas "
+    "e governos a transformar problemas complexos em decisões executáveis, com estratégia, inovação, inteligência "
+    "artificial e políticas públicas."
 )
 MAIS = "Mais sobre o meu trabalho em dnascimento.com.br"
 FORMACAO = [
-    "Design", "Engenharia da Computação", "Análise de Dados", "Gestão de Projetos e Inovação",
-    "Direito da Infraestrutura, Regulação e Governança",
+    "Especialização em Direito da Infraestrutura, Governança e Regulação, PUC Minas (em curso, 2026–2027)",
+    "Bacharelado em Engenharia da Computação, Uniamérica (2022–2026)",
+    "Especialização em Análise de Dados, EBAC – Escola Britânica de Artes Criativas e Tecnologia (2022)",
+    "Design, com ênfase em Gestão de Marca, Universidade Potiguar (2009–2012)",
 ]
 FORMACAO_VAZIA = "Formação e trajetória completas em dnascimento.com.br"
 ESTATICOS = RAIZ / "src" / "nordeste" / "site" / "estaticos"
@@ -122,6 +124,10 @@ def test_rodape_mantem_o_que_ja_tinha_e_ganha_o_bloco_de_autoria(gerado, pagina)
     texto = Arvore.texto(rodape.elementos[0])
     assert re.search(r"publicados em \d{1,2}º? de \w+ de \d{4}", texto) and "sha256 da base:" in texto
     assert "CC BY 4.0" in texto and "Foto:" in texto
+    # as duas linhas antigas, que o bloco de autoria passou a cobrir, sairam do rodape
+    assert "Nordeste em Números" not in texto
+    assert not [a for a in rodape.achar("a") if Arvore.texto(a) == "dnascimento.com.br"]
+    assert not rodape.achar("strong") or [Arvore.texto(s) for s in rodape.achar("strong")] == ["Júlio Diógenes"]
     gatilho = rodape.achar("a", classe="nn-autor-abrir")
     assert len(gatilho) == 1
     assert gatilho[0]["attrs"]["href"] == "/sobre/#autor"  # sem JavaScript, o clique leva a secao de Sobre

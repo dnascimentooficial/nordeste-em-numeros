@@ -248,7 +248,8 @@ def test_rodape_tem_data_sha256_e_links(gerado, dados):
     for pagina in PAGINAS:
         arvore = Arvore(_ler(saida, pagina))
         rodape = Arvore.texto(arvore.achar("footer")[0])
-        assert "Júlio Diógenes · Nordeste em Números" in rodape
+        assert "Júlio Diógenes · Nordeste em Números" not in rodape  # a autoria do rodape e o bloco "Desenvolvido por"
+        assert "Desenvolvido por Júlio Diógenes" in rodape
         assert dados.sha256_base in rodape
         assert re.search(r"publicados em \d{1,2}º? de \w+ de \d{4}", rodape)
         assert "https://dnascimento.com.br" in [e["attrs"].get("href") for e in arvore.achar("a")]
