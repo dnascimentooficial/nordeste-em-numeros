@@ -1,4 +1,4 @@
-# Os 17 cards para compartilhar: uma frase feita, o numero de antes e de depois, a frase de contexto,
+# Os 18 cards para compartilhar: uma frase feita, o numero de antes e de depois, a frase de contexto,
 # o fecho e a condicao que o sustenta. `de` e `para` sao marcadores; `grafico` e o id de um grafico de
 # perguntas.yaml ou, onde nenhuma pergunta o desenha, o grafico inteiro. `fonte` e so o nome da fonte:
 # o card acrescenta a data da base e o endereco. A condicao cobre o que o fecho afirma e a base permite
@@ -242,3 +242,30 @@
   # "Subiu" e "a distância encurtou" (mesma janela de anos). Não verifica "o tropeço na pandemia" (ponto a ponto).
   condicao: "idhm_ne.ultimo > idhm_ne.primeiro e idhm_ne.dif > idhm_br.dif"
   fonte: "Atlas Brasil (PNUD, Ipea, FJP)"
+
+- id: internet
+  rotulo: "Internet em casa"
+  frase_feita: "“Nordestino não tem internet.”"
+  de: "{internet_ne.primeiro:0%}"
+  para: "{internet_ne.ultimo:0%}"
+  frase: "dos domicílios do Nordeste tinham acesso à internet, de {internet_ne.ano_primeiro} a {internet_ne.ano_ultimo}. No Brasil, hoje, {internet_br.ultimo:0%}."
+  grafico:
+    id: g_internet
+    titulo: "Domicílios com acesso à internet"
+    subtitulo: "% dos domicílios. Até 2013, só o acesso por computador; até 2007, só a área urbana. As linhas não se emendam."
+    descricao: "domicílios com acesso à internet, Nordeste e Brasil"
+    casas: 0
+    sufixo: "%"
+    min0: true
+    quebras:
+      - {ano: 2008, rotulo: "entra a área rural"}
+      - {ano: 2014, rotulo: "nova definição"}
+      - {ano: 2020, rotulo: "edição COVID-19"}
+    linhas:
+      - {rotulo: Nordeste, rotulo_curto: NE, destaque: true, tipo: serie, indicador: internet_domicilios, territorio: NE}
+      - {rotulo: Brasil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: internet_domicilios, territorio: BR}
+  fecho: "Tem, quase na mesma proporção que o Brasil."
+  # "Tem" (mais da metade dos domicílios da região) e "quase na mesma proporção" (ao menos 95% do percentual do Brasil).
+  # Os números são da série atual da pesquisa (sem a restrição ao computador); a de 2020 tem metodologia adaptada.
+  condicao: "internet_ne.ultimo > 50 e internet_ne.ultimo >= internet_br.ultimo * 0.95 e internet_ne.ultimo > internet_ne.primeiro"
+  fonte: "Cetic.br, TIC Domicílios"

@@ -29,3 +29,5 @@ informal_ne: {tipo: serie, indicador: informalidade, territorio: NE}
 informal_ref: {tipo: serie, indicador: informalidade, territorio: BR_FORA_NE}
 gini_ne: {tipo: serie, indicador: gini, territorio: NE, serie: pnadc}
 gini_br: {tipo: serie, indicador: gini, territorio: BR, serie: pnadc}
+internet_ne: {tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
+internet_br: {tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}

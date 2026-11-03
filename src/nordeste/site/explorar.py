@@ -102,6 +102,10 @@ INDICADORES_EXPLORAR = (
         "ibid", "ibid", "IBID, inovação (0 a 1)", "Índice Brasil de Inovação e Desenvolvimento",
         "0 a 1, maior é mais inovação", 3, sub="geral",
     ),
+    IndicadorExplorar(
+        "internet", "internet_domicilios", "Domicílios com internet (%)", "Domicílios com acesso à internet",
+        "% dos domicílios", 0, "%",
+    ),
     IndicadorExplorar("pop", "populacao", "População", "População", "pessoas", 0),
 )
 POR_CHAVE = {i.chave: i for i in INDICADORES_EXPLORAR}
@@ -137,7 +141,7 @@ def pontos_do_indicador(dados: DadosSite, ind: IndicadorExplorar) -> dict[str, l
 
 
 def dados_explorar(dados: DadosSite) -> dict[str, dict[str, list[list]]]:
-    """`{indicador: {territorio: [[ano, valor, serie], ...]}}` dos 19 indicadores do Explorar."""
+    """`{indicador: {territorio: [[ano, valor, serie], ...]}}` dos 20 indicadores do Explorar."""
     return {ind.chave: pontos_do_indicador(dados, ind) for ind in INDICADORES_EXPLORAR}
 
 

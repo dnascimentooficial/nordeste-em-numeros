@@ -21,7 +21,7 @@ SITE = "https://nordeste.dnascimento.com.br"
 AVISO = "Este indicador não tem dados para este território"
 CHAVES_DO_EXPLORAR = [
     "pib_pc", "pib_vol", "pib_part", "renda", "rend_trab", "desoc", "informal", "pobreza", "extrema", "gini", "idhm",
-    "ideb_ai", "ideb_af", "ideb_em", "aband", "matric", "superior", "ibid", "pop",
+    "ideb_ai", "ideb_af", "ideb_em", "aband", "matric", "superior", "ibid", "internet", "pop",
 ]
 CHAVES_DOS_ESTADOS = ["pib_pc", "renda", "pobreza", "desoc", "ideb_ai", "idhm", "aband", "ibid"]
 UFS = ["MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"]
@@ -56,10 +56,10 @@ def gerado(tmp_path_factory) -> tuple[Path, RelatorioSite]:
 # --- Explorar ---
 
 
-def test_json_do_explorar_tem_19_indicadores_e_separa_series(gerado, dados):
+def test_json_do_explorar_tem_20_indicadores_e_separa_series(gerado, dados):
     saida, _ = gerado
     completo = dados_explorar(dados)
-    assert list(completo) == CHAVES_DO_EXPLORAR and len(completo) == 19
+    assert list(completo) == CHAVES_DO_EXPLORAR and len(completo) == 20
     assert [i.chave for i in INDICADORES_EXPLORAR] == CHAVES_DO_EXPLORAR
     arquivos = sorted(p.name for p in (saida / "explorar" / "dados").iterdir())
     assert arquivos == sorted(f"{c}.json" for c in CHAVES_DO_EXPLORAR)
@@ -261,9 +261,9 @@ def test_estados_vista_sem_dados_mostra_aviso_e_nao_quebra(tmp_path):
 # --- Cards ---
 
 
-def test_17_paginas_de_card_com_og_proprio(gerado, conteudo):
+def test_18_paginas_de_card_com_og_proprio(gerado, conteudo):
     saida, relatorio = gerado
-    assert len(conteudo.cards) == 17 and relatorio.cards_suprimidos == []
+    assert len(conteudo.cards) == 18 and relatorio.cards_suprimidos == []
     titulos = set()
     for card in conteudo.cards:
         pagina = f"cards/{card['id']}/index.html"
@@ -281,7 +281,7 @@ def test_17_paginas_de_card_com_og_proprio(gerado, conteudo):
         baixar = [a for a in arvore.achar("a") if Arvore.texto(a) == "Baixar imagem (PNG)"]
         assert [a["attrs"]["href"] for a in baixar] == [f"/cards/{card['id']}.png"]
         assert not arvore.achar("script", type="application/ld+json")
-    assert len(titulos) == 17
+    assert len(titulos) == 18
 
 
 def test_card_mostra_numeros_frase_e_fonte_da_base(gerado, dados, conteudo):
@@ -358,7 +358,7 @@ def test_paginas_novas_sem_nan_style_ou_script_inline(gerado):
     novas = ["estados/index.html", "explorar/index.html", "cards/index.html"] + [
         p for p in relatorio.paginas if p.startswith("cards/") and p != "cards/index.html"
     ]
-    assert len(novas) == 3 + 17
+    assert len(novas) == 3 + 18
     for pagina in novas:
         html = _ler(saida, pagina)
         assert "{{" not in html and "{%" not in html, pagina

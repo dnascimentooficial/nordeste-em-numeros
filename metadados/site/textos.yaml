@@ -203,7 +203,7 @@ paginas:
 
 dataset:
   nome: "Nordeste em Números: base histórica de indicadores do Nordeste"
-  descricao: "Indicadores oficiais do Nordeste, dos estados nordestinos, do Brasil e do Brasil fora do Nordeste, de economia, educação, trabalho, renda, pobreza, desenvolvimento humano e inovação, a partir do IBGE, do INEP, do Ipea, do Atlas Brasil e do INPI. Compilação de Júlio Diógenes."
+  descricao: "Indicadores oficiais do Nordeste, dos estados nordestinos, do Brasil e do Brasil fora do Nordeste, de economia, educação, trabalho, renda, pobreza, desenvolvimento humano e inovação, a partir do IBGE, do INEP, do Ipea, do Atlas Brasil, do INPI e do Cetic.br. Compilação de Júlio Diógenes."
 
 fontes:
   titulo: "Todas as fontes de dados"
@@ -225,7 +225,7 @@ formulas:
         - "Taxa de desocupação: (desocupados do Brasil − do Nordeste) ÷ (força de trabalho do Brasil − do Nordeste), em porcentagem."
         - "Taxa de informalidade: (informais do Brasil − do Nordeste) ÷ (ocupados do Brasil − do Nordeste), em porcentagem."
         - "Renda domiciliar por pessoa: (massa de renda do Brasil − do Nordeste) ÷ (população da PNAD Contínua do Brasil − do Nordeste), multiplicado por mil."
-        - "Quando não existe contagem publicada para refazer a conta (pobreza, Gini, IDEB, IDHM, abandono escolar, rendimento do trabalho, volume do PIB), a comparação é com o Brasil inteiro."
+        - "Quando não existe contagem publicada para refazer a conta (pobreza, Gini, IDEB, IDHM, abandono escolar, rendimento do trabalho, volume do PIB, acesso à internet), a comparação é com o Brasil inteiro."
         - "IBID: a referência é a média nacional publicada pelo INPI, que pondera os estados pelo PIB per capita. Não calculo o Brasil fora do Nordeste."
     - titulo: "Comparação entre territórios"
       itens:
@@ -248,7 +248,7 @@ arquivos:
 
 dados:
   titulo: "Dados para baixar"
-  intro: "Estes são os arquivos que o site lê, do jeito que foram publicados. Pode baixar, conferir e usar, com crédito a mim e à fonte oficial de cada série. Os dados de origem são públicos: IBGE, INEP, Ipea, Atlas Brasil e INPI."
+  intro: "Estes são os arquivos que o site lê, do jeito que foram publicados. Pode baixar, conferir e usar, com crédito a mim e à fonte oficial de cada série. Os dados de origem são públicos: IBGE, INEP, Ipea, Atlas Brasil, INPI e Cetic.br."
   conferir: "Para conferir, calcule o sha256 do arquivo baixado e compare com o código ao lado. Se for diferente, o arquivo não é o publicado."
   arquivos:
     base_nordeste.csv: "Uma linha por indicador, território e ano."
