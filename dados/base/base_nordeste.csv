@@ -3987,6 +3987,126 @@ informalidade,,,,SE_UF,2022,52.6,observado,pnadc,informalidade.pnadc.2026-11-01.
 informalidade,,,,SE_UF,2023,51.9,observado,pnadc,informalidade.pnadc.2026-11-01.6f3f875a,
 informalidade,,,,SE_UF,2024,49.8,observado,pnadc,informalidade.pnadc.2026-11-01.6f3f875a,
 informalidade,,,,SE_UF,2025,48.2,observado,pnadc,informalidade.pnadc.2026-11-01.6f3f875a,
+internet_domicilios,,,,BR,2006,14.49,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,BR,2007,17.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,BR,2008,18.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,BR,2009,24.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,BR,2010,27.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,BR,2011,36.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,BR,2012,40.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,BR,2013,43.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,BR,2014,50.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2015,51.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2016,54.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2017,61.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2018,67.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2019,71.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2020,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,BR,2021,82.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2022,80.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2023,84.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2024,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,BR,2025,86.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2006,13.05,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,CO,2007,16.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,CO,2008,21.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,CO,2009,25.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,CO,2010,33.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,CO,2011,37.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,CO,2012,39.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,CO,2013,44.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,CO,2014,44.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2015,48.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2016,56.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2017,68.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2018,64.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2019,70.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2020,81.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,CO,2021,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2022,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2023,87.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2024,85.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,CO,2025,87.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2006,6.15,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,N,2007,5.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,N,2008,7.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,N,2009,10.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,N,2010,14.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,N,2011,21.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,N,2012,21.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,N,2013,26.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,N,2014,35.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2015,38.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2016,46.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2017,48.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2018,63.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2019,72.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2020,81.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,N,2021,79.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2022,76.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2023,79.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2024,81.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,N,2025,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2006,5.54,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,NE,2007,7.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,NE,2008,7.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,NE,2009,10.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,NE,2010,11.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,NE,2011,21.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,NE,2012,27.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,NE,2013,30.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,NE,2014,37.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2015,40.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2016,40.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2017,49.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2018,57.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2019,65.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2020,79.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,NE,2021,77.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2022,78.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2023,80.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2024,81.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,NE,2025,84.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2006,16.9,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,S,2007,21.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,S,2008,20.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,S,2009,29.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,S,2010,30.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,S,2011,41.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,S,2012,47.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,S,2013,51.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,S,2014,51.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2015,53.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2016,52.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2017,60.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2018,69.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2019,73.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2020,84.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,S,2021,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2022,81.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2023,89.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2024,90.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,S,2025,89.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2006,18.74,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,SE,2007,22.0,observado,urbano_computador,internet_domicilios.urbano_computador.2026-11-03.ab3f5858,Só área urbana: a TIC Domicílios vai à área rural a partir de 2008; Cetic.br: Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,SE,2008,25.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,SE,2009,33.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,SE,2010,36.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Considerado somente o acesso à Internet via computador de mesa (desktop) ou computador portátil (laptop e notebook).
+internet_domicilios,,,,SE,2011,45.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,SE,2012,48.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,SE,2013,51.0,observado,computador,internet_domicilios.computador.2026-11-03.e86bca03,Cetic.br: Excluindo-se o acesso via telefone celular no domicílio.
+internet_domicilios,,,,SE,2014,60.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2015,60.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2016,64.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2017,69.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2018,73.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2019,75.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2020,86.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,Cetic.br: Edição COVID-19 - Metodologia adaptada
+internet_domicilios,,,,SE,2021,84.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2022,82.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2023,85.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2024,83.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
+internet_domicilios,,,,SE,2025,87.0,observado,sem_restricao,internet_domicilios.sem_restricao.2026-11-03.792d5a88,
 massa_renda_dom_pc,,,,AL,2012,2917.0,observado,pnadc,massa_renda_dom_pc.pnadc.2026-11-01.3abd17ba,
 massa_renda_dom_pc,,,,AL,2013,2952.0,observado,pnadc,massa_renda_dom_pc.pnadc.2026-11-01.3abd17ba,
 massa_renda_dom_pc,,,,AL,2014,3297.0,observado,pnadc,massa_renda_dom_pc.pnadc.2026-11-01.3abd17ba,
