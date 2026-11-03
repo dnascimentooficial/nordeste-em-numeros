@@ -1,4 +1,4 @@
-"""Autoria no Chromium: o cabecalho de duas linhas (titulo e "por", linha fina, menu), o bloco "Desenvolvido por" do
+"""Autoria e menu no Chromium: o menu do alto (marca, barra preta com <details>, botao laranja, gaveta no celular; sem "por"), o bloco "Desenvolvido por" do
 rodape e o modal "Sobre o autor" (clique, Enter, Esc, X, clique fora, foco preso e devolvido, axe nos dois temas), a
 largura a 390 px, o contraste nos pixels reais e o que vale sem JavaScript.
 
@@ -141,58 +141,92 @@ def test_a_marca_do_modal_segue_o_tema_e_a_do_rodape_e_sempre_a_clara(abrir, esq
         assert rodape["src"].endswith("/marca-autor-clara.webp") and 24 <= rodape["h"] <= 28, rodape  # rodape preto nos dois temas
 
 
-# --- cabecalho: duas linhas, o "por" abaixo do titulo no celular ---
+# --- menu do alto: marca, barra preta pendurada com <details>, botao laranja; a autoria so no rodape ---
 
-_CAIXAS_DO_CABECALHO = """() => {
-  const caixa = (s) => { const c = document.querySelector(s).getBoundingClientRect(); return { x: c.left, y: c.top, r: c.right, b: c.bottom, w: c.width, h: c.height }; };
-  const linha = getComputedStyle(document.querySelector('.nn-topo-linha'));
+MENU_FIXO = 1100  # de 1100 px para cima a barra preta; abaixo, o botao de menu e a gaveta
+
+_CAIXAS_DO_MENU = """() => {
+  const caixa = (s) => { const e = document.querySelector(s); if (!e) return null; const c = e.getBoundingClientRect();
+    return { x: c.left, y: c.top, r: c.right, b: c.bottom, w: c.width, h: c.height }; };
+  const alca = document.querySelector('.nn-topo-alca');
   return {
-    topo: caixa('.nn-topo'), marca: caixa('.nn-marca'), autoria: caixa('.nn-autoria'), linha: caixa('.nn-topo-linha'),
-    menu: caixa('.nn-menu'), linhaFundo: linha.backgroundColor, largura: window.innerWidth,
-    rolagem: document.documentElement.scrollWidth,
+    topo: caixa('.nn-topo'), marca: caixa('.nn-marca'), alca: caixa('.nn-topo-alca'), botao: caixa('.nn-topo-botao'),
+    movel: caixa('.nn-menu-movel > summary'), alcaExibe: getComputedStyle(alca).display,
+    alcaFundo: getComputedStyle(alca).backgroundColor, botaoFundo: getComputedStyle(document.querySelector('.nn-topo-botao')).backgroundColor,
+    largura: window.innerWidth, rolagem: document.documentElement.scrollWidth,
   };
 }"""
 
 
-def _fontes_da_autoria(pagina) -> dict:
-    """O "por" pequeno e discreto; o nome em destaque (18 px no desktop, 16 px no celular), em negrito, com o link."""
-    return pagina.evaluate("""() => {
-      const p = document.querySelector('.nn-autoria'), n = p.querySelector('strong');
-      return { por: parseFloat(getComputedStyle(p).fontSize), nome: parseFloat(getComputedStyle(n).fontSize),
-               peso: Number(getComputedStyle(n).fontWeight), href: n.closest('a').getAttribute('href') };
-    }""")
-
-
 @pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
-def test_cabecalho_no_desktop_titulo_a_esquerda_autor_a_direita_linha_e_menu_embaixo(abrir, rota):
+def test_menu_no_desktop_marca_a_esquerda_barra_preta_no_centro_e_botao_laranja_a_direita(abrir, rota):
     with abrir(rota, largura=DESKTOP, reduced_motion="reduce") as pagina:
-        m = pagina.evaluate(_CAIXAS_DO_CABECALHO)
-        assert m["marca"]["x"] < m["topo"]["x"] + m["topo"]["w"] * 0.2  # o titulo na ponta esquerda
-        assert m["autoria"]["r"] > m["topo"]["r"] - m["topo"]["w"] * 0.1  # o "por" na ponta direita
-        assert m["autoria"]["x"] >= m["marca"]["r"] + 8  # lado a lado, sem se tocar
-        assert abs((m["autoria"]["y"] + m["autoria"]["b"]) / 2 - (m["marca"]["y"] + m["marca"]["b"]) / 2) < 14  # na mesma linha
-        assert m["linha"]["h"] == 1 and m["linha"]["y"] >= m["marca"]["b"] and m["linha"]["y"] >= m["autoria"]["b"]
-        assert m["menu"]["y"] >= m["linha"]["b"]  # o menu, embaixo da linha fina
-        assert m["linha"]["w"] > m["topo"]["w"] * 0.9  # a linha vai de ponta a ponta
+        m = pagina.evaluate(_CAIXAS_DO_MENU)
+        assert m["alcaExibe"] != "none" and m["alcaFundo"] == "rgb(10, 10, 10)", m  # a barra pendurada, preta nos dois temas
+        assert m["alca"]["y"] <= 1  # pendurada no alto da pagina
+        assert m["marca"]["x"] < m["topo"]["x"] + m["topo"]["w"] * 0.2  # a marca na ponta esquerda
+        assert m["botao"]["r"] > m["topo"]["r"] - m["topo"]["w"] * 0.1  # o botao laranja na ponta direita
+        assert m["marca"]["r"] + 8 <= m["alca"]["x"] and m["alca"]["r"] + 8 <= m["botao"]["x"]  # tres blocos, sem se tocar
+        assert abs((m["alca"]["x"] + m["alca"]["r"]) / 2 - m["largura"] / 2) <= 2  # a barra, centrada
+        assert m["botaoFundo"] == "rgb(196, 38, 0)"  # o laranja-escuro, que passa de 4,5:1 com o texto branco
+        assert m["movel"]["w"] == 0 or m["movel"] is None  # o botao de menu do celular nao aparece
         assert _estouro(pagina) == {}
-        assert pagina.locator(".nn-menu a[aria-current='page']").count() == 1
-        assert _fontes_da_autoria(pagina) == {"por": 13, "nome": 18, "peso": 700, "href": "https://dnascimento.com.br"}
+        # autoria so no rodape: nenhum "por ..." no topo, e o credito do autor continua no rodape
+        assert pagina.locator(".nn-autoria").count() == 0
+        assert pagina.locator("header .nn-autor-abrir, header a[href='https://dnascimento.com.br']").count() == 0
+        assert pagina.locator("footer .nn-autor-abrir").count() == 1
+        # a pagina atual marcada uma vez (o link de cima ou o cartao dentro do grupo, que tambem marca o grupo)
+        assert pagina.locator(".nn-menu [aria-current='page']").count() == 1
+        grupo_atual = pagina.locator(".nn-menu-grupo[data-atual]").count()
+        assert grupo_atual == (1 if rota in ("/como-chegamos/", "/estados/") else 0)
+        assert pagina.locator(".nn-menu > a").count() == 2 and pagina.locator(".nn-menu-grupo").count() == 2
+
+
+def test_menu_no_desktop_os_grupos_abrem_um_de_cada_vez_e_fecham_com_esc(abrir):
+    with abrir("/", largura=DESKTOP, reduced_motion="reduce") as pagina:
+        grupos = pagina.locator("details.nn-menu-grupo")
+        assert grupos.count() == 2 and all(g.get_attribute("name") == "nn-menu" for g in (grupos.nth(0), grupos.nth(1)))
+        assert not pagina.locator(".nn-menu-painel:visible").count()  # fechados, nenhum painel a vista
+        grupos.nth(0).locator("summary").click()
+        assert pagina.locator("details.nn-menu-grupo[open]").count() == 1 and pagina.locator(".nn-menu-painel:visible").count() == 1
+        painel = pagina.locator("details.nn-menu-grupo[open] .nn-menu-painel").bounding_box()
+        barra = pagina.locator(".nn-topo-alca").bounding_box()
+        assert painel["y"] >= barra["y"] + 40 and painel["x"] >= 0 and painel["x"] + painel["width"] <= 1280  # desce da barra, na tela
+        grupos.nth(1).locator("summary").click()  # o mesmo `name`: abrir o outro fecha o primeiro
+        assert pagina.locator("details.nn-menu-grupo[open]").count() == 1
+        assert grupos.nth(1).evaluate("d => d.open") and not grupos.nth(0).evaluate("d => d.open")
+        assert _estouro(pagina) == {}
 
 
 @pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
-def test_cabecalho_no_celular_o_por_desce_o_menu_rola_de_lado_e_nada_estoura(abrir, rota):
+def test_menu_no_celular_a_barra_some_o_botao_de_menu_abre_a_gaveta_e_nada_estoura(abrir, rota):
     with abrir(rota, largura=CELULAR, reduced_motion="reduce") as pagina:
-        m = pagina.evaluate(_CAIXAS_DO_CABECALHO)
-        assert m["autoria"]["y"] >= m["marca"]["b"] - 1  # o "por" fica embaixo do titulo
-        assert m["autoria"]["x"] < m["marca"]["x"] + 8  # alinhado a esquerda, como o titulo
-        assert m["linha"]["y"] >= m["autoria"]["b"] and m["menu"]["y"] >= m["linha"]["b"]
+        m = pagina.evaluate(_CAIXAS_DO_MENU)
+        assert m["alcaExibe"] == "none"  # a barra preta so existe de 1100 px para cima
+        assert m["marca"]["x"] < 40 and m["botao"]["b"] <= m["topo"]["b"]  # a marca a esquerda e o botao laranja na barra
+        assert m["movel"]["w"] >= 44 and m["movel"]["h"] >= 44 and m["movel"]["r"] <= m["largura"]  # alvo de toque
         assert m["topo"]["r"] <= m["largura"] and m["rolagem"] <= m["largura"]
-        assert _fontes_da_autoria(pagina) == {"por": 13, "nome": 16, "peso": 700, "href": "https://dnascimento.com.br"}
-        menu = pagina.locator(".nn-menu").evaluate("m => ({ rola: m.scrollWidth > m.clientWidth, overflowX: getComputedStyle(m).overflowX })")
-        assert menu == {"rola": True, "overflowX": "auto"}, menu  # sete abas nao cabem em 390 px: o menu rola, a pagina nao
+        assert pagina.locator(".nn-autoria").count() == 0
+        assert not pagina.locator(".nn-gaveta").is_visible()
+        pagina.locator(".nn-menu-movel > summary").click()
+        gaveta = pagina.locator(".nn-gaveta")
+        assert gaveta.is_visible()
+        caixa = gaveta.bounding_box()
+        assert caixa["x"] >= 0 and caixa["x"] + caixa["width"] <= CELULAR
+        assert pagina.locator(".nn-gaveta > a").count() == 2 and pagina.locator(".nn-gaveta details").count() == 2
+        pagina.locator(".nn-gaveta details > summary").first.click()  # a sanfona abre sem estourar a largura
+        assert pagina.locator(".nn-gaveta details[open] .nn-gaveta-itens a:visible").count() >= 1
         assert _estouro(pagina) == {}
-        pagina.evaluate("() => { const m = document.querySelector('.nn-menu'); m.scrollLeft = m.scrollWidth; }")
-        assert _estouro(pagina) == {}
+
+
+@pytest.mark.parametrize("largura", [360, CELULAR])
+@pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
+def test_menu_no_celular_marca_botao_e_menu_cabem_na_largura_e_a_marca(abrir, rota, largura):
+    """A marca, o botao laranja e o botao de menu cabem lado a lado em 360 px (somavam 384 e o de menu saia da tela)."""
+    with abrir(rota, largura=largura, reduced_motion="reduce") as pagina:
+        m = pagina.evaluate(_CAIXAS_DO_MENU)
+        assert m["rolagem"] <= largura and m["movel"]["r"] <= largura and m["botao"]["r"] <= m["movel"]["x"], m
+        assert m["marca"]["r"] <= m["botao"]["x"], m
 
 
 @pytest.mark.parametrize("largura", [CELULAR, 561, 900, DESKTOP])
@@ -219,8 +253,8 @@ _TEXTOS = """(seletores) => {
     intervalo.selectNodeContents(el);
     const caixas = [...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0)
       .map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height }));
-    // no menu que rola de lado, a borda direita esmaece (mascara): so vale o que esta inteiro na parte nitida
-    if (corte && (el.getBoundingClientRect().right > corte.left + corte.width * 0.8)) continue;
+    if (!el.checkVisibility()) continue;  // dentro de um <details> fechado (o texto nao esta na tela)
+    if (!caixas.length) continue;
     if (caixas.length) saida.push({ nome: `${el.tagName.toLowerCase()}.${el.className}`, cor: getComputedStyle(el).color, caixas });
   }
   return saida;
@@ -254,15 +288,30 @@ def _pior_contraste(pagina, seletor_da_caixa: str, seletor_dos_textos: str) -> t
 @pytest.mark.parametrize("esquema", ["light", "dark"])
 @pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
 @pytest.mark.parametrize("rota", ["/", "/como-chegamos/"])
-def test_contraste_do_cabecalho_nos_pixels_reais(abrir, rota, largura, esquema):
-    """Titulo, "por", nome e abas >= 4,5:1 contra o pior pixel atras de cada linha: sobre a abertura com foto (o Inicio)
-    e sobre a pagina de papel antigo (Como chegamos), nos dois temas. O topo e uma barra preta propria, entao a foto e o
-    papel nao chegam atras do texto; o teste confere o que o navegador de fato pinta."""
+def test_contraste_do_menu_nos_pixels_reais(abrir, rota, largura, esquema):
+    """Marca, abas, grupos e botao laranja >= 4,5:1 contra o pior pixel atras de cada linha: sobre a abertura com foto
+    (o Inicio) e sobre a capa da pagina de papel antigo (Como chegamos), nos dois temas, com o menu fechado e com o
+    painel (desktop) ou a gaveta (celular) aberto. O teste confere o que o navegador de fato pinta."""
+    desktop = largura >= MENU_FIXO
+    textos = ".nn-marca, .nn-topo-botao" + (", .nn-menu > a, .nn-menu-grupo > summary" if desktop else "")
     with abrir(rota, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
         pagina.evaluate("() => document.fonts.ready")
-        pior, quantos = _pior_contraste(pagina, ".nn-topo", ".nn-marca, .nn-autoria, .nn-autoria strong, .nn-menu a")
-    assert quantos >= 5, quantos  # o titulo, o "por", o nome e ao menos duas abas
-    assert pior >= LIMITE_DO_CONTRASTE, f"{rota} {largura} {esquema}: {pior:.2f}:1"
+        pior, quantos = _pior_contraste(pagina, ".nn-topo", textos)
+    assert quantos >= (6 if desktop else 2), quantos  # marca e botao; no desktop, tambem as quatro abas
+    assert pior >= LIMITE_DO_CONTRASTE, f"{rota} {largura} {esquema} (fechado): {pior:.2f}:1"
+    with abrir(rota, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        pagina.evaluate("() => document.fonts.ready")
+        if desktop:
+            pagina.locator("details.nn-menu-grupo > summary").first.click()
+            abertos = ".nn-menu-cartao-titulo, .nn-menu-cartao-texto"
+        else:
+            pagina.locator(".nn-menu-movel > summary").click()
+            pagina.locator(".nn-gaveta details > summary").first.click()
+            abertos = ".nn-gaveta a, .nn-gaveta summary"
+        pagina.evaluate("() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))")
+        pior, quantos = _pior_contraste(pagina, ".nn-topo", abertos)
+    assert quantos >= 3, quantos
+    assert pior >= LIMITE_DO_CONTRASTE, f"{rota} {largura} {esquema} (aberto): {pior:.2f}:1"
 
 
 @pytest.mark.parametrize("esquema", ["light", "dark"])
@@ -294,8 +343,13 @@ def test_sem_javascript_o_link_leva_a_secao_autor_de_sobre_e_o_modal_nao_abre(ab
     with abrir("/", java_script_enabled=False, reduced_motion="reduce") as pagina:
         # o cabecalho e o rodape se leem sem script: titulo com link, "por" com o nome, menu, foto no circulo
         assert pagina.locator(".nn-marca").get_attribute("href") == "/"
-        assert pagina.locator(".nn-autoria a").get_attribute("href") == "https://dnascimento.com.br"
-        assert pagina.locator(".nn-menu a").count() == 7
+        assert pagina.locator(".nn-autoria").count() == 0  # o topo nao tem mais "por": a autoria so no rodape
+        assert pagina.locator("footer .nn-autor-abrir").get_attribute("href") == "/sobre/#autor"
+        assert pagina.locator("footer a[href='https://dnascimento.com.br']").count() >= 1
+        # o menu abre sem script: os grupos sao <details> e o painel mostra os cartoes
+        assert pagina.locator(".nn-menu > a:visible").count() == 2 and pagina.locator(".nn-menu-grupo > summary:visible").count() == 2
+        pagina.locator(".nn-menu-grupo > summary").first.click()
+        assert pagina.locator(".nn-menu-grupo[open] .nn-menu-cartao:visible").count() >= 2
         assert pagina.locator(".nn-autor-circulo img").evaluate("i => i.complete && i.naturalWidth === 320")
 
 

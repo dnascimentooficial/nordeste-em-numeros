@@ -97,7 +97,11 @@ def test_abre_pelo_botao_com_o_grafico_grande_e_o_titulo(navegador, endereco, pr
 def test_esc_fecha_e_o_foco_volta_ao_botao_que_abriu(navegador, endereco):
     contexto, pagina = _abrir(navegador, endereco)
     try:
-        botao = _botao(pagina, 2)
+        # no Inicio editorial so o 1o grafico de cada pergunta fica a vista; os outros ficam em "Ver mais N graficos"
+        # (recolhidos, sem foco possivel). Vale o segundo botao Ampliar que de fato aparece na tela.
+        indice = pagina.evaluate("[...document.querySelectorAll('button.nn-ampliar')].findIndex((b, i) => i > 0 && b.offsetParent !== null)")
+        assert indice > 0
+        botao = _botao(pagina, indice)
         botao.focus()
         botao.press("Enter")  # pelo teclado
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
@@ -107,7 +111,7 @@ def test_esc_fecha_e_o_foco_volta_ao_botao_que_abriu(navegador, endereco):
         # o evento close do <dialog> chega numa tarefa depois do Esc: espera a limpeza em vez de medir no mesmo instante
         # (na CI, mais lenta, o clone ainda estava lá quando o assert rodou)
         pagina.wait_for_function("() => document.querySelectorAll('dialog .nn-ampliado-conteudo').length === 0", timeout=5000)
-        assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[2] === document.activeElement")
+        assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[%d] === document.activeElement" % indice)
     finally:
         contexto.close()
 

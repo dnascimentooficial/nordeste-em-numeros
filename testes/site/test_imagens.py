@@ -330,7 +330,7 @@ def test_geracao_nao_deixa_html_de_apoio_e_as_paginas_apontam_para_imagens_que_e
     assert sorted(p.name for p in saida.rglob("*.html")) == sorted(Path(p).name for p in relatorio.paginas)
     for pagina in relatorio.paginas:
         meta = [e for e in Arvore((saida / pagina).read_text(encoding="utf-8")).achar("meta", property="og:image")]
-        imagem = meta[0]["attrs"]["content"].removeprefix("https://nordeste.dnascimento.com.br/")
+        imagem = meta[0]["attrs"]["content"].removeprefix("https://nordeste.dnascimento.com.br/").split("?")[0]  # o ?v= e so o carimbo de cache
         assert (saida / imagem).is_file(), (pagina, imagem)
 
 

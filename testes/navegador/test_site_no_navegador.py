@@ -144,7 +144,7 @@ def test_sem_javascript_mostra_numeros_e_graficos(abrir, relatorio_site):
         if "abertura_numeros" in relatorio_site.fechos_suprimidos:
             assert pagina.locator(".nn-numero-valor").count() == 0  # suprimida: sai inteira, sem numero solto
         else:
-            assert pagina.locator(".nn-numero-valor").count() == 3 and pagina.locator(".nn-numero-valor:visible").count() == 3
+            assert pagina.locator(".nn-numero-valor").count() == 2 and pagina.locator(".nn-numero-valor:visible").count() == 2  # a faixa de dois numeros
         assert re.search(r"\d", pagina.locator(".nn-hero-intro").first.inner_text())  # o 1o paragrafo cita 2000 e nao tem condicao
 
 
@@ -192,21 +192,12 @@ def test_peso_da_inicial(abrir):
     assert sum(r["bytes"] for r in sem_a_foto) <= LIMITE_DA_INICIAL, sorted(sem_a_foto, key=lambda r: -r["bytes"])[:3]
 
 
-# --- abertura dividida com foto: texto sobre preto sólido, foto ao lado ou acima, sem sobreposição (Ruling S-AC) ---
+# --- abertura em secao cheia com a foto inteira e um veu de 30%: texto direto sobre a foto, com contraste nos pixels reais ---
 
 _ABERTURA = """() => {
   const hero = document.querySelector('#topo');
   const caixa = hero.getBoundingClientRect();
   const pseudo = getComputedStyle(hero, '::before');
-  const px = (v) => parseFloat(v);
-  // a foto e o ::before, posicionado no padding box da abertura
-  const foto = {
-    x: caixa.left + hero.clientLeft + hero.clientWidth - px(pseudo.right) - px(pseudo.width),
-    y: caixa.top + hero.clientTop + px(pseudo.top),
-    w: px(pseudo.width),
-    h: px(pseudo.height),
-    imagem: pseudo.backgroundImage,
-  };
   const alvos = [];
   for (const el of hero.querySelectorAll('.nn-eyebrow, .nn-hero-titulo > span, .nn-hero-intro')) {
     const intervalo = document.createRange();
@@ -214,27 +205,22 @@ _ABERTURA = """() => {
     alvos.push({
       nome: el.className || el.tagName.toLowerCase(),
       cor: getComputedStyle(el).color,
-      caixas: [...intervalo.getClientRects()].map((c) => ({ x: c.left, y: c.top, w: c.width, h: c.height })),
+      grande: parseFloat(getComputedStyle(el).fontSize) >= 24 || (parseFloat(getComputedStyle(el).fontSize) >= 18.66 && Number(getComputedStyle(el).fontWeight) >= 700),
+      caixas: [...intervalo.getClientRects()].map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height })),
     });
   }
-  const titulo = hero.querySelector('.nn-hero-titulo');
-  const linhas = [...titulo.querySelectorAll(':scope > span')].map((s) => {
+  const linhas = [...hero.querySelectorAll('.nn-hero-titulo > span')].map((s) => {
     const intervalo = document.createRange();
     intervalo.selectNodeContents(s);
     return new Set([...intervalo.getClientRects()].map((c) => Math.round(c.top))).size;
   });
-  const raio = parseFloat(getComputedStyle(hero).borderTopRightRadius);
-  return { hero: { x: caixa.left, y: caixa.top, w: caixa.width, h: caixa.height }, foto, alvos, raio,
-           titulo: { fonte: parseFloat(getComputedStyle(titulo).fontSize), linhas } };
+  return { hero: { x: caixa.left, y: caixa.top + scrollY, w: caixa.width, h: caixa.height }, janela: document.documentElement.clientWidth,
+           foto: { imagem: pseudo.backgroundImage, tamanho: pseudo.backgroundSize, inset: [pseudo.top, pseudo.right, pseudo.bottom, pseudo.left] },
+           alvos, linhas, raio: getComputedStyle(hero).borderTopLeftRadius };
 }"""
 _LIMITE_DO_CONTRASTE = 4.5
-_LARGURAS_DA_ABERTURA = [CELULAR, 560, 561, 768, 900, 901, DESKTOP]  # os dois lados dos pontos de quebra (560 e 900 px)
-# area estourada da foto (o sol): a camada de 15% leva o branco puro a rgb(218, 218, 218), luminancia 0,70, entao nenhum
-# pixel da foto passa de 0,9 na tela; 0,55 na tela equivale a ~0,8 na foto. Com o sol no quadro (Rodada 3) eram 0,5% a
-# 1,3% dos pixels da foto acima disso; sem ele, ~0,01%. Com a composicao da Rodada 5 (sol no canto direito, fora do
-# recorte), 0,02% a 0,05%: o que passa de 0,55 sao as paredes brancas do forte e a espuma.
-_LUMINANCIA_ESTOURADA = 0.55
-_LIMITE_DA_AREA_ESTOURADA = 0.001  # fracao dos pixels da foto
+_LIMITE_DO_TEXTO_GRANDE = 3.0  # WCAG: texto de 24 px (ou 18,66 px em negrito) pede 3:1
+_LARGURAS_DA_ABERTURA = [CELULAR, 560, 561, 768, 900, 901, 1099, 1100, DESKTOP]  # os dois lados dos pontos de quebra (560, 900 e 1100 px)
 
 
 def _luminancia_relativa(rgb: np.ndarray) -> np.ndarray:
@@ -249,74 +235,53 @@ def _contrastes(texto: np.ndarray, fundo: np.ndarray) -> np.ndarray:
 
 
 @pytest.mark.parametrize("largura", _LARGURAS_DA_ABERTURA)
-def test_abertura_com_foto_texto_fora_da_foto_e_com_contraste_nos_pixels_reais(abrir, largura):
+def test_abertura_com_foto_em_secao_cheia_inteira_e_com_contraste_nos_pixels_reais(abrir, largura):
     with abrir("/", largura=largura, altura=900, reduced_motion="reduce") as pagina:
         assert "nn-hero-com-foto" in pagina.locator("#topo").get_attribute("class").split()
         medidas = pagina.evaluate(_ABERTURA)
-        foto = medidas["foto"]
+        foto, caixa = medidas["foto"], medidas["hero"]
+        # secao cheia: na largura da janela, sem canto arredondado e subindo por baixo do menu (comeca no alto da pagina)
+        assert caixa["x"] == 0 and abs(caixa["w"] - medidas["janela"]) <= 1 and medidas["raio"] == "0px", caixa
+        assert caixa["y"] <= 1, caixa
+        # a foto inteira por baixo de um veu de 30%: o ::before cobre toda a abertura, sem recorte da metade
+        assert foto["inset"] == ["0px"] * 4 and foto["tamanho"].endswith("cover"), foto
+        assert "linear-gradient(rgba(8, 8, 8, 0.3), rgba(8, 8, 8, 0.3))" in foto["imagem"], foto["imagem"]
         url = re.search(r'url\("?([^")]+)"?\)', foto["imagem"])
-        assert url and url[1].endswith("/foto-abertura.webp"), foto["imagem"]
+        assert url and re.search(r"/foto-abertura\.webp(\?v=[0-9a-f]{8})?$", url[1]), foto["imagem"]
         carregada = pagina.evaluate(
             "async (u) => { const i = new Image(); i.src = u; await i.decode(); return [i.naturalWidth, i.naturalHeight]; }", url[1]
         )
         assert carregada == [1500, 844]  # a composicao da Rodada 5 (praia, mata e sertao)
-        pagina.evaluate("() => document.querySelectorAll('#topo > *').forEach((e) => { e.style.visibility = 'hidden'; })")
-        caixa = medidas["hero"]
-        recorte = {"x": 0, "y": caixa["y"], "width": largura, "height": caixa["h"]}
-        fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(clip=recorte))).convert("RGB"), dtype=float)
-
-    # a foto: do lado do texto (desktop) ou acima dele (ate 900 px), sempre dentro da abertura e inteira na caixa
-    lado_a_lado = foto["w"] < caixa["w"] * 0.9
-    assert (largura > 900) == lado_a_lado
-    assert 0.45 <= foto["w"] / caixa["w"] <= 0.55 if lado_a_lado else foto["h"] / largura >= 0.3, foto
-    assert foto["x"] >= caixa["x"] and foto["x"] + foto["w"] <= caixa["x"] + caixa["w"] + 1
-    assert foto["y"] >= caixa["y"] and foto["y"] + foto["h"] <= caixa["y"] + caixa["h"] + 1
-    # ela aparece, sem camada pesada: a metade longe da emenda (a direita, ou a de cima) e bem mais clara que o #080808
-    fx, fy = int(foto["x"]), int(foto["y"] - caixa["y"])
-    longe = fundo[fy:fy + int(foto["h"]), fx + int(foto["w"] / 2):fx + int(foto["w"])] if lado_a_lado \
-        else fundo[fy:fy + int(foto["h"] / 2), fx:fx + int(foto["w"])]
-    assert _luminancia_relativa(longe.reshape(-1, 3)).mean() > 0.1  # o preto liso tem 0,0024; a foto, uns 0,2
-    # e a emenda funde no preto: a borda do lado do texto e preto liso
-    emenda = fundo[fy:fy + int(foto["h"]), fx:fx + 2] if lado_a_lado else fundo[fy + int(foto["h"]) - 2:fy + int(foto["h"]), fx:fx + int(foto["w"])]
-    assert np.abs(emenda - 8).max() <= 8, "a foto nao funde no preto na emenda"  # os 2 px da borda: preto, a menos de 3% da foto
-    if lado_a_lado:
-        # o sol fica fora do quadro: quase nenhum pixel estourado na foto (os cantos arredondados, fora da abertura, nao contam)
-        regiao = fundo[fy:fy + int(foto["h"]), int(np.ceil(foto["x"])):int(foto["x"] + foto["w"])]
-        alt, larg = regiao.shape[:2]
-        yy, xx = np.mgrid[0:alt, 0:larg]
-        r = medidas["raio"]
-        dx, dy = xx - (larg - r), np.maximum(r - yy, yy - (alt - r))
-        dentro = ~((dx > 0) & (dy > 0) & (dx ** 2 + dy ** 2 > (r - 1) ** 2))
-        estourada = float((_luminancia_relativa(regiao[dentro]) > _LUMINANCIA_ESTOURADA).mean())
-        assert estourada < _LIMITE_DA_AREA_ESTOURADA, f"{estourada:.2%} da foto estourada (o sol voltou ao quadro?)"
-        # e o titulo volta a crescer: ~72 px a 1280 px, sem quebrar "O Nordeste esta" nem "do mesmo jeito?"
-        assert medidas["titulo"]["linhas"][:2] == [1, 1], medidas["titulo"]
-        if largura >= DESKTOP:
-            assert medidas["titulo"]["fonte"] >= 70, medidas["titulo"]
+        # o titulo cresce sem quebrar "O Nordeste esta" nem "do mesmo jeito?"
+        assert medidas["linhas"][:2] == [1, 1], medidas["linhas"]
+        # o contraste vale o dos pixels de fato atras de cada letra: dois prints, com o texto e sem ele (o texto some, a
+        # sombra, o vidro e o veu ficam); as letras sao os pixels que mudam de um para o outro
+        com_texto = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"), dtype=float)
+        pagina.evaluate("""() => document.querySelectorAll('#topo, #topo *').forEach((e) => {
+          for (const [p, v] of [['color', 'transparent'], ['-webkit-text-fill-color', 'transparent'], ['text-decoration-color', 'transparent']]) e.style.setProperty(p, v, 'important'); })""")
+        fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"), dtype=float)
+        # e a foto aparece, sem camada pesada: a abertura nao e preta
+        assert _luminancia_relativa(fundo[int(caixa["y"]):int(caixa["y"] + caixa["h"])].reshape(-1, 3)).mean() > 0.05
 
     reprovados, piores = [], {}
     for n, alvo in enumerate(medidas["alvos"]):
-        canais = [float(v) for v in re.findall(r"[\d.]+", alvo["cor"])]
-        cor, alfa = np.array(canais[:3]), canais[3] if len(canais) > 3 else 1.0
+        cor, alfa = _cor_computada(alvo["cor"])
         assert alvo["caixas"], alvo["nome"]
-        if "nn-destaque" in alvo["nome"]:
-            assert alvo["cor"] == "rgb(234, 46, 0)"  # sobre preto solido o laranja da identidade passa
+        limite = _LIMITE_DO_TEXTO_GRANDE if alvo["grande"] else _LIMITE_DO_CONTRASTE
         pior = 99.0
         for c in alvo["caixas"]:  # cada linha de texto
-            # nenhum texto toca a foto
-            assert c["x"] + c["w"] <= foto["x"] + 1 or c["x"] >= foto["x"] + foto["w"] - 1 \
-                or c["y"] + c["h"] <= foto["y"] + 1 or c["y"] >= foto["y"] + foto["h"] - 1, (alvo["nome"], c, foto)
-            # e o contraste vale o dos pixels de fato atras da linha
             xa, xb = max(0, int(c["x"])), min(largura, int(np.ceil(c["x"] + c["w"])))
-            ya, yb = max(0, int(c["y"] - caixa["y"])), min(fundo.shape[0], int(np.ceil(c["y"] + c["h"] - caixa["y"])))
-            atras = fundo[ya:yb, xa:xb].reshape(-1, 3)
-            pior = min(pior, _contrastes(alfa * cor + (1 - alfa) * atras, atras).min())
+            ya, yb = max(0, int(c["y"])), min(fundo.shape[0], int(np.ceil(c["y"] + c["h"])))
+            letras = np.abs(com_texto[ya:yb, xa:xb] - fundo[ya:yb, xa:xb]).max(axis=2) > 0.6 * 255 * alfa * 0.5  # o miolo das letras
+            atras = fundo[ya:yb, xa:xb][letras].reshape(-1, 3)
+            assert len(atras), (alvo["nome"], "nenhuma letra achada")
+            # sobre a foto, uns poucos pixels de nuvem ou de parede branca nao decidem a leitura: vale o 5o percentil das letras
+            pior = min(pior, float(np.percentile(_contrastes(alfa * cor + (1 - alfa) * atras, atras), 5)))
         piores[f"{n}:{alvo['nome']}"] = round(float(pior), 2)
-        if pior < _LIMITE_DO_CONTRASTE:
-            reprovados.append(f"{alvo['nome']} ({alvo['cor']}): {pior:.2f}:1")
+        if pior < limite:
+            reprovados.append(f"{alvo['nome']} ({alvo['cor']}): {pior:.2f}:1 (minimo {limite})")
     assert len(piores) >= 5  # o selo, as linhas do titulo (com o destaque) e o paragrafo
     assert reprovados == [], piores
-
 
 
 # --- pagina Como chegamos: papel envelhecido, serifada so nela, contraste nos pixels reais ---
@@ -399,9 +364,11 @@ _CORES_DA_REGRA = """() => ({
 })"""
 
 
-def _reprovados_no_contraste(fundo: np.ndarray, grupos: dict, onde: str, piores: dict, regra: dict) -> list[str]:
+def _reprovados_no_contraste(fundo: np.ndarray, grupos: dict, onde: str, piores: dict, regra: dict, tinta: np.ndarray | None = None) -> list[str]:
     """Cada linha de texto contra o pior pixel do fundo atras dela (o print com o texto escondido). E a regra da
-    estetica: texto laranja pequeno nunca direto sobre o papel, so sobre o fundo claro dos carimbos (--nn-hist-selo)."""
+    estetica: texto laranja pequeno nunca direto sobre o papel, so sobre o fundo claro dos carimbos (--nn-hist-selo).
+    Com `tinta` (mascara dos pixels que o texto pinta), so valem os pixels atras das letras: a caixa de uma linha de 84 px
+    e mais alta que a tinta e, na abertura em duas colunas, toca a borda do selo da variacao, que nao e fundo da letra."""
     alto, largo = fundo.shape[:2]
     reprovados = []
     for grupo, nos in grupos.items():
@@ -413,7 +380,8 @@ def _reprovados_no_contraste(fundo: np.ndarray, grupos: dict, onde: str, piores:
             for c in no["caixas"]:
                 xa, xb = max(0, int(c["x"])), min(largo, int(np.ceil(c["x"] + c["w"])))
                 ya, yb = max(0, int(c["y"])), min(alto, int(np.ceil(c["y"] + c["h"])))
-                atras = fundo[ya:yb, xa:xb].reshape(-1, 3).astype(float)
+                recorte = fundo[ya:yb, xa:xb]
+                atras = (recorte[tinta[ya:yb, xa:xb]] if tinta is not None else recorte.reshape(-1, 3)).astype(float)
                 if not len(atras):
                     continue
                 pior = float(_contrastes(alfa * cor + (1 - alfa) * atras, atras).min())
@@ -435,9 +403,11 @@ def test_historia_contraste_em_pixels(abrir, largura, esquema):
         assert pagina.evaluate(_SERIFADA_CARREGADA)
         regra = pagina.evaluate(_CORES_DA_REGRA)
         grupos = pagina.evaluate(_NOS_DE_TEXTO, {"grupos": _TEXTOS_DA_HISTORIA, "modal": False})
+        com_texto = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"), dtype=int)
         pagina.evaluate(_ESCONDER_O_TEXTO)
         fundo = np.array(Image.open(io.BytesIO(pagina.screenshot(full_page=True))).convert("RGB"))
-        reprovados += _reprovados_no_contraste(fundo, grupos, "pagina", piores, regra)
+        tinta = np.abs(com_texto - fundo.astype(int)).max(axis=2) > 40  # o que mudou ao esconder o texto: as letras
+        reprovados += _reprovados_no_contraste(fundo, grupos, "pagina", piores, regra, tinta)
         for grupo, nos in grupos.items():
             vistos[grupo] = vistos.get(grupo, 0) + len(nos)
     for indice in (0, -1):
@@ -893,7 +863,11 @@ def test_historia_nenhuma_imagem_grande_e_pedida_com_o_modal_fechado(navegador, 
             assert pagina.evaluate("() => document.documentElement.classList.contains('nn-js')")
             assert not _estado(pagina)["aberto"]
             assert any(p.endswith("-cartao.webp") for p in pedidos)  # as miniaturas dos cartoes, essas sim
-            assert _imagens_grandes_das_epocas(pedidos) == [], (carga, largura, latencia)
+            # a capa da pagina usa a imagem da 1a epoca como fundo (e so ela): essa e pedida de proposito
+            capa = pagina.evaluate("() => [...getComputedStyle(document.querySelector('.nn-capa')).backgroundImage.matchAll(/url\\(\"?([^\")]+)\"?\\)/g)].map((m) => new URL(m[1], location.href).pathname)")
+            assert capa == ["/historia/1530.webp"], capa
+            grandes = [g for g in _imagens_grandes_das_epocas(pedidos) if g.split("?")[0] not in capa]
+            assert grandes == [], (carga, largura, latencia)
             assert erros == []
 
 
@@ -1216,7 +1190,8 @@ _BLOCOS_DA_HISTORIA = """() => {
     linha: { ...estilo(c('section.nn-hist-linha')), largura: c('section.nn-hist-linha').getBoundingClientRect().width },
     listaLargura: lista.getBoundingClientRect().width, mainLargura: main.getBoundingClientRect().width,
     mascara, mascaraWebkit: getComputedStyle(lista).webkitMaskImage,
-    tituloX: secao, cartaoX: cartao.getBoundingClientRect().left,
+    tituloX: secao, cartaoX: cartao.getBoundingClientRect().left, margem: c('section.nn-hist-fecho').getBoundingClientRect().left, respiro: parseFloat(getComputedStyle(c('section.nn-hist-linha')).paddingLeft),
+    janela: document.documentElement.clientWidth,
     modal: getComputedStyle(c('dialog.nn-modal-historia')).backgroundColor,
     papel: getComputedStyle(c('section.nn-hist-abertura')).backgroundColor,
     setas: [...document.querySelectorAll('.nn-faixa-seta')].map((b) => { const r = b.getBoundingClientRect(); const l = lista.getBoundingClientRect();
@@ -1235,9 +1210,13 @@ def test_historia_abertura_e_fecho_sao_blocos_e_a_linha_do_tempo_fica_solta(abri
         assert "nn-hist-bloco" in m[parte]["classes"].split()
         assert (m[parte]["borda"], m[parte]["estiloBorda"], m[parte]["raio"]) == ("1px", "solid", "34px"), m[parte]
         assert m[parte]["fundo"] == m["papel"] != "rgba(0, 0, 0, 0)"
-    # a linha do tempo: sem borda, sem fundo proprio, na largura toda do main e, por isso, mais larga que o miolo do bloco
+    # a linha do tempo: sem borda, sem fundo proprio; acima de 900 px, de canto a canto da tela (a janela inteira, mais
+    # larga que o main e que o miolo do bloco); no celular, na largura do main
     assert m["linha"]["borda"] == "0px" and m["linha"]["fundo"] == "rgba(0, 0, 0, 0)", m["linha"]
-    assert abs(m["linha"]["largura"] - m["mainLargura"]) <= 1
+    if largura > 900:
+        assert abs(m["linha"]["largura"] - m["janela"]) <= 1 and m["linha"]["largura"] > m["mainLargura"] + 1, m
+    else:
+        assert abs(m["linha"]["largura"] - m["mainLargura"]) <= 1
     assert m["linha"]["largura"] > m["abertura"]["interna"] + 1
     assert m["modal"] == m["papel"]  # o modal das epocas segue no papel
 
@@ -1250,7 +1229,11 @@ def test_historia_mascara_so_na_faixa_horizontal(abrir, largura, com_mascara):
         for valor in (m["mascara"], m["mascaraWebkit"]):
             assert "linear-gradient" in valor and "40px" in valor and ("to right" in valor or "90deg" in valor), valor
         assert m["setas"] == [True, True]  # os botoes ficam fora da lista (e da mascara)
-        assert abs(m["tituloX"] - m["cartaoX"]) <= 1, (m["tituloX"], m["cartaoX"])  # o titulo alinha com o 1o cartao
+        # o titulo fica na largura padrao do site, alinhado aos blocos de papel (onde a margem padrao e menor que o respiro
+        # lateral da faixa, fica no respiro); a faixa vai de canto a canto e o 1o cartao entra depois do respiro, da seta
+        # e do esmaecido da ponta
+        assert abs(m["tituloX"] - max(m["margem"], m["respiro"])) <= 1, (m["tituloX"], m["margem"], m["respiro"])
+        assert m["cartaoX"] > m["tituloX"] and m["cartaoX"] < m["janela"] / 4, (m["tituloX"], m["cartaoX"])
     else:
         assert m["mascara"] == "none" and m["mascaraWebkit"] == "none"
 
@@ -1273,7 +1256,10 @@ _CHAMADA = """() => {
     nos.push({ nome, cor: getComputedStyle(el).color,
       caixas: [...intervalo.getClientRects()].map((r) => ({ x: r.left, y: r.top, w: r.width, h: r.height })) });
   }
-  const depois = c.previousElementSibling.classList.contains('nn-faixa-abertura');
+  // a ordem do Inicio: abertura, faixa de numeros, placar, as perguntas (#resumo) e so entao a chamada do Como chegamos
+  const pos = (sel) => { const e = document.querySelector(sel); return e ? e.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING : 0; };
+  const depois = c.previousElementSibling.id === 'resumo' && !!pos('.nn-faixa-abertura') && !!pos('.nn-placar')
+    && !!pos('#resumo') && !!(c.compareDocumentPosition(document.querySelector('footer')) & Node.DOCUMENT_POSITION_FOLLOWING);
   return { caixa: { x: caixa.left, y: caixa.top, w: caixa.width, h: caixa.height }, raio: estilo.borderTopLeftRadius,
     nos, depois, imagem: estilo.backgroundImage, href: c.querySelector('.nn-chamada-botao').getAttribute('href'),
     credito: c.querySelector('.nn-chamada-credito').textContent.trim(), linkCredito: c.querySelector('.nn-chamada-credito a').getAttribute('href'),
@@ -1284,7 +1270,7 @@ _CHAMADA = """() => {
 @pytest.mark.parametrize("esquema", ["light", "dark"])
 @pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
 def test_chamada_da_historia_no_inicio(abrir, largura, esquema):
-    """O bloco vem logo depois dos numeros, leva ao Como chegamos, tem o credito com link e o texto (e o botao) passam de
+    """O bloco vem depois das perguntas (e dos numeros e do placar), leva ao Como chegamos, tem o credito com link e o texto (e o botao) passam de
     4,5:1 no pior pixel de fundo atras de cada linha, nos dois temas; sem estouro a 390 px."""
     with abrir("/", largura=largura, altura=900, color_scheme=esquema, reduced_motion="reduce") as pagina:
         bloco = pagina.locator("section.nn-chamada-historia")

@@ -404,9 +404,12 @@ def test_inicio_voltar_ao_topo_tem_foco_visivel(abrir):
     with abrir("/", reduced_motion="reduce") as pagina:
         pagina.evaluate("() => window.scrollTo(0, innerHeight * 2)")
         pagina.wait_for_function("() => document.querySelector('.nn-voltar').classList.contains('nn-voltar-visivel')")
+        # o foco chega pelo teclado (so a ultima entrada por tecla liga o :focus-visible). Nao se usa Shift+Tab e Tab: o
+        # Shift+Tab leva o foco a outro elemento, a pagina rola ate ele e o botao, que some no topo e no rodape, nao
+        # volta a ser alcancavel (falhava em uma execucao de cada tres).
+        pagina.keyboard.press("Shift")
         pagina.locator(".nn-voltar").focus()
-        pagina.keyboard.press("Shift+Tab")
-        pagina.keyboard.press("Tab")
+        assert pagina.evaluate("() => document.activeElement.classList.contains('nn-voltar')")
         contorno = pagina.locator(".nn-voltar").evaluate("b => { const e = getComputedStyle(b); return [e.outlineStyle, e.outlineWidth, e.outlineColor]; }")
         assert contorno == ["solid", "3px", "rgb(255, 255, 255)"]
 
