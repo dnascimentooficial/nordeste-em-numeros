@@ -7,6 +7,7 @@ from nordeste.caminhos import Caminhos
 from nordeste.coletores.registro import Coleta
 from nordeste.esquema import COLUNAS_BASE, normalizar_base
 from nordeste.fichas import Ficha, Serie
+from nordeste.padronizacao.cetic import padronizar_cetic
 from nordeste.padronizacao.erros import ErroLayout
 from nordeste.padronizacao.ibid import padronizar_ibid
 from nordeste.padronizacao.ipeadata import padronizar_ipeadata
@@ -22,6 +23,7 @@ _PADRONIZADORES = {
     "planilha": padronizar_planilha,
     "ipeadata": padronizar_ipeadata,
     "ibid": padronizar_ibid,
+    "cetic": padronizar_cetic,
 }
 
 

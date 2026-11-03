@@ -565,6 +565,41 @@ def planilha_ibid() -> bytes:
     return xlsx_abas(abas_ibid())
 
 
+# TIC Domicilios (Cetic.br): uma pagina HTML por ano no layout da tabela A4 (titulo, cabecalho Percentual/Sim/Nao, total,
+# grupo de regioes com o nome do grupo na primeira celula, outros recortes e o rodape com as notas e a fonte), num pacote
+# do coletor `arquivo` por serie. Todo percentual "Sim" e 9,9999 (derivado de 99999). Ate 2013 o rodape traz a restricao ao
+# acesso por computador; 2020 traz a edicao com metodologia adaptada, como nas paginas reais.
+VALOR_INTERNET = BASE / 10_000
+_NOTA_COMPUTADOR = "Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook)."
+_REGIOES_CETIC = ("Sudeste", "Nordeste", "Sul", "Norte", "Centro-Oeste")
+
+
+def pagina_cetic(ano: int, valor: float = VALOR_INTERNET, so_computador: bool | None = None) -> bytes:
+    if so_computador is None:
+        so_computador = ano <= 2013
+    numero = f"{valor:.4f}".replace(".", ",")
+    linha = lambda *celulas: "<tr>" + "".join(f"<td>{c}</td>" for c in celulas) + "</tr>"  # noqa: E731
+    corpo = [
+        "<tr><th colspan='4'>A4 - DOMICÍLIOS COM ACESSO À INTERNET <sup>1</sup></th></tr>",
+        "<tr><th>Percentual (%)</th><th>Sim</th><th>Não</th><th>Não sabe</th></tr>",
+        linha("TOTAL", numero, "1,0000", "0"),
+        linha("REGIÃO", _REGIOES_CETIC[0], numero, "1,0000", "0"),
+        *(linha(regiao, numero, "1,0000", "0") for regiao in _REGIOES_CETIC[1:]),
+        linha("CLASSE SOCIAL", "A", "1", "1", "0"),
+    ]
+    notas = [f"<p>1 {_NOTA_COMPUTADOR}</p>"] if so_computador else []
+    edicao = " (Edição COVID-19 - Metodologia adaptada)" if ano == 2020 else ""
+    fonte = f"<p>Fonte: Cetic.br (sintético, derivado de 99999), TIC Domicílios {ano}{edicao}.</p>"
+    return ("<!doctype html><html lang='pt-br'><head><meta charset='utf-8'><title>A4</title></head><body>"
+            "<h1>Tabela sintética</h1><table>" + "".join(corpo) + "</table>" + "".join(notas) + fonte
+            + "<a href='#'>anterior</a></body></html>").encode("utf-8")
+
+
+def pacote_cetic(serie_id: str) -> bytes:
+    partes = _serie("internet_domicilios", serie_id)["parametros"]["partes"]
+    return empacotar_partes({p["url"]: pagina_cetic(p["ano"]) for p in partes})
+
+
 GERADORES = {
     "pib_nominal/scr_ref2010.json": lambda: json_sidra(
         "PIB a preços correntes (sintético)", "99999", "Mil Reais", _soma),
@@ -637,6 +672,9 @@ GERADORES = {
     "superior/censup_pre2009.zip": lambda: pacote_de_partes("superior", "censup_pre2009", valor_contagem),
     "superior/censup.zip": lambda: pacote_de_partes("superior", "censup", valor_contagem),
     "ibid/serie_historica.xlsx": planilha_ibid,
+    "internet_domicilios/urbano_computador.zip": lambda: pacote_cetic("urbano_computador"),
+    "internet_domicilios/computador.zip": lambda: pacote_cetic("computador"),
+    "internet_domicilios/sem_restricao.zip": lambda: pacote_cetic("sem_restricao"),
 }
 
 

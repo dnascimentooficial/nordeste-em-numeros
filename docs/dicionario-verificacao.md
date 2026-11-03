@@ -64,6 +64,7 @@ Resultado: as 6 séries coletaram com os parâmetros das fichas, `validar` saiu 
 | `superior` | `censup_pre2009` | INEP, Sinopses da Educação Superior 2001 a 2008 (`.xls`, tabelas 1.1 e 5.1) | 2001 a 2008, 15 territórios; IES, universidades e matrículas totais | sim (só 2001 a 2008; 2000 só em PDF) |
 | `superior` | `censup` | INEP, Sinopses da Educação Superior 2009 a 2024 (sinopse por município, tabelas 1.1 e 5.1) | 2009 a 2024, 15 territórios; IES, universidades e matrículas (total, pública, privada) | sim (2009 a 2024; 2025 ainda não publicado) |
 | `ibid` | `serie_historica` | INPI, `ibid-serie-historica.xlsx` (abas `IBID 2014` a `IBID 2025`, conferidas contra a aba de posições) | 2014 a 2025, 15 territórios, 3 subindicadores | sim (arquivo baixado com curl: o `www.gov.br` responde 403 ao coletor; ver a seção) |
+| `internet_domicilios` | `urbano_computador`, `computador`, `sem_restricao` | Cetic.br, TIC Domicílios, tabela A4 (página HTML por ano, coluna "Sim") | 2006 a 2025, Brasil e 5 regiões (sem UFs) | sim |
 
 ## pib_nominal / scr_ref2010
 
@@ -1251,3 +1252,57 @@ Data: 2026-11-03. Nada desta seção chegou à `main`: a ficha, o padronizador e
 - O índice é relativo dentro do ano (normalização mínimo-máximo entre as UFs); o relatório do INPI pede para não comparar o valor
   de um estado entre dois anos. A ficha registra a ressalva.
 - Série fechada em 2025 (`fim: 2025`): uma aba `IBID 2026` faz o padronizador recusar o arquivo até o `fim` subir.
+
+## Bloco Cetic.br: TIC Domicílios
+
+Data: 2026-11-03. Como o IBID, só no ramo de teste `claude/indicador-ibid`.
+
+Fonte: tabela A4 da TIC Domicílios ("Domicílios com acesso à internet"; até 2015, "Proporção de domicílios com acesso à
+internet"), em `https://cetic.br/pt/tics/domicilios/<ano>/domicilios/A4/`, de 2006 a 2025. A página traz a tabela em HTML com o
+total do Brasil, as cinco regiões e outros recortes (área, renda, classe), sem UFs. As planilhas por ano (`/pt/arquivos/domicilios/
+<ano>/domicilios/`) só existem de 2015 em diante e o caminho do zip muda todo ano; a tabela HTML tem o mesmo desenho nos 20 anos, por
+isso é ela que o coletor baixa (coletor `arquivo`, uma parte por ano, o pacote guarda as páginas inteiras). Método:
+`python -m nordeste --hoje 2026-11-03 coletar --indicador internet_domicilios` no repositório de trabalho do ramo, com rede: as três
+séries coletaram sem falha (o `cetic.br` aceita o coletor). A página baixada pelo coletor é idêntica, byte a byte, à baixada antes
+com `curl` (2025: sha256 `b5541cf9...2c66`).
+
+O que o padronizador `cetic` confere em cada página: a tabela existe, o título é o da A4 de acesso à internet, o cabeçalho começa por
+"Percentual" e "Sim", há uma linha do total e uma de cada região, o valor de "Sim" é número de 0 a 100 e o rodapé cita o ano da parte.
+O rótulo da linha é a célula logo antes dos valores (a primeira célula do grupo leva o nome do grupo, como `REGIÃO`).
+
+**Três definições, três séries.** As notas de rodapé das próprias tabelas mostram duas mudanças:
+- 2006 a 2010: "Considerado somente o acesso à internet via computador de mesa (desktop) ou computador portátil (laptop e notebook)".
+- 2011 a 2013: "Excluindo-se o acesso via telefone celular no domicílio".
+- 2014 em diante: sem nota de restrição.
+- Além disso, a pesquisa só foi à área rural a partir de 2008 (https://cetic.br/pt/pesquisa/domicilios/, seção Metodologia; a base
+  de 2007 diz "17.000 domicílios entrevistados em área urbana").
+A ficha separa `urbano_computador` (2006 e 2007), `computador` (2008 a 2013) e `sem_restricao` (2014 a 2025). Cada série declara
+`so_computador`, e o padronizador confere a nota de rodapé de cada ano: se a restrição aparecer onde não devia (ou sumir), a série
+vira pendência. As notas dos rodapés vão para a coluna `nota` das linhas.
+
+**2020.** A fonte da tabela diz "TIC Domicílios 2020 (Edição COVID-19 - Metodologia adaptada)". O padronizador tira esse texto da
+página e o grava na nota das linhas de 2020 ("Cetic.br: Edição COVID-19 - Metodologia adaptada"); a série não se divide, mas o card
+marca 2020 no gráfico e a ficha avisa que a subida de 2019 para 2020 pode ser efeito da adaptação.
+
+### internet_domicilios / urbano_computador
+
+- URLs de coleta: `https://cetic.br/pt/tics/domicilios/2006/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2007/domicilios/A4/`
+- Coleta `internet_domicilios.urbano_computador.2026-11-03.ab3f5858`, sha256 `ab3f5858eebdc4438a76422edc0e4bdc4343f829959bc009b4ebcb5de5041a56`.
+- Obtido: 12 linhas = 2 anos x 6 territórios (BR e as 5 regiões). Brasil 14,49 (2006, com duas casas) e 17 (2007); Nordeste 5,54 e 7.
+
+### internet_domicilios / computador
+
+- URLs de coleta: `https://cetic.br/pt/tics/domicilios/2008/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2009/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2010/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2011/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2012/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2013/domicilios/A4/`
+- Coleta `internet_domicilios.computador.2026-11-03.e86bca03`, sha256 `e86bca03416699aef07680cdd53901d3f2d213ca66d4f043374b3029098bbaf8`.
+- Obtido: 36 linhas = 6 anos x 6 territórios. Brasil 18 (2008) e 43 (2013); Nordeste 7 e 30.
+- Aviso A01 (limiar padrão de 50%): Nordeste de 11 (2010) para 21 (2011), +90,9%. É o ano em que a nota de rodapé muda de "somente
+  computador de mesa ou portátil" para "excluindo-se o acesso via telefone celular"; a ficha registra a mudança na observação (6). Não há
+  como separar o efeito da nota do crescimento real com a tabela publicada.
+
+### internet_domicilios / sem_restricao
+
+- URLs de coleta: `https://cetic.br/pt/tics/domicilios/2014/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2015/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2016/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2017/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2018/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2019/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2020/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2021/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2022/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2023/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2024/domicilios/A4/ https://cetic.br/pt/tics/domicilios/2025/domicilios/A4/`
+- Coleta `internet_domicilios.sem_restricao.2026-11-03.792d5a88`, sha256 `792d5a88031081322092a70de72c67657e3e02f9c44d1d736eae2f4953872374`.
+- Obtido: 72 linhas = 12 anos x 6 territórios. Brasil 50 (2014) e 86 (2025); Nordeste 37 e 84. Valores inteiros, como publicados.
+- Comparação `brasil`, como o Cetic.br publica; não há Brasil fora do Nordeste (a tabela traz percentuais, não contagens).
+- Série fechada em 2025: uma edição nova exige a parte do ano e o `fim` novo.

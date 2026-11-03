@@ -1,6 +1,6 @@
 # Base histórica de indicadores do Nordeste
 
-Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI) do Brasil, das cinco regiões e das nove
+Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI, Cetic.br) do Brasil, das cinco regiões e das nove
 UFs do Nordeste, padroniza tudo numa base longa única, valida e publica em `dados/base/`. O desenho completo
 está em `docs/specs/2026-10-31-base-historica-design.md`; as conferências feitas fonte a fonte, em
 `docs/dicionario-verificacao.md`.
@@ -132,6 +132,7 @@ Os únicos hosts que `coletar` acessa (um teste confere esta lista contra as URL
 | `www.ipeadata.gov.br` | séries do Ipeadata (Gini e desocupação da PNAD, IDHM) |
 | `download.inep.gov.br` | arquivos do INEP (IDEB, abandono, matrículas, ensino superior) |
 | `www.gov.br` | planilha da série histórica do IBID (INPI); as páginas do INEP citadas nas fichas ficam no mesmo domínio |
+| `cetic.br` | tabela A4 da TIC Domicílios, uma página HTML por ano (domicílios com acesso à internet) |
 
 ### Citados nas fichas ou de apoio
 
@@ -231,6 +232,8 @@ Algumas fichas têm o último ano escrito à mão e precisam de edição quando 
 - **IBID** (`ibid`, série `serie_historica`): `fim: 2025`. Quando o INPI acrescentar a aba `IBID 2026` à planilha, o
   padronizador recusa a aba fora da cobertura e a série fica pendente (a publicação mantém as linhas já publicadas)
   até o `fim` subir.
+- **Internet nos domicílios** (`internet_domicilios`, série `sem_restricao`): `fim: 2025` e uma parte por ano, com a URL
+  da página da tabela A4. Quando o Cetic.br publicar 2026, acrescente a parte e suba o `fim`.
 
 ## Indicadores
 
@@ -254,6 +257,7 @@ curso. Indicadores `auxiliar` são insumos (denominadores e contagens) e não s�
 | `idhm` | Índice de Desenvolvimento Humano Municipal (IDHM) e componentes | social | exibido | `censo`, `pnadc` | 2000–2010; 2012–2024 | verificada |
 | `informais` | Pessoas ocupadas em trabalho informal | trabalho | auxiliar | `pnadc` | 2016– | verificada |
 | `informalidade` | Taxa de informalidade | trabalho | exibido | `pnadc` | 2016– | verificada |
+| `internet_domicilios` | Domicílios com acesso à internet | inovacao | exibido | `urbano_computador`, `computador`, `sem_restricao` | 2006–2025 | verificada |
 | `massa_renda_dom_pc` | Massa de rendimento domiciliar per capita | economia | auxiliar | `pnadc` | 2012– | verificada |
 | `matriculas_basica` | Matrículas na educação básica, por etapa e rede | educacao_basica | exibido | `censo_escolar_2000_2002`, `censo_escolar_pre2007`, `educacenso` | 2000–2002; 2005–2025 | verificada |
 | `ocupados` | Pessoas ocupadas | trabalho | auxiliar | `pnadc` | 2016– | verificada |

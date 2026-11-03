@@ -1,0 +1,113 @@
+id: internet_domicilios
+nome: Domicílios com acesso à internet
+descricao: >-
+  Proporção dos domicílios com acesso à internet, pela pesquisa TIC Domicílios
+  do Cetic.br, no Brasil e nas cinco regiões.
+eixo: inovacao
+categoria: acesso_digital
+unidade: "% dos domicílios"
+orgao: Cetic.br (NIC.br/CGI.br)
+periodicidade: anual
+metodologia: >-
+  Tabela A4 da TIC Domicílios ("Domicílios com acesso à internet"; até 2015,
+  "Proporção de domicílios com acesso à internet"), coluna "Sim", linhas do
+  total do Brasil e das regiões. Uma página do Cetic.br por ano, lida da tabela
+  HTML; o coletor guarda as páginas num pacote por série. Três séries, nunca
+  unidas, porque a definição mudou duas vezes, como dizem as notas de rodapé das
+  próprias tabelas: `urbano_computador` (2006 e 2007), só área urbana e só o
+  acesso por computador; `computador` (2008 a 2013), área urbana e rural, ainda
+  só o acesso por computador (até 2010, "considerado somente o acesso via
+  computador"; de 2011 a 2013, "excluindo-se o acesso via telefone celular");
+  `sem_restricao` (2014 em diante), sem a restrição. O padronizador confere a
+  nota de rodapé de cada ano contra a série. Os valores vêm com duas casas em
+  2006 e inteiros depois. Não há abertura por UF.
+observacoes: >-
+  (1) A referência é o Brasil, como o Cetic.br publica; não há Brasil fora do
+  Nordeste (a pesquisa publica percentuais, não as contagens). (2) A edição de
+  2020 é a "Edição COVID-19 - Metodologia adaptada", segundo a fonte da tabela;
+  as linhas de 2020 trazem a nota tirada da página. A subida de 2019 para 2020
+  pode ser efeito da adaptação e não deve ser lida como salto real. (3) Os
+  valores são estimativas amostrais com margem de erro (publicada à parte pelo
+  Cetic.br); diferença de um ou dois pontos entre anos pode ser ruído. (4) Em
+  2005 a tabela equivalente (C1) só abre regiões metropolitanas; a série começa
+  em 2006. (5) As três séries ficam em `serie_id` diferentes; gráfico e
+  comparação não as emendam. (6) Dentro da série `computador`, a nota muda em
+  2011: até 2010, só computador de mesa ou portátil; de 2011 a 2013, tudo menos
+  o celular. O Nordeste vai de 11% (2010) a 21% (2011), o único aviso A01 do
+  indicador; pode ser em parte a mudança da nota, e por isso a ficha a registra.
+sentido: maior_melhor
+limites: {min: 0, max: 100}
+defasagem_meses: 0
+comparacao:
+  referencia: brasil
+series:
+  - id: urbano_computador
+    inicio: 2006
+    fim: 2007
+    fonte: Cetic.br, TIC Domicílios, tabela A4 (área urbana, acesso por computador)
+    base_origem: Páginas da tabela A4 de 2006 e 2007 no site do Cetic.br (coluna "Sim", total e regiões)
+    url: https://cetic.br/pt/tics/domicilios/2006/domicilios/A4/
+    coletor: arquivo
+    parametros:
+      padronizador: cetic
+      tabela: A4
+      so_computador: true
+      nota: "Só área urbana: a TIC Domicílios vai à área rural a partir de 2008"
+      partes:
+        - {url: "https://cetic.br/pt/tics/domicilios/2006/domicilios/A4/", ano: 2006}
+        - {url: "https://cetic.br/pt/tics/domicilios/2007/domicilios/A4/", ano: 2007}
+    compatibilidade: >-
+      Só área urbana e só o acesso por computador. Não comparável com as séries
+      `computador` (inclui a área rural) e `sem_restricao`.
+    verificado: true
+  - id: computador
+    inicio: 2008
+    fim: 2013
+    fonte: Cetic.br, TIC Domicílios, tabela A4 (acesso por computador)
+    base_origem: Páginas da tabela A4 de 2008 a 2013 no site do Cetic.br (coluna "Sim", total e regiões)
+    url: https://cetic.br/pt/tics/domicilios/2008/domicilios/A4/
+    coletor: arquivo
+    parametros:
+      padronizador: cetic
+      tabela: A4
+      so_computador: true
+      partes:
+        - {url: "https://cetic.br/pt/tics/domicilios/2008/domicilios/A4/", ano: 2008}
+        - {url: "https://cetic.br/pt/tics/domicilios/2009/domicilios/A4/", ano: 2009}
+        - {url: "https://cetic.br/pt/tics/domicilios/2010/domicilios/A4/", ano: 2010}
+        - {url: "https://cetic.br/pt/tics/domicilios/2011/domicilios/A4/", ano: 2011}
+        - {url: "https://cetic.br/pt/tics/domicilios/2012/domicilios/A4/", ano: 2012}
+        - {url: "https://cetic.br/pt/tics/domicilios/2013/domicilios/A4/", ano: 2013}
+    compatibilidade: >-
+      Área urbana e rural, só o acesso por computador (sem o celular). Não
+      comparável com `urbano_computador` nem com `sem_restricao`.
+    verificado: true
+  - id: sem_restricao
+    inicio: 2014
+    fim: 2025
+    fonte: Cetic.br, TIC Domicílios, tabela A4
+    base_origem: Páginas da tabela A4 de 2014 a 2025 no site do Cetic.br (coluna "Sim", total e regiões)
+    url: https://cetic.br/pt/tics/domicilios/2025/domicilios/A4/
+    coletor: arquivo
+    parametros:
+      padronizador: cetic
+      tabela: A4
+      so_computador: false
+      partes:
+        - {url: "https://cetic.br/pt/tics/domicilios/2014/domicilios/A4/", ano: 2014}
+        - {url: "https://cetic.br/pt/tics/domicilios/2015/domicilios/A4/", ano: 2015}
+        - {url: "https://cetic.br/pt/tics/domicilios/2016/domicilios/A4/", ano: 2016}
+        - {url: "https://cetic.br/pt/tics/domicilios/2017/domicilios/A4/", ano: 2017}
+        - {url: "https://cetic.br/pt/tics/domicilios/2018/domicilios/A4/", ano: 2018}
+        - {url: "https://cetic.br/pt/tics/domicilios/2019/domicilios/A4/", ano: 2019}
+        - {url: "https://cetic.br/pt/tics/domicilios/2020/domicilios/A4/", ano: 2020}
+        - {url: "https://cetic.br/pt/tics/domicilios/2021/domicilios/A4/", ano: 2021}
+        - {url: "https://cetic.br/pt/tics/domicilios/2022/domicilios/A4/", ano: 2022}
+        - {url: "https://cetic.br/pt/tics/domicilios/2023/domicilios/A4/", ano: 2023}
+        - {url: "https://cetic.br/pt/tics/domicilios/2024/domicilios/A4/", ano: 2024}
+        - {url: "https://cetic.br/pt/tics/domicilios/2025/domicilios/A4/", ano: 2025}
+    compatibilidade: >-
+      Sem a restrição ao computador das séries anteriores; 2020 com metodologia
+      adaptada à pandemia (nota nas linhas). Uma edição nova exige acrescentar a
+      página do ano às partes e subir o `fim`.
+    verificado: true

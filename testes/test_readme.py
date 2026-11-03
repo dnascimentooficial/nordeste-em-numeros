@@ -15,7 +15,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 README = RAIZ / "README.md"
 DOMINIOS = (
     "apisidra.ibge.gov.br", "ftp.ibge.gov.br", "www.ipeadata.gov.br", "www.gov.br",
-    "download.inep.gov.br", "www.atlasbrasil.org.br", "secure.globalsign.com",
+    "download.inep.gov.br", "cetic.br", "www.atlasbrasil.org.br", "secure.globalsign.com",
 )
 
 
