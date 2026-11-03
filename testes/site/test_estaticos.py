@@ -1,5 +1,6 @@
 """Estilo, script, fontes e .htaccess do site: identidade visual, Content-Security-Policy e movimento opcional."""
 
+import hashlib
 import json
 import re
 import shutil
@@ -152,6 +153,10 @@ def test_paginas_usam_os_estaticos_gerados(saida):
         arvore = Arvore(pagina.read_text(encoding="utf-8"))
         locais = [e["attrs"]["href"] for e in arvore.achar("link", rel="stylesheet")]
         locais += [e["attrs"]["src"] for e in arvore.achar("script") if "src" in e["attrs"]]
+        for local in locais:  # cada estatico vem com ?v= e os 8 primeiros do sha256 do arquivo publicado
+            caminho, _, versao = local.partition("?v=")
+            assert versao == hashlib.sha256((saida / caminho.lstrip("/")).read_bytes()).hexdigest()[:8], local
+        locais = [local.partition("?")[0] for local in locais]
         # a pagina Como chegamos tem ainda o nn-js.js, sem defer e antes do estilo (ver o teste abaixo)
         esperados = ["/estilo.css", "/nn-js.js", "/site.js"] if pagina.parent.name == "como-chegamos" else ["/estilo.css", "/site.js"]
         assert sorted(locais) == esperados, pagina
@@ -166,14 +171,14 @@ def test_nn_js_so_na_pagina_como_chegamos_e_antes_do_estilo(saida):
     assert script.strip() == 'document.documentElement.classList.add("nn-js");'
     for pagina in _arquivos(saida, ".html"):
         texto = pagina.read_text(encoding="utf-8")
-        pede = '<script src="/nn-js.js">' in texto
+        pede = '<script src="/nn-js.js?v=' in texto
         assert pede == (pagina.parent.name == "como-chegamos"), pagina
         if pede:
             arvore = Arvore(texto)
-            [tag] = [s for s in arvore.achar("script") if s["attrs"].get("src") == "/nn-js.js"]
+            [tag] = [s for s in arvore.achar("script") if s["attrs"].get("src", "").startswith("/nn-js.js?v=")]
             assert "defer" not in tag["attrs"] and "async" not in tag["attrs"] and "type" not in tag["attrs"]
-            assert texto.index('<script src="/nn-js.js">') < texto.index('<link rel="stylesheet"') < texto.index("</head>")
-            assert texto.index("<head>") < texto.index('<script src="/nn-js.js">')
+            assert texto.index('<script src="/nn-js.js?v=') < texto.index('<link rel="stylesheet"') < texto.index("</head>")
+            assert texto.index("<head>") < texto.index('<script src="/nn-js.js?v=')
     # a classe nao vem mais do site.js (depois do primeiro desenho seria tarde): so o remove, quando nao ha <dialog>
     assert "classList.add('nn-js')" not in (saida / "site.js").read_text(encoding="utf-8")
 

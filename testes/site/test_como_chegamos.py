@@ -356,7 +356,7 @@ def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
             url = e["attrs"].get("src") or e["attrs"]["href"]
             assert url.startswith("/") or url.startswith(SITE), url
     for script in arvore.achar("script"):
-        assert script["attrs"].get("src") in ("/nn-js.js", "/site.js") and not Arvore.texto(script)
+        assert script["attrs"].get("src", "").partition("?")[0] in ("/nn-js.js", "/site.js") and not Arvore.texto(script)
     visivel = arvore.texto_visivel()
     assert not re.search(r"\b(nan|none|undefined|null)\b", visivel, flags=re.IGNORECASE)
     assert "{" not in visivel and "Prévia" not in visivel

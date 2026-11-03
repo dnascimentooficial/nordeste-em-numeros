@@ -4,7 +4,7 @@
 {# a serifada dos titulos so existe nesta pagina: o estilo.css declara a fonte, e so aqui ela e pedida (spec, secao 7) #}
 {# o nn-js.js liga a classe nn-js antes do primeiro desenho (o site.js e defer): sem ela a lista inteira dos artigos aparece
    por um instante e a imagem grande da primeira epoca e baixada com o modal fechado. Fica antes do estilo.css. #}
-{% block cabeca_antes %}<script src="/nn-js.js"></script>
+{% block cabeca_antes %}<script src="{{ estaticos['nn-js.js'] }}"></script>
 {% endblock %}
 {% block cabeca %}<link rel="preload" href="/fontes/eb-garamond/EBGaramond.woff2" as="font" type="font/woff2" crossorigin>
 {% endblock %}

@@ -52,6 +52,16 @@ URL_DO_AUTOR = "https://dnascimento.com.br"
 LICENCA = "https://creativecommons.org/licenses/by/4.0/"
 PASTA_MODELOS = Path(__file__).parent / "modelos"
 PASTA_ESTATICOS = Path(__file__).parent / "estaticos"  # estilo, script, fontes, foto e .htaccess, copiados na raiz do site
+ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js")  # pedidos com ?v=<hash>: CDN e navegador nao servem a versao velha
+
+
+def versoes_dos_estaticos() -> dict[str, str]:
+    """`arquivo -> endereco com ?v=` (oito primeiros caracteres do sha256 do conteudo): cada versao nova do CSS ou do JS
+    ganha um endereco novo, e nenhum cache entrega a antiga com o HTML novo (a Hostinger fez isso duas vezes)."""
+    return {
+        nome: f"/{nome}?v={hashlib.sha256((PASTA_ESTATICOS / nome).read_bytes()).hexdigest()[:8]}"
+        for nome in ARQUIVOS_VERSIONADOS
+    }
 CONTORNO = ("site", "nordeste-contorno.svg")  # em metadados/; ferramentas/gerar_contorno.py o gera
 OG = (1200, 630)  # imagem de compartilhamento das paginas
 CARD = (1080, 1350)  # PNG de cada card
@@ -897,7 +907,7 @@ def gerar_site(
     arquivos = _arquivos_de_dados(caminhos, textos)
     comum = {
         "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in paginas_do_menu],
-        "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR,
+        "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR, "estaticos": versoes_dos_estaticos(),
         "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
         "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
