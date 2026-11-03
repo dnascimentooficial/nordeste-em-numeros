@@ -177,6 +177,51 @@ def test_recusa_id_repetido(tmp_path):
     _recusa(tmp_path, dados, "epocas[2].id")
 
 
+@pytest.mark.parametrize("id_", ["abc", "15", "15300", "m1530", "conteudo", "1 53", "1530\n", "153a", "-153", "t-1530"])
+def test_recusa_id_fora_do_formato_de_quatro_digitos(tmp_path, id_):
+    # o id vira id="..." do HTML e o endereco #<id>: so o ano com quatro digitos, que nunca bate com o id de marco (m<ano>)
+    # nem com os ids fixos da pagina (conteudo, titulo-principal, t-<id>...)
+    dados = _historia()
+    dados["epocas"][1]["id"] = id_
+    mensagem = _recusa(tmp_path, dados, "epocas[1].id")
+    assert "quatro digitos" in mensagem and repr(id_) in mensagem
+
+
+def test_id_numerico_do_yaml_continua_valendo(tmp_path):
+    dados = _historia()
+    dados["epocas"][1]["id"] = 1600  # sem aspas, o YAML le um inteiro
+    assert [e.id for e in carregar_historia(_escrever(tmp_path, dados)).epocas] == ["1500", "1600", "1700"]
+
+
+@pytest.mark.parametrize("campo, ajuste", [
+    ("epocas[1].texto", lambda e: e.update(texto=_texto(10))),
+    ("epocas[1].numeros[0].fonte", lambda e: e["numeros"][0].update(fonte="  ")),
+    ("epocas[1].marcos[0].titulo", lambda e: e["marcos"][0].update(titulo="Acaba com ponto.")),
+    ("epocas[1].imagem.alt", lambda e: e["imagem"].pop("alt")),
+    ("epocas[1].fim", lambda e: e.update(fim=e["inicio"])),
+    ("epocas[1]", lambda e: e.update(extra=1)),
+    ("epocas[1].inicio", lambda e: e.pop("inicio")),
+])
+def test_erro_dentro_da_epoca_cita_o_id_dela(tmp_path, campo, ajuste):
+    # quem conserta o YAML nao precisa contar as entradas da lista: o caminho vem seguido do id da epoca
+    dados = _historia()
+    ajuste(dados["epocas"][1])
+    mensagem = _recusa(tmp_path, dados, f"{campo} (epoca 1600): ")
+    assert mensagem.count("epoca 1600") == 1
+
+
+def test_erro_no_proprio_id_nao_repete_o_id_e_o_repetido_cita_as_duas_epocas(tmp_path):
+    dados = _historia()
+    dados["epocas"][1]["id"] = "abc"
+    assert "(epoca" not in _recusa(tmp_path, dados, "epocas[1].id")
+    dados = _historia()
+    dados["epocas"][1]["fim"] = dados["epocas"][2]["inicio"]
+    dados["epocas"][1]["marcos"][0]["ano"] = dados["epocas"][2]["inicio"]
+    dados["epocas"][2]["marcos"][0]["ano"] = dados["epocas"][2]["inicio"]
+    mensagem = _recusa(tmp_path, dados, "epocas[2].marcos (epoca 1700)")
+    assert "epocas[1], epoca 1600" in mensagem
+
+
 def test_recusa_ano_de_marco_repetido_entre_epocas(tmp_path):
     # cada marco vira um id="m<ano>" na pagina: dois marcos no mesmo ano dariam dois ids iguais
     dados = _historia()
