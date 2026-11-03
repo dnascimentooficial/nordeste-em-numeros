@@ -213,6 +213,20 @@ text-decoration: none;
 color: var(--nn-branco);
 text-shadow: 0 0 2px rgba(0, 0, 0, 0.6), 0 1px 12px rgba(0, 0, 0, 0.45);
 }
+.nn-topo-sobre-foto .nn-marca {
+position: relative;
+isolation: isolate;
+}
+.nn-topo-sobre-foto .nn-marca::before {
+content: "";
+position: absolute;
+inset: -5px -10px;
+z-index: -1;
+border-radius: 10px;
+background: rgba(8, 8, 8, 0.55);
+-webkit-backdrop-filter: blur(3px);
+backdrop-filter: blur(3px);
+}
 .nn-topo-alca {
 position: absolute;
 left: 50%;
@@ -561,6 +575,24 @@ padding: 8px 10px;
 font-size: 12.5px;
 }
 .nn-topo-botao-longo {
+display: none;
+}
+}
+@media (max-width: 389px) {
+.nn-topo-barra {
+gap: 8px;
+}
+.nn-topo-direita {
+gap: 6px;
+}
+.nn .nn-marca {
+font-size: 15px;
+}
+.nn .nn-topo-botao {
+padding: 8px 9px;
+font-size: 12px;
+}
+.nn-topo-botao-seta {
 display: none;
 }
 }
