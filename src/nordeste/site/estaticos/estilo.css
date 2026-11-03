@@ -263,6 +263,24 @@ body {
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.6), 0 1px 12px rgba(0, 0, 0, 0.45);
 }
 
+/* a marca direto sobre a foto: o fundo claro do céu a deixava em 2,9:1; ela leva um vidro escuro por trás, como o
+   parágrafo da abertura (pseudoelemento: a caixa e o alinhamento da marca não mudam) */
+.nn-topo-sobre-foto .nn-marca {
+  position: relative;
+  isolation: isolate;
+}
+
+.nn-topo-sobre-foto .nn-marca::before {
+  content: "";
+  position: absolute;
+  inset: -5px -10px;
+  z-index: -1;
+  border-radius: 10px;
+  background: rgba(8, 8, 8, 0.55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
 /* a barra pendurada: os cantos de cima curvam para dentro (::before e ::after, um quarto de círculo vazado cada) */
 .nn-topo-alca {
   position: absolute;
@@ -682,6 +700,30 @@ body {
 
   .nn-topo-botao-longo {
     display: none; /* "linha do tempo →" */
+  }
+}
+
+/* celulares estreitos (360 px e menos): a marca, o botão e o botão de menu somavam 384 px e o de menu saía da tela */
+@media (max-width: 389px) {
+  .nn-topo-barra {
+    gap: 8px;
+  }
+
+  .nn-topo-direita {
+    gap: 6px;
+  }
+
+  .nn .nn-marca {
+    font-size: 15px;
+  }
+
+  .nn .nn-topo-botao {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+
+  .nn-topo-botao-seta {
+    display: none;
   }
 }
 
