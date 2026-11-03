@@ -1594,6 +1594,108 @@ html:has(.nn-modal[open]) {
   overflow-wrap: anywhere;
 }
 
+/* --- chamada para Como chegamos, logo depois da faixa de números do Início ---
+   Mais estreita que os outros blocos e escura nos dois temas. A imagem de fundo (Frans Post, engenho, domínio público,
+   a da época 1530) segue o padrão da foto da abertura: o degradê (--nn-foto-fusao) deixa o preto sólido do lado do texto
+   e a foto aparece do outro lado; um véu de 15% por cima. No celular o degradê sobe de baixo para cima: foto em cima,
+   texto embaixo, sobre o preto. O botão é o laranja-escuro com texto branco (5,3:1) e o crédito fica no preto sólido. */
+
+.nn-chamada-historia {
+  --nn-foto-fusao: linear-gradient(90deg, #080808 0%, #080808 46%, rgba(8, 8, 8, 0) 92%);
+  /* escurece a coluna do botão, onde a pintura é mais clara; a pintura continua à vista */
+  --nn-chamada-sombra: linear-gradient(270deg, rgba(8, 8, 8, 0.38) 0%, rgba(8, 8, 8, 0.38) 22%, rgba(8, 8, 8, 0) 55%);
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "texto botao" "credito botao";
+  align-items: center;
+  gap: 18px clamp(20px, 4vw, 48px);
+  padding: clamp(28px, 4.4vw, 52px) clamp(22px, 4.4vw, 52px);
+  background-color: #080808;
+  background-image: var(--nn-foto-fusao), var(--nn-chamada-sombra), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/historia/1530-cartao.webp");
+  background-size: auto, auto, auto, cover;
+  background-position: 0 0, 0 0, 0 0, 80% 50%;
+  background-repeat: no-repeat;
+  border: 1px solid var(--nn-borda-preta);
+  border-radius: var(--nn-raio-g);
+  color: var(--nn-branco);
+}
+
+.nn-chamada-texto {
+  grid-area: texto;
+  display: grid;
+  gap: 12px;
+  max-width: 52ch;
+}
+
+.nn-chamada-historia .nn-eyebrow {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.nn .nn-chamada-historia h2 {
+  font-size: clamp(24px, 3.4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.nn .nn-chamada-descricao {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 16px;
+}
+
+.nn .nn-chamada-botao {
+  grid-area: botao;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--nn-laranja-escuro);
+  color: var(--nn-branco);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nn .nn-chamada-botao:hover {
+  background: color-mix(in srgb, var(--nn-laranja-escuro) 82%, var(--nn-preto));
+}
+
+.nn .nn-chamada-botao:focus-visible {
+  outline-color: var(--nn-branco);
+}
+
+.nn .nn-chamada-credito {
+  grid-area: credito;
+  max-width: 62ch;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.nn .nn-chamada-credito a {
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 900px) {
+  .nn-chamada-historia {
+    --nn-foto-fusao: linear-gradient(180deg, rgba(8, 8, 8, 0) 0, rgba(8, 8, 8, 0) 40px, #080808 190px);
+    --nn-chamada-sombra: linear-gradient(rgba(8, 8, 8, 0), rgba(8, 8, 8, 0)); /* no celular o botão fica no preto */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "texto" "botao" "credito";
+    justify-items: start;
+    padding-top: clamp(150px, 42vw, 240px);
+    background-size: auto, auto, auto, 100% auto; /* a foto inteira em cima; o preto sólido cobre o resto */
+    background-position: 0 0, 0 0, 0 0, 50% 0;
+  }
+}
+
 /* --- Como chegamos até aqui: arquivo histórico com a mesma marca ---
    Tudo sob .nn-historia (o <main> da página). Papel envelhecido feito só de gradientes (luz, manchas, grão e fibra,
    nada de imagem), títulos na serifada, datas em carimbo, imagens em sépia que ganham cor no modal e a linha do tempo
@@ -1628,12 +1730,17 @@ html:has(.nn-modal[open]) {
    sobre a página inteira) pesava no scroll em tela de alta densidade e saiu a pedido do autor. */
 .nn-historia {
   --nn-hist-papel: none;
-  background-color: var(--nn-papel-antigo);
-  background-image: var(--nn-hist-papel);
 }
 
+/* o <main> não é mais um cartão só: a abertura e o fecho são blocos de papel, como os da página inicial, e a linha do
+   tempo fica solta, sobre o fundo da página e na largura toda do conteúdo do site */
 .nn > main.nn-historia {
-  gap: clamp(40px, 6vw, 72px);
+  gap: clamp(28px, 5vw, 56px);
+}
+
+.nn-historia .nn-hist-bloco {
+  background-color: var(--nn-papel-antigo);
+  background-image: var(--nn-hist-papel);
   border: 1px solid var(--nn-linha);
   border-radius: var(--nn-raio-g);
   padding: clamp(24px, 5.4vw, 72px) clamp(16px, 5vw, 64px);
@@ -1793,7 +1900,7 @@ html:has(.nn-modal[open]) {
   height: 20px;
   border-radius: 50%;
   border: 3px solid var(--nn-laranja);
-  background: var(--nn-papel-antigo);
+  background: var(--nn-fundo); /* a linha do tempo fica sobre o fundo da página */
 }
 
 /* o cartão: sem JavaScript, um cabeçalho de cartão parado; com o site.js (classe nn-js no <html>), clicável */
@@ -1896,7 +2003,7 @@ html:has(.nn-modal[open]) {
   height: 16px;
   border-radius: 50%;
   background: var(--nn-laranja);
-  box-shadow: 0 0 0 3px var(--nn-papel-antigo);
+  box-shadow: 0 0 0 3px var(--nn-fundo);
 }
 
 .nn-historia a.nn-marco {
@@ -2142,6 +2249,11 @@ html:has(.nn-modal[open]) {
     gap: 12px;
   }
 
+  /* o título da seção alinha com a borda esquerda do primeiro cartão: botão 44 + vão 12 + recuo da lista 40 */
+  .nn-js .nn-historia .nn-hist-linha > .nn-hist-secao {
+    padding-left: 96px;
+  }
+
   .nn-js .nn-historia .nn-faixa-seta {
     display: inline-flex;
     align-items: center;
@@ -2176,15 +2288,18 @@ html:has(.nn-modal[open]) {
     grid-auto-columns: minmax(260px, 300px);
     align-items: start;
     gap: 28px;
-    padding: 44px 6px 18px;
+    padding: 44px 40px 18px; /* 40 px de cada lado: o cartão em repouso fica fora do esmaecido das pontas */
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity; /* mandatory puxava a faixa de volta no meio do deslize do trackpad */
-    scroll-padding-inline: 6px;
+    scroll-padding-inline: 40px;
     scrollbar-width: thin;
     scrollbar-color: var(--nn-sepia) transparent;
     background: linear-gradient(var(--nn-laranja), var(--nn-laranja)) 0 19px / 100% 3px no-repeat local;
     cursor: grab;
+    /* as pontas esmaecem sobre o fundo da página; os botões ‹ › são irmãos da lista e ficam fora da máscara */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
   }
 
   .nn-js .nn-historia .nn-linha-tempo::before {
