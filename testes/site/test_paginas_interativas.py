@@ -21,9 +21,9 @@ SITE = "https://nordeste.dnascimento.com.br"
 AVISO = "Este indicador não tem dados para este território"
 CHAVES_DO_EXPLORAR = [
     "pib_pc", "pib_vol", "pib_part", "renda", "rend_trab", "desoc", "informal", "pobreza", "extrema", "gini", "idhm",
-    "ideb_ai", "ideb_af", "ideb_em", "aband", "matric", "superior", "pop",
+    "ideb_ai", "ideb_af", "ideb_em", "aband", "matric", "superior", "ibid", "pop",
 ]
-CHAVES_DOS_ESTADOS = ["pib_pc", "renda", "pobreza", "desoc", "ideb_ai", "idhm", "aband"]
+CHAVES_DOS_ESTADOS = ["pib_pc", "renda", "pobreza", "desoc", "ideb_ai", "idhm", "aband", "ibid"]
 UFS = ["MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"]
 
 
@@ -56,10 +56,10 @@ def gerado(tmp_path_factory) -> tuple[Path, RelatorioSite]:
 # --- Explorar ---
 
 
-def test_json_do_explorar_tem_18_indicadores_e_separa_series(gerado, dados):
+def test_json_do_explorar_tem_19_indicadores_e_separa_series(gerado, dados):
     saida, _ = gerado
     completo = dados_explorar(dados)
-    assert list(completo) == CHAVES_DO_EXPLORAR and len(completo) == 18
+    assert list(completo) == CHAVES_DO_EXPLORAR and len(completo) == 19
     assert [i.chave for i in INDICADORES_EXPLORAR] == CHAVES_DO_EXPLORAR
     arquivos = sorted(p.name for p in (saida / "explorar" / "dados").iterdir())
     assert arquivos == sorted(f"{c}.json" for c in CHAVES_DO_EXPLORAR)
@@ -90,6 +90,7 @@ def test_filtros_do_explorar_seguem_o_prototipo(dados):
         "matric": ("matriculas_basica", {"etapa": "educacao_basica", "rede": "total"}),
         "superior": ("superior", {"sub": "matriculas", "rede": "total"}),
         "idhm": ("idhm", {"sub": "idhm"}),
+        "ibid": ("ibid", {"sub": "geral"}),
         "pib_pc": ("pib_per_capita", {}),
     }
     for chave, (indicador, filtros) in esperado.items():
@@ -180,16 +181,16 @@ def _vistas(html: str) -> list[Arvore]:
     return [Arvore(trecho) for trecho in html.split('<div class="nn-vista"')[1:]]
 
 
-def test_estados_tem_os_7_indicadores_e_9_ufs(gerado, conteudo):
+def test_estados_tem_os_8_indicadores_e_9_ufs(gerado, conteudo):
     saida, _ = gerado
     html = _ler(saida, "estados/index.html")
     arvore = Arvore(html)
     opcoes = arvore.achar("option")
-    assert [o["attrs"]["value"] for o in opcoes] == CHAVES_DOS_ESTADOS and len(opcoes) == 7
+    assert [o["attrs"]["value"] for o in opcoes] == CHAVES_DOS_ESTADOS and len(opcoes) == 8
     assert [i.chave for i in INDICADORES_ESTADOS] == CHAVES_DOS_ESTADOS
     vistas = arvore.achar("div", classe="nn-vista")
     assert [v["attrs"]["data-vista"] for v in vistas] == CHAVES_DOS_ESTADOS
-    assert ["hidden" in v["attrs"] for v in vistas] == [False] + [True] * 6  # a primeira vista visivel, o resto escondido
+    assert ["hidden" in v["attrs"] for v in vistas] == [False] + [True] * 7  # a primeira vista visivel, o resto escondido
     for trecho in _vistas(html):
         assert [Arvore.texto(e) for e in trecho.achar("th", classe="nn-uf")] == UFS
         celulas = trecho.achar("td", classe="nn-cel")
@@ -212,7 +213,9 @@ def test_estados_sem_style_e_com_faixas_por_classe(gerado):
     assert {"nn-f0", "nn-f9"} <= classes
 
 
-@pytest.mark.parametrize("chave, maior_melhor", [("pobreza", False), ("pib_pc", True), ("desoc", False), ("idhm", True)])
+@pytest.mark.parametrize("chave, maior_melhor", [
+    ("pobreza", False), ("pib_pc", True), ("desoc", False), ("idhm", True), ("ibid", True),
+])
 def test_mapa_de_calor_escurece_o_melhor(dados, chave, maior_melhor):
     # "Melhor = mais escuro": a faixa 9 e a situacao mais favoravel do indicador (a menor, quando menor e melhor).
     ind = next(i for i in INDICADORES_ESTADOS if i.chave == chave)
@@ -230,7 +233,7 @@ def test_mapa_de_calor_escurece_o_melhor(dados, chave, maior_melhor):
 
 
 def test_ranking_do_ultimo_ano_na_ordem_do_indicador(dados):
-    for chave in ("pobreza", "pib_pc"):
+    for chave in ("pobreza", "pib_pc", "ibid"):
         ind = next(i for i in INDICADORES_ESTADOS if i.chave == chave)
         vista = vista_estados(dados, ind)
         ultimo = vista["ano_do_ranking"]
@@ -248,9 +251,9 @@ def test_estados_vista_sem_dados_mostra_aviso_e_nao_quebra(tmp_path):
     gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
     html = _ler(saida, "estados/index.html")
     vistas = _vistas(html)
-    assert len(vistas) == 7
-    assert "Este indicador não tem dados para os estados" in vistas[6].texto_visivel()  # o abandono e o ultimo
-    assert all("não tem dados" not in v.texto_visivel() for v in vistas[:6])
+    assert len(vistas) == 8
+    assert "Este indicador não tem dados para os estados" in vistas[6].texto_visivel()  # o abandono e o setimo
+    assert all("não tem dados" not in v.texto_visivel() for v in vistas[:6] + vistas[7:])
     assert not vistas[6].achar("td", classe="nn-cel") and not vistas[6].achar("details")
     assert all(not v for v in json.loads(_ler(saida, "explorar/dados/aband.json")).values())
 

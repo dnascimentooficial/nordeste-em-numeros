@@ -190,7 +190,7 @@ paginas:
     descricao: "Por que eu fiz este site, como ler os gráficos, todas as fontes, as fórmulas que eu uso e o que ainda falta na base."
   estados:
     titulo: "Os estados do Nordeste · Nordeste em Números"
-    descricao: "Mapa de calor ano a ano e ranking dos estados do Nordeste em indicadores de economia, trabalho, pobreza, educação e desenvolvimento humano, com dados oficiais do IBGE, do INEP e do Atlas Brasil."
+    descricao: "Mapa de calor ano a ano e ranking dos estados do Nordeste em indicadores de economia, trabalho, pobreza, educação, desenvolvimento humano e inovação, com dados oficiais do IBGE, do INEP, do Atlas Brasil e do INPI."
   explorar:
     titulo: "Explorar os dados · Nordeste em Números"
     descricao: "Escolha um indicador e um território, compare dois lado a lado e confira cada ano publicado pelas fontes oficiais."
@@ -203,7 +203,7 @@ paginas:
 
 dataset:
   nome: "Nordeste em Números: base histórica de indicadores do Nordeste"
-  descricao: "Indicadores oficiais do Nordeste, dos estados nordestinos, do Brasil e do Brasil fora do Nordeste, de economia, educação, trabalho, renda, pobreza e desenvolvimento humano, a partir do IBGE, do INEP, do Ipea e do Atlas Brasil. Compilação de Júlio Diógenes."
+  descricao: "Indicadores oficiais do Nordeste, dos estados nordestinos, do Brasil e do Brasil fora do Nordeste, de economia, educação, trabalho, renda, pobreza, desenvolvimento humano e inovação, a partir do IBGE, do INEP, do Ipea, do Atlas Brasil e do INPI. Compilação de Júlio Diógenes."
 
 fontes:
   titulo: "Todas as fontes de dados"
@@ -226,6 +226,7 @@ formulas:
         - "Taxa de informalidade: (informais do Brasil − do Nordeste) ÷ (ocupados do Brasil − do Nordeste), em porcentagem."
         - "Renda domiciliar por pessoa: (massa de renda do Brasil − do Nordeste) ÷ (população da PNAD Contínua do Brasil − do Nordeste), multiplicado por mil."
         - "Quando não existe contagem publicada para refazer a conta (pobreza, Gini, IDEB, IDHM, abandono escolar, rendimento do trabalho, volume do PIB), a comparação é com o Brasil inteiro."
+        - "IBID: a referência é a média nacional publicada pelo INPI, que pondera os estados pelo PIB per capita. Não calculo o Brasil fora do Nordeste."
     - titulo: "Comparação entre territórios"
       itens:
         - "Razão = valor do Nordeste (ou do estado) ÷ valor da referência, em porcentagem. 100% significa igualdade; 50%, metade."
@@ -247,7 +248,7 @@ arquivos:
 
 dados:
   titulo: "Dados para baixar"
-  intro: "Estes são os arquivos que o site lê, do jeito que foram publicados. Pode baixar, conferir e usar, com crédito a mim e à fonte oficial de cada série. Os dados de origem são públicos: IBGE, INEP, Ipea e Atlas Brasil."
+  intro: "Estes são os arquivos que o site lê, do jeito que foram publicados. Pode baixar, conferir e usar, com crédito a mim e à fonte oficial de cada série. Os dados de origem são públicos: IBGE, INEP, Ipea, Atlas Brasil e INPI."
   conferir: "Para conferir, calcule o sha256 do arquivo baixado e compare com o código ao lado. Se for diferente, o arquivo não é o publicado."
   arquivos:
     base_nordeste.csv: "Uma linha por indicador, território e ano."
@@ -263,7 +264,7 @@ estados:
   nota_do_mapa: "Quanto mais escura a célula, melhor a situação naquele indicador. Célula hachurada: ano sem dado. Os valores aparecem ao passar o mouse e na tabela abaixo."
   rolagem: "Arraste o mapa para o lado para ver todos os anos."
   tabela: "Ver todos os números dos estados"
-  fonte: "Fontes: IBGE (Contas Regionais, PNAD Contínua), INEP (IDEB, Indicadores de Fluxo Escolar) e Atlas Brasil (IDHM). As razões com o Brasil fora do Nordeste eu calculo a partir das contagens publicadas."
+  fonte: "Fontes: IBGE (Contas Regionais, PNAD Contínua), INEP (IDEB, Indicadores de Fluxo Escolar), Atlas Brasil (IDHM) e INPI (IBID). As razões com o Brasil fora do Nordeste eu calculo a partir das contagens publicadas."
   sem_dados: "Este indicador não tem dados para os estados."
 
 explorar:

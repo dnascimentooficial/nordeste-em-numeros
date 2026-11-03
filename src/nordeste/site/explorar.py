@@ -98,6 +98,10 @@ INDICADORES_EXPLORAR = (
         "superior", "superior", "Matrículas no ensino superior", "Matrículas no ensino superior", "matrículas", 0,
         sub="matriculas", rede="total",
     ),
+    IndicadorExplorar(
+        "ibid", "ibid", "IBID, inovação (0 a 1)", "Índice Brasil de Inovação e Desenvolvimento",
+        "0 a 1, maior é mais inovação", 3, sub="geral",
+    ),
     IndicadorExplorar("pop", "populacao", "População", "População", "pessoas", 0),
 )
 POR_CHAVE = {i.chave: i for i in INDICADORES_EXPLORAR}
@@ -133,7 +137,7 @@ def pontos_do_indicador(dados: DadosSite, ind: IndicadorExplorar) -> dict[str, l
 
 
 def dados_explorar(dados: DadosSite) -> dict[str, dict[str, list[list]]]:
-    """`{indicador: {territorio: [[ano, valor, serie], ...]}}` dos 18 indicadores do Explorar."""
+    """`{indicador: {territorio: [[ano, valor, serie], ...]}}` dos 19 indicadores do Explorar."""
     return {ind.chave: pontos_do_indicador(dados, ind) for ind in INDICADORES_EXPLORAR}
 
 
@@ -189,6 +193,7 @@ INDICADORES_ESTADOS = (
     IndicadorEstados(
         "aband", "abandono_em", "Abandono no ensino médio (%)", "abandono no ensino médio, %", 1, "%", False, rede="total",
     ),
+    IndicadorEstados("ibid", "ibid", "IBID, inovação (0 a 1)", "IBID, índice de inovação do INPI", 3, "", True, sub="geral"),
 )
 
 
