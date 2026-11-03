@@ -2,13 +2,13 @@
 
 > **Para quem executa:** use superpowers:subagent-driven-development (recomendado) ou superpowers:executing-plans, tarefa a tarefa. Os passos usam caixas (`- [ ]`) para acompanhar.
 
-**Objetivo:** reorganizar a página inicial para que a resposta das seis perguntas apareça numa tela só e cada bloco comece pela conclusão, sem tirar nenhum dado da página.
+**Objetivo:** reorganizar a página inicial para que a resposta das seis perguntas apareça numa tela só, cada pergunta comece pela conclusão e a leitura deixe de ser uma pilha de cartões. As perguntas viram capítulos de uma reportagem, com menu lateral fixo. Nenhum dado sai da página.
 
 **Arquitetura:** só a página inicial muda. Ela continua gerada pelo gerador de sempre: `modelos/inicio.html`, `gerar.py`, `metadados/site/textos.yaml` e `perguntas.yaml`. A ordem dos elementos de cada pergunta muda no modelo. O placar é montado dos mesmos dados das perguntas (rótulo, frase feita e fecho), sem texto novo digitado. O detalhe secundário, ou seja, os outros gráficos, as fontes e as ressalvas, vai para `<details>`, que funciona sem JavaScript.
 
 **Tecnologia:** Python 3.12, Jinja2, CSS próprio (`estaticos/estilo.css`), testes com pytest e Playwright.
 
-**Referência visual:** prévia aprovada pelo autor em https://claude.ai/artifact/SBzoNhfQrWnFfg7TzvNsXp (versão 11, "Prévia: Início mais intuitivo"). Ela foi feita sobre o HTML gerado pelo script `scratchpad/previa-inicio/ferr/transformar.py`, que serve de referência de estrutura, não de código.
+**Referência visual:** prévia aprovada pelo autor em https://claude.ai/artifact/SBzoNhfQrWnFfg7TzvNsXp (versão 12, "Prévia: Início editorial com menu lateral"). Ela foi feita sobre o HTML gerado pelo script `scratchpad/previa-inicio/ferr/transformar.py`, que serve de referência de estrutura, não de código.
 
 ## Restrições globais
 
@@ -28,6 +28,8 @@
 3. **"Ampliar" dentro de `<details>` fechado:** o modal do gráfico tem que funcionar depois que o `<details>` abre. O id do `<template>` não pode mudar.
 4. **Âncoras do placar com o cabeçalho fixo:** ao pular para `#q-escola`, o título do bloco não pode ficar escondido atrás da legenda fixa. Use `scroll-margin-top`.
 5. **Card suprimido:** se a condição de um card ficar falsa, o botão "Baixar o card" daquela pergunta some, em vez de levar a um 404.
+6. **Menu lateral sem JavaScript:** sem JS, o menu aparece sempre (não some nem esconde conteúdo) e os links funcionam como âncoras.
+7. **Telas de 900 a 1100 px:** a coluna do menu (260 px) mais a folha não podem espremer o gráfico. Abaixo de 1100 px, use a versão de faixa de atalhos.
 
 ---
 
@@ -122,7 +124,39 @@
 - [ ] Move `section.nn-chamada-historia` para depois de `#resumo`. Nenhuma outra mudança nela.
 - [ ] Ajusta o teste que hoje exige a chamada logo depois da faixa.
 
-### Tarefa 7: Fechamento
+### Tarefa 7: Layout editorial: capítulos, menu lateral e folha sobreposta
+
+**Arquivos:** `modelos/inicio.html`, `estaticos/estilo.css`, `estaticos/site.js` (função `ligarIndice`), testes em `test_gerar.py` e no navegador.
+
+- [ ] **Capítulos em vez de cartões.**
+  - Os `article` das perguntas perdem o visual de cartão: sem borda, sem raio e sem fundo próprio, com `padding` vertical generoso.
+  - Os capítulos ficam separados por um fio fino (`border-top: 1px solid var(--nn-linha)`), e o primeiro não tem fio.
+  - O eyebrow vira `NN / TEMA`, com o número no laranja.
+  - Nos capítulos pares, gráfico e texto trocam de lado no computador.
+  - O "No frigir dos ovos" deixa a caixa rosa e vira uma citação com fio laranja à esquerda (4 px).
+- [ ] **Folha sobreposta.**
+  - `#resumo` vira uma grade de duas colunas: menu de 260 px e folha.
+  - A folha (`div.nn-folha`) tem o fundo do tema (branco no claro, quase preto no escuro), raio `var(--nn-raio-g)` e sombra suave.
+  - `margin-left: -28px` faz a folha sobrepor levemente a coluna do menu.
+  - A legenda fixa (tarefa 5) fica no topo da folha.
+- [ ] **Menu lateral fixo** (`aside.nn-indice`):
+  - `position: sticky; top: 16px`, com a lista numerada das perguntas: número, tema e a frase feita em letra pequena.
+  - Com JS, ele aparece com um esmaecido depois que o placar sai da tela (classe `nn-indice-visivel`), e o item da pergunta em leitura ganha `aria-current="true"` e destaque: fundo do tema, fio laranja e sombra.
+  - Sem JS, fica sempre visível.
+  - A posição de leitura é calculada no `scroll` com `passive: true`, sem nenhum `setInterval`.
+- [ ] **Celular e telas até 1100 px:** o menu vira uma faixa horizontal fixa no topo, com atalhos em pílula. A pílula ativa rola para dentro da vista. A folha não sobrepõe nada (`margin-left: 0`).
+- [ ] **Placar** como lista numerada com fios entre as linhas: número, tema (coluna de 200 px) e veredito. Sem cartões.
+- [ ] Testes:
+  - o artigo sem cartão (borda 0 e fundo transparente, medidos no navegador);
+  - os capítulos pares invertidos;
+  - o menu com um link por pergunta publicada, na ordem;
+  - sem JS, o menu visível;
+  - com JS, o menu escondido enquanto o placar está na tela e visível depois, com `aria-current` mudando ao rolar até a terceira pergunta;
+  - a 1280 px, a folha sobrepõe o menu (borda esquerda da folha menor que a borda direita da coluna do menu);
+  - a 390 e a 1000 px, a faixa de atalhos aparece e nada estoura a largura;
+  - axe e contraste nos dois temas, com o menu visível.
+
+### Tarefa 8: Fechamento
 
 - [ ] Rode as duas baterias: `PYTHONPATH=src python3 -m pytest -W error` e `-m navegador -W error`.
 - [ ] Tire prints a 1280 e 390 px e compare com a prévia aprovada.
@@ -133,7 +167,7 @@
 
 ## Ordem e estimativa
 
-As tarefas 1, 2 e 3 dão o ganho principal e devem ir juntas. As tarefas 4, 5 e 6 são independentes entre si e pequenas.
+As tarefas 1, 2, 3 e 7 dão o ganho principal e devem ir juntas. As tarefas 4, 5 e 6 são independentes entre si e pequenas.
 
 | Tarefa | Tamanho | Depende de |
 |---|---|---|
@@ -143,7 +177,8 @@ As tarefas 1, 2 e 3 dão o ganho principal e devem ir juntas. As tarefas 4, 5 e 
 | 4. Saídas | pequeno | 3 (pé do bloco) |
 | 5. Legenda fixa | pequeno | — |
 | 6. Chamada no fim | mínimo | — |
-| 7. Fechamento | — | todas |
+| 7. Layout editorial e menu lateral | médio | 2, 3 e 5 |
+| 8. Fechamento | — | todas |
 
 ## Fora do escopo
 
