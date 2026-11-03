@@ -180,7 +180,7 @@ def test_abertura_mostra_parcelas_calculadas(gerado):
                   "Nota dos estados de teste.", "Texto da abertura de teste."):
         assert texto in abertura
     # o grafico dos censos nas duas larguras, dentro da abertura, com os tres censos e a linha emendada
-    trecho = _trecho(html, '<section class="nn-hist-abertura"', "</section>")
+    trecho = _trecho(html, '<section class="nn-hist-abertura nn-hist-bloco"', "</section>")
     svgs = Arvore(trecho).achar("svg")
     assert [s["attrs"]["viewbox"] for s in svgs] == ["0 0 720 300", "0 0 360 240"]
     for svg in svgs:
@@ -342,7 +342,7 @@ def test_um_unico_dialog_vazio_no_fim(gerado):
     fecho = arvore.achar("section", classe="nn-hist-fecho")
     assert len(fecho) == 1
     assert "E de 2000 para cá?" in Arvore.texto(fecho[0])
-    assert [a["attrs"]["href"] for a in Arvore(_trecho(html, '<section class="nn-hist-fecho"', "</section>")).achar("a")] == ["../", "../cards/"]
+    assert [a["attrs"]["href"] for a in Arvore(_trecho(html, '<section class="nn-hist-fecho nn-hist-bloco"', "</section>")).achar("a")] == ["../", "../cards/"]
 
 
 def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
@@ -539,3 +539,62 @@ def test_recusa_imagem_ausente_pesada_ou_fora_de_21_por_9(tmp_path, monkeypatch,
         gerar_site(Caminhos(raiz=_base(tmp_path / "base", _historia())), tmp_path / "saida", imagens=False)
     if defeito == "sem-cartao":  # a mensagem diz que falta a miniatura do cartao daquela epoca
         assert "cartão" in str(erro.value) and "epoca-1700.webp" in str(erro.value)
+
+
+# --- a chamada para a pagina no Inicio: o bloco depois da faixa de numeros, com o titulo dos censos e o credito da 1530 ---
+
+def _historia_com_a_epoca_1530() -> dict:
+    historia = _historia()
+    historia["epocas"][0]["id"] = "1530"  # a epoca cuja imagem e credito a chamada usa
+    historia["epocas"][0]["imagem"]["url"] = "https://commons.wikimedia.org/wiki/File:Teste-1530.jpg"
+    return historia
+
+
+@pytest.fixture(scope="module")
+def com_chamada(tmp_path_factory) -> Path:
+    raiz = _base(tmp_path_factory.mktemp("base"), _historia_com_a_epoca_1530())
+    saida = tmp_path_factory.mktemp("site") / "saida"
+    gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
+    return saida
+
+
+def test_chamada_no_inicio_depois_dos_numeros_com_o_titulo_dos_censos(com_chamada):
+    html = _ler(com_chamada, "index.html")
+    arvore = Arvore(html)
+    chamada = arvore.achar("section", classe="nn-chamada-historia")
+    assert len(chamada) == 1
+    assert html.index("nn-faixa-abertura") < html.index("nn-chamada-historia") < html.index('id="resumo"')
+    # os mesmos numeros da abertura da pagina historica (censos.csv de teste: 46,7% em 1872 e 26,9% em 2022)
+    titulo = Arvore.texto(arvore.achar("h2", id="titulo-chamada-historia")[0])
+    assert titulo == "Em 1872, 46,7% dos brasileiros viviam no Nordeste. Em 2022, 26,9%."
+    pagina = Arvore.texto(Arvore(_ler(com_chamada)).achar(classe="nn-hist-numero")[0])
+    assert "46,7%" in pagina and "26,9%" in pagina
+    texto = Arvore.texto(chamada[0])
+    assert "Como chegamos até aqui" in texto and "em oito épocas, com a fonte de cada número." in texto
+    assert [a["attrs"]["href"] for a in Arvore(_trecho(html, '<section class="nn-chamada-historia"', "</section>")).achar("a")][0] == "/como-chegamos/"
+    assert "Ver a linha do tempo →" in texto
+
+
+def test_chamada_traz_o_credito_da_imagem_da_epoca_1530_com_link(com_chamada):
+    html = _ler(com_chamada, "index.html")
+    trecho = _trecho(html, '<p class="nn-chamada-credito"', "</p>")
+    links = Arvore(trecho).achar("a")
+    assert [l["attrs"]["href"] for l in links] == ["https://commons.wikimedia.org/wiki/File:Teste-1530.jpg"]
+    assert "Imagem: " in trecho and "Autor da imagem 0, <cite>Título da imagem 0</cite>, 1640" in trecho
+    assert trecho.rstrip().endswith("(domínio público).")
+    assert "style=" not in _trecho(html, '<section class="nn-chamada-historia"', "</section>")
+
+
+def test_chamada_some_sem_a_pagina_historica(tmp_path):
+    for nome, historia in (("sem", None), ("provisoria", {**_historia_com_a_epoca_1530(), "provisoria": True})):
+        raiz = _base(tmp_path / f"base-{nome}", historia)
+        saida = tmp_path / f"saida-{nome}"
+        gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
+        html = _ler(saida, "index.html")
+        assert "nn-chamada-historia" not in html and "/como-chegamos/" not in html, nome
+
+
+def test_chamada_exige_os_quatro_marcadores_no_titulo(tmp_path):
+    chamada = {"eyebrow": "e", "titulo": "Em [ano_inicial], [parcela_inicial].", "texto": "t", "botao": "b", "credito": "c"}
+    with pytest.raises(ErroConteudo, match="chamada_historia.titulo"):
+        gerar._chamada_da_historia(chamada, None)

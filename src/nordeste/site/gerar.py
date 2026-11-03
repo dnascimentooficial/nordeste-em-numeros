@@ -8,6 +8,7 @@ cita um destaque que sumiu da base, nao saem e vao para o `RelatorioSite`.
 
 import hashlib
 import json
+import re
 import shutil
 import xml.etree.ElementTree as ET
 from collections.abc import Iterator
@@ -84,6 +85,7 @@ EXPLORAR_INICIAL = ("pib_pc", "NE")  # a vista que ja vem desenhada no HTML: ind
 TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos modelos
     "abertura": {"eyebrow", "titulo", "destaque", "intro"},
     "faixa": {"rotulo", "id", "numeros", "texto", "nota"},  # + `condicao`, opcional (Ruling S-V)
+    "chamada_historia": {"eyebrow", "titulo", "texto", "botao", "credito"},  # o bloco do Inicio que leva a Como chegamos
     "ampliar": {"botao", "rotulo", "fechar", "gire", "quebra"},
     "por_que": {"titulo", "paragrafos"}, "como_ler": {"titulo", "itens"}, "o_que_falta": {"titulo", "itens"},
     "dataset": {"nome", "descricao"}, "fontes": {"titulo", "intro"}, "formulas": {"titulo", "intro", "blocos"},
@@ -125,6 +127,8 @@ PAGINAS = (  # as paginas de sempre; a da historia entra depois do Inicio so qua
 )
 PAGINA_HISTORIA = Pagina("como-chegamos", "como_chegamos.html", "como-chegamos/index.html", "/como-chegamos/", "Como chegamos aqui")
 PAGINAS_COM_DATASET = ("index", "dados")
+EPOCA_DA_CHAMADA = "1530"  # a epoca cuja imagem (e credito) fundo o bloco do Inicio que leva a Como chegamos
+MARCADORES_DA_CHAMADA = ("ano_inicial", "parcela_inicial", "ano_final", "parcela_final")  # no titulo, entre [colchetes]
 PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site so com a pagina
 AVISO_DA_PREVIA = "Prévia: texto provisório"
 
@@ -432,6 +436,11 @@ def _marcos(epoca) -> list[dict]:
     ]
 
 
+def _parcela_em_texto(ponto) -> str:
+    """A parcela como a pagina a mostra (46,7%): a abertura da Como chegamos e o bloco do Inicio usam a mesma conta."""
+    return f"{numero(ponto.valor, 1)}%"
+
+
 def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
     """Os numeros grandes (primeiro e ultimo censo), o grafico dos censos nas duas larguras e a tabela dos valores.
 
@@ -447,7 +456,7 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
         casas=1, sufixo="%", min0=True,
     )
     eixo = (primeiro.ano, ultimo.ano + 1)
-    numeros = [{"valor": f"{numero(p.valor, 1)}%", "ano": p.ano} for p in dict.fromkeys((primeiro, ultimo))]
+    numeros = [{"valor": _parcela_em_texto(p), "ano": p.ano} for p in dict.fromkeys((primeiro, ultimo))]
     return {
         "numeros": numeros,
         "grafico": {
@@ -457,7 +466,7 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
         },
         "tabela": [
             {"ano": ano, "nordeste": numero(nordeste, 0), "brasil": numero(brasil, 0),
-             "parcela": f"{numero(p.valor, 1)}%", "fonte": fonte}
+             "parcela": _parcela_em_texto(p), "fonte": fonte}
             for (ano, nordeste, brasil, fonte), p in zip(historia.censos, parcelas)
         ],
     }
@@ -483,6 +492,31 @@ def _epocas(historia: Historia) -> list[dict]:
         }
         for i, e in enumerate(epocas)
     ]
+
+
+def _chamada_da_historia(chamada: dict, historia: Historia) -> dict | None:
+    """O bloco do Inicio que leva a Como chegamos: os textos de textos.yaml com o titulo preenchido pelo primeiro e pelo
+    ultimo censo (os mesmos numeros da abertura da pagina, de `parcela_do_nordeste`) e o credito da imagem da epoca
+    EPOCA_DA_CHAMADA, que e a que o estilo.css poe no fundo. Sem essa epoca ou sem imagem nela, o bloco nao sai."""
+    modelo = chamada["titulo"]
+    marcador = re.compile(r"\[([^\[\]]*)\]")
+    resto = marcador.sub("", modelo)
+    if sorted(marcador.findall(modelo)) != sorted(MARCADORES_DA_CHAMADA) or "[" in resto or "]" in resto:
+        raise ErroConteudo(
+            f"textos.yaml: chamada_historia.titulo usa os marcadores {', '.join(f'[{m}]' for m in MARCADORES_DA_CHAMADA)}, "
+            f"cada um uma vez; veio {modelo!r}."
+        )
+    epoca = next((e for e in historia.epocas if e.id == EPOCA_DA_CHAMADA and e.imagem is not None), None)
+    if epoca is None:
+        return None
+    parcelas = parcela_do_nordeste(historia)
+    primeiro, ultimo = parcelas[0], parcelas[-1]
+    valores = {
+        "ano_inicial": str(primeiro.ano), "parcela_inicial": _parcela_em_texto(primeiro),
+        "ano_final": str(ultimo.ano), "parcela_final": _parcela_em_texto(ultimo),
+    }
+    titulo = marcador.sub(lambda achado: valores[achado.group(1)], modelo)
+    return {**{k: v for k, v in chamada.items() if k != "titulo"}, "titulo": titulo, "imagem": _credito(epoca.imagem)}
 
 
 def _contexto_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
@@ -896,7 +930,8 @@ def gerar_site(
     abertura, paragrafos_suprimidos = _paragrafos_da_abertura(conteudo.textos["abertura"]["intro"], destaques)
     faixa, faixa_suprimida = _faixa(conteudo.textos["faixa"], destaques)
     com_abertura = {
-        **conteudo.textos, "abertura": {**conteudo.textos["abertura"], "intro": abertura}, "faixa": faixa,
+        **{k: v for k, v in conteudo.textos.items() if k != "chamada_historia"},  # os marcadores dela sao [colchetes]
+        "abertura": {**conteudo.textos["abertura"], "intro": abertura}, "faixa": faixa,
     }
     textos = _resolver(com_abertura, destaques, data)
     perguntas, fechos_suprimidos = _perguntas(dados, destaques, conteudo)
@@ -913,6 +948,7 @@ def gerar_site(
         "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": "/".join(reversed(dados.data_base.split("-"))),
         "creditos_historia": _creditos_da_historia(historia) if com_historia else [],
+        "chamada_historia": _chamada_da_historia(conteudo.textos["chamada_historia"], historia) if com_historia else None,
     }
     por_pagina = {"estados": _contexto_dos_estados(dados), "explorar": _contexto_do_explorar(dados, explorar)}
     if com_historia:

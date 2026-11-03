@@ -1195,3 +1195,119 @@ def test_mapa_de_calor_no_celular_avisa_que_rola_de_lado(abrir):
     with abrir("/estados/", largura=DESKTOP) as pagina:  # no desktop o mapa cabe: sem frase e sem esmaecimento
         assert not pagina.locator(".nn-vista:visible .nn-rolagem").is_visible()
         assert pagina.locator(".nn-vista:visible .nn-mapa-caixa").evaluate("c => getComputedStyle(c).maskImage") == "none"
+
+
+# --- Como chegamos em blocos e a chamada para ela no Inicio ---
+
+_BLOCOS_DA_HISTORIA = """() => {
+  const c = (s) => document.querySelector(s);
+  const estilo = (el) => { const e = getComputedStyle(el); return { borda: e.borderTopWidth, estiloBorda: e.borderTopStyle,
+    raio: e.borderTopLeftRadius, fundo: e.backgroundColor }; };
+  const interna = (el) => { const e = getComputedStyle(el); return el.clientWidth - parseFloat(e.paddingLeft) - parseFloat(e.paddingRight); };
+  const main = c('main.nn-historia');
+  const lista = c('ol.nn-linha-tempo');
+  const mascara = getComputedStyle(lista).maskImage;
+  const secao = c('section.nn-hist-linha > h2').getBoundingClientRect().left + parseFloat(getComputedStyle(c('section.nn-hist-linha > h2')).paddingLeft);
+  const cartao = c('li.nn-epoca .nn-epoca-abrir');
+  return {
+    main: estilo(main), mainPadding: getComputedStyle(main).paddingLeft,
+    abertura: { ...estilo(c('section.nn-hist-abertura')), classes: c('section.nn-hist-abertura').className, interna: interna(c('section.nn-hist-abertura')) },
+    fecho: { ...estilo(c('section.nn-hist-fecho')), classes: c('section.nn-hist-fecho').className },
+    linha: { ...estilo(c('section.nn-hist-linha')), largura: c('section.nn-hist-linha').getBoundingClientRect().width },
+    listaLargura: lista.getBoundingClientRect().width, mainLargura: main.getBoundingClientRect().width,
+    mascara, mascaraWebkit: getComputedStyle(lista).webkitMaskImage,
+    tituloX: secao, cartaoX: cartao.getBoundingClientRect().left,
+    modal: getComputedStyle(c('dialog.nn-modal-historia')).backgroundColor,
+    papel: getComputedStyle(c('section.nn-hist-abertura')).backgroundColor,
+    setas: [...document.querySelectorAll('.nn-faixa-seta')].map((b) => { const r = b.getBoundingClientRect(); const l = lista.getBoundingClientRect();
+      return r.width > 0 && (r.right <= l.left + 1 || r.left >= l.right - 1); }),
+  };
+}"""
+
+
+@pytest.mark.parametrize("esquema", ["light", "dark"])
+@pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
+def test_historia_abertura_e_fecho_sao_blocos_e_a_linha_do_tempo_fica_solta(abrir, largura, esquema):
+    with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        m = pagina.evaluate(_BLOCOS_DA_HISTORIA)
+    assert m["main"]["borda"] == "0px" and m["mainPadding"] == "0px" and m["main"]["fundo"] == "rgba(0, 0, 0, 0)", m["main"]
+    for parte in ("abertura", "fecho"):
+        assert "nn-hist-bloco" in m[parte]["classes"].split()
+        assert (m[parte]["borda"], m[parte]["estiloBorda"], m[parte]["raio"]) == ("1px", "solid", "34px"), m[parte]
+        assert m[parte]["fundo"] == m["papel"] != "rgba(0, 0, 0, 0)"
+    # a linha do tempo: sem borda, sem fundo proprio, na largura toda do main e, por isso, mais larga que o miolo do bloco
+    assert m["linha"]["borda"] == "0px" and m["linha"]["fundo"] == "rgba(0, 0, 0, 0)", m["linha"]
+    assert abs(m["linha"]["largura"] - m["mainLargura"]) <= 1
+    assert m["linha"]["largura"] > m["abertura"]["interna"] + 1
+    assert m["modal"] == m["papel"]  # o modal das epocas segue no papel
+
+
+@pytest.mark.parametrize("largura, com_mascara", [(DESKTOP, True), (901, True), (CELULAR, False)])
+def test_historia_mascara_so_na_faixa_horizontal(abrir, largura, com_mascara):
+    with abrir(HISTORIA, largura=largura, reduced_motion="reduce") as pagina:
+        m = pagina.evaluate(_BLOCOS_DA_HISTORIA)
+    if com_mascara:
+        for valor in (m["mascara"], m["mascaraWebkit"]):
+            assert "linear-gradient" in valor and "40px" in valor and ("to right" in valor or "90deg" in valor), valor
+        assert m["setas"] == [True, True]  # os botoes ficam fora da lista (e da mascara)
+        assert abs(m["tituloX"] - m["cartaoX"]) <= 1, (m["tituloX"], m["cartaoX"])  # o titulo alinha com o 1o cartao
+    else:
+        assert m["mascara"] == "none" and m["mascaraWebkit"] == "none"
+
+
+def test_historia_sem_js_sem_mascara(abrir):
+    with abrir(HISTORIA, largura=DESKTOP, java_script_enabled=False) as pagina:
+        assert pagina.evaluate("() => getComputedStyle(document.querySelector('ol.nn-linha-tempo')).maskImage") == "none"
+
+
+_CHAMADA = """() => {
+  const c = document.querySelector('section.nn-chamada-historia');
+  const caixa = c.getBoundingClientRect();
+  const estilo = getComputedStyle(c);
+  const nos = [];
+  for (const [nome, el] of [['eyebrow', c.querySelector('.nn-eyebrow')], ['titulo', c.querySelector('h2')],
+      ['texto', c.querySelector('.nn-chamada-descricao')], ['botao', c.querySelector('.nn-chamada-botao')],
+      ['credito', c.querySelector('.nn-chamada-credito')], ['link', c.querySelector('.nn-chamada-credito a')]]) {
+    const intervalo = document.createRange();
+    intervalo.selectNodeContents(el);
+    nos.push({ nome, cor: getComputedStyle(el).color,
+      caixas: [...intervalo.getClientRects()].map((r) => ({ x: r.left, y: r.top, w: r.width, h: r.height })) });
+  }
+  const depois = c.previousElementSibling.classList.contains('nn-faixa-abertura');
+  return { caixa: { x: caixa.left, y: caixa.top, w: caixa.width, h: caixa.height }, raio: estilo.borderTopLeftRadius,
+    nos, depois, imagem: estilo.backgroundImage, href: c.querySelector('.nn-chamada-botao').getAttribute('href'),
+    credito: c.querySelector('.nn-chamada-credito').textContent.trim(), linkCredito: c.querySelector('.nn-chamada-credito a').getAttribute('href'),
+    rolagem: document.documentElement.scrollWidth, janela: document.documentElement.clientWidth };
+}"""
+
+
+@pytest.mark.parametrize("esquema", ["light", "dark"])
+@pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
+def test_chamada_da_historia_no_inicio(abrir, largura, esquema):
+    """O bloco vem logo depois dos numeros, leva ao Como chegamos, tem o credito com link e o texto (e o botao) passam de
+    4,5:1 no pior pixel de fundo atras de cada linha, nos dois temas; sem estouro a 390 px."""
+    with abrir("/", largura=largura, altura=900, color_scheme=esquema, reduced_motion="reduce") as pagina:
+        bloco = pagina.locator("section.nn-chamada-historia")
+        bloco.scroll_into_view_if_needed()
+        medidas = pagina.evaluate(_CHAMADA)
+        assert medidas["depois"] and medidas["raio"] == "34px"
+        assert medidas["href"] == "/como-chegamos/" and medidas["linkCredito"].startswith("https://commons.wikimedia.org/")
+        assert medidas["credito"] == ("Imagem: Frans Post, A fábrica de açúcar e a plantação do Engenho Real, 1660 (domínio público).")
+        assert "/historia/1530-cartao.webp" in medidas["imagem"] and "linear-gradient" in medidas["imagem"]
+        assert medidas["caixa"]["w"] <= 960 + 1 and medidas["rolagem"] <= medidas["janela"]
+        pagina.evaluate("""() => { for (const e of document.querySelectorAll('.nn-chamada-historia, .nn-chamada-historia *')) {
+          for (const [p, v] of [['color', 'transparent'], ['text-decoration-color', 'transparent'], ['text-shadow', 'none']]) e.style.setProperty(p, v, 'important'); } }""")
+        caixa = medidas["caixa"]
+        fundo = np.array(Image.open(io.BytesIO(bloco.screenshot())).convert("RGB"), dtype=float)
+    piores = {}
+    for no in medidas["nos"]:
+        cor, alfa = _cor_computada(no["cor"])
+        assert no["caixas"], no["nome"]
+        pior = 99.0
+        for c in no["caixas"]:
+            xa, xb = max(0, int(c["x"] - caixa["x"])), min(fundo.shape[1], int(np.ceil(c["x"] - caixa["x"] + c["w"])))
+            ya, yb = max(0, int(c["y"] - caixa["y"])), min(fundo.shape[0], int(np.ceil(c["y"] - caixa["y"] + c["h"])))
+            atras = fundo[ya:yb, xa:xb].reshape(-1, 3)
+            pior = min(pior, float(_contrastes(alfa * cor + (1 - alfa) * atras, atras).min()))
+        piores[no["nome"]] = round(pior, 2)
+    assert all(v >= _LIMITE_DO_CONTRASTE for v in piores.values()), piores

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_componentes.html" import atualizacoes, legenda %}
 {% from "_modal_grafico.html" import ampliado, dialogo %}
+{% from "_epoca.html" import credito %}
 {% macro grafico(g, p, t) %}
 <div class="nn-grafico">
   <div class="nn-grafico-topo">
@@ -42,6 +43,19 @@
 {% endif %}
   <p class="nn-faixa-nota">{{ faixa.nota }}</p>
 </section>
+
+{% if chamada_historia %}
+{% set c = chamada_historia %}
+<section class="nn-chamada-historia" aria-labelledby="titulo-chamada-historia">
+  <div class="nn-chamada-texto">
+    <p class="nn-eyebrow">{{ c.eyebrow }}</p>
+    <h2 id="titulo-chamada-historia">{{ c.titulo }}</h2>
+    <p class="nn-chamada-descricao">{{ c.texto }}</p>
+  </div>
+  <a class="nn-chamada-botao" href="/como-chegamos/">{{ c.botao }}</a>
+  <p class="nn-chamada-credito">{{ c.credito }}: {{ credito(c.imagem) }}.</p>
+</section>
+{% endif %}
 
 <section class="nn-pagina" id="resumo" aria-label="As perguntas">
 {{ legenda() }}

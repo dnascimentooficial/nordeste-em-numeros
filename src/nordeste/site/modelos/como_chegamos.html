@@ -13,7 +13,7 @@
 {% if h.previa %}
 <p class="nn-hist-previa" role="note"><strong>{{ h.previa }}.</strong> Só publico esta página depois da revisão do texto.</p>
 {% endif %}
-<section class="nn-hist-abertura" aria-labelledby="titulo-principal">
+<section class="nn-hist-abertura nn-hist-bloco" aria-labelledby="titulo-principal">
   <h1 class="nn-hist-titulo" id="titulo-principal">{{ h.abertura.titulo }}</h1>
   <p class="nn-hist-subtitulo">{{ h.abertura.subtitulo }}</p>
   <p class="nn-hist-numero">
@@ -53,7 +53,7 @@
   </ol>
 </section>
 
-<section class="nn-hist-fecho" aria-labelledby="titulo-fecho">
+<section class="nn-hist-fecho nn-hist-bloco" aria-labelledby="titulo-fecho">
   <h2 class="nn-hist-secao" id="titulo-fecho">{{ h.fecho.titulo }}</h2>
   <p>{{ h.fecho.texto }}</p>
   <ul class="nn-hist-fecho-links">

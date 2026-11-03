@@ -46,6 +46,17 @@ faixa:
   condicao: "pob_ne.ultimo < pob_ne.primeiro e pob_ne.ultimo > pob_br.ultimo"
   nota: "Tudo aqui vem do IBGE, do INEP, do Ipea e do Atlas Brasil. Nada é estimado por mim. As faixas cinza nos gráficos mostram quem governava o país em cada período, só para situar o tempo. Nenhum número aqui diz que um governo causou um resultado."
 
+# Bloco do Início que leva à página Como chegamos (só aparece quando ela é gerada), logo depois da faixa de números.
+# O título é um modelo: [ano_inicial] e [parcela_inicial] (primeiro censo) e [ano_final] e [parcela_final] (último censo)
+# saem de censos.csv, os mesmos números da abertura da página, e aparecem uma vez cada. credito é o rótulo antes do
+# crédito da imagem de fundo (a da época 1530), que vem do historia.yaml.
+chamada_historia:
+  eyebrow: "Como chegamos até aqui"
+  titulo: "Em [ano_inicial], [parcela_inicial] dos brasileiros viviam no Nordeste. Em [ano_final], [parcela_final]."
+  texto: "Como a região chegou até aqui, do açúcar até hoje, em oito épocas, com a fonte de cada número."
+  botao: "Ver a linha do tempo →"
+  credito: "Imagem"
+
 # Botão "Ampliar" dos gráficos do Início e a janela que abre com o gráfico grande.
 ampliar:
   botao: "Ampliar"
