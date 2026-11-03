@@ -1,1 +1,2 @@
 indicador_id,serie_id,motivo
+ibid,serie_historica,falha ao baixar https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx apos 4 tentativas (403 Client Error: Forbidden for url: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx)
