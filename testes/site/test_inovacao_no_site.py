@@ -212,3 +212,17 @@ def test_estados_mostra_o_ibid_pela_posicao_com_a_nota(gerado, dados):
     piaui = next(l for l in vista["linhas"] if l["uf"] == "PI")
     assert piaui["celulas"][0]["titulo"] == "Piauí, 2014: 21º no país"
     assert piaui["celulas"][0]["classe"] < piaui["celulas"][-1]["classe"]  # 21º -> 18º: a celula de 2025 e mais escura
+
+
+def test_saidas_dos_capitulos_so_levam_aonde_ha_dado_do_capitulo(gerado):
+    """Estados so tem o IBID; Explorar, o IBID e a internet. Os outros capitulos levam so para a base."""
+    html = _ler(gerado[0])
+    esperado = {
+        "conectividade": (False, True), "conhecimento": (False, False), "inovacao": (True, True),
+        "trabalho": (False, False), "ecossistema": (False, False),
+    }
+    for id_, (estados, explorar) in esperado.items():
+        saidas = _artigo(html, id_).split('class="nn-saidas"', 1)[1]
+        assert ('href="/estados/"' in saidas) is estados, id_
+        assert ('href="/explorar/"' in saidas) is explorar, id_
+        assert 'href="/dados/"' in saidas, id_

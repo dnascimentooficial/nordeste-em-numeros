@@ -232,6 +232,11 @@ def descricao_acessivel(
     return f"Gráfico de linhas, {cfg.titulo}. {'; '.join(partes)}. A tabela com todos os valores está logo abaixo."
 
 
+def _enxuto(valor: float) -> float:
+    """Seis casas bastam para o site.js (o site mostra ate tres) e cortam o peso do HTML da inicial."""
+    return round(valor, 6)
+
+
 def _dados_para_o_script(linhas: list[Linha]) -> str:
     """JSON compacto e deterministico lido pelo site.js (Ruling S-C): pontos como [ano, valor, serie]."""
     return json.dumps(
@@ -240,7 +245,7 @@ def _dados_para_o_script(linhas: list[Linha]) -> str:
                 "rotulo": l.rotulo,
                 "rotulo_curto": l.rotulo_curto,
                 "destaque": l.destaque,
-                "pontos": [[p.ano, p.valor, p.serie] for p in l.pontos],
+                "pontos": [[p.ano, _enxuto(p.valor), p.serie] for p in l.pontos],
             }
             for l in linhas
         ],
@@ -251,6 +256,11 @@ def _dados_para_o_script(linhas: list[Linha]) -> str:
 
 def _atributo(valor: str) -> str:
     return escape(valor, quote=True)
+
+
+def _atributo_json(valor: str) -> str:
+    """Para atributo entre aspas simples: o JSON fica sem `&quot;` (um terco do peso de data-pontos na inicial)."""
+    return valor.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
 
 
 def _passo_dos_anos(estreito: bool, vao: int = ANO_FINAL - ANO_INICIAL) -> int:
@@ -314,7 +324,7 @@ def grafico_linhas(
 
     partes = [
         f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="{id_titulo} {id_desc}" width="100%" '
-        f'viewBox="0 0 {largura} {altura}" font-size="11" data-pontos="{_atributo(dados)}" '
+        f'viewBox="0 0 {largura} {altura}" font-size="11" data-pontos=\'{_atributo_json(dados)}\' '
         f'data-casas="{cfg.casas}" data-sufixo="{_atributo(cfg.sufixo)}"'
         + ("" if eixo_anos == (ANO_INICIAL, ANO_FINAL) else f' data-eixo="{ano_inicial} {ano_final}"') + ">",
         f'<title id="{id_titulo}">{escape(cfg.titulo, quote=False)}</title>',

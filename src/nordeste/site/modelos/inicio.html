@@ -86,7 +86,7 @@
 {% set varios = p.graficos|length > 1 %}
       <details>
         <summary>Ver os números {{ "destes gráficos" if varios else "deste gráfico" }}</summary>
-        <div class="nn-tabela">
+        <div class="nn-tabela" tabindex="0" role="region" aria-label="Números de {{ p.rotulo }}">
           <table>
             <thead><tr>{% if varios %}<th scope="col">Gráfico</th>{% endif %}<th scope="col">Ano</th><th scope="col">Série</th><th scope="col" class="nn-num">Valor</th></tr></thead>
             <tbody>

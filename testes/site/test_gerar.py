@@ -494,7 +494,7 @@ def test_cada_grafico_do_inicio_tem_botao_e_template_ampliado(gerado, dados, con
     assert len(corpos) == len(graficos)
     for (pergunta, grafico), corpo in zip(graficos, corpos, strict=True):
         assert len(re.findall(r'viewBox="0 0 1100 520"', corpo)) == 1  # o grafico na terceira largura, pronto do Python
-        assert 'data-pontos="' in corpo  # a dica de valor do site.js le o mesmo atributo dos outros graficos
+        assert "data-pontos='" in corpo  # a dica de valor do site.js le o mesmo atributo dos outros graficos
         texto = Arvore(corpo).texto_visivel()
         for esperado in (
             preencher(pergunta["frase_feita"], destaques), preencher(grafico.get("titulo", ""), destaques),

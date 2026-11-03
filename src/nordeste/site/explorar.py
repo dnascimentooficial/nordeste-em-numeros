@@ -173,6 +173,7 @@ class IndicadorEstados:
     sub: str | None = None
     rede: str | None = None
     serie: str | None = None
+    posicoes: int | None = None  # posicao num ranking de N (1 e o melhor): a barra cresce quanto melhor a posicao
 
 
 INDICADORES_ESTADOS = (
@@ -201,6 +202,7 @@ INDICADORES_ESTADOS = (
     IndicadorEstados(
         "ibid", "ibid_posicao", "IBID, posição no ranking do INPI (1 a 27)",
         "IBID, posição de cada estado no ranking nacional do INPI", 0, "º no país", False,
+        posicoes=27,
     ),
 )
 
@@ -274,11 +276,17 @@ def vista_estados(dados: DadosSite, ind: IndicadorEstados) -> dict:
     do_ano = [(uf, celulas[uf, ultimo]) for uf in UFS if (uf, ultimo) in celulas]
     do_ano.sort(key=lambda par: -par[1] if ind.maior_melhor else par[1])  # estavel: empate mantem a ordem dos estados
     maior = max(valor for _, valor in do_ano) or 1.0
+
+    def largura(valor: float) -> float:
+        if ind.posicoes:  # 1º preenche a barra, o ultimo da lista nacional fica com o minimo
+            return (ind.posicoes + 1 - valor) / ind.posicoes * 100
+        return valor / maior * 100
+
     vista["ano_do_ranking"] = ultimo
     vista["ranking"] = [
         {
             "posicao": f"{i}º {NOME_DO_TERRITORIO[uf]}", "valor": texto(valor),
-            "largura": f"{max(2.0, valor / maior * 100):.1f}",
+            "largura": f"{max(2.0, largura(valor)):.1f}",
         }
         for i, (uf, valor) in enumerate(do_ano, start=1)
     ]

@@ -86,3 +86,13 @@ def test_inicio_ainda_nao_fala_do_ibid(saida):
     html = _ler(saida, "index.html")
     conteudo = html[html.index("<main"):html.index("</main>")]
     assert "IBID" not in conteudo and "Inovação" not in conteudo
+
+
+def test_ranking_do_ibid_tem_barra_maior_para_a_melhor_posicao(dados):
+    """Posicao: 1º no pais enche a barra; quem esta mais abaixo no ranking nacional tem a barra menor."""
+    ind = next(i for i in INDICADORES_ESTADOS if i.chave == "ibid")
+    vista = vista_estados(dados, ind)
+    larguras = [float(r["largura"]) for r in vista["ranking"]]
+    assert larguras == sorted(larguras, reverse=True) and larguras[0] > larguras[-1]
+    pos = [int(r["valor"].split("º")[0]) for r in vista["ranking"]]
+    assert larguras[0] == round((28 - pos[0]) / 27 * 100, 1)

@@ -133,8 +133,13 @@
       </details>
 {% endif %}
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ c.rotulo }}">
+{# Estados e Explorar so tem o IBID e a internet: os outros capitulos levam so a base para baixar #}
+{% if c.id == "inovacao" %}
         <a href="/estados/">{{ s.estados }}</a>
+{% endif %}
+{% if c.id in ("conectividade", "inovacao") %}
         <a href="/explorar/">{{ s.explorar }}</a>
+{% endif %}
         <a href="/dados/">Baixar os dados</a>
       </nav>
     </article>

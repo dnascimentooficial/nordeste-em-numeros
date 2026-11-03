@@ -235,7 +235,14 @@ def test_data_pontos_data_casas_e_data_sufixo_para_o_script():
 
 def test_data_pontos_mantem_acentos():
     linha = Linha("Maranhão", "MA", _pontos((2010, 1.0)), True)
-    assert 'data-pontos="[{&quot;rotulo&quot;:&quot;Maranhão&quot;' in grafico_linhas([linha], CFG, GOVERNOS_MINI)
+    assert 'data-pontos=\'[{"rotulo":"Maranhão"' in grafico_linhas([linha], CFG, GOVERNOS_MINI)
+
+
+def test_data_pontos_entre_aspas_simples_escapa_apostrofo_e_tags():
+    linha = Linha("Olho d'água <b>", "OD", _pontos((2010, 1.0)), True)
+    svg = grafico_linhas([linha], CFG, GOVERNOS_MINI)
+    assert "Olho d&#39;água &lt;b&gt;" in svg
+    assert json.loads(_raiz(svg).get("data-pontos"))[0]["rotulo"] == "Olho d'água <b>"
 
 
 def test_sem_atributo_style_nem_cor_literal_de_tema():
