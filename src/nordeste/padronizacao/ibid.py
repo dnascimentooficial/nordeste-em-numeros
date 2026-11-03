@@ -214,11 +214,40 @@ def ler_ibid(conteudo: bytes, serie: Serie) -> dict[int, dict[str, dict[str, flo
     return resultado
 
 
+def _linha(ficha: Ficha, serie: Serie, coleta_id: str, territorio: str, ano: int, valor: float, sub: str = "") -> dict:
+    return {
+        "indicador_id": ficha.id, "subindicador": sub, "etapa": "", "rede": "", "territorio_id": territorio,
+        "ano": ano, "valor": valor, "tipo_dado": "observado", "serie_id": serie.id, "coleta_id": coleta_id, "nota": "",
+    }
+
+
+def _padronizar_posicoes(
+    conteudo: bytes, ficha: Ficha, serie: Serie, coleta_id: str, territorios: pd.DataFrame,
+) -> pd.DataFrame:
+    """`medida: posicao`: a posicao nacional de cada UF no ranking do indice geral (1 a 27, aba de posicoes), uma
+    linha por UF da tabela de territorios e ano. A leitura e a mesma do indice: so sai a posicao que confere com a
+    calculada pela coluna C. Brasil e regioes nao tem posicao."""
+    publicadas = _posicoes_publicadas(ler_abas(conteudo))
+    registros = []
+    for ano in ler_ibid(conteudo, serie):
+        for sigla, posicao in publicadas[ano].items():
+            territorio = territorio_por_nome(territorios, UFS_DO_INPI[sigla])
+            if territorio is not None:
+                registros.append(_linha(ficha, serie, coleta_id, territorio, ano, float(posicao)))
+    return normalizar_base(pd.DataFrame(registros, columns=COLUNAS_BASE))
+
+
 def padronizar_ibid(
     conteudo: bytes, ficha: Ficha, serie: Serie, coleta_id: str, territorios: pd.DataFrame,
 ) -> pd.DataFrame:
     """Linhas da base: Brasil, regioes e as UFs da tabela de territorios (as demais UFs sao lidas e conferidas, mas
-    nao entram), uma por ano e subindicador (`geral`, `contexto` e `resultado`), todas `observado`."""
+    nao entram), uma por ano e subindicador (`geral`, `contexto` e `resultado`), todas `observado`. Com
+    `parametros.medida: posicao`, a posicao nacional de cada UF no ranking (ver `_padronizar_posicoes`)."""
+    medida = serie.parametros.get("medida", "indice")
+    if medida == "posicao":
+        return _padronizar_posicoes(conteudo, ficha, serie, coleta_id, territorios)
+    if medida != "indice":
+        raise ErroLayout(f"IBID: medida desconhecida {medida!r} em {ficha.id}/{serie.id} (use indice ou posicao)")
     por_nome = {**UFS_DO_INPI, **{nome: nome for nome in AGREGADOS_DO_INPI}}
     registros = []
     for ano, do_ano in ler_ibid(conteudo, serie).items():

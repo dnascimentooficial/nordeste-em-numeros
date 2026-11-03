@@ -13,6 +13,17 @@ from nordeste.coletores.erros import ErroColeta
 
 TEMPO_LIMITE_S = 120  # por leitura no socket, nao para o download inteiro
 BLOCO_DOWNLOAD = 1 << 20
+# Quem consulta as fontes (e o site, na automacao) se identifica, sempre com este nome: e o unico lugar dele. O gov.br
+# responde 403 a identificacao padrao da biblioteca (python-requests/x.y).
+USER_AGENT = "nordeste-em-numeros/1.0 (+https://nordeste.dnascimento.com.br)"
+CABECALHOS = {"User-Agent": USER_AGENT}
+
+
+def nova_sessao() -> requests.Session:
+    """Sessao HTTP com a identificacao do projeto (USER_AGENT) em todos os pedidos."""
+    sessao = requests.Session()
+    sessao.headers.update(CABECALHOS)
+    return sessao
 
 
 class _DownloadIncompleto(requests.RequestException):
@@ -71,16 +82,21 @@ def baixar(
     esperar=time.sleep,
     sessao: requests.Session | None = None,
     ca_extra: Path | None = None,
+    put_json: dict | None = None,
 ) -> bytes:
     """Baixa a URL para a memoria; apos cada falha espera espera_inicial * 2**k antes de tentar de novo.
 
     `ca_extra`: certificado PEM de uma intermediaria que o servidor nao envia; a verificacao usa o bundle
-    padrao mais ele (nunca `verify=False`). Esgotadas as tentativas, levanta ErroColeta com a URL.
+    padrao mais ele (nunca `verify=False`). `put_json`: o pedido e um PUT com esse corpo JSON (APIs que so entregam
+    a consulta assim, como a do GeoCAPES). Esgotadas as tentativas, levanta ErroColeta com a URL.
     """
-    sessao = sessao or requests.Session()
+    sessao = sessao or nova_sessao()
 
     def acao(opcoes: dict) -> bytes:
-        resposta = sessao.get(url, timeout=TEMPO_LIMITE_S, **opcoes)
+        if put_json is not None:
+            resposta = sessao.put(url, json=put_json, timeout=TEMPO_LIMITE_S, headers=CABECALHOS, **opcoes)
+        else:
+            resposta = sessao.get(url, timeout=TEMPO_LIMITE_S, headers=CABECALHOS, **opcoes)
         resposta.raise_for_status()
         return resposta.content
 
@@ -102,11 +118,11 @@ def baixar_para_arquivo(
     (sem Content-Encoding) conta como falha. Cada tentativa recomeca o arquivo do zero; se todas falharem,
     `destino` e apagado e sobe ErroColeta.
     """
-    sessao = sessao or requests.Session()
+    sessao = sessao or nova_sessao()
 
     def acao(opcoes: dict) -> tuple[str, int]:
         resumo, tamanho = hashlib.sha256(), 0
-        with sessao.get(url, timeout=TEMPO_LIMITE_S, stream=True, **opcoes) as resposta:
+        with sessao.get(url, timeout=TEMPO_LIMITE_S, stream=True, headers=CABECALHOS, **opcoes) as resposta:
             resposta.raise_for_status()
             with destino.open("wb") as saida:
                 for bloco in resposta.iter_content(chunk_size=BLOCO_DOWNLOAD):

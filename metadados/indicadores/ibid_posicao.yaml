@@ -1,0 +1,49 @@
+id: ibid_posicao
+nome: Posição no ranking do IBID
+descricao: >-
+  Posição de cada estado do Nordeste no ranking nacional do Índice Brasil de
+  Inovação e Desenvolvimento (IBID), do INPI, entre as 27 unidades da
+  federação. Quanto menor, melhor: 1 é o estado mais bem colocado do país.
+eixo: inovacao
+categoria: inovacao
+unidade: posição entre as 27 UFs (1 = melhor)
+orgao: INPI
+periodicidade: anual
+metodologia: >-
+  Posição publicada pelo INPI na aba `IBID_série hist` da planilha da série
+  histórica (ranking do índice geral, 2014 a 2025), a mesma planilha da ficha
+  `ibid`. O padronizador só aceita a posição que confere com a calculada pelo
+  índice geral lido na aba do ano (1 mais o número de UFs com índice maior).
+  Só as UFs têm posição; Brasil e regiões não entram.
+observacoes: >-
+  (1) Existe para a página Estados: o INPI avisa que o valor do índice de um
+  estado não se compara entre anos (cada indicador é normalizado entre as UFs
+  dentro do ano), e a posição é a comparação que o próprio INPI recomenda. O
+  valor do índice continua na ficha `ibid`, usada no Explorar. (2) Sem
+  referência: posição não tem média nacional nem Brasil fora do Nordeste. (3)
+  Mesma coleta e mesmo arquivo da ficha `ibid`; edição nova exige subir o `fim`
+  das duas fichas.
+sentido: menor_melhor
+limites: {min: 1, max: 27}
+defasagem_meses: 0
+limiar_salto_pct: 300
+comparacao:
+  referencia: nenhuma
+series:
+  - id: serie_historica
+    inicio: 2014
+    fim: 2025
+    fonte: INPI, Índice Brasil de Inovação e Desenvolvimento (série histórica 2014-2025), posição no ranking
+    base_origem: >-
+      ibid-serie-historica.xlsx, aba IBID_série hist (posição de cada UF no
+      ranking do índice geral), conferida contra as abas IBID 2014 a IBID 2025
+    url: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid
+    coletor: arquivo
+    parametros:
+      url: https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx
+      padronizador: ibid
+      medida: posicao
+    compatibilidade: >-
+      Série única, de 2014 a 2025. A posição compara o estado com os demais
+      dentro do ano; a de anos diferentes se compara, o valor do índice não.
+    verificado: true

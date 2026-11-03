@@ -211,6 +211,7 @@ def test_links_quebrados_com_ca_extra_inexistente_lista_o_motivo(projeto, monkey
 def test_coleta_do_inep_so_na_primeira_semana():
     assert [coleta_do_inep(date(2026, 11, d)) for d in (1, 7, 8, 30)] == [True, True, False, False]
     assert INDICADORES_INEP_PESADOS == ("matriculas_basica", "superior")
+    assert automacao.INDICADORES_PESADOS == ("matriculas_basica", "superior", "patentes_residentes")  # BADEPI: 123 MB
 
 
 # --- anexos da release ---
@@ -747,7 +748,8 @@ def test_cli_auxiliar_site_mudou_com_site_novo_inexistente_e_erro_distinto(tmp_p
 
 def test_cli_auxiliar_pular_inep(capsys):
     assert automacao.main(["pular-inep", "--hoje", "2026-11-15"]) == 0
-    assert capsys.readouterr().out.splitlines() == ["--pular-indicador matriculas_basica", "--pular-indicador superior"]
+    assert capsys.readouterr().out.splitlines() == [
+        "--pular-indicador matriculas_basica", "--pular-indicador superior", "--pular-indicador patentes_residentes"]
     for dia in ("2026-11-01", "2026-11-07"):  # primeira semana: coleta tudo, nada a pular
         assert automacao.main(["pular-inep", "--hoje", dia]) == 0
         assert capsys.readouterr().out == ""
@@ -761,7 +763,7 @@ def test_cli_auxiliar_pular_inep_sem_hoje_usa_a_data_de_hoje(capsys, monkeypatch
 
     monkeypatch.setattr(automacao, "date", Hoje)
     assert automacao.main(["pular-inep"]) == 0
-    assert len(capsys.readouterr().out.splitlines()) == 2
+    assert len(capsys.readouterr().out.splitlines()) == 3
 
 
 def test_cli_auxiliar_ajuda_do_anos_novos_avisa_que_sem_base_anterior_e_aproximado(capsys):

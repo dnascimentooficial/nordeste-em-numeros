@@ -21,17 +21,18 @@ import requests
 
 from nordeste.caminhos import Caminhos
 from nordeste.coletores.erros import ErroColeta
-from nordeste.coletores.http import _bundle_com_extra
+from nordeste.coletores.http import CABECALHOS, USER_AGENT, _bundle_com_extra  # noqa: F401 - USER_AGENT: um so lugar
 from nordeste.coletores.registro import ler_registro
 from nordeste.fichas import ErroFicha, Ficha, carregar_fichas
 from nordeste.site.formatacao import numero
 
 RAIZ_PADRAO = Path(__file__).resolve().parents[2]
 INDICADORES_INEP_PESADOS = ("matriculas_basica", "superior")  # sinopses do INEP: centenas de MB, saem uma vez por mes
+# coletados so na primeira semana do mes; nas outras, o bruto vem da release (cache). A BADEPI do INPI: zip de 123 MB,
+# uma versao nova por ano
+INDICADORES_PESADOS = (*INDICADORES_INEP_PESADOS, "patentes_residentes")
 RELEASE_DOS_BRUTOS = "brutos"
 SEPARADOR_DO_ANEXO = "__"
-USER_AGENT = "nordeste-em-numeros/1.0 (+https://nordeste.dnascimento.com.br)"  # quem consulta fontes e site se identifica
-CABECALHOS = {"User-Agent": USER_AGENT}
 TERRITORIOS_DO_RESUMO = {"NE": "Nordeste", "BR": "Brasil"}
 
 
@@ -382,7 +383,8 @@ def _parser() -> argparse.ArgumentParser:
     mudou = comandos.add_parser("site-mudou", help="imprime mudou/igual; sai com 0 se o site mudou e 1 se esta igual")
     mudou.add_argument("--anterior", type=Path, required=True, help="site publicado (pasta inexistente conta como mudou)")
     mudou.add_argument("--novo", type=Path, required=True, help="site recem-gerado")
-    pular = comandos.add_parser("pular-inep", help="imprime '--pular-indicador ID' dos indicadores pesados do INEP fora da 1a semana")
+    pular = comandos.add_parser(
+        "pular-inep", help="imprime '--pular-indicador ID' dos indicadores pesados (INEP e BADEPI) fora da 1a semana")
     pular.add_argument("--hoje", type=date.fromisoformat, default=None, help="AAAA-MM-DD (padrao: hoje)")
     return parser
 
@@ -419,7 +421,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if mudou else 1
         elif args.comando == "pular-inep":
             if not coleta_do_inep(args.hoje or date.today()):
-                for indicador in INDICADORES_INEP_PESADOS:
+                for indicador in INDICADORES_PESADOS:
                     print(f"--pular-indicador {indicador}")
     except (ErroAutomacao, ErroFicha, OSError, ValueError) as erro:
         print(erro, file=sys.stderr)
