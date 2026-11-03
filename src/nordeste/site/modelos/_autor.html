@@ -3,9 +3,16 @@
 {% macro ligado(trecho, autor) %}{{ trecho.antes }}<a href="{{ autor.url }}">{{ trecho.ancora }}</a>{{ trecho.depois }}{% endmacro %}
 {% macro conteudo(autor, id_titulo) %}
 <h2 id="{{ id_titulo }}">{{ autor.titulo }}</h2>
+{% if autor.marca %}
+<picture class="nn-autor-logo">
+  <source media="(prefers-color-scheme: dark)" srcset="{{ autor.marca.clara }}">
+  <img src="{{ autor.marca.escura }}" alt="{{ autor.nome }}" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}">
+</picture>
+{% endif %}
 <section class="nn-autor-secao">
   <h3>{{ autor.quem_sou.titulo }}</h3>
-  <p>{{ ligado(autor.quem_sou.texto, autor) }}</p>
+  <p>{{ autor.quem_sou.texto }}</p>
+  <p>{{ ligado(autor.quem_sou.mais, autor) }}</p>
 </section>
 <section class="nn-autor-secao">
   <h3>{{ autor.motivacao.titulo }}</h3>

@@ -747,8 +747,9 @@
      abre com showModal() e liga a dica de valor ao SVG grande, como nos gráficos da página. Fecha pelo botão, por Esc
      e por clique fora; o foco volta ao botão que abriu. Sem JavaScript os botões ficam com hidden. */
   function ligarAmpliar() {
-    /* o <dialog> das épocas (Como chegamos) também é .nn-modal, mas é de ligarHistoria: este esvazia o corpo ao fechar */
-    const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia)');
+    /* os <dialog> das épocas (Como chegamos) e do autor também são .nn-modal, mas são de ligarHistoria e ligarAutor:
+       este esvazia o corpo ao fechar */
+    const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)');
     if (!dialogo || typeof dialogo.showModal !== 'function') return;
     const corpo = dialogo.querySelector('.nn-modal-corpo');
     let origem = null;
@@ -786,6 +787,36 @@
       caixa.classList.add('nn-clicavel');
       caixa.addEventListener('pointerdown', (evento) => { toque = evento.pointerType === 'touch'; });
       caixa.addEventListener('click', () => { if (!toque) abrir(botao); });
+    });
+  }
+
+  /* --- modal "Sobre o autor" ------------------------------------------------------------------------------------ */
+
+  /* O conteúdo já vem no HTML, dentro do <dialog class="nn-modal-autor"> de toda página; aqui só se abre e se fecha. O
+     gatilho do rodapé é um link para /sobre/#autor, que é o que vale sem JavaScript: com ele, o clique abre o modal em
+     vez de navegar. showModal() prende o foco e fecha com Esc; o X e o clique fora também fecham, e o foco volta ao
+     gatilho que abriu. */
+  function ligarAutor() {
+    const dialogo = document.querySelector('dialog.nn-modal-autor');
+    const gatilhos = document.querySelectorAll('.nn-autor-abrir');
+    if (!dialogo || typeof dialogo.showModal !== 'function' || !gatilhos.length) return;
+    let origem = null;
+    gatilhos.forEach((gatilho) => {
+      gatilho.addEventListener('click', (evento) => {
+        evento.preventDefault();
+        if (dialogo.open) return;
+        origem = gatilho;
+        dialogo.showModal();
+        dialogo.scrollTop = 0;
+      });
+    });
+    dialogo.querySelector('.nn-modal-fechar').addEventListener('click', () => dialogo.close());
+    dialogo.addEventListener('click', (evento) => {
+      if (evento.target === dialogo) dialogo.close(); /* o fundo escurecido é o próprio <dialog> */
+    });
+    dialogo.addEventListener('close', () => {
+      if (origem) origem.focus();
+      origem = null;
     });
   }
 
@@ -1153,6 +1184,7 @@
     centralizarAba();
     document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica);
     ligarAmpliar();
+    ligarAutor();
     ligarHistoria();
     ligarEstados();
     ligarExplorar();

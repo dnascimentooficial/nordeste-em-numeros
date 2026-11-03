@@ -74,13 +74,13 @@ o_que_falta:
     - "Linha de pobreza: confirmada pelos metadados do Ipeadata, não por publicação do IBGE."
 
 # Autoria: o bloco "Desenvolvido por" do rodapé, o modal "Sobre o autor" e a seção #autor de Sobre saem desta chave, do
-# mesmo texto. `link` é o trecho de quem_sou.texto e de formacao_vazia que vira link para o site do autor. `formacao` é
-# opcional (lista de itens): ausente, nula ou vazia, a seção mostra formacao_vazia. Não pôr aqui fato biográfico que o
-# autor não tenha passado.
+# mesmo texto. `link` é o trecho de quem_sou.mais e de formacao_vazia que vira link para o site do autor. `formacao` é
+# opcional (lista de itens): ausente, nula ou vazia, a seção mostra formacao_vazia. quem_sou.texto, formacao e motivacao
+# são do autor (do site dele e do que ele passou); não pôr aqui fato biográfico que ele não tenha passado.
 # A foto do autor é estaticos/autor.webp (opcional, WebP de até 100 KB): existindo, ela vai no círculo do rodapé; sem
-# ela, o círculo mostra as iniciais. A marca gráfica é estaticos/marca-autor.svg (opcional): existindo, aparece no
-# rodapé. Quando autor.webp chegar, o LICENSE.md precisa citá-la como "© Júlio Diógenes, todos os direitos reservados"
-# (um teste falha se não citar).
+# ela, o círculo mostra as iniciais. A marca gráfica são duas versões do logotipo, estaticos/marca-autor-clara.webp (branca,
+# para fundo escuro) e estaticos/marca-autor-escura.webp (para fundo claro): aparece só se as duas existirem. Foto e marca
+# são © do autor: o LICENSE.md precisa citá-las (um teste falha se não citar).
 autor:
   nome: "Júlio Diógenes"
   titulo: "Sobre o autor"
@@ -88,11 +88,18 @@ autor:
   link: "dnascimento.com.br"
   quem_sou:
     titulo: "Quem sou"
-    texto: "Júlio Diógenes, autor do Nordeste em Números. Meu trabalho e minha trajetória estão em dnascimento.com.br."
+    texto: "Há mais de 17 anos, ajudo profissionais, empresas e governos a transformar problemas complexos em decisões executáveis. Minha atuação combina design, engenharia, inovação, dados e gestão de projetos. Trabalho com estratégia, inovação e inteligência artificial."
+    mais: "Mais sobre o meu trabalho em dnascimento.com.br"
   motivacao:
     titulo: "Por que fiz este estudo"
     texto: "Fiz este estudo por raiva, e também por orgulho. Raiva de um discurso que repete que o Nordeste está do mesmo jeito, apaga a história da região e ignora o que estados e municípios fizeram e deixaram de fazer. Orgulho de uma região que mudou mais do que se diz, ainda que falte muito chão. Então fui conferir nos dados oficiais, de 2000 para cá, e na história, da Colônia até hoje. Aqui ninguém ganha passe livre: município, estado e União dividem a conta. Cada número tem fonte e cálculo à vista, para quem quiser rebater ou entender."
   formacao_titulo: "Formação"
+  formacao:
+    - "Design"
+    - "Engenharia da Computação"
+    - "Análise de Dados"
+    - "Gestão de Projetos e Inovação"
+    - "Direito da Infraestrutura, Regulação e Governança"
   formacao_vazia: "Formação e trajetória completas em dnascimento.com.br"
 
 # Metadados de página (título, descrição das prévias de compartilhamento) e conjunto de dados descrito no JSON-LD.

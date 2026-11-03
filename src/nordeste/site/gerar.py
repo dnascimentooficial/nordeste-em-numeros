@@ -60,7 +60,9 @@ FOTO_EXIGIDA = ("credito", "url")  # `foto` e opcional em textos.yaml; se existi
 FOTO_ARQUIVO = "foto-abertura.webp"  # em estaticos/; o estilo.css aponta para este nome (fundo da abertura, Ruling S-U)
 AUTOR_FOTO = "autor.webp"  # em estaticos/, opcional: a foto do circulo do rodape; sem ela o circulo mostra as iniciais
 AUTOR_FOTO_TAMANHO_MAXIMO = 100_000  # bytes: o rodape esta em todas as paginas
-AUTOR_MARCA = "marca-autor.svg"  # em estaticos/, opcional: a marca grafica do autor, mostrada no rodape so se existir
+AUTOR_MARCA = {"clara": "marca-autor-clara.webp", "escura": "marca-autor-escura.webp"}  # em estaticos/, opcionais: o
+# logotipo do autor (branco, para fundo escuro; escuro, para fundo claro), mostrado so se as duas versoes existirem
+AUTOR_MARCA_TAMANHO_MAXIMO = 60_000  # bytes, cada versao
 LARGO = {"largura": 720}  # os dois tamanhos de cada grafico (Ruling S-O): o CSS mostra um conforme a largura da tela
 ESTREITO = {"largura": 360, "altura": 240}
 AMPLIADO = {"largura": 1100, "altura": 520}  # o terceiro, do modal "Ampliar" (Ruling S-W): guardado num <template>
@@ -85,7 +87,7 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
     "cards": {"titulo", "intro", "sera", "baixar", "voltar"},
     "autor": {  # + `formacao`, opcional (lista de itens)
         **dict.fromkeys(("nome", "titulo", "fechar", "link", "formacao_titulo", "formacao_vazia")),
-        "quem_sou": {"titulo", "texto"}, "motivacao": {"titulo", "texto"},
+        "quem_sou": {"titulo", "texto", "mais"}, "motivacao": {"titulo", "texto"},
     },
 }
 FRASE_DA_DATA = "na data desta publicação"
@@ -698,17 +700,18 @@ def _validar_foto(foto: object) -> None:
 
 
 def _validar_autor(autor: dict) -> None:
-    """Os textos do autor sao textos nao vazios; `link` aparece em quem_sou.texto e em formacao_vazia (e o trecho que
+    """Os textos do autor sao textos nao vazios; `link` aparece em quem_sou.mais e em formacao_vazia (e o trecho que
     vira link para o site do autor); `formacao`, se vier, e uma lista de textos nao vazios (nula ou vazia vale ausente)."""
     textos = {
         "nome": autor["nome"], "titulo": autor["titulo"], "fechar": autor["fechar"], "link": autor["link"],
         "formacao_titulo": autor["formacao_titulo"], "formacao_vazia": autor["formacao_vazia"],
         **{f"{secao}.{campo}": autor[secao][campo] for secao in ("quem_sou", "motivacao") for campo in ("titulo", "texto")},
+        "quem_sou.mais": autor["quem_sou"]["mais"],
     }
     for nome, texto in textos.items():
         if not isinstance(texto, str) or not texto.strip():
             raise ErroConteudo(f"textos.yaml: autor.{nome} é um texto, não vazio.")
-    for nome, texto in (("quem_sou.texto", autor["quem_sou"]["texto"]), ("formacao_vazia", autor["formacao_vazia"])):
+    for nome, texto in (("quem_sou.mais", autor["quem_sou"]["mais"]), ("formacao_vazia", autor["formacao_vazia"])):
         if autor["link"] not in texto:
             raise ErroConteudo(f"textos.yaml: autor.{nome} não cita autor.link ({autor['link']!r}), o trecho que vira link.")
     formacao = autor.get("formacao")
@@ -736,6 +739,23 @@ def _foto_do_autor() -> dict | None:
     return {"src": f"/{AUTOR_FOTO}", "largura": largura, "altura": altura}
 
 
+def _marca_do_autor() -> dict | None:
+    """As duas versoes do logotipo em `estaticos/`, com as medidas (iguais nas duas, sem salto de layout); None se
+    faltar alguma. Recusa o que nao e WebP ou passa do peso."""
+    arquivos = {tema: PASTA_ESTATICOS / nome for tema, nome in AUTOR_MARCA.items()}
+    if not all(a.is_file() for a in arquivos.values()):
+        return None
+    medidas = set()
+    for arquivo in arquivos.values():
+        if arquivo.stat().st_size > AUTOR_MARCA_TAMANHO_MAXIMO:
+            raise ErroConteudo(f"{arquivo.name} passa de {AUTOR_MARCA_TAMANHO_MAXIMO // 1000} KB.")
+        medidas.add(medidas_da_webp(arquivo))
+    if len(medidas) != 1:
+        raise ErroConteudo("as duas versões da marca do autor têm de ter o mesmo tamanho.")
+    (largura, altura), = medidas
+    return {**{tema: f"/{nome}" for tema, nome in AUTOR_MARCA.items()}, "largura": largura, "altura": altura}
+
+
 def _contexto_do_autor(autor: dict) -> dict:
     """O que os modelos leem do autor (rodape, modal e secao de Sobre): nome, iniciais, foto e marca (se existirem) e
     as tres secoes, com o link do site do autor ja marcado nos textos que o citam."""
@@ -745,8 +765,11 @@ def _contexto_do_autor(autor: dict) -> dict:
         "nome": autor["nome"], "iniciais": (palavras[0][0] + palavras[-1][0]).upper(), "url": URL_DO_AUTOR,
         "titulo": autor["titulo"], "fechar": autor["fechar"], "link": autor["link"],
         "foto": _foto_do_autor(),
-        "marca": f"/{AUTOR_MARCA}" if (PASTA_ESTATICOS / AUTOR_MARCA).is_file() else None,
-        "quem_sou": {"titulo": autor["quem_sou"]["titulo"], "texto": _com_link(autor["quem_sou"]["texto"], autor["link"])},
+        "marca": _marca_do_autor(),
+        "quem_sou": {
+            "titulo": autor["quem_sou"]["titulo"], "texto": autor["quem_sou"]["texto"],
+            "mais": _com_link(autor["quem_sou"]["mais"], autor["link"]),
+        },
         "motivacao": autor["motivacao"],
         "formacao": {
             "titulo": autor["formacao_titulo"], "itens": formacao,

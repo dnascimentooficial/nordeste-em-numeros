@@ -10,14 +10,14 @@
   <div class="nn-autor-bloco">
     <a class="nn-autor-abrir" href="/sobre/#autor" aria-haspopup="dialog">
 {% if autor.foto %}
-      <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}"></span>
+      <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="{{ autor.nome }}" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}"></span>
 {% else %}
       <span class="nn-autor-circulo" aria-hidden="true">{{ autor.iniciais }}</span>
 {% endif %}
       <span class="nn-autor-texto">Desenvolvido por <strong class="nn-autor-nome">{{ autor.nome }}</strong></span>
     </a>
 {% if autor.marca %}
-    <img class="nn-autor-marca" src="{{ autor.marca }}" alt="">
+    <img class="nn-autor-marca" src="{{ autor.marca.clara }}" alt="" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}">
 {% endif %}
   </div>
 </footer>

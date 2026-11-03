@@ -217,30 +217,65 @@ body {
   transform: none;
 }
 
-/* --- topo: barra preta em pílula, com o menu em abas --- */
+/* --- topo: barra preta de duas linhas. Em cima, o título à esquerda e o "por Júlio Diógenes" à direita; uma linha fina
+   de 1 px; embaixo, o menu em abas. A barra é preta nos dois temas (a linha e os textos de baixo contraste vivem sobre
+   #080808); no celular o "por" desce para baixo do título e o menu rola de lado --- */
 
 .nn-topo {
   background: var(--nn-preto);
   color: var(--nn-branco);
   border: 1px solid var(--nn-borda-preta);
-  border-radius: 999px;
-  padding: 8px 8px 8px 22px;
+  border-radius: var(--nn-raio);
+  padding: 18px clamp(14px, 2.4vw, 26px) 8px;
 }
 
 .nn-hero-topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.nn-topo-titulo {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 8px 16px;
+  gap: 2px 20px;
+  padding-inline: 4px;
 }
 
 .nn .nn-marca {
   font-family: var(--nn-display);
   font-weight: 800;
-  font-size: 15px;
-  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.4vw, 28px);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
   text-decoration: none;
+}
+
+.nn .nn-autoria {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.nn .nn-autoria strong {
+  color: var(--nn-branco);
+  font-weight: 700;
+}
+
+.nn .nn-autoria a {
+  text-decoration: none;
+}
+
+.nn .nn-autoria a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+}
+
+.nn-topo-linha {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .nn-menu {
@@ -278,34 +313,23 @@ body {
   color: var(--nn-branco);
 }
 
-.nn .nn-hero-site {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.62);
-  padding-right: 14px;
-  text-decoration: none;
-}
-
-.nn .nn-hero-site:hover {
-  color: var(--nn-branco);
-}
-
 @media (max-width: 900px) {
   .nn-topo {
-    border-radius: var(--nn-raio);
-    padding: 12px 10px 10px 18px;
+    padding: 16px 10px 8px;
   }
 
   .nn-menu {
-    order: 3;
-    flex-basis: 100%;
-    margin-left: -8px;
     /* o menu rola de lado: a borda direita esmaece para mostrar que há mais abas */
     -webkit-mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
     mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
   }
+}
 
-  .nn .nn-hero-site {
-    padding-right: 8px;
+@media (max-width: 560px) {
+  .nn-topo-titulo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
   }
 }
 
@@ -1464,6 +1488,96 @@ html:has(.nn-modal[open]) {
 
 .nn .nn-rodape a {
   color: var(--nn-branco);
+}
+
+/* o bloco de autoria: o círculo de 56 px (a foto, ou as iniciais) e o "Desenvolvido por", que abrem o modal "Sobre o
+   autor" (sem JavaScript, o link leva à seção de Sobre); a marca do autor, só a versão branca, porque o rodapé é preto
+   nos dois temas */
+
+.nn-autor-bloco {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 6px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.nn .nn-autor-abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.nn .nn-autor-abrir:hover .nn-autor-nome {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+  text-underline-offset: 3px;
+}
+
+.nn-autor-circulo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--nn-laranja-escuro);
+  color: var(--nn-branco);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font: 800 19px/1 var(--nn-display);
+  letter-spacing: 0.02em;
+}
+
+.nn-autor-circulo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nn-autor-texto {
+  font-size: 15px;
+}
+
+.nn-autor-marca {
+  display: block;
+  height: 26px;
+  width: auto;
+}
+
+/* o conteúdo do autor: o modal e a seção de Sobre */
+
+.nn-modal-autor {
+  max-width: 680px; /* estreito de propósito; no celular a largura de .nn-modal (a tela toda) continua valendo */
+}
+
+.nn-autor-conteudo,
+.nn-card-autor {
+  display: grid;
+  gap: 18px;
+}
+
+.nn-autor-secao {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.nn-autor-logo {
+  display: block;
+}
+
+.nn-autor-logo img {
+  display: block;
+  height: 26px;
+  width: auto;
 }
 
 .nn-sha-base {
