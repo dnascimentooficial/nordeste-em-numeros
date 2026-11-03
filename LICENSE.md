@@ -23,6 +23,11 @@ para a licença e indique se fez alterações.
   lado do arquivo.
 - Foto da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`): © Júlio Diógenes, todos os
   direitos reservados; não está coberta pela CC BY 4.0.
+- Foto do autor (`src/nordeste/site/estaticos/autor.webp`): © Júlio Diógenes, todos os direitos reservados; não está
+  coberta pela CC BY 4.0.
+- Marca do autor, as duas versões do logotipo (`src/nordeste/site/estaticos/marca-autor-clara.webp` e
+  `src/nordeste/site/estaticos/marca-autor-escura.webp`): © Júlio Diógenes, todos os direitos reservados; não estão
+  cobertas pela CC BY 4.0.
 - Contorno do Nordeste usado nas imagens: derivado da malha do IBGE via tbrugz/geodata-br (CC0).
 - Imagens da página "Como chegamos até aqui" (`src/nordeste/site/estaticos/historia/`): não estão cobertas pela
   CC BY 4.0. Cada uma segue a licença do original, com autor, data e página em `metadados/site/historia.yaml` e na
