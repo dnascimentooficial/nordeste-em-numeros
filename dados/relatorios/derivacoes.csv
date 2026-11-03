@@ -19,3 +19,13 @@ deriv.renda_dom_pc.pnadc.70fc5130,renda_dom_pc,pnadc,massa_renda_dom_pc.pnadc.20
 deriv.superior.censup.4d334181,superior,censup,superior.censup.2026-11-01.ceefe706
 deriv.superior.censup_pre2009.b1861a84,superior,censup_pre2009,superior.censup_pre2009.2026-11-01.1cb64f0e
 deriv.pib_per_capita.scr_ref2010.67e35416,pib_per_capita,scr_ref2010,pib_nominal.scr_ref2010.2026-11-01.80b6b394;populacao.censo_2000_2010.2026-11-01.c1dc5d39;populacao.censo_2022.2026-11-01.aff51c31;populacao.estimativa_pre_censo2022.2026-11-01.677a1c48
+deriv.doutores_titulados.nota_3_ou_mais.91820ece,doutores_titulados,nota_3_ou_mais,doutores_titulados.nota_3_ou_mais.2026-11-03.e0db8f68
+deriv.doutores_titulados.sem_filtro_de_nota.34d0151d,doutores_titulados,sem_filtro_de_nota,doutores_titulados.sem_filtro_de_nota.2026-11-03.fd9d40eb
+deriv.empregos_ti.cempre_6450.85d4e407,empregos_ti,cempre_6450,empregos_ti.cempre_6450.2026-11-03.35767014
+deriv.empregos_ti.cempre_9418.5955c95e,empregos_ti,cempre_9418,empregos_ti.cempre_9418.2026-11-03.a9063452
+deriv.gasto_estadual_cti.mcti_legado.9093168e,gasto_estadual_cti,mcti_legado,gasto_estadual_cti.mcti_legado.2026-11-03.eee35c6f
+deriv.patentes_residentes.badepi_v12.ce169a77,patentes_residentes,badepi_v12,patentes_residentes.badepi_v12.2026-11-03.6f4e609b
+deriv.pintec_empresas.cnae1.03fc295c,pintec_empresas,cnae1,pintec_empresas.cnae1.2026-11-03.32720b2c
+deriv.pintec_empresas.cnae2.63a2e9c3,pintec_empresas,cnae2,pintec_empresas.cnae2.2026-11-03.d049eda5
+deriv.programas_pos.nota_3_ou_mais.fd5be036,programas_pos,nota_3_ou_mais,programas_pos.nota_3_ou_mais.2026-11-03.fe8878d6
+deriv.programas_pos.sem_filtro_de_nota.b578041a,programas_pos,sem_filtro_de_nota,programas_pos.sem_filtro_de_nota.2026-11-03.6f297631
