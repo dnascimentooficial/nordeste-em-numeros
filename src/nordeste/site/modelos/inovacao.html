@@ -41,11 +41,45 @@
 {% for paragrafo in c.paragrafos %}
       <p class="nn-frase">{{ paragrafo }}</p>
 {% endfor %}
+{% for b in c.blocos %}
+      <section class="nn-bloco-texto" aria-labelledby="bloco-{{ c.id }}-{{ loop.index }}">
+        <h3 id="bloco-{{ c.id }}-{{ loop.index }}">{{ b.titulo }}</h3>
+{% if b.destaques %}
+        <ul class="nn-numeros nn-numeros-bloco">
+{% for n in b.destaques %}
+          <li class="nn-numero"><span class="nn-numero-valor">{{ n.valor }}</span><span class="nn-numero-rotulo">{{ n.rotulo }}{% if n.ano %} <span class="nn-numero-ano">({{ n.ano }})</span>{% endif %}</span></li>
+{% endfor %}
+        </ul>
+{% endif %}
+{% for paragrafo in b.paragrafos %}
+        <p>{{ paragrafo }}</p>
+{% endfor %}
+{% if b.tabela %}
+        <div class="nn-tabela nn-tabela-bloco" tabindex="0" role="region" aria-label="{{ b.tabela.titulo }}">
+          <table>
+            <caption>{{ b.tabela.titulo }}</caption>
+            <thead><tr>{% for col in b.tabela.colunas %}<th scope="col">{{ col }}</th>{% endfor %}</tr></thead>
+            <tbody>
+{% for linha in b.tabela.linhas %}
+              <tr>{% for cel in linha %}{% if loop.first %}<th scope="row">{{ cel }}</th>{% else %}<td>{{ cel }}</td>{% endif %}{% endfor %}</tr>
+{% endfor %}
+            </tbody>
+          </table>
+        </div>
+{% endif %}
+        <p class="nn-bloco-fonte"><b>Fonte:</b> {{ b.fonte }}</p>
+      </section>
+{% endfor %}
+{% if c.fecho %}
+      <p class="nn-fecho"><b>{{ pl.fecho }}</b> {{ c.fecho }}</p>
+{% endif %}
+{% if c.fonte %}
       <div class="nn-fonte">
 {% for linha in c.fonte %}
         <span>{{ linha }}</span>
 {% endfor %}
       </div>
+{% endif %}
 {% else %}
 {% if c.fecho %}
       <p class="nn-fecho"><b>{{ pl.fecho }}</b> {{ c.fecho }}</p>
@@ -132,6 +166,7 @@
         </div>
       </details>
 {% endif %}
+{% if not c.texto %}
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ c.rotulo }}">
 {# Estados e Explorar so tem o IBID e a internet: os outros capitulos levam so a base para baixar #}
 {% if c.id == "inovacao" %}
@@ -142,6 +177,7 @@
 {% endif %}
         <a href="/dados/">Baixar os dados</a>
       </nav>
+{% endif %}
     </article>
 {% endfor %}
   </div>

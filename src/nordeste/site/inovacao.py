@@ -3,7 +3,8 @@ capitulo de texto sobre o ecossistema.
 
 Mesmas regras do Inicio: nenhum numero de dado e digitado (marcadores `{id.campo:formato}` preenchidos pela base, com
 os destaques declarados no proprio arquivo), e cada veredito tem uma condicao que, falsa, o tira da pagina e do placar.
-O capitulo sem graficos (`texto: true`) traz so paragrafos com a etiqueta do que ele e; nele nao ha marcador.
+O capitulo sem graficos (`texto: true`) traz a etiqueta do que ele e e, em vez de graficos, paragrafos e/ou blocos
+(titulo, numeros em destaque, paragrafos, tabela e a fonte do bloco): fatos datados de fora da base, sem marcador.
 """
 
 from pathlib import Path
@@ -21,21 +22,56 @@ _CHAVES_DO_CAPITULO = {
     "opcionais": {"explicacao", "alerta", "regua", "posicoes"},
 }
 _CHAVES_DO_TEXTO = {
-    "obrigatorias": {"id", "rotulo", "titulo", "texto", "etiqueta", "paragrafos", "fonte"},
-    "opcionais": set(),
+    "obrigatorias": {"id", "rotulo", "titulo", "texto", "etiqueta"},
+    "opcionais": {"paragrafos", "blocos", "fonte", "fecho"},
 }
+_CHAVES_DO_BLOCO = {"obrigatorias": {"titulo", "fonte"}, "opcionais": {"destaques", "paragrafos", "tabela"}}
+_CHAVES_DO_NUMERO = {"obrigatorias": {"valor", "rotulo"}, "opcionais": {"ano"}}
+_CHAVES_DA_TABELA = {"obrigatorias": {"titulo", "colunas", "linhas"}, "opcionais": set()}
+
+
+def _lista_de_textos(valor: object) -> bool:
+    return isinstance(valor, list) and bool(valor) and all(isinstance(p, str) and p for p in valor)
+
+
+def _validar_capitulo_de_texto(capitulo: dict) -> None:
+    onde = f"{ARQUIVO}, capítulo {capitulo.get('id')}"
+    _exigir_chaves(capitulo, _CHAVES_DO_TEXTO, onde)
+    if "paragrafos" not in capitulo and "blocos" not in capitulo:
+        raise ErroConteudo(f"{onde}: o capítulo de texto precisa de paragrafos ou blocos.")
+    for campo in ("paragrafos", "fonte"):
+        if campo in capitulo and not _lista_de_textos(capitulo[campo]):
+            raise ErroConteudo(f"{onde}: {campo} é uma lista de textos.")
+    if "fecho" in capitulo and not (isinstance(capitulo["fecho"], str) and capitulo["fecho"]):
+        raise ErroConteudo(f"{onde}: fecho é um texto.")
+    blocos = capitulo.get("blocos", [])
+    if not isinstance(blocos, list) or ("blocos" in capitulo and not blocos):
+        raise ErroConteudo(f"{onde}: blocos é uma lista com ao menos um bloco.")
+    textos = list(capitulo.get("paragrafos", [])) + [capitulo.get("fecho", "")]
+    for n, bloco in enumerate(blocos, start=1):
+        ondeb = f"{onde}, bloco {n}"
+        _exigir_chaves(bloco, _CHAVES_DO_BLOCO, ondeb)
+        if "paragrafos" in bloco and not _lista_de_textos(bloco["paragrafos"]):
+            raise ErroConteudo(f"{ondeb}: paragrafos é uma lista de textos.")
+        for numero in bloco.get("destaques", []):
+            _exigir_chaves(numero, _CHAVES_DO_NUMERO, f"{ondeb}, destaque")
+            textos += [str(v) for v in numero.values()]
+        if "tabela" in bloco:
+            tabela = bloco["tabela"]
+            _exigir_chaves(tabela, _CHAVES_DA_TABELA, f"{ondeb}, tabela")
+            if any(not isinstance(l, list) or len(l) != len(tabela["colunas"]) for l in tabela["linhas"]):
+                raise ErroConteudo(f"{ondeb}, tabela: cada linha tem uma célula por coluna.")
+            textos += [str(c) for l in tabela["linhas"] for c in l]
+        textos += [bloco["titulo"], bloco["fonte"]] + list(bloco.get("paragrafos", []))
+    if any("{" in t or "}" in t for t in textos):
+        raise ErroConteudo(f"{onde}: o capítulo de texto não usa marcador de dado.")
 _CHAVES_DA_REGUA = {"obrigatorias": {"rotulo", "destaque"}, "opcionais": set()}
 _CHAVES_DAS_POSICOES = {"obrigatorias": {"titulo", "indicador", "nota"}, "opcionais": set()}
 
 
 def _validar_capitulo(capitulo: object, destaques: dict) -> None:
     if isinstance(capitulo, dict) and capitulo.get("texto") is True:
-        _exigir_chaves(capitulo, _CHAVES_DO_TEXTO, f"{ARQUIVO}, capítulo {capitulo.get('id')}")
-        for campo in ("paragrafos", "fonte"):
-            if not isinstance(capitulo[campo], list) or not all(isinstance(p, str) and p for p in capitulo[campo]):
-                raise ErroConteudo(f"{ARQUIVO}, capítulo {capitulo['id']}: {campo} é uma lista de textos.")
-        if any("{" in p or "}" in p for p in capitulo["paragrafos"]):
-            raise ErroConteudo(f"{ARQUIVO}, capítulo {capitulo['id']}: o capítulo de texto não usa marcador de dado.")
+        _validar_capitulo_de_texto(capitulo)
         return
     onde = f"{ARQUIVO}, capítulo {capitulo.get('id') if isinstance(capitulo, dict) else capitulo!r}"
     _exigir_chaves(capitulo, _CHAVES_DO_CAPITULO, onde)

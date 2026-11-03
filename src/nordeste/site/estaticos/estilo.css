@@ -3634,3 +3634,66 @@ html:has(.nn-modal[open]) {
   max-height: none;
   overflow: visible;
 }
+
+/* Página Inovação: capítulos de texto em blocos (título, números em destaque, texto curto, tabela e a fonte do bloco
+   logo abaixo, em letra menor). Os números usam a faixa da inicial, num corpo menor e em até três colunas. */
+.nn-bloco-texto {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--nn-linha);
+}
+
+.nn .nn-bloco-texto h3 {
+  margin: 0;
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.15;
+}
+
+.nn .nn-bloco-texto p {
+  margin: 0;
+  max-width: 68ch;
+}
+
+.nn-numeros-bloco {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 18px 24px;
+}
+
+.nn-numeros-bloco .nn-numero-valor {
+  font-size: clamp(30px, 4vw, 44px);
+  overflow-wrap: normal;
+}
+
+.nn-numeros-bloco .nn-numero-rotulo {
+  font-size: 14px;
+  color: var(--nn-suave);
+}
+
+.nn .nn-bloco-fonte {
+  color: var(--nn-suave);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.nn-tabela-bloco {
+  max-height: none;
+}
+
+.nn-tabela-bloco caption {
+  text-align: left;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 0 0 8px;
+}
+
+.nn-tabela-bloco th[scope="row"] {
+  position: static;
+  background: none;
+  white-space: nowrap;
+}
+
+.nn-numeros-bloco .nn-conta {
+  color: inherit;
+}

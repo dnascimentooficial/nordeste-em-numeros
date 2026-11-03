@@ -131,6 +131,7 @@ def test_pagina_inovacao_sem_decimal_digitado_nos_capitulos_com_numeros():
     from nordeste.site.inovacao import carregar_inovacao
     inovacao = carregar_inovacao(PASTA_SITE)
     decimais = []
-    for texto in _textos([inovacao["capa"], inovacao["placar"], inovacao["regua"], inovacao["capitulos"]]):
+    com_numeros = [cap for cap in inovacao["capitulos"] if not cap.get("texto")]  # os de texto trazem fatos datados
+    for texto in _textos([inovacao["capa"], inovacao["placar"], inovacao["regua"], com_numeros]):
         decimais += re.findall(r"\d+[.,]\d+", re.sub(r"\{[^{}]*\}", "", texto))
     assert set(decimais) <= {"1.0", "2.0", "2.3"}  # nomes, nao dados: CNAE 1.0 e 2.0, tabelas 2.3.3 e 2.3.5 do MCTI

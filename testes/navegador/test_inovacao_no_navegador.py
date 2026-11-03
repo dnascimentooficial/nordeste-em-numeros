@@ -48,7 +48,7 @@ def test_inovacao_sem_estouro_com_os_graficos_recolhidos_abertos(abrir, largura)
 def test_inovacao_sem_javascript_mostra_numeros_graficos_e_regua(abrir):
     with abrir(ROTA, java_script_enabled=False) as pagina:
         assert pagina.locator(".nn-placar-lista li").count() == 4
-        assert pagina.locator("article.nn-capitulo").count() == 5
+        assert pagina.locator("article.nn-capitulo").count() == 6  # quatro com graficos e dois de texto
         lide = pagina.locator("#resumo .nn-frase").first.inner_text()
         assert re.search(r"\d", lide) and "{" not in lide and "}" not in lide
         assert pagina.locator("#resumo .nn-graf-largo svg").first.is_visible()

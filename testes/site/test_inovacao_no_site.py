@@ -74,7 +74,8 @@ def test_pagina_gera_com_capa_placar_capitulos_e_menu_lateral(gerado, conteudo):
         html[html.index('<nav class="nn-indice"'):html.index("</nav>", html.index('<nav class="nn-indice"'))]).achar("a")]
     assert indice == [f"#{c}" for c in capitulos]
     assert html.index('class="nn-capa') < html.index('class="nn-card nn-placar"') < html.index('id="resumo"')
-    assert len(arvore.achar("nav", classe="nn-saidas")) == len(capitulos)
+    com_numeros = [c for c in conteudo["capitulos"] if not c.get("texto")]
+    assert len(arvore.achar("nav", classe="nn-saidas")) == len(com_numeros)  # os capitulos de texto nao tem saidas
 
 
 def test_placar_tem_os_vereditos_dos_capitulos_com_numeros(gerado, conteudo):
@@ -128,18 +129,40 @@ def test_posicoes_do_ibid_saem_da_ficha_de_posicao(gerado, dados):
     assert texto.index("Norte13º") < texto.index("Maranhão")  # do mais bem colocado ao ultimo
 
 
-def test_ecossistema_e_so_texto_com_a_etiqueta(gerado, conteudo):
+def test_capitulos_de_texto_tem_blocos_com_destaques_e_fonte_sem_grafico(gerado, conteudo):
+    """Ecossistema e Porto Digital: etiqueta no topo, blocos com numeros em destaque e a fonte de cada bloco embaixo."""
+    saida, _ = gerado
+    html = _ler(saida)
+    textos = {c["id"]: c for c in conteudo["capitulos"] if c.get("texto")}
+    assert set(textos) == {"ecossistema", "porto_digital"}
+    for id_, cap in textos.items():
+        artigo = _artigo(html, id_)
+        arvore = Arvore(artigo)
+        assert Arvore.texto(arvore.achar(classe="nn-etiqueta")[0]) == cap["etiqueta"]
+        assert "<svg" not in artigo.replace('class="nn-icone"', "")
+        assert 'class="nn-saidas"' not in artigo
+        blocos = arvore.achar("section", classe="nn-bloco-texto")
+        assert len(blocos) == len(cap["blocos"])
+        for bloco, esperado in zip(blocos, cap["blocos"]):
+            assert esperado["fonte"] in " ".join(" ".join(artigo.split()).split())
+        valores = [Arvore.texto(v) for v in arvore.achar(classe="nn-numero-valor")]
+        assert valores == [n["valor"] for b in cap["blocos"] for n in b.get("destaques", [])]
+        assert artigo.count('class="nn-bloco-fonte"') == len(cap["blocos"])
+    eco = " ".join(_artigo(html, "ecossistema").split())
+    for trecho in ("26º → 1º", "Selo de Evolução Ouro", "não respondeu", "18% das empresas", "Maranhão e Piauí não tinham"):
+        assert trecho in eco, trecho
+    assert " 19 " not in eco and "19 no Nordeste" not in eco
+    pd = " ".join(_artigo(html, "porto_digital").split())
+    for trecho in ("24 mil", "14,2 mil", "Novo CAGED", "não diz o que entra na conta dele", "Embarque Digital"):
+        assert trecho in pd, trecho
+
+
+def test_tabela_da_abep_tic_tem_os_nove_estados_e_rotulo_acessivel(gerado):
     saida, _ = gerado
     artigo = _artigo(_ler(saida), "ecossistema")
-    arvore = Arvore(artigo)
-    assert Arvore.texto(arvore.achar(classe="nn-etiqueta")[0]) == "Índice de associação setorial, não é estatística oficial"
-    assert "<svg" not in artigo.replace('class="nn-icone"', "")
-    texto = Arvore.texto(arvore.achar("article")[0]) if arvore.achar("article") else " ".join(arvore.visivel)
-    for trecho in ("26º em 2021", "1º em 2025", "100 pontos", "oito estados", "Piauí e Pernambuco",
-                   "Rio Grande do Norte e Alagoas", "541 empresas e 24 mil profissionais em 2025, segundo o próprio Porto Digital",
-                   "113 iniciativas", "13 de outubro de 2025"):
-        assert trecho in " ".join(texto.split()), trecho
-    assert "19 no Nordeste" not in texto and " 19 " not in texto
+    assert 'class="nn-tabela nn-tabela-bloco" tabindex="0" role="region"' in artigo
+    linhas = Arvore(artigo).achar("tr")
+    assert len(linhas) == 1 + 9
 
 
 def test_graficos_alem_do_principal_ficam_recolhidos(gerado, conteudo):
@@ -215,11 +238,11 @@ def test_estados_mostra_o_ibid_pela_posicao_com_a_nota(gerado, dados):
 
 
 def test_saidas_dos_capitulos_so_levam_aonde_ha_dado_do_capitulo(gerado):
-    """Estados so tem o IBID; Explorar, o IBID e a internet. Os outros capitulos levam so para a base."""
+    """Estados so tem o IBID; Explorar, o IBID e a internet. Os outros capitulos levam so para a base; os de texto, a nada."""
     html = _ler(gerado[0])
     esperado = {
         "conectividade": (False, True), "conhecimento": (False, False), "inovacao": (True, True),
-        "trabalho": (False, False), "ecossistema": (False, False),
+        "trabalho": (False, False),
     }
     for id_, (estados, explorar) in esperado.items():
         saidas = _artigo(html, id_).split('class="nn-saidas"', 1)[1]

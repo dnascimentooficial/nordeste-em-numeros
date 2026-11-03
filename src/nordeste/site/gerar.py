@@ -520,7 +520,15 @@ def _contexto_da_inovacao(dados: DadosSite, inovacao: dict) -> tuple[dict, list[
     capitulos, suprimidos = [], []
     for c in inovacao["capitulos"]:
         if c.get("texto") is True:
-            capitulos.append({**c, "id": c["id"], "graficos": [], "fecho": None})
+            blocos = [
+                {"titulo": b["titulo"], "fonte": b["fonte"], "paragrafos": b.get("paragrafos", []),
+                 "tabela": b.get("tabela"), "destaques": [{"ano": None, **n} for n in b.get("destaques", [])]}
+                for b in c.get("blocos", [])
+            ]
+            capitulos.append({
+                **c, "id": c["id"], "graficos": [], "paragrafos": c.get("paragrafos", []), "blocos": blocos,
+                "fonte": c.get("fonte", []), "fecho": c.get("fecho"),
+            })
             continue
         corpo = {k: v for k, v in c.items() if k != "fecho"}
         if not _cita_so_o_que_existe(corpo, destaques):

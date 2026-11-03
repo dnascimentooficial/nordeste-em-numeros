@@ -199,12 +199,88 @@ capitulos:
 
   - id: ecossistema
     texto: true
-    rotulo: Ecossistema e governo digital
-    titulo: "O que não é estatística oficial"
-    etiqueta: "Índice de associação setorial, não é estatística oficial"
+    rotulo: Governo digital e parques
+    titulo: "Governo digital e parques tecnológicos"
+    etiqueta: "Fora da estatística oficial: índice de associação setorial e levantamento do MCTI"
+    blocos:
+      - titulo: "Governo digital: o Piauí saiu do fim da fila"
+        destaques:
+          - {valor: "26º → 1º", rotulo: "Piauí no índice de serviços públicos digitais da ABEP-TIC", ano: "2021 → 2025"}
+          - {valor: "2 de 8", rotulo: "estados com Selo Ouro que são do Nordeste: Piauí e Pernambuco", ano: "2026"}
+          - {valor: "67,8 e 69,3", rotulo: "pontos, média do Nordeste e do Brasil, numa escala de 0 a 100", ano: "2026"}
+        paragrafos:
+          - "O índice mede o que cada governo estadual oferece de serviço público pela internet. O Piauí ficou entre os últimos de 2020 a 2023 (22º, 26º, 25º e 22º), subiu para 3º em 2024, dividiu o 1º lugar com o Rio Grande do Sul em 2025 e fez a pontuação máxima, 100, em 2026."
+          - "O resto da região não andou junto. Em 2026, a ABEP-TIC trocou o ranking por selos: Piauí e Pernambuco ficaram com o Ouro, o Ceará com a Prata, a Bahia com o Bronze, e Alagoas, Paraíba, Maranhão, Sergipe e Rio Grande do Norte ficaram sem selo. Rio Grande do Norte e Alagoas receberam o Selo de Evolução Ouro, dado a quem mais avançou de um ano para o outro."
+          - "A Bahia fez o caminho inverso do Piauí: foi 2ª em 2021, ficou entre as cinco primeiras até 2024 e caiu para 16ª em 2025."
+        tabela:
+          titulo: "Posição de cada estado do Nordeste no índice da ABEP-TIC"
+          colunas: ["Estado", "2020", "2021", "2022", "2023", "2024", "2025", "2026 (selo)"]
+          linhas:
+            - ["Piauí", "22º", "26º", "25º", "22º", "3º", "1º", "Ouro"]
+            - ["Pernambuco", "9º", "11º", "12º", "14º", "11º", "7º", "Ouro"]
+            - ["Ceará", "22º", "17º", "16º", "15º", "21º", "11º", "Prata"]
+            - ["Bahia", "4º", "2º", "4º", "4º", "5º", "16º", "Bronze"]
+            - ["Maranhão", "20º", "23º", "24º", "20º", "não respondeu", "18º", "sem selo"]
+            - ["Paraíba", "8º", "7º", "14º", "13º", "14º", "19º", "sem selo"]
+            - ["Sergipe", "12º", "14º", "22º", "26º", "20º", "21º", "sem selo"]
+            - ["Alagoas", "17º", "17º", "23º", "23º", "17º", "23º", "sem selo; Evolução Ouro"]
+            - ["Rio Grande do Norte", "18º", "17º", "21º", "25º", "não respondeu", "25º", "sem selo; Evolução Ouro"]
+        fonte: "ABEP-TIC, relatórios e planilhas do Índice de Oferta de Serviços Públicos Digitais, edições de 2020 a 2026. A ABEP-TIC reúne, desde 1977, os órgãos de tecnologia dos próprios governos estaduais, que são os avaliados, e o trabalho tem financiamento do BID. A escala mudou várias vezes (de 0 a 100, de 0 a 150, até 179,5 e de novo de 0 a 100) e o número de estados que responderam variou de 24 a 27, por isso comparo posição e selo, nunca pontos de anos diferentes. As médias de 2026 são da mesma edição e da mesma escala."
+      - titulo: "Parques tecnológicos: o Nordeste tem 18% das empresas instaladas"
+        destaques:
+          - {valor: "113", rotulo: "iniciativas de parques tecnológicos no Brasil; só 64 estão em operação", ano: "jan/2025"}
+          - {valor: "2.706", rotulo: "empresas e organizações instaladas nos parques em operação", ano: "jan/2025"}
+          - {valor: "18%", rotulo: "delas ficam no Nordeste; no Sul, 45%, e no Sudeste, 33%", ano: "jan/2025"}
+        paragrafos:
+          - "O levantamento do MCTI, lançado na conferência da Anprotec em 13 de outubro de 2025, conta toda iniciativa que se apresenta como parque tecnológico, inclusive as que ainda estão no papel: das 113, outras 42 estão em implantação e 7 em planejamento."
+          - "O Nordeste, com mais de um quarto da população do país, abriga 18% das empresas e organizações instaladas nesses parques. Pernambuco tem 9% do total nacional e o Rio Grande do Norte, 5%. Em janeiro de 2025, Maranhão e Piauí não tinham nenhum parque em operação."
+          - "Para reduzir essa diferença, uma chamada do MCTI com a Finep e o FNDCT, em 2024, pôs R$ 100 milhões em parques de estados que tinham pouco ou nada, entre eles Alagoas, Maranhão, Piauí e Sergipe. Somando as chamadas, a Finep e o FNDCT destinaram cerca de R$ 670 milhões a 56 parques."
+          - "O livro mostra quantos parques há em cada estado só em gráfico, sem os números escritos, por isso essa conta não entra aqui. E os dados são informados pelos próprios parques: em 2023, 43 dos 64 em operação responderam à pesquisa."
+        fonte: "MCTI, livro Evolução, Impacto e Potencial dos Parques Tecnológicos do Brasil (2025), prefácio e seções 2.1 e 2.2, com a base MCTI-InovaData-Br de janeiro de 2025; pesquisa do Núcleo de Tecnologias de Gestão da UFV. Dados informados pelos próprios parques."
+  - id: porto_digital
+    texto: true
+    rotulo: Porto Digital
+    titulo: "Porto Digital, de perto: 25 anos de um distrito de inovação no Recife"
+    etiqueta: "Parte dos números é do próprio Porto Digital; parte é dado público (Novo CAGED e INEP) recortado pelo Observatório do Porto Digital"
     paragrafos:
-      - "O índice de oferta de serviços públicos digitais da ABEP-TIC mede o que cada governo estadual oferece pela internet. Quem faz é a associação que reúne os órgãos de tecnologia dos próprios governos estaduais, os avaliados. O Piauí foi o 26º em 2021 e o 1º em 2025, e em 2026 fez 100 pontos. Em 2026, oito estados ganharam o Selo Ouro, entre eles o Piauí e Pernambuco, e o Rio Grande do Norte e Alagoas receberam o Selo de Evolução Ouro, o de quem mais avançou de um ano para o outro. A escala do índice mudou várias vezes, por isso eu cito posição e selo, nunca pontos de anos diferentes."
-      - "No Recife, o Porto Digital tinha 541 empresas e 24 mil profissionais em 2025, segundo o próprio Porto Digital."
-      - "No país, o estudo do MCTI sobre parques tecnológicos, lançado na conferência da Anprotec em 13 de outubro de 2025, contou 113 iniciativas, somando as que funcionam, as em implantação e as em planejamento."
-    fonte:
-      - "Fontes: ABEP-TIC, relatórios do Índice de Oferta de Serviços Públicos Digitais de 2021, 2025 e 2026; Porto Digital, página institucional e e-book Ecossistema em Estudo (2026); Anprotec, notícia de 13/10/2025 sobre o livro do MCTI Evolução, Impacto e Potencial dos Parques Tecnológicos do Brasil."
+      - "O Porto Digital nasceu em 2000 como política pública para fomentar a economia digital em Pernambuco, juntar governo, universidade e empresas, segurar talento no estado e recuperar o Bairro do Recife. Há outros ambientes de inovação na região. Este ganha o recorte porque publica, por um observatório próprio, números que dá para conferir na base pública. Medir todos os outros exigiria a lista do MCTI por estado, que ainda não está acessível."
+    blocos:
+      - titulo: "O tamanho, segundo o próprio Porto Digital"
+        destaques:
+          - {valor: "R$ 7,4 bi", rotulo: "de faturamento anual das empresas do ecossistema", ano: "2025"}
+          - {valor: "541", rotulo: "empresas embarcadas"}
+          - {valor: "24 mil", rotulo: "colaboradores", ano: "2025"}
+          - {valor: "230 mil m²", rotulo: "de prédios históricos restaurados desde 2000, em 171 hectares do centro do Recife"}
+        paragrafos:
+          - "Esses números são declarados pelo próprio Porto Digital, que não publica o método da conta. O site traz 541 empresas; o e-book do Observatório, de setembro de 2026, fala em mais de 540 em 2025. O distrito também atua em Caruaru, no Agreste, com o Armazém da Criatividade, vencedor do Prêmio Finep de Inovação 2025 na categoria Ambiente de Inovação."
+        fonte: "Porto Digital, páginas Sobre o Porto Digital e Prêmios e reconhecimentos (portodigital.org); e-book Ecossistema em Estudo, do Observatório do Porto Digital (setembro de 2026), p. 2."
+      - titulo: "O emprego com carteira assinada"
+        destaques:
+          - {valor: "14,2 mil", rotulo: "empregos formais em tecnologia no Recife", ano: "jun/2026"}
+          - {valor: "72%", rotulo: "deles em desenvolvimento de software; no Nordeste, 30,9%"}
+          - {valor: "+13,3%", rotulo: "em 12 meses; a economia do Recife cresceu 3,8% e a média do Brasil em TIC, 2,2%", ano: "até jun/2026"}
+        paragrafos:
+          - "A base pública conta só quem tem carteira assinada, e chega a 14,2 mil empregos de tecnologia no Recife inteiro. É bem menos que os 24 mil colaboradores declarados, e o Porto Digital não diz o que entra na conta dele."
+          - "O que chama atenção é o perfil. No Recife, 72% desses empregos estão no desenvolvimento e licenciamento de software: são 10.254, o maior número entre as capitais do Nordeste. Na região, o desenvolvimento responde por 30,9% do emprego em TIC, e o resto é suporte e consultoria."
+          - "E o ritmo. Em 12 meses até junho de 2026, o emprego formal em TIC no Recife cresceu 13,3%. No mesmo período, Florianópolis teve 1,8%, Curitiba 1,3% e Belo Horizonte 1,0%."
+        fonte: "Novo CAGED (Ministério do Trabalho e Emprego), na leitura do Observatório do Porto Digital, e-book Ecossistema em Estudo (setembro de 2026), p. 4 a 9. Não é a mesma conta dos empregos em TI do capítulo 4, que vêm do Cadastro Central de Empresas do IBGE."
+      - titulo: "A formação dobrou"
+        destaques:
+          - {valor: "703 → 1.427", rotulo: "formandos por ano em cursos superiores de TIC no Recife", ano: "média 2020–2022 → 2024"}
+          - {valor: "+103%", rotulo: "no Recife; no Brasil, a alta foi de 26%"}
+          - {valor: "64%", rotulo: "dos novos profissionais da cidade saem de faculdades parceiras do Porto Digital"}
+        paragrafos:
+          - "O Porto Digital atribui o salto a dois programas. A Residência Tecnológica é disciplina obrigatória nas faculdades parceiras, em que o aluno trabalha em problemas reais das empresas. O Embarque Digital, criado com a Prefeitura do Recife, dá bolsa integral em cursos de tecnologia a quem estudou em escola pública, com metade das vagas reservada a pretos e pardos."
+          - "Segundo o próprio programa, a evasão no Embarque Digital fica abaixo de 40%, contra 60% na média nacional, e 70% dos alunos terminam o curso empregados."
+        fonte: "Censo da Educação Superior (INEP), na leitura do Observatório do Porto Digital, e-book Ecossistema em Estudo, p. 18 e 19. Evasão e empregabilidade: dados do Embarque Digital."
+      - titulo: "Quem está sendo contratado"
+        destaques:
+          - {valor: "57%", rotulo: "das contratações em TIC no Recife foram de pessoas pretas, pardas, indígenas e amarelas", ano: "1º sem. 2026"}
+          - {valor: "28%", rotulo: "de diferença salarial entre homens e mulheres na contratação; em Florianópolis, 73%", ano: "1º sem. 2026"}
+          - {valor: "26,8%", rotulo: "das contratações de TI em Pernambuco foram de menores de 25 anos; um ano antes, 24,7%", ano: "1º sem. 2026"}
+        paragrafos:
+          - "Nos polos do Sul, a participação de pretos, pardos, indígenas e amarelos nas novas vagas de tecnologia não chega a 33%, segundo o mesmo estudo."
+          - "A diferença salarial é a média simples do salário de contratação no semestre, sem separar cargo ou experiência. Serve para comparar cidades, não para medir discriminação."
+          - "O dado dos jovens contraria uma tese que circula desde o ChatGPT: a de que a inteligência artificial acabaria com a vaga de entrada. Em Pernambuco, a fatia de contratados com menos de 25 anos aumentou."
+        fonte: "Novo CAGED (MTE), admissões do primeiro semestre de 2026 e de 2025, na leitura do Observatório do Porto Digital, e-book Ecossistema em Estudo, p. 11 a 15."
+    fecho: "o Porto Digital mostra o que uma política pública entrega quando dura 25 anos. Mas um bairro do Recife não é o Nordeste: a região segue com menos de um décimo dos empregos em TI do país, como mostra o capítulo 4."
