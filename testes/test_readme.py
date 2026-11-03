@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from nordeste.coletores.arquivo import urls_arquivo
+from nordeste.coletores.geocapes import url_geocapes
 from nordeste.coletores.ipeadata import urls_ipeadata
 from nordeste.coletores.sidra import url_sidra
 from nordeste.fichas import carregar_fichas
@@ -15,7 +16,8 @@ RAIZ = Path(__file__).resolve().parent.parent
 README = RAIZ / "README.md"
 DOMINIOS = (
     "apisidra.ibge.gov.br", "ftp.ibge.gov.br", "www.ipeadata.gov.br", "www.gov.br",
-    "download.inep.gov.br", "cetic.br", "www.atlasbrasil.org.br", "secure.globalsign.com",
+    "download.inep.gov.br", "cetic.br", "inpidrive.inpi.gov.br", "geocapes.capes.gov.br", "antigo.mctic.gov.br",
+    "www.atlasbrasil.org.br", "secure.globalsign.com",
 )
 
 
@@ -29,8 +31,12 @@ def _hosts_do_coletor() -> set[str]:
         for serie in (s for s in ficha.series if s.coletor != "calculo"):
             if serie.coletor == "arquivo":
                 urls = urls_arquivo(serie.parametros)
+                if "conferir_link" in serie.parametros:  # a pagina oficial que o coletor le antes de baixar
+                    urls.append(serie.parametros["conferir_link"]["pagina"])
             elif serie.coletor == "sidra":
                 urls = [url_sidra(serie.parametros)]
+            elif serie.coletor == "geocapes":
+                urls = [url_geocapes(serie.parametros)]
             else:
                 urls = list(urls_ipeadata(serie.parametros).values())
             hosts |= {urlparse(u).netloc for u in urls}

@@ -1,0 +1,71 @@
+id: pintec_empresas
+nome: Empresas industriais, total e as que implementaram inovação (PINTEC)
+descricao: >-
+  Número de empresas das indústrias extrativas e de transformação e quantas
+  delas implementaram inovação de produto ou de processo no triênio, pela
+  Pesquisa de Inovação (PINTEC) do IBGE.
+eixo: inovacao
+categoria: inovacao
+unidade: empresas
+orgao: IBGE
+periodicidade: trienal
+metodologia: >-
+  Tabela 2.2 de cada edição regional da PINTEC (em 2000, a Tabela 1), colunas
+  "Total" e "Que implementaram inovações" (total), linhas do Brasil e das
+  regiões. Subindicadores: `total` e `inovadoras`. Sete edições: 2000
+  (período 1998-2000), 2003, 2005, 2008, 2011, 2014 e 2017 (período 2015-2017),
+  a última publicada. Os números são estimativas da amostra expandida, com casas
+  decimais, como o IBGE publica.
+observacoes: >-
+  (1) Insumo da taxa de inovação (`inovacao_industria`) e dos números citados
+  no site. (2) Só indústria: empresas com 10 ou mais pessoas ocupadas das
+  indústrias extrativas e de transformação. (3) Duas séries: de 2000 a 2005 a
+  PINTEC usava a CNAE 1.0; de 2008 em diante, a CNAE 2.0, e as tabelas regionais
+  de 2008 são as da CNAE 2.0. (4) Em 2000 o Sudeste vem sem São Paulo, e a
+  linha fica de fora. (5) As poucas UFs que a tabela abre (no Nordeste, Ceará,
+  Pernambuco e Bahia) não entram. (6) Série encerrada em 2017: a PINTEC
+  Semestral, que veio depois, só publica o Brasil.
+sentido: maior_melhor
+auxiliar: true
+limites: {min: 0}
+defasagem_meses: 0
+limiar_salto_pct: 100
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: cnae1
+    inicio: 2000
+    fim: 2005
+    fonte: IBGE, Pesquisa de Inovação (PINTEC) 2000, 2003 e 2005, tabelas por Grandes Regiões
+    base_origem: Tabela 1 (2000) e Tabela 2.2 (2003 e 2005) dos arquivos Grandes_Regioes.zip
+    url: https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/
+    coletor: arquivo
+    parametros:
+      padronizador: pintec
+      medida: contagens
+      partes:
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2000/Grandes_Regioes.zip", ano: 2000, periodo: "1998-2000", arquivo_no_zip: tab01.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2003/Grandes_Regioes.zip", ano: 2003, periodo: "2001-2003", arquivo_no_zip: tab202.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2005/Grandes_Regioes.zip", ano: 2005, periodo: "2003-2005", arquivo_no_zip: tab202.xls, formato: xls}
+    compatibilidade: >-
+      CNAE 1.0. Não se emenda com `cnae2`.
+    verificado: true
+  - id: cnae2
+    inicio: 2008
+    fim: 2017
+    fonte: IBGE, Pesquisa de Inovação (PINTEC) 2008, 2011, 2014 e 2017, tabelas por Grandes Regiões
+    base_origem: Tabela 2.2 das edições de 2008 (CNAE 2.0), 2011, 2014 e 2017
+    url: https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/
+    coletor: arquivo
+    parametros:
+      padronizador: pintec
+      medida: contagens
+      partes:
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2008/cnae2_gran_reg_tab_2_01_a_26.zip", ano: 2008, periodo: "2006-2008", arquivo_no_zip: Tab2_02.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2011/xls/gregioesufs_xls.zip", ano: 2011, periodo: "2009-2011", arquivo_no_zip: tab202.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2014/xls/pintec2014_grandes_regioes_e_unidades_da_federacao_selecionadas.xls", ano: 2014, periodo: "2012-2014", aba: tab2.2, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2017/xls/pintec2017_grandes_regioes_e_unidades_da_federacao_selecionadas.xls", ano: 2017, periodo: "2015-2017", aba: tab2.2, formato: xls}
+    compatibilidade: >-
+      CNAE 2.0. Não se emenda com `cnae1`. Série encerrada em 2017.
+    verificado: true

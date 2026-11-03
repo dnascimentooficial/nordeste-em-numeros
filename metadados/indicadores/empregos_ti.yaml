@@ -1,0 +1,79 @@
+id: empregos_ti
+nome: Empregos assalariados em tecnologia da informação
+descricao: >-
+  Pessoal ocupado assalariado nas empresas das divisões 62 (serviços de
+  tecnologia da informação) e 63 (prestação de serviços de informação) da
+  CNAE 2.0, pelo Cadastro Central de Empresas (CEMPRE) do IBGE.
+eixo: trabalho
+categoria: tecnologia_da_informacao
+unidade: pessoas
+orgao: IBGE
+periodicidade: anual
+metodologia: >-
+  CEMPRE, variável 708 (pessoal ocupado assalariado), divisões 117594 (62) e
+  117601 (63) da classificação CNAE 2.0, por Brasil, região e UF, no SIDRA:
+  tabela 6450 (2006 a 2021) e tabela 9418 (2022 em diante). O valor de cada
+  território é a soma das duas divisões publicadas; o padronizador confere o
+  rótulo de cada divisão. Brasil e regiões são os valores publicados pelo IBGE.
+observacoes: >-
+  (1) É o CEMPRE, não a RAIS: o cadastro do IBGE junta a RAIS às pesquisas
+  econômicas anuais do próprio IBGE (indústria, comércio e construção, segundo o
+  leia-me do CEMPRE) e conta o pessoal das empresas e organizações formais em
+  31 de dezembro. (2) Duas
+  séries, que não se emendam: a tabela 9418 começa em 2022 e não repete 2021.
+  O CEMPRE de 2022 vem de um cadastro com universo bem maior: as tabelas do
+  próprio IBGE (Tabela 1, ftp.ibge.gov.br) trazem 5,43 milhões de empresas e
+  52,7 milhões de pessoas ocupadas no Brasil em 2021 e 9,43 milhões de empresas
+  e 62,7 milhões de pessoas em 2022. As tabelas não trazem nota técnica que
+  explique a mudança, e a página da metodologia (www.ibge.gov.br) não abria
+  nesta rede; a causa fica sem afirmação. (3) Há células "X" (sigilo) em UFs do
+  Norte e do Centro-Oeste, nenhuma no Nordeste; Brasil e regiões vêm prontos.
+sentido: maior_melhor
+limites: {min: 0}
+limiar_salto_pct: 200
+defasagem_meses: 18
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: cempre_6450
+    inicio: 2006
+    fim: 2021
+    fonte: IBGE, Cadastro Central de Empresas (CEMPRE), SIDRA tabela 6450
+    base_origem: >-
+      SIDRA, tabela 6450, variável 708 (pessoal ocupado assalariado),
+      classificação c12762, divisões 62 e 63 da CNAE 2.0
+    url: https://sidra.ibge.gov.br/tabela/6450
+    coletor: sidra
+    parametros:
+      tabela: "6450"
+      variavel: "708"
+      periodos: 2006-2021
+      classificacoes: {c12762: "117594,117601"}
+      soma_de_categorias:
+        "117594": "62 Atividades dos serviços de tecnologia da informação"
+        "117601": "63 Atividades de prestação de serviços de informação"
+    compatibilidade: >-
+      Tabela 6450, 2006 a 2021. Não se emenda com `cempre_9418` (cadastro com
+      universo diferente a partir de 2022).
+    verificado: true
+  - id: cempre_9418
+    inicio: 2022
+    fim: 2024
+    fonte: IBGE, Cadastro Central de Empresas (CEMPRE), SIDRA tabela 9418
+    base_origem: >-
+      SIDRA, tabela 9418, variável 708 (pessoal ocupado assalariado),
+      classificação c12762, divisões 62 e 63 da CNAE 2.0
+    url: https://sidra.ibge.gov.br/tabela/9418
+    coletor: sidra
+    parametros:
+      tabela: "9418"
+      variavel: "708"
+      periodos: 2022-2024
+      classificacoes: {c12762: "117594,117601"}
+      soma_de_categorias:
+        "117594": "62 Atividades dos serviços de tecnologia da informação"
+        "117601": "63 Atividades de prestação de serviços de informação"
+    compatibilidade: >-
+      Tabela 9418, 2022 em diante. Ano novo exige estender `periodos` e o `fim`.
+    verificado: true

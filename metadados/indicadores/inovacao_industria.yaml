@@ -1,0 +1,65 @@
+id: inovacao_industria
+nome: Indústrias que inovaram
+descricao: >-
+  Percentual das empresas industriais que implementaram inovação de produto ou
+  de processo no triênio (taxa de inovação), pela PINTEC do IBGE.
+eixo: inovacao
+categoria: inovacao
+unidade: "% das empresas industriais"
+orgao: IBGE
+periodicidade: trienal
+metodologia: >-
+  Taxa de inovação = empresas que implementaram inovação de produto ou de
+  processo ÷ total de empresas × 100, com as duas contagens publicadas na mesma
+  linha da Tabela 2.2 de cada edição regional da PINTEC (em 2000, a Tabela 1):
+  a conta é do projeto, sobre números publicados, nunca a média de taxas. As
+  contagens estão na ficha auxiliar `pintec_empresas`. Sete edições, de 2000
+  (período 1998-2000) a 2017 (período 2015-2017).
+observacoes: >-
+  (1) Só indústria (extrativa e de transformação, empresas com 10 ou mais
+  pessoas ocupadas); serviços ficam de fora. (2) Série encerrada em 2017: a
+  PINTEC Semestral, de 2021 em diante, não abre regiões. (3) Duas séries, pela
+  mudança de CNAE 1.0 para 2.0 entre 2005 e 2008. (4) Referência: o Brasil.
+  (5) A taxa é estimativa amostral: diferença de um ponto entre o Nordeste e o
+  Brasil não é distância.
+sentido: maior_melhor
+limites: {min: 0, max: 100}
+defasagem_meses: 0
+comparacao:
+  referencia: brasil
+series:
+  - id: cnae1
+    inicio: 2000
+    fim: 2005
+    fonte: IBGE, Pesquisa de Inovação (PINTEC) 2000, 2003 e 2005, tabelas por Grandes Regiões; taxa calculada pelo projeto
+    base_origem: Tabela 1 (2000) e Tabela 2.2 (2003 e 2005) dos arquivos Grandes_Regioes.zip
+    url: https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/
+    coletor: arquivo
+    parametros:
+      padronizador: pintec
+      medida: taxa
+      partes:
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2000/Grandes_Regioes.zip", ano: 2000, periodo: "1998-2000", arquivo_no_zip: tab01.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2003/Grandes_Regioes.zip", ano: 2003, periodo: "2001-2003", arquivo_no_zip: tab202.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2005/Grandes_Regioes.zip", ano: 2005, periodo: "2003-2005", arquivo_no_zip: tab202.xls, formato: xls}
+    compatibilidade: >-
+      CNAE 1.0. Não se emenda com `cnae2`.
+    verificado: true
+  - id: cnae2
+    inicio: 2008
+    fim: 2017
+    fonte: IBGE, Pesquisa de Inovação (PINTEC) 2008, 2011, 2014 e 2017, tabelas por Grandes Regiões; taxa calculada pelo projeto
+    base_origem: Tabela 2.2 das edições de 2008 (CNAE 2.0), 2011, 2014 e 2017
+    url: https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/
+    coletor: arquivo
+    parametros:
+      padronizador: pintec
+      medida: taxa
+      partes:
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2008/cnae2_gran_reg_tab_2_01_a_26.zip", ano: 2008, periodo: "2006-2008", arquivo_no_zip: Tab2_02.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2011/xls/gregioesufs_xls.zip", ano: 2011, periodo: "2009-2011", arquivo_no_zip: tab202.xls, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2014/xls/pintec2014_grandes_regioes_e_unidades_da_federacao_selecionadas.xls", ano: 2014, periodo: "2012-2014", aba: tab2.2, formato: xls}
+        - {url: "https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2017/xls/pintec2017_grandes_regioes_e_unidades_da_federacao_selecionadas.xls", ano: 2017, periodo: "2015-2017", aba: tab2.2, formato: xls}
+    compatibilidade: >-
+      CNAE 2.0. Não se emenda com `cnae1`. Série encerrada em 2017.
+    verificado: true

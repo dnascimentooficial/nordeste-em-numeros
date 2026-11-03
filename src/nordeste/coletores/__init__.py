@@ -1,7 +1,9 @@
 """Coleta dos arquivos brutos: rede (SIDRA, arquivos por URL) ou fixtures no modo offline."""
 
 import hashlib
+import html
 import json
+import re
 import os
 import shutil
 import tempfile
@@ -15,8 +17,10 @@ import requests
 from nordeste.caminhos import Caminhos
 from nordeste.coletores.arquivo import (
     ParteBaixada, Receita, escrever_pacote, preparar_parte, receita_em_json, receitas_das_partes, url_arquivo,
+    urls_arquivo,
 )
 from nordeste.coletores.erros import ErroColeta
+from nordeste.coletores.geocapes import baixar_geocapes, url_geocapes
 from nordeste.coletores.http import baixar, baixar_para_arquivo
 from nordeste.coletores.ipeadata import url_ipeadata, urls_ipeadata
 from nordeste.coletores.registro import Coleta, ler_registro, registrar
@@ -213,11 +217,50 @@ def _coletar_partes(
     return coleta
 
 
+_LINK = re.compile(r"<a\b[^>]*\bhref=\"([^\"]+)\"[^>]*>(.*?)</a>", re.S | re.I)
+
+
+def links_da_pagina(conteudo: bytes) -> list[tuple[str, str]]:
+    """(href, texto visivel) de cada link da pagina HTML, com as entidades resolvidas e os espacos juntados."""
+    texto = conteudo.decode("utf-8", errors="replace")
+    return [(html.unescape(href), " ".join(html.unescape(re.sub(r"<[^>]+>", " ", rotulo)).split()))
+            for href, rotulo in _LINK.findall(texto)]
+
+
+def conferir_link(parametros: dict, sessao: requests.Session | None) -> None:
+    """`conferir_link: {pagina, texto, host, sufixo}`: a pagina oficial ainda aponta, no link com esse texto e esse
+    host, para o endereco que a ficha baixa (o href mais o sufixo). O link pode mudar a cada versao da base (no INPI, o
+    token do compartilhamento): se mudou, sumiu ou ficou ambiguo, ErroColeta com o endereco novo, e a ficha e revista
+    antes da proxima coleta."""
+    regra = parametros["conferir_link"]
+    if not isinstance(regra, dict) or not all(isinstance(regra.get(c), str) for c in ("pagina", "texto", "host", "sufixo")):
+        raise ErroColeta("conferir_link deve trazer pagina, texto, host e sufixo (textos)")
+    achados = [href for href, rotulo in links_da_pagina(baixar(regra["pagina"], sessao=sessao))
+               if rotulo == regra["texto"] and urlparse(href).hostname == regra["host"]]
+    if len(set(achados)) != 1:
+        raise ErroColeta(
+            f"a página {regra['pagina']} tem {len(set(achados))} links {regra['texto']!r} para {regra['host']} "
+            "(esperava um); confira a página e a ficha antes de coletar")
+    esperado = achados[0].rstrip("/") + regra["sufixo"]
+    baixados = urls_arquivo(parametros)
+    if baixados != [esperado]:
+        raise ErroColeta(
+            f"o link {regra['texto']!r} de {regra['pagina']} aponta agora para {esperado}, e a ficha baixa "
+            f"{' '.join(baixados)}: versão nova da base? Reveja a ficha (endereço, fim da série) antes de coletar")
+
+
 def _coletar_da_rede(
     ficha: Ficha, serie: Serie, caminhos: Caminhos, hoje: date, sessao: requests.Session | None,
 ) -> Coleta:
     if not serie.verificado:
         raise ErroColeta(f"série não verificada: {ficha.id}/{serie.id}")
+    if serie.coletor == "geocapes":
+        if serie.fim is None:
+            raise ErroColeta(f"série do GeoCAPES sem fim declarado: {ficha.id}/{serie.id}")
+        conteudo = baixar_geocapes(serie.parametros, serie.inicio, serie.fim, sessao)
+        return _guardar(ficha, serie, caminhos, conteudo, url_geocapes(serie.parametros), "json", "rede", hoje)
+    if serie.coletor == "arquivo" and "conferir_link" in serie.parametros:
+        conferir_link(serie.parametros, sessao)
     if serie.coletor == "sidra":
         url, extensao = url_sidra(serie.parametros), "json"
     elif serie.coletor == "ipeadata":

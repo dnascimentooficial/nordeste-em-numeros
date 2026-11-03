@@ -1,0 +1,3939 @@
+{
+ "fonte": "https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=3",
+ "indicador": {
+  "id": 3,
+  "descricao": "Distribuição de discentes de pós-graduação no Brasil",
+  "mensagem": "Até o ano de 2016, são contabilizados os discentes dos programas com classificação 3 ou superior. A partir do ano de 2017, critérios de filtragem por nota deixaram de ser utilizados."
+ },
+ "sumarizador": "uf,grau,fluxo",
+ "anos": {
+  "2017": {
+   "foto": 3017,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2018": {
+   "foto": 3018,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2019": {
+   "foto": 3019,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2020": {
+   "foto": 3020,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2021": {
+   "foto": 3021,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2022": {
+   "foto": 3022,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2023": {
+   "foto": 3023,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2024": {
+   "foto": 3024,
+   "dados": [
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AM",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "TO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PI",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "CE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RN",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PB",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "AL",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SE",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "BA",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "ES",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MG",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RJ",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SP",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "PR",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "RS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "SC",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "DF",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "GO",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MS",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Mestrado",
+     "FLUXO": "Titulado",
+     "REFERENCIAL": 1
+    },
+    {
+     "UF": "MT",
+     "GRAU": "Doutorado",
+     "FLUXO": "Matriculado",
+     "REFERENCIAL": 1
+    }
+   ]
+  }
+ }
+}

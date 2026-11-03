@@ -7,6 +7,7 @@ import pytest
 
 from nordeste.cli import main
 from nordeste.coletores.arquivo import url_arquivo
+from nordeste.coletores.geocapes import url_geocapes
 from nordeste.coletores.ipeadata import url_ipeadata
 from nordeste.coletores.sidra import url_sidra
 from nordeste.fichas import carregar_fichas
@@ -22,10 +23,12 @@ FICHAS_PARTE_B = {
     "rendimento_trabalho",
 }
 FICHAS_INEP = {"ideb", "abandono_em", "matriculas_basica", "superior"}
-FICHAS_COMPLETAS = FICHAS_PARTE_A | FICHAS_PARTE_B | {"pib_volume", "ibid"} | FICHAS_INEP  # as que trazem os 15 territorios em todo ano
+FICHAS_INOVACAO = {"patentes_residentes", "programas_pos", "doutores_titulados", "gasto_estadual_cti", "empregos_ti"}
+FICHAS_COMPLETAS = (  # as que trazem os 15 territorios em todo ano
+    FICHAS_PARTE_A | FICHAS_PARTE_B | {"pib_volume", "ibid"} | FICHAS_INEP | FICHAS_INOVACAO)
 HOJE = ["--hoje", "2026-11-01"]
 DICIONARIO = Path(__file__).resolve().parent.parent / "docs" / "dicionario-verificacao.md"
-URL_DO_COLETOR = {"sidra": url_sidra, "ipeadata": url_ipeadata, "arquivo": url_arquivo}
+URL_DO_COLETOR = {"sidra": url_sidra, "ipeadata": url_ipeadata, "arquivo": url_arquivo, "geocapes": url_geocapes}
 
 
 @pytest.fixture

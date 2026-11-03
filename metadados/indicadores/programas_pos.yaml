@@ -1,0 +1,68 @@
+id: programas_pos
+nome: Programas de pós-graduação
+descricao: >-
+  Número de programas de pós-graduação stricto sensu (mestrado e doutorado,
+  acadêmicos e profissionais) avaliados pela CAPES, pela UF do programa.
+eixo: educacao_superior
+categoria: pos_graduacao
+unidade: programas
+orgao: CAPES
+periodicidade: anual
+metodologia: >-
+  Indicador "Distribuição de programas de pós-graduação no Brasil" do GeoCAPES
+  (indicador 4), contado por UF do programa (`sumarizador=iduf`), um ano-base
+  por vez. A origem, segundo a própria fonte de dados do indicador, é a tabela
+  ADD_PROGRAMA do Sistema Nacional de Pós-Graduação. O Nordeste, as outras
+  regiões e o Brasil são a soma das UFs; UF ausente no ano conta zero.
+observacoes: >-
+  (1) A consulta é a API JSON interna do mapa do GeoCAPES, sem documentação
+  pública nem garantia de estabilidade; não é arquivo de dados abertos (o
+  dadosabertos.capes.gov.br não respondia em 2026-11-03). O coletor confere a
+  descrição do indicador, uma foto por ano e o aviso de método, e o padronizador
+  confere campos, UFs e contagens; qualquer mudança faz a coleta falhar, e a
+  série segue com a coleta anterior. (2) Quebra em 2016: até 2016 só entram os
+  programas com nota 3 ou mais; de 2017 em diante não há filtro por nota (aviso
+  do próprio GeoCAPES). Por isso duas séries, que não se emendam. (3) O ano de
+  2024 foi publicado em agosto de 2025.
+sentido: maior_melhor
+limites: {min: 0}
+limiar_salto_pct: 200
+defasagem_meses: 8
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: nota_3_ou_mais
+    inicio: 1998
+    fim: 2016
+    fonte: CAPES, GeoCAPES, Distribuição de programas de pós-graduação no Brasil (programas com nota 3 ou mais)
+    base_origem: API do GeoCAPES, indicador 4, contagem por UF do programa, anos-base 1998 a 2016
+    url: https://geocapes.capes.gov.br/geocapes/
+    coletor: geocapes
+    parametros:
+      padronizador: geocapes
+      indicador: 4
+      descricao: Distribuição de programas de pós-graduação no Brasil
+      sumarizador: iduf
+      campo_uf: IDUF
+      aviso: Até o ano de 2016, são contabilizados os programas com classificação 3 ou superior.
+    compatibilidade: >-
+      Só programas com nota 3 ou superior. Não se emenda com `sem_filtro_de_nota`.
+    verificado: true
+  - id: sem_filtro_de_nota
+    inicio: 2017
+    fim: 2024
+    fonte: CAPES, GeoCAPES, Distribuição de programas de pós-graduação no Brasil (sem filtro por nota)
+    base_origem: API do GeoCAPES, indicador 4, contagem por UF do programa, anos-base 2017 a 2024
+    url: https://geocapes.capes.gov.br/geocapes/
+    coletor: geocapes
+    parametros:
+      padronizador: geocapes
+      indicador: 4
+      descricao: Distribuição de programas de pós-graduação no Brasil
+      sumarizador: iduf
+      campo_uf: IDUF
+      aviso: A partir do ano de 2017, deixaram de ser utilizados critérios de filtragem por nota.
+    compatibilidade: >-
+      Todos os programas, sem filtro por nota. Ano novo (2025) exige subir o `fim`.
+    verificado: true

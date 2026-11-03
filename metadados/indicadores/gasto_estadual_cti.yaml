@@ -1,0 +1,60 @@
+id: gasto_estadual_cti
+nome: Dispêndio dos governos estaduais em C&T e em P&D
+descricao: >-
+  Quanto os governos estaduais gastaram em ciência e tecnologia (C&T) e, dentro
+  disso, em pesquisa e desenvolvimento (P&D), em milhões de reais correntes,
+  segundo o MCTI. Série encerrada em 2019.
+eixo: inovacao
+categoria: gasto_cti
+unidade: R$ milhões correntes
+orgao: MCTI
+periodicidade: anual
+metodologia: >-
+  Tabelas 2.3.3 (C&T, por região e UF) e 2.3.5 (P&D por execução, por região e
+  UF) dos Indicadores Nacionais de Ciência, Tecnologia e Inovação do MCTI, em
+  CSV no site legado do ministério, de 2000 a 2019. Subindicadores: `ct` (C&T =
+  P&D + atividades científicas e técnicas correlatas, tabela 2.3.3), `pd` (P&D,
+  coluna "P&D" da 2.3.5) e `pd_pos_graduacao` (a parte do P&D que é gasto com
+  pós-graduação, coluna "Pós-graduação" da 2.3.5). O Brasil é a linha "Total" e o
+  Nordeste e as regiões são os valores publicados pelo MCTI. Na tabela, "-" é
+  zero.
+observacoes: >-
+  (1) O P&D inclui uma estimativa feita pelo próprio MCTI: o gasto das
+  instituições estaduais de ensino superior com pós-graduação stricto sensu,
+  usado como proxy do P&D delas (nota 2 da tabela 2.3.5). Em 2019, foi 10.248 dos
+  13.785 milhões do Brasil e 773 dos 1.111 milhões do Nordeste. Como C&T = P&D +
+  atividades correlatas, a estimativa também está no C&T. (2) Valores correntes,
+  sem deflator: o site mostra a fatia do Nordeste no total do Brasil, que não
+  depende da inflação. (3) Série encerrada em 2019: o site legado não é mais
+  atualizado, e as tabelas de 2020 em diante ficam no gov.br/mcti, que responde
+  aos robôs com uma página de desafio (não contornada). (4) Fonte primária: os
+  balanços gerais dos estados e levantamentos das secretarias estaduais de C&T.
+  (5) A soma das UFs do Nordeste difere do Nordeste publicado por
+  arredondamento (2000: 139,4 contra 139,2 no C&T).
+sentido: maior_melhor
+limites: {min: 0}
+defasagem_meses: 0
+tratamento_monetario: {modo: razao}
+limiar_salto_pct: 300
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: mcti_legado
+    inicio: 2000
+    fim: 2019
+    fonte: MCTI, Indicadores Nacionais de CT&I, tabelas 2.3.3 e 2.3.5 (dispêndios dos governos estaduais), site legado
+    base_origem: >-
+      tab_2_3_3_E.csv (C&T por região e UF) e tab_2_3_5_E.csv (P&D por
+      execução, por região e UF), em milhões de R$ correntes
+    url: https://antigo.mctic.gov.br/mctic/opencms/indicadores/indicadores_cti.html
+    coletor: arquivo
+    parametros:
+      padronizador: mcti
+      partes:
+        - {url: "https://antigo.mctic.gov.br/mctic/opencms/indicadores/arquivos/recursosAplicados/governosEstaduais/tab_2_3_3_E.csv", tabela: "Tabela 2.3.3", titulo: "Dispêndios dos governos estaduais em ciência e tecnologia (C&T)", subindicador: ct}
+        - {url: "https://antigo.mctic.gov.br/mctic/opencms/indicadores/arquivos/recursosAplicados/governosEstaduais/tab_2_3_5_E.csv", tabela: "Tabela 2.3.5", titulo: "Dispêndios dos governos estaduais em pesquisa e desenvolvimento (P&D)", subindicador: pd, coluna: "P&D"}
+        - {url: "https://antigo.mctic.gov.br/mctic/opencms/indicadores/arquivos/recursosAplicados/governosEstaduais/tab_2_3_5_E.csv", tabela: "Tabela 2.3.5", titulo: "Dispêndios dos governos estaduais em pesquisa e desenvolvimento (P&D)", subindicador: pd_pos_graduacao, coluna: "Pós-graduação(2)"}
+    compatibilidade: >-
+      Série única, encerrada em 2019, em reais correntes.
+    verificado: true

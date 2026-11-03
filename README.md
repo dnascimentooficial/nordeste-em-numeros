@@ -1,6 +1,6 @@
 # Base histórica de indicadores do Nordeste
 
-Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI, Cetic.br) do Brasil, das cinco regiões e das nove
+Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI, Cetic.br, CAPES, MCTI) do Brasil, das cinco regiões e das nove
 UFs do Nordeste, padroniza tudo numa base longa única, valida e publica em `dados/base/`. O desenho completo
 está em `docs/specs/2026-10-31-base-historica-design.md`; as conferências feitas fonte a fonte, em
 `docs/dicionario-verificacao.md`.
@@ -127,12 +127,18 @@ Os únicos hosts que `coletar` acessa (um teste confere esta lista contra as URL
 
 | Domínio | Para quê |
 |---|---|
-| `apisidra.ibge.gov.br` | tabelas do SIDRA (população, PIB, PNAD Contínua) |
-| `ftp.ibge.gov.br` | arquivos das Contas Regionais (PIB em volume) |
+| `apisidra.ibge.gov.br` | tabelas do SIDRA (população, PIB, PNAD Contínua, CEMPRE) |
+| `ftp.ibge.gov.br` | arquivos das Contas Regionais (PIB em volume) e tabelas regionais da PINTEC |
 | `www.ipeadata.gov.br` | séries do Ipeadata (Gini e desocupação da PNAD, IDHM) |
 | `download.inep.gov.br` | arquivos do INEP (IDEB, abandono, matrículas, ensino superior) |
-| `www.gov.br` | planilha da série histórica do IBID (INPI); as páginas do INEP citadas nas fichas ficam no mesmo domínio |
+| `www.gov.br` | planilha da série histórica do IBID (INPI) e a página da BADEPI, onde o coletor confere o link dos microdados de patentes; as páginas do INEP citadas nas fichas ficam no mesmo domínio |
 | `cetic.br` | tabela A4 da TIC Domicílios, uma página HTML por ano (domicílios com acesso à internet) |
+| `inpidrive.inpi.gov.br` | microdados de patentes da BADEPI (zip de 123 MB, coletado só na primeira semana do mês) |
+| `geocapes.capes.gov.br` | API JSON do GeoCAPES (programas de pós-graduação e titulados por UF), sem documentação pública |
+| `antigo.mctic.gov.br` | tabelas CSV do MCTI sobre o dispêndio dos governos estaduais em C&T e P&D (site legado, série até 2019) |
+
+Todas as coletas se identificam com o User-Agent `nordeste-em-numeros/1.0 (+https://nordeste.dnascimento.com.br)`, definido em
+`nordeste.coletores.http.USER_AGENT`: o `www.gov.br` responde 403 à identificação padrão da biblioteca HTTP.
 
 ### Citados nas fichas ou de apoio
 
@@ -234,6 +240,12 @@ Algumas fichas têm o último ano escrito à mão e precisam de edição quando 
   até o `fim` subir.
 - **Internet nos domicílios** (`internet_domicilios`, série `sem_restricao`): `fim: 2025` e uma parte por ano, com a URL
   da página da tabela A4. Quando o Cetic.br publicar 2026, acrescente a parte e suba o `fim`.
+- **Patentes de residentes** (`patentes_residentes`, série `badepi_v12`): `fim: 2025` e o endereço do link "Patentes" da página
+  da BADEPI. Uma versão nova da base muda o token do link: a coleta falha com o endereço novo até a ficha ser revista. Ano novo no
+  arquivo também deixa a série pendente até o `fim` subir.
+- **CAPES** (`programas_pos` e `doutores_titulados`, séries `sem_filtro_de_nota`): `fim: 2024`; o coletor só pede os anos da série.
+- **Empregos em TI** (`empregos_ti`, série `cempre_9418`): `periodos: 2022-2024` e `fim: 2024`.
+- Encerradas, sem ano novo previsto: `gasto_estadual_cti` (2019), `pintec_empresas` e `inovacao_industria` (2017).
 
 ## Indicadores
 
@@ -249,25 +261,33 @@ curso. Indicadores `auxiliar` são insumos (denominadores e contagens) e não s�
 | `abandono_em` | Taxa de abandono no ensino médio | educacao_basica | exibido | `indicadores_inep` | 2007–2025 | verificada |
 | `desocupacao` | Taxa de desocupação | trabalho | exibido | `pnad`, `pnadc` | 2001–2009; 2011– | verificada |
 | `desocupados` | Pessoas desocupadas | trabalho | auxiliar | `pnadc` | 2012– | verificada |
+| `doutores_titulados` | Doutores titulados | educacao_superior | exibido | `nota_3_ou_mais`, `sem_filtro_de_nota` | 1998–2024 | verificada |
+| `empregos_ti` | Empregos assalariados em tecnologia da informação | trabalho | exibido | `cempre_6450`, `cempre_9418` | 2006–2024 | verificada |
 | `extrema_pobreza` | Extrema pobreza | social | exibido | `pnadc` | 2012–2024 | verificada |
 | `forca_trabalho` | Pessoas na força de trabalho | trabalho | auxiliar | `pnadc` | 2012– | verificada |
+| `gasto_estadual_cti` | Dispêndio dos governos estaduais em C&T e em P&D | inovacao | exibido | `mcti_legado` | 2000–2019 | verificada |
 | `gini` | Índice de Gini da renda domiciliar per capita | social | exibido | `pnad`, `pnadc` | 2001–2009; 2011– | verificada |
 | `ibid` | Índice Brasil de Inovação e Desenvolvimento (IBID) | inovacao | exibido | `serie_historica` | 2014–2025 | verificada |
+| `ibid_posicao` | Posição no ranking do IBID | inovacao | exibido | `serie_historica` | 2014–2025 | verificada |
 | `ideb` | Índice de Desenvolvimento da Educação Básica (IDEB) | educacao_basica | exibido | `ideb` | 2005–2025 | verificada |
 | `idhm` | Índice de Desenvolvimento Humano Municipal (IDHM) e componentes | social | exibido | `censo`, `pnadc` | 2000–2010; 2012–2024 | verificada |
 | `informais` | Pessoas ocupadas em trabalho informal | trabalho | auxiliar | `pnadc` | 2016– | verificada |
 | `informalidade` | Taxa de informalidade | trabalho | exibido | `pnadc` | 2016– | verificada |
+| `inovacao_industria` | Indústrias que inovaram | inovacao | exibido | `cnae1`, `cnae2` | 2000–2005; 2008–2017 | verificada |
 | `internet_domicilios` | Domicílios com acesso à internet | inovacao | exibido | `urbano_computador`, `computador`, `sem_restricao` | 2006–2025 | verificada |
 | `massa_renda_dom_pc` | Massa de rendimento domiciliar per capita | economia | auxiliar | `pnadc` | 2012– | verificada |
 | `matriculas_basica` | Matrículas na educação básica, por etapa e rede | educacao_basica | exibido | `censo_escolar_2000_2002`, `censo_escolar_pre2007`, `educacenso` | 2000–2002; 2005–2025 | verificada |
 | `ocupados` | Pessoas ocupadas | trabalho | auxiliar | `pnadc` | 2016– | verificada |
+| `patentes_residentes` | Pedidos de patente de residentes | inovacao | exibido | `badepi_v12` | 2000–2025 | verificada |
 | `pib_nominal` | PIB a preços correntes | economia | auxiliar | `scr_ref2010` | 2002–2023 | verificada |
 | `pib_participacao` | Participação no PIB nacional | economia | exibido | `scr_ref2010` | 2002–2023 | verificada |
 | `pib_per_capita` | PIB per capita | economia | exibido | `scr_ref2010` | 2002–2006; 2008–2023 | verificada, calculada pelo projeto |
 | `pib_volume` | PIB real (índice de volume) | economia | exibido | `scr_ref2010` | 2002–2023 | verificada |
+| `pintec_empresas` | Empresas industriais, total e as que implementaram inovação (PINTEC) | inovacao | auxiliar | `cnae1`, `cnae2` | 2000–2005; 2008–2017 | verificada |
 | `pobreza` | Pobreza | social | exibido | `pnadc` | 2012–2024 | verificada |
 | `populacao` | População residente | contexto | exibido | `estimativa_pre_censo2022`, `estimativa_pos_censo2022`, `censo_2000_2010`, `censo_2022` | 2000–2022; 2024– | verificada |
 | `populacao_pnadc` | População residente da PNAD Contínua | contexto | auxiliar | `pnadc` | 2012– | verificada |
+| `programas_pos` | Programas de pós-graduação | educacao_superior | exibido | `nota_3_ou_mais`, `sem_filtro_de_nota` | 1998–2024 | verificada |
 | `renda_dom_pc` | Renda domiciliar per capita | social | exibido | `pnadc` | 2012– | verificada |
 | `rendimento_trabalho` | Rendimento médio real do trabalho | trabalho | exibido | `pnadc` | 2012– | verificada |
 | `superior` | Ensino superior, matrículas de graduação e instituições | educacao_superior | exibido | `censup_pre2009`, `censup` | 2001–2024 | verificada |

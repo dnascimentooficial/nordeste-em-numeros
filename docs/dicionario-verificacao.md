@@ -1226,12 +1226,13 @@ Data: 2026-11-03. Nada desta seção chegou à `main`: a ficha, o padronizador e
 - Arquivo: `ibid-serie-historica.xlsx`, 509.419 bytes, sha256 `eec72964c17fa714ea014e549e3e4dea2a322e1efd18a30da67887ae9adc92bc`.
   Quinze abas: três de posições no ranking (índice geral, Contexto e Resultado) e uma por ano, `IBID 2014` a `IBID 2025`. Uma cópia
   sem alteração fica em `testes/reais/` para o teste do padronizador.
-- **Coleta: divergência.** `coletar --indicador ibid` recebeu 403 do `www.gov.br` nas quatro tentativas. O mesmo endereço respondeu
-  200 a um `curl` na mesma rede e 403 a um `curl` que se apresentou como `python-requests`: o servidor recusa o User-Agent padrão do
-  `requests`, que o coletor usa. O arquivo registrado em `coletas.csv` (`ibid.serie_historica.2026-11-03.eec72964`, origem `rede`) é
-  o baixado com `curl`, gravado pela mesma função de gravação do coletor, com a URL oficial. A série está `verificado: true` para
-  o robô tentar a coleta toda semana; enquanto o coletor não se identificar de outro jeito (decisão em aberto, não tomada aqui), a
-  coleta semanal desta série falha, vai para `falhas_coleta.csv` e a série segue com a coleta anterior.
+- **Coleta.** A primeira tentativa (`coletar --indicador ibid`) recebeu 403 do `www.gov.br`: o servidor recusa o User-Agent padrão do
+  `requests` (`python-requests/x.y`). Decisão do autor: todas as coletas passam a se identificar como
+  `nordeste-em-numeros/1.0 (+https://nordeste.dnascimento.com.br)`, definido num lugar só (`nordeste.coletores.http.USER_AGENT`,
+  que a automação também usa). Com ele, `coletar --indicador ibid` baixou do endereço oficial em 2026-11-03, pelo próprio coletor,
+  o mesmo arquivo (sha256 `eec72964...`, por isso nenhuma linha nova em `coletas.csv`). `testes/test_identificacao.py` confere que o
+  cabeçalho vai em todos os downloads, e `testes/contrato/test_identificacao_rede.py` (marcador `rede`) baixa a planilha do INPI
+  por esse caminho.
 - Layout, conferido no arquivo: nas abas anuais, A1 traz o ano, C1 `IBID - Geral` e a linha 3 os rótulos de D a L
   (`IBID - Contexto`, cinco pilares, `IBID - Resultado`, dois pilares). Da linha 4 em diante, nome e sigla da UF e os dez índices;
   primeiro as 27 UFs, depois as regiões e o Brasil. A sigla do INPI repete `SE` (Sergipe e Sudeste) e usa `SU` para o Sul e `NO`
@@ -1306,3 +1307,152 @@ marca 2020 no gráfico e a ficha avisa que a subida de 2019 para 2020 pode ser e
 - Obtido: 72 linhas = 12 anos x 6 territórios. Brasil 50 (2014) e 86 (2025); Nordeste 37 e 84. Valores inteiros, como publicados.
 - Comparação `brasil`, como o Cetic.br publica; não há Brasil fora do Nordeste (a tabela traz percentuais, não contagens).
 - Série fechada em 2025: uma edição nova exige a parte do ano e o `fim` novo.
+
+### ibid_posicao / serie_historica
+
+- URL de coleta: `https://www.gov.br/inpi/pt-br/inpi-data/indice-brasil-de-inovacao-e-desenvolvimento-ibid/ibid-serie-historica.xlsx`
+  (a mesma planilha da ficha `ibid`; coleta `ibid_posicao.serie_historica.2026-11-03.eec72964`, mesmo sha256).
+- O padronizador `ibid` com `medida: posicao` grava a posição da aba `IBID_série hist`, só depois de conferir que ela é a calculada
+  pelo índice geral do ano (como na ficha `ibid`). 108 linhas = 12 anos x 9 UFs. Posições de 2014 e 2025: PI 21º e 18º, PB 18º e 15º,
+  RN 13º e 12º, CE 15º e 14º, PE 12º e 13º, BA 16º e 16º, SE 14º e 19º, AL 27º e 25º, MA 25º e 26º (as do levantamento).
+- Decisão do autor: a página Estados mostra a posição do IBID, não a nota (o INPI avisa que a nota não se compara entre anos). O
+  mecanismo de Estados é uma tabela no código (`explorar.INDICADORES_ESTADOS`), não um campo de ficha; a entrada do IBID passou a
+  apontar para esta ficha, com "menor é melhor" e uma nota na página (`textos.yaml`, `estados.notas.ibid`). O Explorar continua com
+  a nota do índice, com o aviso de que cada ano tem a sua escala na unidade.
+
+## Bloco da página Inovação: patentes, CAPES, gasto estadual, CEMPRE e PINTEC
+
+Data: 2026-11-03, no ramo de teste `claude/indicador-ibid`. Fatos e fontes do levantamento da página (seções "Levantamento 2" a
+"4"); coletas de rede feitas pelo coletor do projeto, com o User-Agent novo, no repositório do ramo
+(`python -m nordeste --hoje 2026-11-03 coletar --indicador <id>`). Nenhuma falha de coleta.
+
+### patentes_residentes / badepi_v12
+
+- Página oficial: https://www.gov.br/inpi/pt-br/inpi-data/dados-e-series-temporais/badepi ("microdados da BADEPI em sua versão
+  12.0 [...] com série histórica de 2000 a 2025"). O link "Patentes" leva ao compartilhamento Nextcloud do INPI.
+- URL de coleta: `https://inpidrive.inpi.gov.br/index.php/s/G33ljb4puihwzDR/download`
+- Antes de baixar, o coletor lê a página da BADEPI e confere que o link com o texto "Patentes" para `inpidrive.inpi.gov.br` é o da
+  ficha (`conferir_link`). A página tem outros dois links "Patentes" (o menu do gov.br), por isso o host entra na regra. Se o token
+  mudar (versão nova da base), a coleta falha com o endereço novo e a ficha é revista.
+- Zip baixado: `badepiv12_ptn.zip`, 129.210.638 bytes, sha256 `13329fdb7ad961265ada099f9f989c042f1cc786b8c394f027dd746431d30b85`
+  (igual ao baixado no levantamento). O pacote guarda só `badepiv12_ptn_deposito.csv` e `badepiv12_ptn_depositante.csv`, com os
+  bytes comprimidos do original: 42.034.999 bytes, coleta `patentes_residentes.badepi_v12.2026-11-03.6f4e609b`. O download levou
+  ~20 s nesta rede; o robô coleta a série só na primeira semana do mês (`automacao.INDICADORES_PESADOS`) e, nas outras, usa o bruto
+  guardado na release `brutos`.
+- Dicionário (`Patentes_Dicionario_Microdados.xlsx`, no mesmo zip): `ANO` é o ano de `DT_ENTRADA_INPI`; "o requerente que aparece em
+  primeira ordem no pedido determina a origem do pedido". O dicionário **não** documenta a numeração dos pedidos.
+- Mapeamento de tipo (inferido): formato antigo pelo prefixo (`PI`, `MU`; `C` é certificado de adição); formato de 12 dígitos
+  (desde 2012) pelos dois primeiros dígitos. Na versão 12 aparecem 10 (98.506 pedidos), 11 (263.999), 12 (13.857), 13 (1.472), 20
+  (37.758), 21 (423) e 22 (65). Contados: 10 e 11 (PI), 20 e 21 (MU). Ficam de fora 13 (certificado de adição) e 12 e 22 (que leio
+  como pedidos divididos de PI e MU).
+- Conferência com a tabela 6.1.2 do MCTI (BADEPI v8, extração de 01/03/2021, PI, MU e C por UF, 2000 a 2020): o Nordeste bate ou
+  fica a poucas unidades em todos os anos (2000: PI 189 e MU 136 nos dois; 2020: PI 902 contra 903, MU 177 contra 178; maior
+  diferença, 2015: PI 530 contra 572). O certificado de adição com a natureza 13 também bate de perto (2014: 89 contra 98). O Brasil
+  daqui fica abaixo da 6.1.2 nos anos com muitos residentes sem UF (2015: PI 4.293 contra 4.631), porque a 6.1.2 soma esses pedidos ao
+  total e aqui o Brasil é a soma das UFs. Contar também as naturezas 12 e 22 aproximaria um pouco mais o Brasil de 2019 e 2020 (PI 5.403
+  e 5.263, contra 5.466 e 5.280) e mudaria o Nordeste de 2025 de 1.352 para 1.355; fiquei com o mapeamento do levantamento, e a
+  diferença está registrada aqui.
+- Duplicidades: 6.329 pedidos têm mais de uma linha de ordem 1; em 30 os dados diferem (país, UF ou tipo de pessoa). Vale a primeira
+  linha que traz o país (uma linha sem país não identifica a origem). Com essa regra, o Brasil de 2000 é 6.227, o do levantamento.
+- Obtido: 390 linhas = 26 anos x 15 territórios, todas `observado`. Nordeste 325 (2000) e 1.352 (2025); Brasil 6.227 e 9.508.
+  Residentes sem UF, fora do Brasil: 155 em 2000, 535 em 2015, nenhum em 2025.
+- 2024 e 2025 vão com a nota "parcial" (`anos_parciais`): o pedido fica 18 meses em sigilo. A versão 8, extraída em março de 2021,
+  já trazia para 2020 quase o mesmo que a 12 (Nordeste 1.081 contra 1.079), sinal de que a revisão é pequena; a marca fica até a
+  versão seguinte confirmar.
+
+### programas_pos / nota_3_ou_mais
+
+- Origem: API JSON interna do GeoCAPES (https://geocapes.capes.gov.br/geocapes/), lida no `geocapes.js` do próprio site. Sem
+  documentação; `dadosabertos.capes.gov.br` não respondeu.
+- URL de coleta: `https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=4`
+- Para cada ano, `PUT .../fotosDados/<foto>/dadosSumarizados?referencial=quantidade&sumarizador=iduf` com corpo `{}`. O coletor
+  confere a descrição do indicador ("Distribuição de programas de pós-graduação no Brasil") e uma foto por ano; o padronizador
+  confere o aviso ("Até o ano de 2016, são contabilizados os programas com classificação 3 ou superior"), os campos, as UFs e as
+  contagens.
+- Coleta `programas_pos.nota_3_ou_mais.2026-11-03.fe8878d6`. Obtido: 285 linhas = 19 anos (1998 a 2016) x 15 territórios.
+  Nordeste 179 (1998) e 846 (2016); Brasil 1.259 e 4.177. Os valores de 1998 são os do levantamento.
+
+### programas_pos / sem_filtro_de_nota
+
+- URL de coleta: `https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=4`
+- Coleta `programas_pos.sem_filtro_de_nota.2026-11-03.6f297631`. Obtido: 120 linhas = 8 anos (2017 a 2024) x 15 territórios.
+  Nordeste 880 (2017) e 962 (2024); Brasil 4.347 e 4.635 (2024 como no levantamento).
+
+### doutores_titulados / nota_3_ou_mais
+
+- URL de coleta: `https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=3`
+- `sumarizador=uf,grau,fluxo`; entram `FLUXO` Titulado e `GRAU` Doutorado ou Doutorado Profissional. Grau ou situação fora dos
+  conhecidos (Mestrado, Mestrado Profissional, Doutorado, Doutorado Profissional; Matriculado, Titulado) é erro de layout.
+- Coleta `doutores_titulados.nota_3_ou_mais.2026-11-03.e0db8f68`. Obtido: 285 linhas. Nordeste 83 (1998) e 2.956 (2016); Brasil
+  3.915 e 20.603. Brasil de 2000: 5.318, o mesmo da tabela 3.5.1 do MCTI (extraída do GeoCAPES em 12/11/2021).
+
+### doutores_titulados / sem_filtro_de_nota
+
+- URL de coleta: `https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=3`
+- Coleta `doutores_titulados.sem_filtro_de_nota.2026-11-03.fd9d40eb`. Obtido: 120 linhas. Nordeste 3.372 (2017) e 4.328 (2024);
+  Brasil 22.056 e 25.915 (2024 como no levantamento; o Nordeste é 16,7% do Brasil).
+
+### gasto_estadual_cti / mcti_legado
+
+- Página: https://antigo.mctic.gov.br/mctic/opencms/indicadores/indicadores_cti.html (site legado do MCTI, sem desafio anti-robô; o
+  gov.br/mcti responde com a página TSPD e não foi contornado).
+- URLs de coleta: `https://antigo.mctic.gov.br/mctic/opencms/indicadores/arquivos/recursosAplicados/governosEstaduais/tab_2_3_3_E.csv https://antigo.mctic.gov.br/mctic/opencms/indicadores/arquivos/recursosAplicados/governosEstaduais/tab_2_3_5_E.csv`
+- Coleta `gasto_estadual_cti.mcti_legado.2026-11-03.eee35c6f`. Padronizador `mcti`: confere número e título da tabela, os anos de
+  2000 a 2019, a unidade (milhões de R$ correntes), o Brasil ("Total"), as cinco regiões e as 27 UFs. Na 2.3.5, cada ano tem três
+  colunas (P&D, orçamento executado e pós-graduação); a ficha lê "P&D" (`pd`) e "Pós-graduação(2)" (`pd_pos_graduacao`).
+- Obtido: 900 linhas = 20 anos x 15 territórios x 3 subindicadores. C&T: Nordeste 139,2 (2000) e 2.201,7 (2019); Brasil 2.854,3 e
+  18.571,8. P&D: Nordeste 82,5 e 1.110,8; Brasil 2.486,2 e 13.785,3. Pós-graduação dentro do P&D, 2019: 772,8 (Nordeste) e
+  10.247,8 (Brasil). Valores do levantamento.
+- A soma das UFs difere do regional publicado só por arredondamento (2000, C&T: 139,4 contra 139,2); a R07 (tolerância de 0,5%)
+  passa em todos os anos e subindicadores. O "-" da tabela vale zero.
+- Avisos A01 (limiar de 300% na ficha): 31 casos, quase todos de UF que sai de zero ou de valores de poucos milhões (o Maranhão vai
+  de 2,7 para 23,9 em C&T de 2000 para 2001). Estão na tabela do MCTI.
+
+### empregos_ti / cempre_6450
+
+- URL de coleta: `https://apisidra.ibge.gov.br/values/t/6450/n1/all/n2/all/n3/21,22,23,24,25,26,27,28,29/v/708/p/2006-2021/c12762/117594,117601`
+- Coleta `empregos_ti.cempre_6450.2026-11-03.35767014`. O padronizador `sidra` soma as duas divisões (`soma_de_categorias`) e confere
+  o rótulo de cada uma ("62 Atividades dos serviços de tecnologia da informação" e "63 Atividades de prestação de serviços de
+  informação"). Obtido: 240 linhas = 16 anos x 15 territórios. Nordeste 22.897 (2006) e 50.080 (2021); Brasil 281.810 e 632.029.
+  Nenhum "X" no Nordeste; a soma das nove UFs bate com o Nordeste publicado.
+
+### empregos_ti / cempre_9418
+
+- URL de coleta: `https://apisidra.ibge.gov.br/values/t/9418/n1/all/n2/all/n3/21,22,23,24,25,26,27,28,29/v/708/p/2022-2024/c12762/117594,117601`
+- Coleta `empregos_ti.cempre_9418.2026-11-03.a9063452`. Obtido: 45 linhas = 3 anos x 15 territórios. Nordeste 57.243 (2022) e
+  75.113 (2024); Brasil 726.114 e 765.225.
+- Quebra entre as tabelas: a 9418 não repete 2021. As tabelas do CEMPRE no `ftp.ibge.gov.br` (Tabela 1 de
+  `Economia_Cadastro_de_Empresas/2021/tabelas_xlsx.zip` e de `.../2022/...`) mostram outro universo: 5.434.091 empresas e 52.696.808
+  pessoas ocupadas no Brasil em 2021; 9.431.239 e 62.746.860 em 2022. A de 2021 remete ao SIDRA 992 e a de 2022 ao 7528. Nenhuma
+  traz nota técnica que explique a mudança, e a página de metodologia (`www.ibge.gov.br`) não resolve nesta rede: a ficha não afirma
+  a causa.
+
+### pintec_empresas / cnae1
+
+- Pasta oficial: https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/ (edições 2000,
+  2003, 2005, 2008, 2011, 2014 e 2017; nenhuma posterior).
+- URLs de coleta: `https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2000/Grandes_Regioes.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2003/Grandes_Regioes.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2005/Grandes_Regioes.zip`
+- Tabelas: `tab01.xls` em 2000 (Tabela 1, 1998-2000) e `tab202.xls` em 2003 e 2005 (Tabela 2.2). Coleta
+  `pintec_empresas.cnae1.2026-11-03.32720b2c`. Obtido (total e inovadoras): 2000 Nordeste 6.798,6 e 2.118,9, Brasil 72.005,3 e
+  22.697,7; 2003 Nordeste 8.194,0 e 2.652,5; 2005 Nordeste 9.098,4 e 2.914,6, Brasil 91.054,6 e 30.377,4. Em 2000 o Sudeste vem sem São
+  Paulo e fica de fora.
+
+### pintec_empresas / cnae2
+
+- URLs de coleta: `https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2008/cnae2_gran_reg_tab_2_01_a_26.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2011/xls/gregioesufs_xls.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2014/xls/pintec2014_grandes_regioes_e_unidades_da_federacao_selecionadas.xls https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2017/xls/pintec2017_grandes_regioes_e_unidades_da_federacao_selecionadas.xls`
+- Tabela 2.2 de cada edição (`Tab2_02.xls`, `tab202.xls`, aba `tab2.2`). Coleta `pintec_empresas.cnae2.2026-11-03.d049eda5`. Obtido:
+  2008 Nordeste 10.699,2 e 3.618,1; 2011 13.641,0 e 4.954,9; 2014 14.305,9 e 5.314,4; 2017 Nordeste 12.654,2 e 4.277,9, Brasil
+  102.513,6 e 34.731,8 (os valores do levantamento). A R07 (Brasil = soma das regiões) passa nas edições com as cinco regiões.
+
+### inovacao_industria / cnae1
+
+- URLs de coleta: `https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2000/Grandes_Regioes.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2003/Grandes_Regioes.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2005/Grandes_Regioes.zip`
+- Mesmos arquivos da `pintec_empresas`; o padronizador grava a taxa (inovadoras ÷ total x 100) da mesma linha, com nota. Coleta
+  `inovacao_industria.cnae1.2026-11-03.32720b2c`. Nordeste 31,2% (2000), 32,4% (2003), 32,0% (2005); Brasil 31,5%, 33,3%, 33,4%.
+
+### inovacao_industria / cnae2
+
+- URLs de coleta: `https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2008/cnae2_gran_reg_tab_2_01_a_26.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2011/xls/gregioesufs_xls.zip https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2014/xls/pintec2014_grandes_regioes_e_unidades_da_federacao_selecionadas.xls https://ftp.ibge.gov.br/Industrias_Extrativas_e_de_Transformacao/Pesquisa_de_Inovacao_Tecnologica/2017/xls/pintec2017_grandes_regioes_e_unidades_da_federacao_selecionadas.xls`
+- Coleta `inovacao_industria.cnae2.2026-11-03.d049eda5`. Nordeste 33,8% (2008), 36,3% (2011), 37,1% (2014), 33,8% (2017); Brasil
+  38,1%, 35,6%, 36,4%, 33,9%. 2017: Nordeste 4.278 de 12.654 e Brasil 34.732 de 102.514, como no levantamento.
+

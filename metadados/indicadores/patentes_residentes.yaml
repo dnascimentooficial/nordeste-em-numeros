@@ -1,0 +1,78 @@
+id: patentes_residentes
+nome: Pedidos de patente de residentes
+descricao: >-
+  Pedidos de patente de invenção (PI) e de modelo de utilidade (MU)
+  depositados no INPI por residentes no Brasil, pela UF do primeiro
+  depositante.
+eixo: inovacao
+categoria: inovacao
+unidade: pedidos
+orgao: INPI
+periodicidade: anual
+metodologia: >-
+  Contagem feita pelo projeto nos microdados da BADEPI versão 12 (série de 2000
+  a 2025), tabelas de depósitos e de depositantes. Ano: o da data de entrada no
+  INPI (campo ANO). Origem: a do depositante de ordem 1, como manda o dicionário
+  da BADEPI ("o requerente que aparece em primeira ordem no pedido determina a
+  origem do pedido"); residente é quem tem país BR, e a UF é a desse
+  depositante. Tipo: no número antigo, o prefixo (PI ou MU); no número de 12
+  dígitos, usado desde 2012, os dois primeiros dígitos, 10 e 11 para PI e 20 e
+  21 para MU. Certificados de adição (prefixo C, natureza 13) e pedidos
+  divididos (naturezas 12 e 22) ficam de fora. O dicionário da BADEPI não
+  documenta essa numeração: o mapeamento foi inferido e conferido contra a
+  tabela 6.1.2 do MCTI (extração especial da BADEPI v8, 2000 a 2020), que
+  separa PI, MU e certificado por UF (diferenças no dicionário de verificação).
+  O Nordeste, as outras regiões e o Brasil são a soma das UFs.
+observacoes: >-
+  (1) O Brasil é a soma dos pedidos de residentes com UF identificada: pedidos
+  de residente sem UF do primeiro depositante ficam fora (155 em 2000, 535 em
+  2015, nenhum em 2025), e por isso o Brasil daqui fica abaixo do total de
+  residentes publicado pelo INPI nesses anos. (2) Quando o arquivo traz mais
+  de uma linha de ordem 1 para o mesmo pedido (30 pedidos com dados diferentes
+  na versão 12), vale a primeira que traz o país. (3) 2024 e 2025 vão marcados como parciais: o
+  pedido fica 18 meses em sigilo antes de ser publicado, e a base do ano mais
+  recente pode ganhar pedidos na versão seguinte. A comparação com a extração
+  da versão 8 (março de 2021) sugere que a revisão é pequena (Nordeste, 2020:
+  1.081 PI e MU na versão 8, 1.079 na versão 12), mas a marca fica até a versão
+  seguinte confirmar. (4) São pedidos depositados, não patentes concedidas. (5)
+  O endereço de download é o do link "Patentes" da página da BADEPI; o token do
+  compartilhamento muda a cada versão, e o coletor confere o link antes de
+  baixar: se ele mudou, a coleta falha e a ficha é revista (endereço e `fim`).
+  (6) O zip tem 123 MB; o bruto guardado tem só os dois CSV usados (cerca de 42
+  MB, com os bytes comprimidos do original), e o robô o baixa uma vez por mês.
+sentido: maior_melhor
+limites: {min: 0}
+limiar_salto_pct: 200
+defasagem_meses: 10
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: badepi_v12
+    inicio: 2000
+    fim: 2025
+    fonte: INPI, Base de Dados Estatísticos de Propriedade Intelectual (BADEPI) v12, microdados de patentes; contagem do projeto
+    base_origem: >-
+      badepiv12_ptn.zip (link "Patentes" da página da BADEPI), membros
+      badepiv12_ptn_deposito.csv e badepiv12_ptn_depositante.csv
+    url: https://www.gov.br/inpi/pt-br/inpi-data/dados-e-series-temporais/badepi
+    coletor: arquivo
+    parametros:
+      padronizador: badepi
+      conferir_link:
+        pagina: https://www.gov.br/inpi/pt-br/inpi-data/dados-e-series-temporais/badepi
+        texto: Patentes
+        host: inpidrive.inpi.gov.br
+        sufixo: /download
+      prefixos: [PI, MU]
+      naturezas: ["10", "11", "20", "21"]
+      anos_parciais: [2024, 2025]
+      nota_dos_anos_parciais: "parcial: pedidos em sigilo de 18 meses podem entrar na versão seguinte da BADEPI"
+      partes:
+        - {url: "https://inpidrive.inpi.gov.br/index.php/s/G33ljb4puihwzDR/download", arquivo_no_zip: badepiv12_ptn_deposito.csv, formato: csv}
+        - {url: "https://inpidrive.inpi.gov.br/index.php/s/G33ljb4puihwzDR/download", arquivo_no_zip: badepiv12_ptn_depositante.csv, formato: csv}
+    compatibilidade: >-
+      Série única de 2000 a 2025, com a numeração dos pedidos traduzida para PI e
+      MU nos dois formatos. 2024 e 2025 parciais. Versão nova da BADEPI exige
+      rever o endereço e o `fim`.
+    verificado: true

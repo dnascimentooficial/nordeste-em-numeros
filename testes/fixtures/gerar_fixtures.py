@@ -600,6 +600,136 @@ def pacote_cetic(serie_id: str) -> bytes:
     return empacotar_partes({p["url"]: pagina_cetic(p["ano"]) for p in partes})
 
 
+# --- Página Inovação: patentes (BADEPI), CAPES (GeoCAPES), gasto estadual (MCTI), CEMPRE e PINTEC ---
+# Contagens sintéticas: cada UF vale 1 (ou BASE nos arquivos de soma), e regiões e Brasil são as somas. Não é dado oficial.
+_REGIAO_DA_UF = {
+    "AC": "N", "AP": "N", "AM": "N", "PA": "N", "RO": "N", "RR": "N", "TO": "N",
+    "MA": "NE", "PI": "NE", "CE": "NE", "RN": "NE", "PB": "NE", "PE": "NE", "AL": "NE", "SE": "NE", "BA": "NE",
+    "ES": "SE", "MG": "SE", "RJ": "SE", "SP": "SE", "PR": "S", "RS": "S", "SC": "S",
+    "DF": "CO", "GO": "CO", "MS": "CO", "MT": "CO",
+}
+_NOMES_DAS_REGIOES = {"N": "Norte", "NE": "Nordeste", "SE": "Sudeste", "S": "Sul", "CO": "Centro-Oeste"}
+
+
+def _csv_latin1(linhas: list[list]) -> bytes:
+    return ("\n".join(";".join(str(c) for c in linha) for linha in linhas) + "\n").encode("latin-1")
+
+
+def zip_badepi(serie_id: str) -> bytes:
+    """Zip com os dois CSV da BADEPI: um pedido de residente por UF e ano (PI no número antigo até 2011, natureza 10
+    depois), mais um pedido estrangeiro, um certificado de adição e um pedido sem país por ano, que não entram."""
+    serie = _serie("patentes_residentes", serie_id)
+    deposito = [["NO_PEDIDO", "ANO", "DT_ENTRADA_INPI", "DT_DEPOSITO", "NM_TITULO_PATENTE"]]
+    depositante = [["NO_PEDIDO", "NO_ORDEM", "CD_TIPO_PFPJ", "NO_CNPJ_CPF", "NM_COMPLET_PFPJ", "CD_PAIS_PFPJ",
+                    "CD_UF_PFPJ", "NM_CIDADE_PFPJ", "CD_IBGE_CIDADE"]]
+    for ano in range(serie["inicio"], serie["fim"] + 1):
+        for k, uf in enumerate(_REGIAO_DA_UF):
+            numero = f"PI{ano % 100:02d}{k:05d}" if ano < 2012 else f"10{ano}{k:06d}"
+            deposito.append([numero, ano, f"{ano}-01-01 00:00:00.000", f"{ano}-01-01 00:00:00.000", "Pedido sintético"])
+            depositante.append([numero, 1, "F", "", "Depositante sintético", "BR", uf, "", ""])
+            depositante.append([numero, 2, "F", "", "Segundo depositante", "US", "", "", ""])
+        for numero, pais, uf in ((f"PI{ano % 100:02d}99998", "US", ""), (f"C1{ano % 100:02d}99997", "BR", "SP"),
+                                 (f"MU{ano % 100:02d}99996", "", "")):
+            deposito.append([numero, ano, "", "", "Fora da contagem"])
+            depositante.append([numero, 1, "J", "", "Fora da contagem", pais, uf, "", ""])
+    membros = {p["arquivo_no_zip"]: linhas for p, linhas in zip(serie["parametros"]["partes"], (deposito, depositante))}
+    saida = io.BytesIO()
+    with zipfile.ZipFile(saida, "w", zipfile.ZIP_DEFLATED) as zip_:
+        for nome, linhas in membros.items():
+            item = zipfile.ZipInfo(nome, date_time=(2026, 1, 1, 0, 0, 0))
+            item.compress_type = zipfile.ZIP_DEFLATED
+            zip_.writestr(item, _csv_latin1(linhas))
+    return empacotar_partes({serie["parametros"]["partes"][0]["url"]: saida.getvalue()})
+
+
+def json_geocapes(indicador_id: str, serie_id: str) -> dict:
+    """Bruto do coletor geocapes: o aviso com as duas frases do GeoCAPES e, por ano, 1 por UF (programas) ou, nos
+    discentes, 1 doutor titulado, 1 mestre titulado e 1 doutorando matriculado por UF."""
+    serie = _serie(indicador_id, serie_id)
+    p = serie["parametros"]
+    outra = {"nota_3_ou_mais": "sem_filtro_de_nota", "sem_filtro_de_nota": "nota_3_ou_mais"}[serie_id]
+    mensagem = " ".join(sorted({p["aviso"], _serie(indicador_id, outra)["parametros"]["aviso"]}, key=lambda a: "A partir" in a))
+    anos = {}
+    for ano in range(serie["inicio"], serie["fim"] + 1):
+        if p["campo_uf"] == "IDUF":
+            dados = [{"IDUF": uf, "REFERENCIAL": 1} for uf in _REGIAO_DA_UF]
+        else:
+            dados = [{"UF": uf, "GRAU": grau, "FLUXO": fluxo, "REFERENCIAL": 1} for uf in _REGIAO_DA_UF
+                     for grau, fluxo in (("Doutorado", "Titulado"), ("Mestrado", "Titulado"), ("Doutorado", "Matriculado"))]
+        anos[str(ano)] = {"foto": 1000 + ano, "dados": dados}
+    return {"fonte": "https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=" + str(p["indicador"]),
+            "indicador": {"id": p["indicador"], "descricao": p["descricao"], "mensagem": mensagem},
+            "sumarizador": p["sumarizador"], "anos": anos}
+
+
+_UFS_POR_NOME = dict(sorted((nome, sigla) for sigla, nome in UFS_DO_INPI.items()))
+
+
+def csv_mcti(parte: dict, inicio: int, fim: int) -> bytes:
+    """Tabela do MCTI no layout do CSV real: UF vale 1,0, regiões e Total as somas; na 2.3.5, três colunas por ano."""
+    anos = list(range(inicio, fim + 1))
+    por_ano = 3 if parte.get("coluna") else 1
+    cabecalho = ["Grandes Regiões / Unidades da Federação"]
+    abaixo = [""]
+    for ano in anos:
+        cabecalho += [str(ano)] + [""] * (por_ano - 1)
+        abaixo += ["P&D", "Orçamento executado(1)", "Pós-graduação(2)"] if por_ano == 3 else []
+    def linha(nome, valor):
+        return [nome, *([f"{valor:.1f}".replace(".", ",")] * (len(anos) * por_ano))]
+    regioes = {r: sum(1 for u in _REGIAO_DA_UF.values() if u == r) for r in _NOMES_DAS_REGIOES}
+    linhas = [[""] * 3, [parte["tabela"]], [f"{parte['titulo']} (sintético), segundo regiões e UFs {inicio}-{fim}"],
+              ["(em milhões de R$ correntes)"], cabecalho]
+    if por_ano == 3:
+        linhas.append(abaixo)
+    linhas.append(linha("Total", len(_REGIAO_DA_UF)))
+    for regiao, nome in _NOMES_DAS_REGIOES.items():
+        linhas.append(linha(nome, regioes[regiao]))
+        linhas += [linha(n, 1) for n, s in _UFS_POR_NOME.items() if _REGIAO_DA_UF[s] == regiao]
+    linhas.append(["Fonte: sintética, derivada de 99999; não é dado oficial."])
+    return _csv_latin1(linhas)
+
+
+def pacote_mcti(serie_id: str) -> bytes:
+    serie = _serie("gasto_estadual_cti", serie_id)
+    arquivos = {}
+    for parte in serie["parametros"]["partes"]:
+        arquivos.setdefault(parte["url"], csv_mcti(parte, serie["inicio"], serie["fim"]))
+    return empacotar_partes(arquivos)
+
+
+def json_cempre(serie_id: str) -> list[dict]:
+    """JSON do SIDRA com as duas divisões da CNAE (62 e 63) para cada território e ano, BASE x multiplicador cada."""
+    p = _serie("empregos_ti", serie_id)["parametros"]
+    inicio, fim = map(int, p["periodos"].split("-"))
+    rotulo = "Classificação Nacional de Atividades Econômicas (CNAE 2.0)"
+    linhas = []
+    for codigo, nome in p["soma_de_categorias"].items():
+        parte = json_sidra("Pessoal ocupado assalariado (sintético)", "45", "Pessoas", _soma, anos=range(inicio, fim + 1),
+                           classificacoes=((rotulo, codigo, nome),))
+        linhas = linhas or parte[:1]
+        linhas += parte[1:]
+    return linhas
+
+
+def tabela_pintec(parte: dict) -> list[list]:
+    """Tabela 2.2 sintética: Brasil e regiões, total BASE x multiplicador e metade delas inovadoras (taxa 50%)."""
+    linhas = [[f"Tabela 2.2 - Empresas (sintético), total e as que implementaram inovações - período {parte['periodo']}"],
+              [], ["Grandes Regiões", "Empresas"], ["", "Total", "Que implementaram inovações"], ["", "", "Total"]]
+    for nome, multiplicador in (("Brasil", 13), ("Norte", 1), ("Nordeste", 9), ("Sudeste", 1), ("Sul", 1),
+                                ("Centro-Oeste", 1)):
+        linhas.append([nome, float(BASE * multiplicador), BASE * multiplicador / 2])
+    linhas.append(["Fonte: sintética, derivada de 99999; não é dado oficial."])
+    return linhas
+
+
+def pacote_pintec(indicador_id: str, serie_id: str) -> bytes:
+    arquivos = {}
+    for parte in _serie(indicador_id, serie_id)["parametros"]["partes"]:
+        xls = xls_abas({parte.get("aba", "tab2.2"): tabela_pintec(parte)})
+        arquivos[parte["url"]] = zip_com_um_arquivo(parte["arquivo_no_zip"], xls) if parte.get("arquivo_no_zip") else xls
+    return empacotar_partes(arquivos)
+
+
 GERADORES = {
     "pib_nominal/scr_ref2010.json": lambda: json_sidra(
         "PIB a preços correntes (sintético)", "99999", "Mil Reais", _soma),
@@ -675,6 +805,15 @@ GERADORES = {
     "internet_domicilios/urbano_computador.zip": lambda: pacote_cetic("urbano_computador"),
     "internet_domicilios/computador.zip": lambda: pacote_cetic("computador"),
     "internet_domicilios/sem_restricao.zip": lambda: pacote_cetic("sem_restricao"),
+    "ibid_posicao/serie_historica.xlsx": planilha_ibid,
+    "patentes_residentes/badepi_v12.zip": lambda: zip_badepi("badepi_v12"),
+    **{f"{i}/{s}.json": (lambda i=i, s=s: json_geocapes(i, s))
+       for i in ("programas_pos", "doutores_titulados") for s in ("nota_3_ou_mais", "sem_filtro_de_nota")},
+    "gasto_estadual_cti/mcti_legado.zip": lambda: pacote_mcti("mcti_legado"),
+    "empregos_ti/cempre_6450.json": lambda: json_cempre("cempre_6450"),
+    "empregos_ti/cempre_9418.json": lambda: json_cempre("cempre_9418"),
+    **{f"{i}/{s}.zip": (lambda i=i, s=s: pacote_pintec(i, s))
+       for i in ("pintec_empresas", "inovacao_industria") for s in ("cnae1", "cnae2")},
 }
 
 

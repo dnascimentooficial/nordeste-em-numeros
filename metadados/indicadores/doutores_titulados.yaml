@@ -1,0 +1,83 @@
+id: doutores_titulados
+nome: Doutores titulados
+descricao: >-
+  Pessoas que concluíram o doutorado (acadêmico ou profissional) no ano, pela UF
+  do programa, segundo a CAPES.
+eixo: educacao_superior
+categoria: pos_graduacao
+unidade: titulados
+orgao: CAPES
+periodicidade: anual
+metodologia: >-
+  Indicador "Distribuição de discentes de pós-graduação no Brasil" do GeoCAPES
+  (indicador 3), contado por UF do programa, grau e situação
+  (`sumarizador=uf,grau,fluxo`), um ano-base por vez. Entram os discentes na
+  situação "Titulado" dos graus Doutorado e Doutorado Profissional. A origem,
+  segundo a fonte de dados do indicador, é a tabela ADD_DISCENTE do Sistema
+  Nacional de Pós-Graduação. O Nordeste, as outras regiões e o Brasil são a
+  soma das UFs; UF ausente no ano conta zero.
+observacoes: >-
+  (1) Mesma API interna e sem documentação da ficha `programas_pos`, com as
+  mesmas conferências: grau ou situação desconhecidos fazem a padronização
+  falhar, para nenhum entrar ou sair calado. (2) Quebra em 2016: até 2016 só os
+  discentes de programas com nota 3 ou mais; de 2017 em diante, sem filtro
+  (aviso do GeoCAPES). O doutorado profissional aparece a partir de 2017. Duas
+  séries, que não se emendam. (3) A queda de 2020 está no dado (ano da
+  pandemia). (4) Conferência: o Brasil de 2000 (5.318) é o da tabela 3.5.1 do
+  MCTI, extraída do GeoCAPES em 2021.
+sentido: maior_melhor
+limites: {min: 0}
+limiar_salto_pct: 300
+defasagem_meses: 8
+comparacao:
+  referencia: brasil_fora_ne
+  metodo: soma
+series:
+  - id: nota_3_ou_mais
+    inicio: 1998
+    fim: 2016
+    fonte: CAPES, GeoCAPES, Distribuição de discentes de pós-graduação no Brasil (programas com nota 3 ou mais)
+    base_origem: API do GeoCAPES, indicador 3, titulados de doutorado por UF do programa, anos-base 1998 a 2016
+    url: https://geocapes.capes.gov.br/geocapes/
+    coletor: geocapes
+    parametros:
+      padronizador: geocapes
+      indicador: 3
+      descricao: Distribuição de discentes de pós-graduação no Brasil
+      sumarizador: uf,grau,fluxo
+      campo_uf: UF
+      aviso: Até o ano de 2016, são contabilizados os discentes dos programas com classificação 3 ou superior.
+      filtro:
+        FLUXO: [Titulado]
+        GRAU: [Doutorado, Doutorado Profissional]
+      dominios:
+        FLUXO: [Matriculado, Titulado]
+        GRAU: [Mestrado, Mestrado Profissional, Doutorado, Doutorado Profissional]
+    compatibilidade: >-
+      Só discentes de programas com nota 3 ou superior. Não se emenda com
+      `sem_filtro_de_nota`.
+    verificado: true
+  - id: sem_filtro_de_nota
+    inicio: 2017
+    fim: 2024
+    fonte: CAPES, GeoCAPES, Distribuição de discentes de pós-graduação no Brasil (sem filtro por nota)
+    base_origem: API do GeoCAPES, indicador 3, titulados de doutorado por UF do programa, anos-base 2017 a 2024
+    url: https://geocapes.capes.gov.br/geocapes/
+    coletor: geocapes
+    parametros:
+      padronizador: geocapes
+      indicador: 3
+      descricao: Distribuição de discentes de pós-graduação no Brasil
+      sumarizador: uf,grau,fluxo
+      campo_uf: UF
+      aviso: A partir do ano de 2017, critérios de filtragem por nota deixaram de ser utilizados.
+      filtro:
+        FLUXO: [Titulado]
+        GRAU: [Doutorado, Doutorado Profissional]
+      dominios:
+        FLUXO: [Matriculado, Titulado]
+        GRAU: [Mestrado, Mestrado Profissional, Doutorado, Doutorado Profissional]
+    compatibilidade: >-
+      Todos os programas, sem filtro por nota; inclui o doutorado profissional.
+      Ano novo (2025) exige subir o `fim`.
+    verificado: true

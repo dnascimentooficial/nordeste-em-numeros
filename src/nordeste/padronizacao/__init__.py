@@ -7,10 +7,14 @@ from nordeste.caminhos import Caminhos
 from nordeste.coletores.registro import Coleta
 from nordeste.esquema import COLUNAS_BASE, normalizar_base
 from nordeste.fichas import Ficha, Serie
+from nordeste.padronizacao.badepi import padronizar_badepi
 from nordeste.padronizacao.cetic import padronizar_cetic
 from nordeste.padronizacao.erros import ErroLayout
+from nordeste.padronizacao.geocapes import padronizar_geocapes
 from nordeste.padronizacao.ibid import padronizar_ibid
 from nordeste.padronizacao.ipeadata import padronizar_ipeadata
+from nordeste.padronizacao.mcti import padronizar_mcti
+from nordeste.padronizacao.pintec import padronizar_pintec
 from nordeste.padronizacao.planilha import padronizar_planilha
 from nordeste.padronizacao.sidra import padronizar_sidra
 
@@ -24,6 +28,10 @@ _PADRONIZADORES = {
     "ipeadata": padronizar_ipeadata,
     "ibid": padronizar_ibid,
     "cetic": padronizar_cetic,
+    "geocapes": padronizar_geocapes,
+    "badepi": padronizar_badepi,
+    "mcti": padronizar_mcti,
+    "pintec": padronizar_pintec,
 }
 
 
@@ -46,7 +54,23 @@ def padronizar(
     estimados = df["ano"].isin(serie.parametros.get("anos_estimativa", [])) & (
         df["tipo_dado"] != "indisponivel")
     df.loc[estimados, "tipo_dado"] = "estimativa_oficial"
+    df = _com_anos_parciais(df, serie)
     return _com_anos_sem_pesquisa(df, serie, coleta.coleta_id)
+
+
+def _com_anos_parciais(df: pd.DataFrame, serie: Serie) -> pd.DataFrame:
+    """`anos_parciais` (com `nota_dos_anos_parciais`): anos que a fonte ainda pode completar; o valor fica como veio e
+    a nota da ficha vai para as linhas desses anos (depois da nota da fonte, se houver)."""
+    anos = serie.parametros.get("anos_parciais", [])
+    if not anos:
+        return df
+    nota = serie.parametros.get("nota_dos_anos_parciais")
+    if not isinstance(nota, str) or not nota.strip():
+        raise ErroLayout(f"{serie.id}: anos_parciais exige nota_dos_anos_parciais (texto não vazio)")
+    parciais = df["ano"].isin(anos) & (df["tipo_dado"] != "indisponivel")
+    df = df.copy()
+    df.loc[parciais, "nota"] = [f"{n}; {nota}" if n else nota for n in df.loc[parciais, "nota"]]
+    return df
 
 
 def _com_anos_sem_pesquisa(df: pd.DataFrame, serie: Serie, coleta_id: str) -> pd.DataFrame:

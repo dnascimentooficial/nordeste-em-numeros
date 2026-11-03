@@ -1,0 +1,915 @@
+{
+ "fonte": "https://geocapes.capes.gov.br/geocapes/rest/fotosDados/?indicador=4",
+ "indicador": {
+  "id": 4,
+  "descricao": "Distribuição de programas de pós-graduação no Brasil",
+  "mensagem": "Até o ano de 2016, são contabilizados os programas com classificação 3 ou superior. A partir do ano de 2017, deixaram de ser utilizados critérios de filtragem por nota."
+ },
+ "sumarizador": "iduf",
+ "anos": {
+  "2017": {
+   "foto": 3017,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2018": {
+   "foto": 3018,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2019": {
+   "foto": 3019,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2020": {
+   "foto": 3020,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2021": {
+   "foto": 3021,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2022": {
+   "foto": 3022,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2023": {
+   "foto": 3023,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  },
+  "2024": {
+   "foto": 3024,
+   "dados": [
+    {
+     "IDUF": "AC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AM",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "TO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PI",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "CE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RN",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PB",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "AL",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SE",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "BA",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "ES",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MG",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RJ",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SP",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "PR",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "RS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "SC",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "DF",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "GO",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MS",
+     "REFERENCIAL": 1
+    },
+    {
+     "IDUF": "MT",
+     "REFERENCIAL": 1
+    }
+   ]
+  }
+ }
+}
