@@ -431,7 +431,7 @@ def test_historia_contraste_em_pixels(abrir, largura, esquema):
     vistos: dict[str, int] = {}
     reprovados, piores = [], {}
     with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
-        pagina.evaluate("() => document.fonts.ready")
+        pagina.evaluate("() => document.fonts.ready.then(() => true)")
         assert pagina.evaluate(_SERIFADA_CARREGADA)
         regra = pagina.evaluate(_CORES_DA_REGRA)
         grupos = pagina.evaluate(_NOS_DE_TEXTO, {"grupos": _TEXTOS_DA_HISTORIA, "modal": False})
@@ -442,7 +442,7 @@ def test_historia_contraste_em_pixels(abrir, largura, esquema):
             vistos[grupo] = vistos.get(grupo, 0) + len(nos)
     for indice in (0, -1):
         with abrir(HISTORIA, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
-            pagina.evaluate("() => document.fonts.ready")
+            pagina.evaluate("() => document.fonts.ready.then(() => true)")
             cartoes = pagina.locator("button.nn-epoca-abrir")
             (cartoes.first if indice == 0 else cartoes.last).click()
             assert pagina.locator("dialog.nn-modal-historia").evaluate("d => d.open")
@@ -467,7 +467,7 @@ def test_historia_so_pede_a_serifada_nesta_pagina(abrir, rotas):
     pediram = {}
     for rota in rotas:
         with abrir(rota) as pagina:
-            pagina.evaluate("() => document.fonts.ready")
+            pagina.evaluate("() => document.fonts.ready.then(() => true)")
             nomes = pagina.evaluate("() => performance.getEntriesByType('resource').map((r) => r.name)")
             pediram[rota] = [n for n in nomes if n.endswith(SERIFADA)]
             if rota == HISTORIA:
@@ -657,7 +657,7 @@ def test_historia_teclado_setas_e_enter(abrir):
         proximo.click()
         pagina.wait_for_function("() => document.querySelector('ol.nn-linha-tempo').scrollLeft > 0")
         assert abs(faixa.evaluate("f => f.scrollLeft") - passo) <= 2
-        assert anterior.get_attribute("aria-disabled") == "false"
+        pagina.wait_for_function("() => document.querySelector('.nn-faixa-anterior').getAttribute('aria-disabled') === 'false'")  # o evento scroll chega depois
         anterior.click()
         pagina.wait_for_function("() => document.querySelector('ol.nn-linha-tempo').scrollLeft === 0")
 
@@ -691,6 +691,7 @@ def test_historia_endereco_abre_epoca(abrir):
         assert pagina.locator(MODAL_HISTORIA).evaluate("d => d.scrollTop") == 0
     for endereco in (marco, f"m{marco}"):
         with abrir(f"{HISTORIA}#{endereco}", reduced_motion="reduce") as pagina:
+            pagina.evaluate("() => document.fonts.ready.then(() => true)")  # a posicao final vale depois da fonte (o modal rola de novo)
             estado = _estado(pagina)
             assert estado["aberto"] and estado["epoca"] == epoca["id"], (endereco, estado)
             dentro = pagina.evaluate(f"""() => {{
@@ -1037,7 +1038,7 @@ def test_historia_cartoes_so_anunciam_dialogo_com_javascript(abrir):
 
 def test_historia_peso_abaixo_de_1mb(abrir):
     with abrir(HISTORIA) as pagina:
-        pagina.evaluate("() => document.fonts.ready")
+        pagina.evaluate("() => document.fonts.ready.then(() => true)")
         recursos = pagina.evaluate(
             """() => [performance.getEntriesByType('navigation')[0], ...performance.getEntriesByType('resource')]
                  .map((r) => ({ nome: r.name, bytes: r.transferSize }))"""

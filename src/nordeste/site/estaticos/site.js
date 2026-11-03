@@ -900,9 +900,15 @@
       if (!dialogo.open) dialogo.showModal();
       if (marco) {
         marco.classList.add('nn-marco-alvo');
-        const topo = marco.getBoundingClientRect().top - dialogo.getBoundingClientRect().top;
-        const fechar = dialogo.querySelector('.nn-modal-topo');
-        dialogo.scrollTop += topo - (fechar ? fechar.offsetHeight : 0) - 16; /* abaixo do Fechar, preso no topo, com folga */
+        const rolar = () => {
+          if (!dialogo.open || !marco.classList.contains('nn-marco-alvo')) return;
+          const topo = marco.getBoundingClientRect().top - dialogo.getBoundingClientRect().top;
+          const fechar = dialogo.querySelector('.nn-modal-topo');
+          dialogo.scrollTop += topo - (fechar ? fechar.offsetHeight : 0) - 16; /* abaixo do Fechar, preso no topo, com folga */
+        };
+        rolar();
+        /* a fonte serifada pode chegar depois e mudar a altura do texto acima do marco: rola de novo quando ela chega */
+        if (document.fonts && document.fonts.status !== 'loaded') document.fonts.ready.then(rolar);
       } else {
         dialogo.scrollTop = 0;
       }
