@@ -21,6 +21,18 @@
   font-display: swap;
 }
 
+/* a serifada dos titulos da pagina Como chegamos (EB Garamond 500, so o subconjunto latino): o navegador so baixa a
+   fonte onde algum elemento a usa, e so seletores sob .nn-historia a usam */
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fontes/eb-garamond/EBGaramond.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   --nn-laranja: #ea2e00;
   --nn-laranja-escuro: #c42600; /* texto pequeno em fundo claro */
@@ -46,6 +58,8 @@
   --nn-graf-hachura: rgba(8, 8, 8, 0.13);
   --nn-graf-eixo: rgba(8, 8, 8, 0.45);
   --nn-borda-preta: transparent; /* contorno das partes pretas, que só aparece no tema escuro */
+  --nn-papel-antigo: #f3ead6; /* o papel envelhecido da página Como chegamos: #c42600 dá 4,8:1 sobre ele */
+  --nn-sepia: #6b4423; /* a tinta de arquivo: rótulos, créditos e a etiqueta "estimativa de historiador" (7,1:1) */
   color-scheme: light;
 }
 
@@ -64,6 +78,8 @@
     --nn-graf-hachura: rgba(245, 244, 239, 0.16);
     --nn-graf-eixo: rgba(245, 244, 239, 0.45);
     --nn-borda-preta: rgba(255, 255, 255, 0.12);
+    --nn-papel-antigo: #1c1712; /* papel escuro quente */
+    --nn-sepia: #d2b48c;
     color-scheme: dark;
   }
 }
@@ -201,30 +217,67 @@ body {
   transform: none;
 }
 
-/* --- topo: barra preta em pílula, com o menu em abas --- */
+/* --- topo: barra preta de duas linhas. Em cima, o título à esquerda e o "por Júlio Diógenes" à direita; uma linha fina
+   de 1 px; embaixo, o menu em abas. A barra é preta nos dois temas (a linha e os textos de baixo contraste vivem sobre
+   #080808); no celular o "por" desce para baixo do título e o menu rola de lado --- */
 
 .nn-topo {
   background: var(--nn-preto);
   color: var(--nn-branco);
   border: 1px solid var(--nn-borda-preta);
-  border-radius: 999px;
-  padding: 8px 8px 8px 22px;
+  border-radius: var(--nn-raio);
+  padding: 18px clamp(14px, 2.4vw, 26px) 8px;
 }
 
 .nn-hero-topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.nn-topo-titulo {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 8px 16px;
+  gap: 2px 20px;
+  padding-inline: 4px;
 }
 
 .nn .nn-marca {
   font-family: var(--nn-display);
   font-weight: 800;
-  font-size: 15px;
-  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.4vw, 28px);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
   text-decoration: none;
+}
+
+.nn .nn-autoria {
+  color: rgba(255, 255, 255, 0.72); /* o "por" é pequeno e discreto; o nome é que se destaca */
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.nn .nn-autoria strong {
+  color: var(--nn-branco);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.nn .nn-autoria a {
+  text-decoration: none;
+}
+
+.nn .nn-autoria a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+}
+
+.nn-topo-linha {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .nn-menu {
@@ -262,34 +315,27 @@ body {
   color: var(--nn-branco);
 }
 
-.nn .nn-hero-site {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.62);
-  padding-right: 14px;
-  text-decoration: none;
-}
-
-.nn .nn-hero-site:hover {
-  color: var(--nn-branco);
-}
-
 @media (max-width: 900px) {
   .nn-topo {
-    border-radius: var(--nn-raio);
-    padding: 12px 10px 10px 18px;
+    padding: 16px 10px 8px;
   }
 
   .nn-menu {
-    order: 3;
-    flex-basis: 100%;
-    margin-left: -8px;
     /* o menu rola de lado: a borda direita esmaece para mostrar que há mais abas */
     -webkit-mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
     mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
   }
+}
 
-  .nn .nn-hero-site {
-    padding-right: 8px;
+@media (max-width: 560px) {
+  .nn-topo-titulo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .nn .nn-autoria strong {
+    font-size: 16px;
   }
 }
 
@@ -1454,8 +1500,789 @@ html:has(.nn-modal[open]) {
   color: var(--nn-branco);
 }
 
+/* o bloco de autoria: o círculo de 56 px (a foto, ou as iniciais) e o "Desenvolvido por", que abrem o modal "Sobre o
+   autor" (sem JavaScript, o link leva à seção de Sobre); a marca do autor, só a versão branca, porque o rodapé é preto
+   nos dois temas */
+
+.nn-autor-bloco {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 6px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.nn .nn-autor-abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.nn .nn-autor-abrir:hover .nn-autor-nome {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+  text-underline-offset: 3px;
+}
+
+.nn-autor-circulo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--nn-laranja-escuro);
+  color: var(--nn-branco);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font: 800 19px/1 var(--nn-display);
+  letter-spacing: 0.02em;
+}
+
+.nn-autor-circulo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nn-autor-texto {
+  font-size: 15px;
+}
+
+.nn-autor-marca {
+  display: block;
+  height: 26px;
+  width: auto;
+}
+
+/* o conteúdo do autor: o modal e a seção de Sobre */
+
+.nn-modal-autor {
+  max-width: 680px; /* estreito de propósito; no celular a largura de .nn-modal (a tela toda) continua valendo */
+}
+
+.nn-autor-conteudo,
+.nn-card-autor {
+  display: grid;
+  gap: 18px;
+}
+
+.nn-autor-secao {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.nn-autor-logo {
+  display: block;
+}
+
+.nn-autor-logo img {
+  display: block;
+  height: 26px;
+  width: auto;
+}
+
 .nn-sha-base {
   overflow-wrap: anywhere;
+}
+
+/* --- Como chegamos até aqui: arquivo histórico com a mesma marca ---
+   Tudo sob .nn-historia (o <main> da página). Papel envelhecido feito só de gradientes (luz, manchas, grão e fibra,
+   nada de imagem), títulos na serifada, datas em carimbo, imagens em sépia que ganham cor no modal e a linha do tempo
+   no laranja do site. Texto laranja pequeno só sobre o fundo claro dos carimbos e etiquetas (--nn-hist-selo), onde
+   #c42600 passa de 5:1; sobre o papel ficam a tinta, o --nn-suave e o sépia, todos acima de 5,5:1. */
+
+.nn-historia {
+  --nn-serifada: "EB Garamond", Georgia, "Times New Roman", serif;
+  --nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 40%, var(--nn-branco)); /* fundo de carimbo e etiqueta */
+  --nn-hist-luz: rgba(255, 255, 255, 0.55);
+  --nn-hist-mancha: rgba(140, 96, 40, 0.1);
+  --nn-hist-grao: rgba(107, 68, 35, 0.06);
+  --nn-hist-fibra: rgba(107, 68, 35, 0.025);
+  --nn-hist-borda: rgba(110, 72, 24, 0.2);
+  --nn-hist-sombra: 0 1px 0 rgba(107, 68, 35, 0.12), 0 14px 28px -22px rgba(60, 38, 14, 0.55);
+  --nn-painel: var(--nn-hist-selo);
+}
+
+@media (prefers-color-scheme: dark) {
+  .nn-historia {
+    --nn-hist-selo: color-mix(in srgb, var(--nn-papel-antigo) 70%, var(--nn-preto));
+    --nn-hist-luz: rgba(255, 226, 180, 0.05);
+    --nn-hist-mancha: rgba(0, 0, 0, 0.28);
+    --nn-hist-grao: rgba(210, 180, 140, 0.045);
+    --nn-hist-fibra: rgba(210, 180, 140, 0.02);
+    --nn-hist-borda: rgba(0, 0, 0, 0.45);
+    --nn-hist-sombra: 0 14px 28px -22px rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* o papel (a página e o modal das épocas usam o mesmo): calculado no .nn-historia, com as cores do tema dele */
+.nn-historia {
+  --nn-hist-papel:
+    radial-gradient(ellipse 80% 45% at 30% 0%, var(--nn-hist-luz), transparent 70%),
+    radial-gradient(ellipse 55% 35% at 100% 100%, var(--nn-hist-mancha), transparent 70%),
+    radial-gradient(ellipse 40% 25% at 0% 62%, var(--nn-hist-mancha), transparent 70%),
+    repeating-radial-gradient(circle at 23% 37%, var(--nn-hist-grao) 0 1px, transparent 1px 3px),
+    repeating-radial-gradient(circle at 71% 64%, var(--nn-hist-grao) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(97deg, var(--nn-hist-fibra) 0 1px, transparent 1px 7px);
+  background-color: var(--nn-papel-antigo);
+  background-image: var(--nn-hist-papel);
+}
+
+.nn > main.nn-historia {
+  gap: clamp(40px, 6vw, 72px);
+  border: 1px solid var(--nn-linha);
+  border-radius: var(--nn-raio-g);
+  box-shadow: inset 0 0 70px var(--nn-hist-borda);
+  padding: clamp(24px, 5.4vw, 72px) clamp(16px, 5vw, 64px);
+}
+
+.nn-historia .nn-hist-titulo,
+.nn-historia .nn-hist-secao,
+.nn-historia .nn-epoca-nome,
+.nn-historia .nn-epoca-titulo,
+.nn-historia .nn-hist-valor,
+.nn-historia .nn-epoca-valor {
+  font-family: var(--nn-serifada);
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
+}
+
+.nn-historia .nn-hist-previa {
+  border: 1px dashed var(--nn-laranja);
+  border-radius: 14px;
+  background: var(--nn-hist-selo);
+  padding: 10px 16px;
+  font-size: 14px;
+  max-width: none;
+}
+
+/* abertura: fio duplo de jornal antigo, título grande e as duas parcelas como num livro-caixa */
+
+.nn-hist-abertura {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.nn-hist-abertura::before {
+  content: "";
+  height: 6px;
+  border-block: 1px solid var(--nn-sepia);
+  opacity: 0.55;
+}
+
+.nn-historia .nn-hist-titulo {
+  font-size: clamp(46px, 7.4vw, 100px);
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.nn-historia .nn-hist-subtitulo {
+  font-size: clamp(18px, 2.2vw, 24px);
+  line-height: 1.35;
+  max-width: 42ch;
+}
+
+.nn-historia .nn-hist-numero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px clamp(28px, 5vw, 64px);
+  max-width: none;
+  margin-block: 6px;
+}
+
+.nn-hist-parcela {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  border-top: 3px solid var(--nn-laranja);
+  padding-top: 18px; /* a caixa do texto da serifada passa da linha em ~0,12 em: o fio fica fora dela */
+  min-width: 0;
+}
+
+.nn-historia .nn-hist-valor {
+  font-size: clamp(60px, 9vw, 116px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.nn-hist-rotulo {
+  color: var(--nn-suave);
+  font-size: 14px;
+  max-width: 24ch;
+}
+
+.nn-historia .nn-hist-grafico {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.nn-historia .nn-hist-legenda,
+.nn-historia .nn-hist-nota {
+  color: var(--nn-suave);
+  font-size: 13px;
+}
+
+.nn-historia .nn-hist-texto {
+  font-size: 17px;
+}
+
+.nn-historia .nn-tabela th {
+  background: var(--nn-hist-selo);
+}
+
+/* títulos de seção com fio fino embaixo */
+
+.nn-historia .nn-hist-secao {
+  font-size: clamp(32px, 4.2vw, 52px);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--nn-linha);
+}
+
+/* linha do tempo: o fio laranja à esquerda, um anel por época e um ponto cheio, maior, por marco. A faixa horizontal
+   e arrastável do computador fica sobre esta lista (site.js); sem JavaScript e no celular, ela é a página. */
+
+.nn-hist-linha {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.nn-historia .nn-linha-tempo {
+  --nn-fio: 12px; /* centro do fio, a partir da borda da lista */
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 36px;
+  display: grid;
+  gap: 48px;
+}
+
+.nn-historia .nn-linha-tempo::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--nn-fio) - 1.5px);
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--nn-laranja);
+}
+
+.nn-historia .nn-epoca {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  scroll-margin-top: 16px;
+}
+
+.nn-historia .nn-epoca::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--nn-fio) - 36px - 10px);
+  top: 20px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid var(--nn-laranja);
+  background: var(--nn-papel-antigo);
+}
+
+/* o cartão: sem JavaScript, um cabeçalho de cartão parado; com o site.js (classe nn-js no <html>), clicável */
+
+.nn-historia .nn-epoca-abrir {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0;
+  padding: 16px 18px 18px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--nn-hist-selo);
+  border: 1px solid var(--nn-linha);
+  border-radius: var(--nn-raio);
+  box-shadow: var(--nn-hist-sombra);
+  cursor: default;
+}
+
+.nn-js .nn-historia .nn-epoca-abrir {
+  cursor: pointer;
+}
+
+.nn-js .nn-historia .nn-epoca-abrir:hover {
+  border-color: var(--nn-laranja);
+}
+
+/* as imagens já vêm recortadas em 21:9 no arquivo (o enquadramento é escolhido lá, o navegador não corta nada);
+   width e height no HTML e o aspect-ratio seguram a caixa antes de a imagem chegar e se ela falhar */
+.nn-historia .nn-epoca-miniatura,
+.nn-historia .nn-epoca-imagem,
+.nn-historia .nn-marco-imagem {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 21 / 9;
+  border-radius: 14px;
+  background: var(--nn-hist-mancha);
+  filter: sepia(0.85) saturate(0.8) contrast(0.95);
+}
+
+.nn-historia .nn-modal-historia .nn-epoca-imagem,
+.nn-historia .nn-modal-historia .nn-marco-imagem {
+  filter: none; /* no modal a imagem volta à cor do arquivo */
+}
+
+.nn-historia .nn-epoca-nome {
+  font-size: clamp(25px, 2.6vw, 31px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+/* datas em carimbo: caixa alta espaçada, fio duplo e o fundo claro que deixa o laranja-escuro legível */
+
+.nn-historia .nn-epoca-periodo,
+.nn-historia .nn-epoca-data,
+.nn-historia .nn-marco-ano {
+  display: inline-block;
+  width: fit-content;
+  padding: 3px 9px;
+  border: 3px double currentColor;
+  border-radius: 5px;
+  background: var(--nn-hist-selo);
+  color: var(--nn-laranja-texto);
+  font-family: var(--nn-texto);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* marcos na linha: ponto laranja cheio sobre o fio, carimbo com o ano e o título */
+
+.nn-historia .nn-marcos-linha {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.nn-historia .nn-marcos-linha li {
+  position: relative;
+}
+
+.nn-historia .nn-marcos-linha li::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--nn-fio) - 36px - 8px);
+  top: calc(50% - 8px);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--nn-laranja);
+  box-shadow: 0 0 0 3px var(--nn-papel-antigo);
+}
+
+.nn-historia a.nn-marco {
+  display: flex;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.nn-historia a.nn-marco .nn-marco-titulo {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.nn-historia a.nn-marco:hover .nn-marco-titulo {
+  text-decoration-thickness: 2px;
+}
+
+/* o conteúdo da época (o modal; sem JavaScript, logo abaixo do cartão) */
+
+.nn-historia .nn-epoca-conteudo {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+  padding-top: 6px;
+}
+
+.nn-historia .nn-epoca-titulo {
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+}
+
+/* a imagem destaque abre o conteúdo da época, na largura toda, com o crédito numa linha pequena logo abaixo */
+.nn-historia .nn-epoca-figura {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.nn-historia .nn-epoca-credito,
+.nn-historia .nn-marco-credito {
+  color: var(--nn-sepia);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* a imagem de um marco (só quando há imagem livre do próprio fato), embaixo do texto dele */
+.nn-historia .nn-marco-figura {
+  margin: 10px 0 4px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nn-historia .nn-marco-imagem {
+  border-radius: 10px;
+}
+
+.nn-historia .nn-epoca-resumo {
+  font-size: clamp(18px, 2vw, 21px);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.nn-historia .nn-epoca-texto {
+  display: grid;
+  gap: 12px;
+}
+
+.nn-historia .nn-epoca-texto p {
+  line-height: 1.68;
+}
+
+.nn-historia .nn-epoca-conteudo h4 {
+  margin: 0 0 10px;
+  color: var(--nn-sepia);
+  font-family: var(--nn-texto);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.nn-historia .nn-epoca-marcos ol,
+.nn-historia .nn-epoca-numeros ul,
+.nn-historia .nn-epoca-fontes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  max-width: 68ch;
+}
+
+.nn-historia .nn-epoca-marcos ol {
+  gap: 12px;
+}
+
+.nn-historia .nn-epoca-marcos .nn-marco-ano {
+  margin-right: 8px;
+}
+
+.nn-historia .nn-epoca-numeros li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding-block: 12px;
+  border-top: 1px solid var(--nn-linha);
+}
+
+.nn-historia .nn-epoca-valor {
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+.nn-historia .nn-epoca-fonte-numero {
+  flex-basis: 100%;
+  color: var(--nn-suave);
+  font-size: 13px;
+}
+
+/* etiquetas do tipo de número: dado oficial na tinta, estimativa de historiador no sépia, interpretação em laranja */
+
+.nn-historia .nn-tipo {
+  display: inline-block;
+  padding: 2px 9px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: var(--nn-hist-selo);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nn-historia .nn-tipo-oficial {
+  color: var(--nn-tinta);
+}
+
+.nn-historia .nn-tipo-historiador {
+  color: var(--nn-sepia);
+}
+
+.nn-historia .nn-tipo-interpretacao {
+  color: var(--nn-laranja-texto);
+  border-style: dashed;
+}
+
+.nn-historia .nn-epoca-ficou {
+  border-left: 3px solid var(--nn-laranja);
+  padding: 2px 0 2px 16px;
+}
+
+.nn-historia .nn-epoca-fontes ul {
+  gap: 6px;
+  font-size: 14px;
+}
+
+.nn-historia .nn-epoca-fontes li {
+  position: relative;
+  padding-left: 16px;
+}
+
+.nn-historia .nn-epoca-fontes li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  background: var(--nn-sepia);
+}
+
+.nn-historia .nn-epoca-nav,
+.nn-historia .nn-hist-fecho-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nn-historia .nn-epoca-nav a,
+.nn-historia .nn-hist-fecho-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--nn-linha);
+  border-radius: 999px;
+  background: var(--nn-hist-selo);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nn-historia .nn-epoca-nav a:hover,
+.nn-historia .nn-hist-fecho-links a:hover {
+  border-color: var(--nn-laranja);
+}
+
+.nn-historia .nn-epoca-proxima {
+  margin-left: auto;
+}
+
+/* fecho */
+
+.nn-historia .nn-hist-fecho {
+  display: grid;
+  gap: 14px;
+}
+
+.nn-historia .nn-hist-fecho-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* com o site.js: os artigos saem da lista (vão para o modal); a faixa horizontal e os botões ‹ › acima de 900 px */
+
+.nn-js .nn-historia .nn-linha-tempo .nn-epoca-conteudo {
+  display: none;
+}
+
+.nn-historia .nn-faixa {
+  min-width: 0;
+}
+
+.nn-historia .nn-faixa-seta {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .nn-js .nn-historia .nn-faixa {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0 0 3px;
+    border: 1px solid var(--nn-linha);
+    border-radius: 50%;
+    background: var(--nn-hist-selo);
+    color: var(--nn-tinta);
+    font: 400 30px/1 var(--nn-serifada);
+    cursor: pointer;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta:hover {
+    border-color: var(--nn-laranja);
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .nn-js .nn-historia .nn-faixa-seta[aria-disabled="true"]:hover {
+    border-color: var(--nn-linha);
+  }
+
+  /* a faixa: um cartão por coluna, presos pelo snap; o fio é o fundo (local: corre com o conteúdo, de ponta a ponta) */
+  .nn-js .nn-historia .nn-linha-tempo {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(260px, 300px);
+    align-items: start;
+    gap: 28px;
+    padding: 44px 6px 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nn-sepia) transparent;
+    background: linear-gradient(var(--nn-laranja), var(--nn-laranja)) 0 19px / 100% 3px no-repeat local;
+    cursor: grab;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo::before {
+    content: none;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando {
+    scroll-snap-type: none;
+    cursor: grabbing;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .nn-js .nn-historia .nn-linha-tempo.nn-arrastando .nn-epoca-abrir {
+    cursor: grabbing;
+  }
+
+  .nn-js .nn-historia .nn-epoca {
+    scroll-snap-align: start;
+    gap: 12px;
+  }
+
+  /* o anel da época fica sobre o fio, acima do cartão */
+  .nn-js .nn-historia .nn-epoca::before {
+    left: 14px;
+    top: -35px;
+  }
+
+  .nn-js .nn-historia .nn-epoca-abrir {
+    max-width: none;
+  }
+
+  /* os marcos, embaixo do cartão: o ponto laranja maior, o carimbo do ano e o título */
+  .nn-js .nn-historia .nn-marcos-linha {
+    padding-left: 30px;
+  }
+
+  .nn-js .nn-historia .nn-marcos-linha li::before {
+    left: -28px;
+    top: 9px; /* na altura do carimbo do ano */
+  }
+
+  .nn-js .nn-historia a.nn-marco {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding-block: 6px;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+}
+
+/* o modal das épocas: coluna de leitura, Fechar preso no topo e o marco de quem chegou por ele em destaque */
+
+.nn-historia .nn-modal-historia {
+  width: min(880px, calc(100vw - 32px));
+  border-color: var(--nn-hist-borda);
+  background-color: var(--nn-papel-antigo);
+  background-image: var(--nn-hist-papel);
+}
+
+.nn-historia .nn-modal-historia .nn-modal-topo {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.nn-historia .nn-modal-historia .nn-modal-fechar {
+  background: var(--nn-hist-selo);
+}
+
+.nn-historia .nn-modal-historia .nn-epoca-conteudo {
+  padding-top: 0;
+}
+
+.nn-historia .nn-modal-historia .nn-epoca-titulo:focus {
+  outline: none; /* o foco vai ao título só para o leitor de tela anunciar a nova época */
+}
+
+.nn-historia .nn-epoca-marcos .nn-marco-alvo {
+  margin-inline: -12px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--nn-laranja);
+  border-radius: 0 12px 12px 0;
+  background: var(--nn-hist-selo);
+}
+
+@media (max-width: 560px), (orientation: landscape) and (max-height: 520px) {
+  .nn-historia .nn-modal-historia {
+    width: 100vw;
+  }
 }
 
 /* --- movimento: só para quem não pediu menos movimento --- */
@@ -1505,6 +2332,19 @@ html:has(.nn-modal[open]) {
     animation: nn-fundo-entra 0.22s ease-out;
   }
 
+  .nn-js .nn-historia .nn-epoca-abrir {
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+
+  .nn-js .nn-historia .nn-epoca-abrir:hover {
+    transform: translateY(-2px);
+  }
+
+  /* a imagem da época sai do sépia para a cor quando o modal abre */
+  .nn-historia .nn-modal-historia[open] .nn-epoca-imagem {
+    animation: nn-revela 0.9s ease-out both;
+  }
+
   .nn-entra {
     opacity: 0;
     transform: translateY(18px);
@@ -1550,6 +2390,16 @@ html:has(.nn-modal[open]) {
   @keyframes nn-fundo-entra {
     from {
       opacity: 0;
+    }
+  }
+
+  @keyframes nn-revela {
+    from {
+      filter: sepia(0.85) saturate(0.8) contrast(0.95);
+    }
+
+    to {
+      filter: none;
     }
   }
 

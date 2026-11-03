@@ -22,16 +22,20 @@
 <div class="nn">
 <header class="nn-topo">
   <div class="nn-hero-topo">
-    <a class="nn-marca" href="/">Júlio Diógenes · Nordeste em Números</a>
+    <div class="nn-topo-titulo">
+      <a class="nn-marca" href="/">Nordeste em Números</a>
+      <p class="nn-autoria">por <a href="https://dnascimento.com.br"><strong>Júlio Diógenes</strong></a></p>
+    </div>
+    <div class="nn-topo-linha" aria-hidden="true"></div>
     <nav class="nn-menu" aria-label="Páginas do site">
       <a href="/">Início</a>
+      <a href="/como-chegamos/">Como chegamos aqui</a>
       <a href="/estados/" aria-current="page">Estados</a>
       <a href="/explorar/">Explorar</a>
       <a href="/cards/">Cards</a>
       <a href="/sobre/">Sobre os dados</a>
       <a href="/dados/">Dados</a>
     </nav>
-    <a class="nn-hero-site" href="https://dnascimento.com.br">dnascimento.com.br</a>
   </div>
 </header>
 <main id="conteudo">
@@ -1391,13 +1395,51 @@
 </section>
 </main>
 <footer class="nn-rodape">
-  <span><strong>Júlio Diógenes · Nordeste em Números</strong></span>
   <span>Dados oficiais publicados em 1º de novembro de 2026. Fontes e fórmulas em <a href="/sobre/">Sobre os dados</a>.</span>
   <span>sha256 da base: <code class="nn-sha-base">f572acb05c16193b788e78433abaea3ad481a2f36ec8b2ced64537fe50913b9d</code></span>
   <span>Compilação sob licença <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</span>
   <span class="nn-credito">Imagem: <a href="https://dnascimento.com.br">Júlio Diógenes</a> (composição com praia, mata e sertão do Nordeste)</span>
-  <a href="https://dnascimento.com.br">dnascimento.com.br</a>
+  <div class="nn-autor-bloco">
+    <a class="nn-autor-abrir" href="/sobre/#autor" aria-haspopup="dialog">
+      <span class="nn-autor-circulo"><img src="/autor.webp" alt="Júlio Diógenes" width="320" height="320" loading="lazy" decoding="async"></span>
+      <span class="nn-autor-texto">Desenvolvido por <strong class="nn-autor-nome">Júlio Diógenes</strong></span>
+    </a>
+    <img class="nn-autor-marca" src="/marca-autor-clara.webp" alt="" width="462" height="154" loading="lazy" decoding="async">
+  </div>
 </footer>
+<dialog class="nn-modal nn-modal-autor" aria-labelledby="nn-autor-titulo-modal">
+  <div class="nn-modal-caixa">
+    <div class="nn-modal-topo">
+      <button type="button" class="nn-modal-fechar"><span>Fechar</span> <span aria-hidden="true">×</span></button>
+    </div>
+    <div class="nn-autor-conteudo">
+<h2 id="nn-autor-titulo-modal">Sobre o autor</h2>
+<picture class="nn-autor-logo">
+  <source media="(prefers-color-scheme: dark)" srcset="/marca-autor-clara.webp">
+  <img src="/marca-autor-escura.webp" alt="Júlio Diógenes" width="462" height="154" loading="lazy" decoding="async">
+</picture>
+<section class="nn-autor-secao">
+  <h3>Quem sou</h3>
+  <p>Diretor executivo do Laboratório Urbano Vivo de Vitória (LUV). Há mais de 17 anos, ajudo profissionais, empresas e governos a transformar problemas complexos em decisões executáveis, com estratégia, inovação, inteligência artificial e políticas públicas.</p>
+  <p>Mais sobre o meu trabalho em <a href="https://dnascimento.com.br">dnascimento.com.br</a></p>
+</section>
+<section class="nn-autor-secao">
+  <h3>Por que fiz este estudo</h3>
+  <p>Fiz este estudo por raiva, e também por orgulho. Raiva de um discurso que repete que o Nordeste está do mesmo jeito, apaga a história da região e ignora o que estados e municípios fizeram e deixaram de fazer. Orgulho de uma região que mudou mais do que se diz, ainda que falte muito chão. Então fui conferir nos dados oficiais, de 2000 para cá, e na história, da Colônia até hoje. Aqui ninguém ganha passe livre: município, estado e União dividem a conta. Cada número tem fonte e cálculo à vista, para quem quiser rebater ou entender.</p>
+</section>
+<section class="nn-autor-secao">
+  <h3>Formação</h3>
+  <ul class="nn-lista">
+    <li>Especialização em Direito da Infraestrutura, Governança e Regulação, PUC Minas (em curso, 2026–2027)</li>
+    <li>Bacharelado em Engenharia da Computação, Uniamérica (2022–2026)</li>
+    <li>Especialização em Análise de Dados, EBAC – Escola Britânica de Artes Criativas e Tecnologia (2022)</li>
+    <li>Design, com ênfase em Gestão de Marca, Universidade Potiguar (2009–2012)</li>
+  </ul>
+</section>
+
+    </div>
+  </div>
+</dialog>
 </div>
 </body>
 </html>
