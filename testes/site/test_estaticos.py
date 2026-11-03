@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from nordeste.caminhos import Caminhos
-from nordeste.site import graficos
+from nordeste.site import gerar, graficos
 from nordeste.site.dados import DadosSite
 from nordeste.site.formatacao import numero
 from nordeste.site.gerar import gerar_site
@@ -143,6 +143,10 @@ def test_sem_style_ou_script_inline(saida):
                 continue
             assert script["attrs"].get("src", "").startswith("/") and not Arvore.texto(script), pagina
     js = (saida / "site.js").read_text(encoding="utf-8")
+    # o CSSOM (`elemento.style.propriedade = ...`, o anel do voltar ao topo) a CSP deixa; o atributo style, nao
+    sem_cssom = re.sub(r"\.style\.[a-zA-Z]+ = ", "", js)
+    assert re.findall(r"\.style\.([a-zA-Z]+) = ", js) and not re.findall(r"\.style\.(?:cssText|setProperty)", js)
+    js = sem_cssom
     for proibido in (".style", "setAttribute('style'", 'setAttribute("style"', "cssText", "innerHTML", "outerHTML",
                      "insertAdjacentHTML", "document.write", "eval(", "new Function", "setTimeout('", 'setTimeout("'):
         assert proibido not in js, proibido
@@ -346,62 +350,49 @@ def _regra_em(css: str, cabecalho: tuple[str, ...], seletor: str) -> dict[str, s
 
 # a composicao da abertura (foto-abertura.webp, 1500x844): o Farol da Barra (torre e forte) vai de x 39,5% a 58,6% da
 # largura e o sol fica em x ~95,7% (medidos na imagem original, 1672x941)
-FOTO_PROPORCAO = 1500 / 844
-FOTO_FAROL_X = (0.395, 0.586)
-FOTO_SOL_X = 0.957
 
 
-def test_css_da_foto_abertura_dividida(saida):
+def test_css_da_abertura_em_secao_cheia_com_a_foto_inteira(saida):
     css = (saida / "estilo.css").read_text(encoding="utf-8")
-    # a foto e o ::before (local: a CSP e default-src 'self'), com so uma camada leve e o degradê da emenda; nada de <img>
+    # a foto e o ::before (local: a CSP e default-src 'self'), a composicao inteira por baixo de um veu uniforme de 30%
+    # (ate 40%, se o contraste pedir), sem degradê e sem o recorte da metade direita; nada de <img>
     foto = _declaracoes(css, ".nn-hero-com-foto::before")
     assert 'url("/foto-abertura.webp")' in foto["background-image"] and foto["background-size"].endswith("cover")
-    assert "background-image" not in _declaracoes(css, ".nn-hero-com-foto")  # o fundo da abertura segue o preto liso
-    camada = re.search(r"linear-gradient\(rgba\(8, 8, 8, ([0-9.]+)\), rgba\(8, 8, 8, ([0-9.]+)\)\)", foto["background-image"])
-    assert camada and camada[1] == camada[2] and float(camada[1]) <= 0.25  # a camada leve da foto (<= 25%)
-    # desktop: a foto e a metade direita; a coluna do texto termina antes dela
-    desktop = _regra_em(css, ("@media (min-width: 901px)",), ".nn-hero-com-foto::before")
-    largura = float(re.fullmatch(r"(\d+)%", desktop["width"])[1])
-    assert 48 <= largura <= 50  # Rodada 4: a coluna do texto fica com 50 a 52% para o titulo crescer
-    # Rodada 5 (composicao 1500x844): a foto cobre a coluna pela altura (`cover` ou `auto N%`, 100 <= N <= 130) e o
-    # recorte horizontal deixa o Farol da Barra inteiro dentro do quadro e o sol (canto direito) fora, para qualquer
-    # coluna de 0,9:1 a 1,1:1 (medida: ~0,97:1 de 901 a 1440 px); o teste de navegador mede a area estourada
-    tamanho = desktop["background-size"].rsplit(",", 1)[1].strip()
-    ampliada = re.fullmatch(r"auto (\d+)%", tamanho)
-    assert tamanho == "cover" or (ampliada and 100 <= int(ampliada[1]) <= 130), desktop["background-size"]
-    posicao_x = re.fullmatch(r"(\d+)% (\d+)%", desktop["background-position"].rsplit(",", 1)[1].strip())
-    assert posicao_x, desktop["background-position"]
-    for proporcao in (0.9, 1.0, 1.1):  # largura / altura da coluna da foto
-        largura_foto = FOTO_PROPORCAO * (int(ampliada[1]) / 100 if ampliada else 1.0)  # em alturas da coluna
-        inicio = (largura_foto - proporcao) * int(posicao_x[1]) / 100 / largura_foto  # fracao da largura da foto
-        fim = inicio + proporcao / largura_foto
-        assert inicio <= FOTO_FAROL_X[0] - 0.02 and FOTO_FAROL_X[1] + 0.02 <= fim, (proporcao, inicio, fim)
-        assert fim <= FOTO_SOL_X - 0.06, (proporcao, fim)  # o sol e o brilho em volta dele ficam fora do quadro
-    # o titulo volta a ~72 px (teto entre 72 e 80 px), sem passar de 64 px a 901 px nem de 72 px a 1280 px na inclinacao
-    titulo = re.fullmatch(r"clamp\((\d+)px, ([\d.]+)vw, (\d+)px\)",
-                          _regra_em(css, ("@media (min-width: 901px)",), ".nn .nn-hero-com-foto .nn-hero-titulo")["font-size"])
-    assert titulo and 72 <= int(titulo[3]) <= 80 and float(titulo[2]) * 9.01 <= 64 and float(titulo[2]) * 12.8 <= 72.5, titulo
-    assert desktop["--nn-foto-fusao"].startswith("linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0)")  # emenda: preto liso
-    assert _regra_em(css, ("@media (min-width: 901px)",), ".nn-hero-com-foto")["padding-right"].startswith(f"calc({largura:g}% + ")
-    # ate 900 px: faixa no topo que funde no preto embaixo, e o texto desce abaixo dela
-    faixa = _regra_em(css, ("@media (max-width: 900px)",), ".nn-hero-com-foto::before")
-    assert faixa["--nn-foto-fusao"].endswith("#080808 100%)") and faixa["--nn-foto-fusao"].startswith("linear-gradient(180deg, ")
-    assert faixa["height"] == "var(--nn-foto-alt)"
-    # a faixa mostra a largura toda da composicao (`cover` da regra geral), com o farol no meio: recorte centrado em x
-    assert "background-size" not in faixa and faixa["background-position"].rsplit(",", 1)[1].strip().startswith("50% ")
-    assert _regra_em(css, ("@media (max-width: 900px)",), ".nn-hero-com-foto")["padding-top"].startswith("calc(var(--nn-foto-alt)")
-    assert re.fullmatch(r"clamp\((\d+)px, (\d+)vw, (\d+)px\)", _declaracoes(css, ".nn-hero-com-foto")["--nn-foto-alt"])
-    # o texto fica sempre sobre #080808 e o destaque do titulo segue #ea2e00 (4,7:1), sem regra propria com foto
-    assert _contraste((234, 46, 0), (8, 8, 8)) >= 4.5
-    assert _declaracoes(css, ".nn-hero-titulo .nn-destaque")["color"] == "var(--nn-laranja)"
-    assert not any("nn-destaque" in c for cabecalhos, _ in _regras(css) for c in cabecalhos if "nn-hero-com-foto" in c)
-    for seletor in (".nn-hero-intro", ".nn-hero .nn-eyebrow"):
-        texto = _declaracoes(css, seletor).get("color")
-        if texto and texto.startswith("rgba(255, 255, 255,"):
-            a = float(texto.rsplit(",", 1)[1].strip(" )"))
-            assert _contraste(tuple(255 * a + 8 * (1 - a) for _ in range(3)), (8, 8, 8)) >= 4.5, seletor
-    # a foto so existe por CSS: nem <img> nem style= nas paginas (test_sem_style_ou_script_inline) e movimento so sem reducao
+    assert foto["inset"] == "0" and "width" not in foto and "--nn-foto-fusao" not in foto["background-image"]
+    camada = re.fullmatch(r'linear-gradient\(rgba\(8, 8, 8, ([0-9.]+)\), rgba\(8, 8, 8, ([0-9.]+)\)\), url\("/foto-abertura.webp"\)',
+                          foto["background-image"])
+    assert camada and camada[1] == camada[2] and 0.3 <= float(camada[1]) <= 0.4, foto["background-image"]
+    assert "90deg" not in foto["background-image"] and "180deg" not in foto["background-image"]
+    # o circulo decorativo se aposentou: nenhum ::after na abertura
+    assert not [c for c, _ in _regras(css) if c and ".nn-hero" in c[-1] and "::after" in c[-1]]
+    # secao cheia: na largura da tela, subindo por baixo do menu, com o texto na largura padrao
+    hero = _declaracoes(css, ".nn-hero, .nn-capa")
+    assert hero["width"] == "100vw" and hero["margin-left"] == "calc(50% - 50vw)", hero
+    assert hero["margin-top"] == "calc(-1 * (var(--nn-topo-alt) + 28px))" and hero["padding-inline"] == "var(--nn-borda-cheia)"
+    assert re.search(r"body \{[^}]*overflow-x: clip", css)
+    # o titulo com sombra difusa, o destaque no laranja claro com sombra mais forte e o paragrafo na caixa de vidro
+    assert "text-shadow" in _declaracoes(css, ".nn-hero-com-foto .nn-hero-titulo")
+    destaque = _declaracoes(css, ".nn-hero-com-foto .nn-hero-titulo .nn-destaque")
+    assert destaque["color"].startswith("#ff5a1f") and destaque["text-shadow"].count("rgba(0, 0, 0,") >= 2
+    vidro = _declaracoes(css, ".nn .nn-hero-com-foto .nn-hero-intro")
+    assert vidro["background"] == "rgba(8, 8, 8, 0.42)" and vidro["backdrop-filter"] == "blur(3px)"
+    # a foto so existe por CSS e movimento so sem reducao
     assert not any("nn-hero-com-foto" in cabecalhos[-1] and "animation" in d for cabecalhos, d in _regras(css) if cabecalhos)
+
+
+def test_css_das_capas_tem_uma_classe_por_imagem_do_gerador(saida):
+    """Cada imagem de CAPAS (e a foto da abertura) tem a sua classe no estilo.css, com o arquivo certo no fundo; o
+    degradê escuro fica a esquerda no computador e sobe de baixo no celular."""
+    css = (saida / "estilo.css").read_text(encoding="utf-8")
+    for arquivo in [a for a in gerar.CAPAS.values() if a]:
+        regra = _declaracoes(css, "." + gerar.classe_da_capa(arquivo))
+        assert regra.get("--nn-capa-foto") == f'url("/historia/{arquivo}")', arquivo
+        assert (gerar.PASTA_ESTATICOS / "historia" / arquivo).is_file(), arquivo
+    assert _declaracoes(css, "." + gerar.CLASSE_DA_CAPA_DA_FOTO)["--nn-capa-foto"] == 'url("/foto-abertura.webp")'
+    capa = _declaracoes(css, ".nn-capa")
+    assert capa["--nn-capa-veu"].startswith("linear-gradient(90deg, #080808 0%")
+    assert capa["background-image"] == "var(--nn-capa-veu), var(--nn-capa-base), var(--nn-capa-foto, none)"
+    assert _regra_em(css, ("@media (max-width: 1099px)",), ".nn-capa")["--nn-capa-veu"].startswith("linear-gradient(0deg, #080808")
 
 
 def test_modal_do_css_e_as_cores_da_faixa(saida):
@@ -421,7 +412,7 @@ def test_texto_branco_pequeno_so_sobre_o_laranja_escuro(saida):
     css = (saida / "estilo.css").read_text(encoding="utf-8")
     assert _contraste((255, 255, 255), (0xEA, 0x2E, 0x00)) < 4.5 <= _contraste((255, 255, 255), (0xC4, 0x26, 0x00))
     assert re.search(r"--nn-laranja-escuro:\s*#c42600", css)
-    for seletor in ('.nn .nn-menu a[aria-current="page"]', '.nn-botao[aria-pressed="true"]', ".nn .nn-baixar"):
+    for seletor in ('.nn-botao[aria-pressed="true"]', ".nn .nn-baixar", ".nn .nn-topo-botao", ".nn .nn-saidas .nn-saida-card"):
         assert _declaracoes(css, seletor)["background"] == "var(--nn-laranja-escuro)", seletor
     grupos: dict[tuple, dict[str, str]] = {}
     for cabecalhos, declaracao in _regras(css):
@@ -429,7 +420,8 @@ def test_texto_branco_pequeno_so_sobre_o_laranja_escuro(saida):
             propriedade, valor = declaracao.split(":", 1)
             grupos.setdefault(cabecalhos, {})[propriedade.strip()] = " ".join(valor.split())
     vivos = ("var(--nn-laranja)", "#ea2e00")
-    assert [c[-1] for c, g in grupos.items() if g.get("background") in vivos and g.get("color") == "var(--nn-branco)"] == []
+    # o voltar ao topo e o unico no laranja vivo: nao tem texto, so o icone (grafico pede 3:1, e o branco da 4,3:1)
+    assert [c[-1] for c, g in grupos.items() if g.get("background") in vivos and g.get("color") == "var(--nn-branco)"] == [".nn-voltar"]
 
 
 def test_modal_reserva_o_espaco_da_barra_e_o_zoom_so_com_ponteiro_fino(saida):

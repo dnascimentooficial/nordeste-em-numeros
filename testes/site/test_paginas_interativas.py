@@ -15,7 +15,7 @@ from nordeste.site.explorar import (
 from nordeste.site.formatacao import numero
 from nordeste.site.gerar import RelatorioSite, gerar_site, vista_explorar_em_html
 
-from auxiliares import RAIZ, Arvore, alterar_base, copiar_base
+from auxiliares import RAIZ, Arvore, alterar_base, copiar_base, svgs_da_pagina
 
 SITE = "https://nordeste.dnascimento.com.br"
 AVISO = "Este indicador não tem dados para este território"
@@ -137,7 +137,7 @@ def test_explorar_traz_a_vista_inicial_desenhada(gerado, dados):
     assert AVISO not in arvore.texto_visivel()
     # nas duas larguras (Ruling S-O), com o Brasil como referencia e o Nordeste em destaque
     assert len(arvore.achar("div", classe="nn-graf-largo")) == len(arvore.achar("div", classe="nn-graf-estreito")) == 1
-    svgs = arvore.achar("svg")
+    svgs = svgs_da_pagina(arvore)
     assert [s["attrs"]["viewbox"] for s in svgs] == ["0 0 720 300", "0 0 360 240"]
     linhas = json.loads(svgs[0]["attrs"]["data-pontos"])
     assert [(l["rotulo"], l["destaque"]) for l in linhas] == [("Brasil", False), ("Nordeste", True)]
@@ -298,8 +298,8 @@ def test_card_mostra_numeros_frase_e_fonte_da_base(gerado, dados, conteudo):
         fonte = Arvore.texto(arvore.achar("p", classe="nn-c-fonte")[0])
         data = "/".join(reversed(dados.data_base.split("-")))
         assert fonte == f"Fonte: {card['fonte']} · dados de {data} · dnascimento.com.br"
-        assert len(arvore.achar("svg")) == 1  # o minigrafico, decorativo
-        assert arvore.achar("svg")[0]["attrs"]["aria-hidden"] == "true"
+        assert len(svgs_da_pagina(arvore)) == 1  # o minigrafico, decorativo
+        assert svgs_da_pagina(arvore)[0]["attrs"]["aria-hidden"] == "true"
 
 
 def test_rotulo_dos_cards_e_neutro(gerado, conteudo):

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% from "_componentes.html" import atualizacoes %}
+{% set sobre_foto = true %}
+{% from "_componentes.html" import atualizacoes, capa %}
 {% block conteudo %}
 {% set t = textos.estados %}
+{{ capa(capas.estados, t.titulo, t.intro) }}
 <section class="nn-pagina" id="estados" aria-labelledby="titulo-principal">
-  <h1 id="titulo-principal">{{ t.titulo }}</h1>
-  <p class="nn-muted">{{ t.intro }}</p>
   <div class="nn-controles">
     <label for="sel-estado-ind">Indicador
       <select id="sel-estado-ind" class="nn-sel-estado">

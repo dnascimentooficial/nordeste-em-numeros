@@ -5,6 +5,7 @@
 # editorial (comentado em cada fecho); o que nenhuma comparacao verifica fica dito no comentario.
 
 - id: renda-per-capita
+  card: pibpc
   rotulo: Riqueza
   frase_feita: "“O Nordeste não sai do lugar.” Será?"
   explicacao: "Quanto o Nordeste tem para cada 100 reais por pessoa do resto do país. A linha tracejada em 100% seria a igualdade."
@@ -27,6 +28,7 @@
     - "2007 fica sem valor: não há população publicada para o ano que permita conferir o cálculo. Valores correntes; a razão dispensa deflator."
 
 - id: economia
+  card: vol
   rotulo: Economia
   frase_feita: "“A economia daqui não cresce.”"
   lide: "O índice de volume mede quanto a economia cresceu sem o efeito da inflação. De {vol_ne.ano_primeiro} a {vol_ne.ano_ultimo}, o índice de volume do PIB do Nordeste foi de {vol_ne.primeiro:0} para {vol_ne.ultimo:1}; o do Brasil, para {vol_br.ultimo:1}. A participação do Nordeste no PIB nacional passou de {part_ne.primeiro:1%} para {part_ne.ultimo:1%}."
@@ -56,6 +58,7 @@
     - "Fonte: IBGE, Contas Regionais (referência 2010)."
 
 - id: escola
+  card: ideb
   rotulo: Educação
   frase_feita: "“A educação no Nordeste não melhorou.”"
   lide: "O IDEB é a nota das escolas, de 0 a 10, e junta o que os alunos aprendem com quantos passam de ano. Nos anos iniciais do fundamental (1º ao 5º ano), o Nordeste foi de {ideb_ai_ne.primeiro:1} em {ideb_ai_ne.ano_primeiro} para {ideb_ai_ne.ultimo:1} em {ideb_ai_ne.ano_ultimo}. O Brasil marcou {ideb_ai_br.ultimo:1}."
@@ -104,6 +107,7 @@
     - "Fonte: INEP, IDEB (bienal, de 0 a 10) e Indicadores de Fluxo Escolar."
 
 - id: trabalho
+  card: desoc
   rotulo: Trabalho e renda
   frase_feita: "“Aqui não tem emprego e ninguém ganha nada.”"
   lide: "Em {desoc_ne.ano_ultimo}, a taxa de desocupação (desemprego) no Nordeste foi de {desoc_ne.ultimo:1%}, contra {desoc_br.ultimo:1%} no Brasil. A renda domiciliar por pessoa da região equivalia a {renda_razao.ultimo:1%} da do Brasil fora do Nordeste em {renda_razao.ano_ultimo} ({renda_razao.primeiro:1%} em {renda_razao.ano_primeiro})."
@@ -139,6 +143,7 @@
     - "Fonte: IBGE, PNAD (anual, até 2014) e PNAD Contínua (desde 2012). A PNAD não foi a campo em 2010, ano do Censo."
 
 - id: idhm
+  card: idhm
   rotulo: Desenvolvimento humano
   frase_feita: "“Desenvolvimento humano? Continua lá embaixo.”"
   explicacao: "Para o Nordeste como região, a série começa em 2012."
@@ -159,6 +164,7 @@
     - "Fonte: Atlas do Desenvolvimento Humano no Brasil (PNUD, Ipea e Fundação João Pinheiro). O IDHM do Nordeste em 2000 e 2010 não é publicado."
 
 - id: pobreza
+  card: pobreza
   rotulo: Pobreza
   frase_feita: "“Os pobres estão do mesmo jeito.”"
   lide: "A linha de pobreza aqui é de US$ 8,30 por dia por pessoa, a das tabelas que o IBGE publica para os indicadores da ONU. Em {pob_ne.ano_ultimo}, {pob_ne.ultimo:1%} da população do Nordeste vivia abaixo dela, contra {pob_br.ultimo:1%} no Brasil. Em {pob_ne.ano_primeiro}, eram {pob_ne.primeiro:1%} na região. Na extrema pobreza (US$ 3,00 por dia), a região tinha {ext_ne.ultimo:1%}."

@@ -141,8 +141,14 @@ def _epoca_html(html: str, id_: str) -> str:
 
 
 def _menu(html: str) -> list[tuple[str, str]]:
+    """(endereco, nome) de cada link da barra do menu: os links soltos e os cartoes dos grupos (pelo titulo)."""
     nav = _trecho(html, '<nav class="nn-menu"', "</nav>")
-    return re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', nav)
+    pares = []
+    for a in re.findall(r"<a\b[^>]*>.*?</a>", nav, flags=re.S):
+        arvore = Arvore(a)
+        titulo = arvore.achar(classe="nn-menu-cartao-titulo")
+        pares.append((arvore.achar("a")[0]["attrs"]["href"], Arvore.texto(titulo[0] if titulo else arvore.achar("a")[0])))
+    return pares
 
 
 @pytest.fixture(scope="module")
@@ -159,10 +165,11 @@ def test_pagina_gerada_no_menu_entre_inicio_e_estados(gerado):
     assert relatorio.paginas.index(PAGINA) == relatorio.paginas.index("index.html") + 1
     for pagina in ("index.html", PAGINA, "sobre/index.html", "cards/pobreza/index.html"):
         menu = _menu(_ler(saida, pagina))
-        assert menu[:3] == [("/", "Início"), ("/como-chegamos/", "Como chegamos aqui"), ("/estados/", "Estados")], pagina
+        assert menu[:3] == [("/", "Início"), ("/como-chegamos/", "Como chegamos até aqui"),
+                            ("/cards/", "Cards para compartilhar")], pagina
     arvore = Arvore(_ler(saida))
     atual = [e for e in arvore.achar("a") if e["attrs"].get("aria-current") == "page"]
-    assert [e["attrs"]["href"] for e in atual] == ["/como-chegamos/"]
+    assert [e["attrs"]["href"] for e in atual] == ["/como-chegamos/"] * 2  # na barra e na gaveta
     assert len(arvore.achar("main", classe="nn-historia")) == 1
     assert arvore.achar("main")[0]["attrs"]["id"] == "conteudo"  # o link "Ir para o conteúdo" continua valendo
 
@@ -175,10 +182,21 @@ def test_abertura_mostra_parcelas_calculadas(gerado):
     assert len(secao) == 1
     numero = Arvore.texto(arvore.achar(classe="nn-hist-numero")[0])
     assert "46,7%" in numero and "1872" in numero and "26,9%" in numero and "2022" in numero
+    # o titulo e o subtitulo sobem para a capa; a abertura fica com a conta dos censos, o texto e o grafico
+    capa = Arvore.texto(arvore.achar("section", classe="nn-capa")[0])
+    assert "Como chegamos até aqui" in capa and "Subtítulo da abertura de teste." in capa
     abertura = Arvore.texto(secao[0])
-    for texto in ("Como chegamos até aqui", "Subtítulo da abertura de teste.", "Legenda do gráfico de teste.",
-                  "Nota dos estados de teste.", "Texto da abertura de teste."):
+    for texto in ("A conta dos censos", "Legenda do gráfico de teste.", "Nota dos estados de teste.",
+                  "Texto da abertura de teste."):
         assert texto in abertura
+    # a coluna da esquerda: 1872 · 46,7%, a etiqueta da queda (calculada dos censos), 2022 · 26,9% "no Censo de 2022"
+    parcelas = [Arvore.texto(p) for p in arvore.achar("p", classe="nn-hist-parcela")]
+    assert parcelas == ["1872 46,7% dos brasileiros viviam no Nordeste", "2022 26,9% no Censo de 2022"]
+    assert [Arvore.texto(e) for e in arvore.achar(classe="nn-hist-etiqueta")] == ["−19,8 pontos em 150 anos"]
+    # a fonte e a nota num paragrafo so, embaixo do grafico; os numeros dos censos no pe do bloco
+    legenda = Arvore.texto(arvore.achar("figcaption", classe="nn-hist-legenda")[0])
+    assert legenda == "Legenda do gráfico de teste. Nota dos estados de teste."
+    assert html.index('class="nn-hist-grafico"') < html.index('class="nn-hist-pe"') < html.index("Ver os números dos censos")
     # o grafico dos censos nas duas larguras, dentro da abertura, com os tres censos e a linha emendada
     trecho = _trecho(html, '<section class="nn-hist-abertura nn-hist-bloco"', "</section>")
     svgs = Arvore(trecho).achar("svg")
@@ -189,6 +207,10 @@ def test_abertura_mostra_parcelas_calculadas(gerado):
         assert [p[:2] for p in pontos[0]["pontos"]] == [[1872, 46.7], [1950, 34.6], [2022, 26.9]]
         assert svg["attrs"]["data-sufixo"] == "%" and svg["attrs"]["data-casas"] == "1"
     assert len(Arvore(trecho).achar("path")) == 2  # uma linha por largura
+    # as pontas maiores (o primeiro e o ultimo censo) e o rotulo do primeiro ponto, em cada largura
+    pontas = Arvore(trecho).achar("circle", classe="nn-ponta")
+    assert len(pontas) == 4 and {c["attrs"]["r"] for c in pontas} == {"5"}
+    assert [Arvore.texto(t) for t in Arvore(trecho).achar("text", classe="nn-ponta-rotulo")] == ["1872 · 46,7%"] * 2
     assert not [r for r in Arvore(trecho).achar("rect") if "nn-faixa" in r["attrs"].get("class", "")]
     # a tabela que a descricao acessivel promete: um censo por linha, com as populacoes e a fonte
     linhas = [Arvore.texto(tr) for tr in Arvore(trecho).achar("tr")][1:]
@@ -203,6 +225,7 @@ def test_abertura_muda_com_os_censos(tmp_path):
     gerar_site(Caminhos(raiz=_base(tmp_path / "base", _historia(), outros)), saida, imagens=False)
     numero = Arvore.texto(Arvore(_ler(saida)).achar(classe="nn-hist-numero")[0])
     assert "50,0%" in numero and "46,7%" not in numero
+    assert "−23,1 pontos em 150 anos" in numero  # a etiqueta tambem sai dos censos, nunca digitada
 
 
 def test_cada_epoca_tem_artigo_completo(gerado):
@@ -404,7 +427,7 @@ def test_incluir_provisoria_gera_previa_com_aviso_e_noindex(tmp_path):
     aviso = arvore.achar(classe="nn-hist-previa")
     assert len(aviso) == 1 and "Prévia: texto provisório" in Arvore.texto(aviso[0])
     assert [m["attrs"]["content"] for m in arvore.achar("meta", name="robots")] == ["noindex"]
-    assert ("/como-chegamos/", "Como chegamos aqui") in _menu(_ler(saida, "index.html"))
+    assert ("/como-chegamos/", "Como chegamos até aqui") in _menu(_ler(saida, "index.html"))
     assert not Arvore(_ler(saida, "index.html")).achar("meta", name="robots")  # so a pagina previa sai do indice
     # epoca sem imagem (so possivel com provisoria): cartao e artigo sem <img>, sem credito, e o resto inteiro
     assert not imagens_da_pagina(arvore) and not arvore.achar(classe="nn-epoca-credito")
@@ -558,12 +581,14 @@ def com_chamada(tmp_path_factory) -> Path:
     return saida
 
 
-def test_chamada_no_inicio_depois_dos_numeros_com_o_titulo_dos_censos(com_chamada):
+def test_chamada_no_inicio_depois_das_perguntas_com_o_titulo_dos_censos(com_chamada):
     html = _ler(com_chamada, "index.html")
     arvore = Arvore(html)
     chamada = arvore.achar("section", classe="nn-chamada-historia")
     assert len(chamada) == 1
-    assert html.index("nn-faixa-abertura") < html.index("nn-chamada-historia") < html.index('id="resumo"')
+    # depois das perguntas (e antes dos <template> dos graficos ampliados), nao mais logo depois da faixa
+    fim_das_perguntas = html.index("</section>", html.rindex('<article class="nn-capitulo'))
+    assert html.index('id="resumo"') < fim_das_perguntas < html.index('<section class="nn-chamada-historia"') < html.index("<template")
     # os mesmos numeros da abertura da pagina historica (censos.csv de teste: 46,7% em 1872 e 26,9% em 2022)
     titulo = Arvore.texto(arvore.achar("h2", id="titulo-chamada-historia")[0])
     assert titulo == "Em 1872, 46,7% dos brasileiros viviam no Nordeste. Em 2022, 26,9%."

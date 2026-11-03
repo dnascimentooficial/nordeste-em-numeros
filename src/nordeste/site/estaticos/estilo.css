@@ -43,6 +43,9 @@
   --nn-texto: "DM Sans", system-ui, sans-serif;
   --nn-raio: 24px;
   --nn-raio-g: 34px;
+  --nn-topo-alt: 64px; /* a barra do menu; a abertura e as capas sobem por baixo dela */
+  /* o recuo que põe o texto de uma seção cheia (na largura da tela) na largura padrão do site */
+  --nn-borda-cheia: max(clamp(16px, 3vw, 32px), calc((100vw - 1180px) / 2 + clamp(16px, 3vw, 32px)));
 
   /* tema claro */
   --nn-fundo: var(--nn-papel);
@@ -61,6 +64,12 @@
   --nn-papel-antigo: #f3ead6; /* o papel envelhecido da página Como chegamos: #c42600 dá 4,8:1 sobre ele */
   --nn-sepia: #6b4423; /* a tinta de arquivo: rótulos, créditos e a etiqueta "estimativa de historiador" (7,1:1) */
   color-scheme: light;
+}
+
+@media (max-width: 1099px) {
+  :root {
+    --nn-topo-alt: 60px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -104,6 +113,7 @@ html {
 
 body {
   margin: 0;
+  overflow-x: clip; /* a abertura e as capas vão de canto a canto: nada de rolagem de lado */
   background: var(--nn-fundo);
   color: var(--nn-tinta);
   font-family: var(--nn-texto);
@@ -115,7 +125,7 @@ body {
 .nn {
   max-width: 1180px;
   margin-inline: auto;
-  padding: 14px clamp(16px, 3vw, 32px) 32px;
+  padding: 0 clamp(16px, 3vw, 32px) 32px;
   display: grid;
   gap: 28px;
 }
@@ -217,163 +227,500 @@ body {
   transform: none;
 }
 
-/* --- topo: barra preta de duas linhas. Em cima, o título à esquerda e o "por Júlio Diógenes" à direita; uma linha fina
-   de 1 px; embaixo, o menu em abas. A barra é preta nos dois temas (a linha e os textos de baixo contraste vivem sobre
-   #080808); no celular o "por" desce para baixo do título e o menu rola de lado --- */
+/* --- menu do alto: a marca à esquerda, a barra preta pendurada no topo (Início, Histórias, Dados, Sobre os dados) e o
+   botão laranja à direita. Histórias e Dados são <details name="nn-menu">, que abrem sem JavaScript: o painel de
+   cartões desce como continuação da barra. Abaixo de 1100 px a barra some e o botão de menu abre a gaveta preta, com
+   os grupos em sanfona. A barra, o painel e a gaveta são pretos nos dois temas. Nas páginas que abrem com foto ou capa
+   escura (nn-topo-sobre-foto), a abertura sobe por baixo do menu e só a marca e o botão de menu ficam brancos. --- */
 
 .nn-topo {
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio);
-  padding: 18px clamp(14px, 2.4vw, 26px) 8px;
+  position: relative;
+  z-index: 40;
 }
 
-.nn-hero-topo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-}
-
-.nn-topo-titulo {
+.nn-topo-barra {
+  position: relative;
+  height: var(--nn-topo-alt);
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 2px 20px;
-  padding-inline: 4px;
+  gap: 16px;
 }
 
 .nn .nn-marca {
   font-family: var(--nn-display);
   font-weight: 800;
-  font-size: clamp(22px, 2.4vw, 28px);
-  letter-spacing: -0.04em;
+  font-size: 20px;
+  letter-spacing: -0.02em;
   line-height: 1.1;
-  text-decoration: none;
-}
-
-.nn .nn-autoria {
-  color: rgba(255, 255, 255, 0.72); /* o "por" é pequeno e discreto; o nome é que se destaca */
-  font-size: 13px;
   white-space: nowrap;
-}
-
-.nn .nn-autoria strong {
-  color: var(--nn-branco);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.nn .nn-autoria a {
+  color: var(--nn-tinta);
   text-decoration: none;
 }
 
-.nn .nn-autoria a:hover {
-  text-decoration: underline;
-  text-decoration-color: var(--nn-laranja);
-}
-
-.nn-topo-linha {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.nn-menu {
-  position: relative;
-  display: flex;
-  gap: 4px;
-  max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.nn-menu::-webkit-scrollbar {
-  display: none;
-}
-
-.nn .nn-menu a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.74);
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.nn .nn-menu a:hover {
+.nn .nn-topo-sobre-foto .nn-marca {
   color: var(--nn-branco);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6), 0 1px 12px rgba(0, 0, 0, 0.45);
 }
 
-.nn .nn-menu a[aria-current="page"] {
-  background: var(--nn-laranja-escuro); /* texto branco pequeno: #ea2e00 dá 4,3:1, #c42600 passa de 4,5:1 */
+/* a barra pendurada: os cantos de cima curvam para dentro (::before e ::after, um quarto de círculo vazado cada) */
+.nn-topo-alca {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(660px, calc(100% - 520px));
+  background: #0a0a0a;
   color: var(--nn-branco);
+  border-radius: 0 0 18px 18px;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
 }
 
-@media (max-width: 900px) {
-  .nn-topo {
-    padding: 16px 10px 8px;
-  }
-
-  .nn-menu {
-    /* o menu rola de lado: a borda direita esmaece para mostrar que há mais abas */
-    -webkit-mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
-    mask-image: linear-gradient(to right, var(--nn-preto) 82%, transparent);
-  }
-}
-
-@media (max-width: 560px) {
-  .nn-topo-titulo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  .nn .nn-autoria strong {
-    font-size: 16px;
-  }
-}
-
-/* --- abertura: preta, com círculos finos --- */
-
-.nn-hero {
-  position: relative;
-  overflow: hidden;
-  background: var(--nn-preto);
-  color: var(--nn-branco);
-  border: 1px solid var(--nn-borda-preta);
-  border-radius: var(--nn-raio-g);
-  padding: clamp(28px, 5.4vw, 72px) clamp(22px, 5vw, 64px);
-  display: grid;
-  gap: 18px;
-}
-
-.nn-hero::before,
-.nn-hero::after {
+.nn-topo-alca::before,
+.nn-topo-alca::after {
   content: "";
   position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
+  top: 0;
+  width: 20px;
+  height: 20px;
   pointer-events: none;
 }
 
-.nn-hero::before {
-  width: min(620px, 70vw);
-  aspect-ratio: 1;
-  right: -12%;
-  top: -38%;
+.nn-topo-alca::before {
+  left: -20px;
+  background: radial-gradient(circle at 0 100%, transparent 19.5px, #0a0a0a 20px);
 }
 
-.nn-hero::after {
-  width: min(300px, 36vw);
-  aspect-ratio: 1;
-  right: 16%;
-  bottom: -30%;
+.nn-topo-alca::after {
+  right: -20px;
+  background: radial-gradient(circle at 100% 100%, transparent 19.5px, #0a0a0a 20px);
+}
+
+.nn-topo-alca:has(.nn-menu-grupo[open]) {
+  border-radius: 0; /* o painel aberto continua a barra e leva os cantos de baixo */
+}
+
+.nn-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0 4px;
+  min-height: 52px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nn-menu-grupo {
+  display: contents; /* o summary fica na linha dos links e o painel se posiciona pela barra */
+}
+
+.nn .nn-menu > a,
+.nn .nn-topo .nn-menu-grupo > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 0;
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 9px;
+  color: #a1a1aa; /* 7,6:1 sobre #0a0a0a */
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  list-style: none;
+}
+
+.nn .nn-topo summary::-webkit-details-marker {
+  display: none;
+}
+
+.nn .nn-topo details > summary::before,
+.nn .nn-topo details[open] > summary::before {
+  content: none;
+  display: none;
+}
+
+.nn .nn-menu > a:hover,
+.nn .nn-topo .nn-menu-grupo > summary:hover,
+.nn .nn-menu > a[aria-current="page"],
+.nn .nn-topo .nn-menu-grupo[data-atual] > summary {
+  color: var(--nn-branco);
+}
+
+.nn .nn-menu > a[aria-current="page"] {
+  box-shadow: inset 0 -2px 0 var(--nn-laranja);
+}
+
+.nn .nn-topo .nn-menu-grupo[open] > summary {
+  background: #1c1c1f;
+  color: var(--nn-branco);
+}
+
+.nn-menu-seta {
+  opacity: 0.7;
+}
+
+.nn-menu-grupo[open] .nn-menu-seta,
+.nn-gaveta details[open] .nn-menu-seta {
+  transform: rotate(180deg);
+}
+
+/* o painel: desce da barra, na largura dela, com os cantos de baixo arredondados */
+.nn-menu-painel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  background: #0a0a0a;
+  border-top: 1px solid #1f1f22;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.55);
+}
+
+/* fechado, o conteúdo do <details> some de vez: com a contenção do slot fechado, o painel e a gaveta (absolutos) ainda
+   ocupariam caixas fora da tela */
+.nn-menu-grupo:not([open]) > .nn-menu-painel,
+.nn-menu-movel:not([open]) > .nn-gaveta {
+  display: none;
+}
+
+.nn-menu-painel-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.nn-menu-painel-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.nn .nn-menu-cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 132px;
+  padding: 14px;
+  border: 1px solid #232327;
+  border-radius: 14px;
+  background: #111113;
+  color: var(--nn-branco);
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.nn-menu-cartao::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(234, 46, 0, 0.14), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nn .nn-menu-cartao:hover {
+  border-color: #3a3a40;
+  background-color: #151518;
+}
+
+.nn-menu-cartao:hover::after {
+  opacity: 1;
+}
+
+.nn .nn-menu-cartao[aria-current="page"] {
+  border-color: var(--nn-laranja);
+}
+
+.nn-menu-cartao-titulo {
+  position: relative;
+  z-index: 1;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.nn-menu-cartao-texto {
+  position: relative;
+  z-index: 1;
+  color: #a1a1aa;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.nn-menu-icone {
+  display: flex;
+  margin-bottom: auto;
+  color: var(--nn-laranja);
+}
+
+/* os cartões de Histórias: a miniatura da época 1530 (só existe com a página Como chegamos, e só então o cartão sai)
+   e, nos cards, o laranja-escuro com o ícone, sem a imagem de um card, cujo texto competia com o título */
+.nn .nn-menu-painel-2 .nn-menu-cartao {
+  min-height: 150px;
+}
+
+.nn .nn-menu-cartao-como-chegamos {
+  background: #111113 url("/historia/1530-cartao.webp") center / cover no-repeat;
+}
+
+.nn-menu-cartao-como-chegamos::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.25) 0%, rgba(10, 10, 10, 0.95) 70%);
+}
+
+.nn .nn-menu-cartao-cards {
+  border-color: #8a1c00;
+  background: linear-gradient(150deg, #b32400 0%, #6e1500 100%);
+}
+
+.nn .nn-menu-cartao-cards:hover {
+  border-color: #ff7a4d;
+  background: linear-gradient(150deg, #b32400 0%, #6e1500 100%);
+}
+
+.nn-menu-cartao-cards .nn-menu-icone {
+  color: var(--nn-branco);
+}
+
+.nn-menu-cartao-cards .nn-menu-cartao-texto {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.nn-topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* o botão: o laranja-escuro, porque o texto branco de 14 px pede 4,5:1 (o #ea2e00 dá 4,3:1, o #c42600 dá 5,3:1) */
+.nn .nn-topo-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--nn-laranja-escuro);
+  color: var(--nn-branco);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: 0 6px 16px -8px rgba(234, 46, 0, 0.7);
+}
+
+.nn .nn-topo-botao:hover {
+  background: color-mix(in srgb, var(--nn-laranja-escuro) 88%, var(--nn-preto));
+}
+
+.nn .nn-topo-botao:focus-visible {
+  outline-color: var(--nn-tinta);
+}
+
+.nn-topo-sobre-foto .nn-topo-botao:focus-visible {
+  outline-color: var(--nn-branco);
+}
+
+.nn-topo-botao:hover .nn-topo-botao-seta {
+  transform: translateX(2px);
+}
+
+.nn-menu-movel {
+  display: none;
+}
+
+@media (max-width: 1099px) {
+  .nn-topo-alca {
+    display: none;
+  }
+
+  .nn .nn-marca {
+    font-size: 18px;
+  }
+
+  .nn .nn-topo-botao {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .nn-menu-movel {
+    display: block;
+  }
+
+  .nn .nn-topo .nn-menu-movel > summary {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    min-height: 0;
+    padding: 0;
+    border: 1px solid var(--nn-linha);
+    border-radius: 12px;
+    color: var(--nn-tinta);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .nn .nn-topo-sobre-foto .nn-menu-movel > summary {
+    color: var(--nn-branco);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .nn-menu-hamburguer,
+  .nn-menu-hamburguer::before,
+  .nn-menu-hamburguer::after {
+    display: block;
+    position: relative;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+  }
+
+  .nn-menu-hamburguer::before,
+  .nn-menu-hamburguer::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+
+  .nn-menu-hamburguer::before {
+    top: -5px;
+  }
+
+  .nn-menu-hamburguer::after {
+    top: 5px;
+  }
+
+  .nn-menu-movel[open] .nn-menu-hamburguer {
+    background: transparent;
+  }
+
+  .nn-menu-movel[open] .nn-menu-hamburguer::before {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nn-menu-movel[open] .nn-menu-hamburguer::after {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  /* a gaveta: abaixo da barra, na largura dela */
+  .nn-gaveta {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--nn-topo-alt) - 2px);
+    display: grid;
+    gap: 2px;
+    padding: 12px;
+    border-radius: 16px;
+    background: #0a0a0a;
+    color: var(--nn-branco);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+  }
+
+  .nn .nn-gaveta a,
+  .nn .nn-topo .nn-gaveta summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 11px 12px;
+    border-radius: 10px;
+    color: #d4d4d8;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .nn .nn-gaveta a:hover,
+  .nn .nn-topo .nn-gaveta summary:hover,
+  .nn .nn-topo .nn-gaveta details[data-atual] > summary {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--nn-branco);
+  }
+
+  .nn .nn-gaveta a[aria-current="page"] {
+    color: var(--nn-branco);
+    box-shadow: inset 3px 0 0 var(--nn-laranja);
+  }
+
+  .nn-gaveta-itens {
+    display: grid;
+    margin: 0 0 6px 12px;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .nn .nn-gaveta-itens a {
+    color: #a1a1aa;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 520px) {
+  .nn .nn-marca {
+    font-size: 16px;
+  }
+
+  .nn .nn-topo-botao {
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+
+  .nn-topo-botao-longo {
+    display: none; /* "linha do tempo →" */
+  }
+}
+
+/* --- abertura do Início e capas das páginas internas: seção cheia, na largura da tela, que começa no alto, por baixo do
+   menu (a margem negativa é a altura da barra mais o vão da grade). O texto fica na largura padrão (--nn-borda-cheia). */
+
+.nn-hero,
+.nn-capa {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-top: calc(-1 * (var(--nn-topo-alt) + 28px));
+  padding-inline: var(--nn-borda-cheia);
+  background-color: var(--nn-preto);
+  color: var(--nn-branco);
+}
+
+/* a abertura: com foto (textos.yaml: foto), a composição inteira à mostra, escurecida por igual por um véu de 30%,
+   sem degradê; o título ganha uma sombra difusa e o parágrafo vai numa caixa de vidro escuro. A composição (1500x844)
+   tem a mata e a cidade à esquerda, o Farol da Barra no meio e o sertão à direita. Sem foto, a abertura é preta. */
+.nn-hero {
+  overflow: hidden;
+  min-height: calc(560px + var(--nn-topo-alt) + 28px);
+  padding-top: calc(var(--nn-topo-alt) + 28px + clamp(40px, 6vw, 80px));
+  padding-bottom: clamp(28px, 5.4vw, 72px);
+  display: grid;
+  gap: 18px;
+  align-content: center;
+}
+
+.nn-hero-com-foto::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(8, 8, 8, 0.3), rgba(8, 8, 8, 0.3)), url("/foto-abertura.webp");
+  background-size: auto, cover;
+  background-position: 0 0, center 45%;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 .nn-hero > * {
@@ -381,7 +728,7 @@ body {
 }
 
 .nn-hero .nn-eyebrow {
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .nn .nn-hero-titulo {
@@ -401,12 +748,41 @@ body {
 }
 
 .nn-hero-intro {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.86);
   font-size: clamp(16px, 1.4vw, 19px);
 }
 
 .nn .nn-hero-intro {
   max-width: 60ch;
+}
+
+.nn-hero-com-foto .nn-eyebrow {
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+
+.nn-hero-com-foto .nn-hero-titulo {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55), 0 4px 28px rgba(0, 0, 0, 0.65);
+}
+
+.nn-hero-com-foto .nn-hero-titulo .nn-destaque {
+  color: #ff5a1f; /* sobre a foto, o laranja mais claro; a sombra mais forte o separa do fundo */
+  /* as duas sombras curtas contornam a letra (sem elas, a borda de algumas letras ficava abaixo de 3:1 sobre o céu) */
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.7), 0 4px 30px rgba(0, 0, 0, 0.8);
+}
+
+.nn .nn-hero-com-foto .nn-hero-intro {
+  justify-self: start;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(8, 8, 8, 0.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+@media (min-width: 901px) {
+  .nn .nn-hero-com-foto .nn-hero-titulo {
+    font-size: clamp(36px, 5.6vw, 72px); /* o título ocupa a coluna da esquerda e deixa a composição à mostra */
+  }
 }
 
 .nn-conta {
@@ -415,77 +791,100 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* com foto (textos.yaml: foto): abertura dividida. O texto fica sempre sobre preto sólido (#080808) e a foto ocupa o
-   ::before, sem passar por baixo de nenhum texto: no desktop (> 900 px) é a metade direita da abertura e o título cede
-   a coluna da esquerda; até 900 px é uma faixa no topo e o texto vem abaixo. A foto leva só uma camada leve (15%) e um
-   degradê que a funde no preto na emenda. O destaque do título segue #ea2e00 (4,7:1 sobre #080808). O círculo grande do
-   ::before dá lugar à foto; o círculo pequeno do ::after continua, por cima da foto. A imagem é uma composição (1500x844):
-   mata e cidade à esquerda, o Farol da Barra no meio (x 39 a 59% da largura, y 25 a 46% da altura) e o sertão à direita,
-   com o sol no canto (x ~96%, y ~31%). No desktop a coluna da foto tem ~1:1, então `cover` mostra ~55% da largura; o
-   recorte a 48% vai de x ~22% a ~77%: farol inteiro no meio, a mata se apagando na emenda, o sertão à direita e o sol fora
-   do quadro. A coluna do texto tem largura para o título chegar a ~72 px. */
-
-.nn-hero-com-foto {
-  --nn-foto-alt: clamp(170px, 42vw, 340px); /* altura da faixa de foto até 900 px */
+@media (max-width: 1099px) {
+  .nn-hero {
+    min-height: 0;
+    padding-top: calc(var(--nn-topo-alt) + 28px + 40px);
+  }
 }
 
-.nn-hero-com-foto::before {
-  border: 0;
-  border-radius: 0;
-  aspect-ratio: auto;
-  background-image: var(--nn-foto-fusao), linear-gradient(rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.15)), url("/foto-abertura.webp");
-  background-size: auto, auto, cover;
+/* as capas: o título e a frase de abertura em branco sobre o escuro da esquerda, a imagem à direita (no celular, a
+   imagem em cima e o escuro subindo de baixo); a imagem de cada página é uma classe nn-capa-<arquivo>, porque a CSP
+   não deixa pôr o fundo no HTML. Sem imagem (sem página histórica e sem foto), a capa é preta. */
+.nn-capa {
+  --nn-capa-veu: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0.92) 38%, rgba(8, 8, 8, 0.35) 75%, rgba(8, 8, 8, 0.15) 100%);
+  min-height: 420px;
+  padding-top: calc(var(--nn-topo-alt) + 28px + clamp(36px, 5vw, 64px));
+  padding-bottom: clamp(28px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 22px;
+  --nn-capa-base: linear-gradient(0deg, rgba(8, 8, 8, 0.55), rgba(8, 8, 8, 0) 50%);
+  background-image: var(--nn-capa-veu), var(--nn-capa-base), var(--nn-capa-foto, none);
+  background-size: cover;
+  background-position: var(--nn-capa-posicao, center 40%);
   background-repeat: no-repeat;
 }
 
-@media (min-width: 901px) {
-  .nn-hero-com-foto {
-    padding-left: clamp(22px, 4.4vw, 56px);
-    padding-right: calc(48% + 20px); /* a coluna do texto termina antes da foto */
-  }
+.nn-capa-abertura {
+  --nn-capa-foto: url("/foto-abertura.webp");
+}
 
-  .nn-hero-com-foto::before {
-    --nn-foto-fusao: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0) 36%);
-    inset: 0 0 0 auto;
-    width: 48%;
-    /* a foto cobre a coluna pela altura (a largura é 1,78 vez a altura; a coluna tem ~1:1); o recorte a 48% põe o farol
-       no meio da coluna, com a mata à esquerda e o sertão à direita, e para antes do sol (x ~96% da foto) */
-    background-size: auto, auto, cover;
-    background-position: 0 0, 0 0, 48% 50%;
-  }
+.nn-capa-1530 {
+  --nn-capa-foto: url("/historia/1530.webp");
+  --nn-capa-posicao: center 55%;
+  --nn-capa-veu: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0.88) 40%, rgba(8, 8, 8, 0.3) 78%, rgba(8, 8, 8, 0.1) 100%);
+}
 
-  .nn-hero-com-foto::after {
-    right: 6%; /* o círculo pequeno fica todo dentro da foto, sem cruzar a emenda */
-  }
+.nn-capa-1964 {
+  --nn-capa-foto: url("/historia/1964.webp");
+}
 
-  .nn .nn-hero-com-foto .nn-hero-titulo {
-    font-size: clamp(36px, 5.6vw, 72px); /* "do mesmo jeito?" cabe na coluna do texto até 72 px (1280 px) */
+.nn-capa-1950 {
+  --nn-capa-foto: url("/historia/1950.webp");
+}
+
+.nn-capa-marco-1932 {
+  --nn-capa-foto: url("/historia/marco-1932.webp");
+}
+
+.nn-capa-marco-1934 {
+  --nn-capa-foto: url("/historia/marco-1934.webp");
+}
+
+.nn-capa-texto {
+  max-width: 760px;
+  display: grid;
+  gap: 14px;
+}
+
+.nn .nn-capa h1 {
+  color: var(--nn-branco);
+}
+
+.nn .nn-capa .nn-capa-intro {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: clamp(16px, 1.6vw, 19px);
+  max-width: 62ch;
+}
+
+.nn .nn-capa-credito {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 62ch;
+}
+
+.nn .nn-capa a {
+  color: var(--nn-branco);
+  text-decoration-color: currentColor;
+}
+
+.nn .nn-capa a:focus-visible {
+  outline-color: var(--nn-branco);
+}
+
+@media (max-width: 1099px) {
+  .nn-capa {
+    --nn-capa-veu: linear-gradient(0deg, #080808 18%, rgba(8, 8, 8, 0.55) 60%, rgba(8, 8, 8, 0.35) 100%);
+    --nn-capa-base: linear-gradient(transparent, transparent);
+    min-height: 320px;
+    padding-top: calc(var(--nn-topo-alt) + 28px + 32px);
   }
 }
 
-@media (max-width: 900px) {
-  .nn-hero-com-foto {
-    padding-top: calc(var(--nn-foto-alt) + clamp(18px, 3vw, 28px));
-  }
-
-  .nn-hero-com-foto::before {
-    --nn-foto-fusao: linear-gradient(180deg, rgba(8, 8, 8, 0) 55%, #080808 100%);
-    inset: 0 0 auto 0;
-    width: auto;
-    height: var(--nn-foto-alt);
-    /* a faixa (2:1 a 2,5:1) mostra a largura toda da composição, com o farol no meio; 30% sobe o recorte para o farol
-       ficar no meio da altura visível, acima do degradê */
-    background-position: 0 0, 0 0, 50% 30%;
-  }
-
-  .nn-hero-com-foto::after {
-    top: calc(var(--nn-foto-alt) * -0.25); /* o círculo pequeno vai para a faixa da foto, longe do texto */
-    bottom: auto;
-    right: 8%;
-  }
-}
-
-/* --- faixa de números, logo abaixo da abertura: fundo papel nos dois temas --- */
+/* --- faixa de números, logo abaixo da abertura: fundo papel nos dois temas, dois números com a comparação --- */
 
 .nn-faixa-abertura {
   background: var(--nn-papel);
@@ -502,7 +901,7 @@ body {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px clamp(18px, 3vw, 40px);
 }
 
@@ -531,21 +930,18 @@ body {
   line-height: 1.3;
 }
 
-.nn-numero-ano {
-  color: rgba(8, 8, 8, 0.64);
-  font-size: 13px;
+.nn-numero-comparacao {
+  margin-top: 6px;
+  color: rgba(8, 8, 8, 0.66);
+  font-size: 15px;
+}
+
+.nn-numero-comparacao b {
+  color: var(--nn-preto);
 }
 
 .nn-faixa-abertura .nn-conta {
   color: inherit;
-}
-
-.nn-faixa-texto {
-  font-size: 17px;
-}
-
-.nn .nn-faixa-texto {
-  max-width: 64ch;
 }
 
 .nn-faixa-nota {
@@ -560,6 +956,361 @@ body {
 @media (max-width: 560px) {
   .nn-numeros {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- placar das perguntas: uma linha por pergunta, com fios entre elas: o número, o tema e o veredito. A linha inteira
+   é o link para a pergunta. --- */
+
+.nn-placar {
+  gap: 14px;
+}
+
+.nn-placar-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.nn .nn-placar-lista a {
+  display: grid;
+  grid-template-columns: 44px 200px minmax(0, 1fr) 24px;
+  align-items: baseline;
+  gap: 4px;
+  padding: 14px 4px;
+  border-top: 1px solid var(--nn-linha);
+  color: inherit;
+  text-decoration: none;
+}
+
+.nn-placar-lista li:last-child a {
+  border-bottom: 1px solid var(--nn-linha);
+}
+
+.nn-placar-num,
+.nn-indice-num,
+.nn-capitulo-num {
+  color: var(--nn-laranja-texto);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-placar-tema {
+  color: var(--nn-laranja-texto);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nn-placar-veredito {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.nn-placar-sem-veredito {
+  color: var(--nn-suave);
+}
+
+.nn-placar-ir {
+  color: var(--nn-laranja-texto);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.nn .nn-placar-lista a:hover .nn-placar-veredito {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+  text-underline-offset: 3px;
+}
+
+.nn-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- as perguntas como capítulos de uma reportagem: o menu lateral fixo (260 px) e a folha que o sobrepõe em 28 px,
+   com a legenda presa no alto. Sem JavaScript o menu fica sempre à vista; com ele (nn-indice-ligado), aparece depois
+   do placar e marca a pergunta em leitura. Até 1100 px o menu vira uma faixa de atalhos presa no alto. --- */
+
+.nn-pagina.nn-editorial {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+}
+
+.nn-indice {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  padding: 28px 40px 28px 8px;
+}
+
+.nn-indice-ligado:not(.nn-indice-visivel) {
+  opacity: 0;
+  transform: translateX(-8px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.nn .nn-indice-titulo {
+  margin: 0 0 12px;
+  color: var(--nn-suave);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nn-indice ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.nn .nn-indice a {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 6px;
+  padding: 10px 12px;
+  border-left: 3px solid transparent;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nn-indice b {
+  display: block;
+  font-size: 15px;
+}
+
+.nn-indice small {
+  display: block;
+  margin-top: 2px;
+  color: var(--nn-suave);
+  font-size: 12.5px;
+  line-height: 1.3;
+}
+
+.nn .nn-indice a[aria-current="true"] {
+  background: var(--nn-painel);
+  border-left-color: var(--nn-laranja);
+  box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.35);
+}
+
+.nn-folha {
+  --nn-folha-margem: clamp(20px, 4vw, 56px);
+  position: relative;
+  margin-left: -28px;
+  padding: 12px var(--nn-folha-margem) 24px;
+  display: grid;
+  background: var(--nn-painel);
+  border-radius: var(--nn-raio-g);
+  box-shadow: 0 18px 50px -30px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* a legenda fica no alto da folha enquanto se lê, com fundo opaco */
+.nn-folha > .nn-legenda {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 calc(-1 * var(--nn-folha-margem));
+  padding: 12px var(--nn-folha-margem);
+  background: var(--nn-painel);
+  border-bottom: 1px solid var(--nn-linha);
+  border-radius: var(--nn-raio-g) var(--nn-raio-g) 0 0;
+}
+
+.nn-legenda-siglas {
+  color: var(--nn-suave);
+}
+
+.nn-capitulo {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  padding: 44px 0;
+  border-top: 1px solid var(--nn-linha);
+  scroll-margin-top: 104px; /* o título não fica atrás da legenda presa */
+}
+
+.nn-capitulo > * {
+  min-width: 0;
+}
+
+.nn-folha > .nn-capitulo:first-of-type {
+  border-top: 0;
+}
+
+.nn-capitulo > .nn-eyebrow {
+  font-size: 13px;
+}
+
+.nn .nn-capitulo h2 {
+  font-size: clamp(28px, 3.2vw, 40px);
+}
+
+.nn-pergunta-corpo {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.nn-pergunta-texto {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .nn-pergunta-corpo {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  .nn-pergunta-texto {
+    padding-top: 44px;
+  }
+
+  /* nos capítulos pares, o gráfico vai para a direita */
+  .nn-capitulo-invertido .nn-pergunta-corpo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  }
+
+  .nn-capitulo-invertido .nn-pergunta-corpo > .nn-grafico {
+    order: 2;
+  }
+}
+
+.nn-mais-graficos .nn-grade {
+  margin-top: 12px;
+}
+
+.nn-fonte-metodo-corpo {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.nn-saidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.nn .nn-saidas a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--nn-linha);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nn .nn-saidas a:hover {
+  border-color: var(--nn-laranja);
+}
+
+.nn .nn-saidas .nn-saida-card {
+  background: var(--nn-laranja-escuro); /* texto branco de 15 px: 5,3:1 */
+  border-color: var(--nn-laranja-escuro);
+  color: var(--nn-branco);
+}
+
+.nn .nn-saidas .nn-saida-card:hover {
+  background: color-mix(in srgb, var(--nn-laranja-escuro) 88%, var(--nn-preto));
+}
+
+@media (max-width: 1100px) {
+  .nn-pagina.nn-editorial {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nn-indice,
+  .nn-indice-ligado:not(.nn-indice-visivel) {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    padding: 8px 0;
+    background: var(--nn-fundo);
+    overflow-x: auto;
+    scrollbar-width: none;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .nn-indice::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nn .nn-indice-titulo {
+    display: none;
+  }
+
+  .nn-indice ol {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .nn .nn-indice a {
+    grid-template-columns: auto auto;
+    align-items: center;
+    padding: 8px 14px;
+    border: 1px solid var(--nn-linha);
+    border-radius: 999px;
+  }
+
+  .nn .nn-indice a[aria-current="true"] {
+    border-color: var(--nn-laranja);
+    box-shadow: none;
+  }
+
+  .nn-indice small {
+    display: none;
+  }
+
+  .nn-folha {
+    margin-left: 0;
+    border-radius: var(--nn-raio);
+  }
+
+  .nn-folha > .nn-legenda {
+    position: static;
+    border-radius: var(--nn-raio) var(--nn-raio) 0 0;
+  }
+
+  .nn-capitulo {
+    scroll-margin-top: 72px; /* a faixa de atalhos presa no alto */
+  }
+
+  .nn .nn-placar-lista a {
+    grid-template-columns: 34px minmax(0, 1fr) 20px;
+  }
+
+  .nn-placar-tema,
+  .nn-placar-veredito {
+    grid-column: 2;
+  }
+
+  .nn-placar-ir {
+    grid-column: 3;
+    grid-row: 1;
   }
 }
 
@@ -597,15 +1348,15 @@ body {
   max-width: 64ch;
 }
 
+/* o veredito, logo abaixo do título da pergunta: uma citação com o fio laranja */
 .nn-fecho {
-  font-size: 17px;
-  padding: 16px 20px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--nn-laranja) 9%, transparent);
+  font-size: 19px;
+  padding: 4px 0 4px 16px;
+  border-left: 4px solid var(--nn-laranja);
 }
 
 .nn .nn-fecho {
-  max-width: 64ch;
+  max-width: 60ch;
 }
 
 .nn-fecho b {
@@ -1477,6 +2228,92 @@ html:has(.nn-modal[open]) {
   justify-items: start;
 }
 
+/* --- voltar ao topo: o botão laranja do canto, em todas as páginas. Sem JavaScript, um link para o alto sempre à vista;
+   com ele (nn-voltar-ligado), aparece depois de 80% de uma tela, com o anel do quanto já se leu, e some quando o
+   rodapé entra na tela, para não cobrir os links dele. --- */
+
+.nn-voltar {
+  position: fixed;
+  right: clamp(14px, 2.4vw, 28px);
+  bottom: clamp(14px, 2.4vw, 28px);
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--nn-laranja);
+  color: var(--nn-branco);
+  text-decoration: none;
+  box-shadow: 0 12px 28px -10px rgba(234, 46, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.nn-voltar-ligado:not(.nn-voltar-visivel),
+.nn-voltar-ligado.nn-voltar-no-rodape {
+  opacity: 0;
+  transform: translateY(16px) scale(0.85);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.nn-voltar-anel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.nn-voltar-trilho,
+.nn-voltar-progresso {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.nn-voltar-trilho {
+  stroke: rgba(255, 255, 255, 0.28);
+}
+
+.nn-voltar-progresso {
+  stroke: var(--nn-branco);
+  stroke-linecap: round;
+}
+
+.nn-voltar:not(.nn-voltar-ligado) .nn-voltar-progresso {
+  display: none; /* sem JavaScript não há leitura medida */
+}
+
+.nn-voltar-seta {
+  position: relative;
+}
+
+.nn-voltar:hover {
+  box-shadow: 0 16px 34px -10px rgba(234, 46, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.nn-voltar:hover .nn-voltar-seta {
+  transform: translateY(-3px);
+}
+
+.nn-voltar:focus-visible {
+  outline: 3px solid var(--nn-branco);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--nn-laranja);
+}
+
+@media (max-width: 559px) {
+  .nn-voltar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media print {
+  .nn-voltar {
+    display: none;
+  }
+}
+
 /* --- rodapé --- */
 
 .nn-rodape {
@@ -1594,9 +2431,9 @@ html:has(.nn-modal[open]) {
   overflow-wrap: anywhere;
 }
 
-/* --- chamada para Como chegamos, logo depois da faixa de números do Início ---
+/* --- chamada para Como chegamos, depois das perguntas do Início ---
    Mais estreita que os outros blocos e escura nos dois temas. A imagem de fundo (Frans Post, engenho, domínio público,
-   a da época 1530) segue o padrão da foto da abertura: o degradê (--nn-foto-fusao) deixa o preto sólido do lado do texto
+   a da época 1530) segue o padrão das capas: o degradê (--nn-foto-fusao) deixa o preto sólido do lado do texto
    e a foto aparece do outro lado; um véu de 15% por cima. No celular o degradê sobe de baixo para cima: foto em cima,
    texto embaixo, sobre o preto. O botão é o laranja-escuro com texto branco (5,3:1) e o crédito fica no preto sólido. */
 
@@ -1793,50 +2630,131 @@ html:has(.nn-modal[open]) {
   max-width: 42ch;
 }
 
-.nn-historia .nn-hist-numero {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px clamp(28px, 5vw, 64px);
-  max-width: none;
-  margin-block: 6px;
-}
-
-.nn-hist-parcela {
+/* a abertura em duas colunas: a conta dos censos (o primeiro e o último, com a variação numa etiqueta entre eles) e o
+   texto à esquerda; o gráfico à direita, com as pontas marcadas; embaixo, os números de cada censo */
+.nn-hist-grade {
   display: grid;
-  align-content: start;
-  gap: 2px;
-  border-top: 3px solid var(--nn-laranja);
-  padding-top: 18px; /* a caixa do texto da serifada passa da linha em ~0,12 em: o fio fica fora dela */
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
   min-width: 0;
 }
 
+@media (min-width: 960px) {
+  .nn-hist-grade {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+  }
+}
+
+.nn-hist-resumo {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
+.nn-historia .nn-hist-eyebrow {
+  color: var(--nn-sepia);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nn-historia .nn-hist-numero {
+  display: grid;
+  gap: 6px;
+}
+
+.nn-historia .nn-hist-parcela {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: baseline;
+}
+
+/* o ano em laranja direto sobre o papel: a exceção aprovada na prévia (14 px em negrito, 4,8:1 no claro) */
+.nn-hist-ano {
+  grid-row: 1 / 3;
+  align-self: start;
+  margin-top: 14px;
+  color: var(--nn-laranja-texto);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
 .nn-historia .nn-hist-valor {
-  font-size: clamp(60px, 9vw, 116px);
-  line-height: 1.05;
+  grid-column: 2;
+  font-size: clamp(56px, 6.4vw, 84px);
+  line-height: 0.95;
   letter-spacing: -0.02em;
 }
 
 .nn-hist-rotulo {
+  grid-column: 2;
   color: var(--nn-suave);
-  font-size: 14px;
-  max-width: 24ch;
+  font-size: 15px;
+}
+
+.nn-historia .nn-hist-variacao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: center;
+  padding: 6px 0 6px 18px;
+}
+
+.nn-hist-fio {
+  width: 2px;
+  height: 34px;
+  margin-left: 6px;
+  background: linear-gradient(var(--nn-laranja), transparent);
+}
+
+.nn-hist-etiqueta {
+  justify-self: start;
+  padding: 5px 10px;
+  border: 1px solid var(--nn-laranja);
+  border-radius: 999px;
+  background: var(--nn-hist-selo);
+  color: var(--nn-laranja-texto);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .nn-historia .nn-hist-grafico {
   margin: 0;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 
-.nn-historia .nn-hist-legenda,
-.nn-historia .nn-hist-nota {
+.nn-historia .nn-ponta {
+  stroke: var(--nn-papel-antigo);
+  stroke-width: 2.5;
+}
+
+.nn-historia .nn-ponta-rotulo {
+  fill: var(--nn-tinta);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* a fonte e a nota dos estados num parágrafo só, menor */
+.nn-historia .nn-hist-legenda {
   color: var(--nn-suave);
   font-size: 13px;
+  max-width: none;
+}
+
+.nn-hist-pe {
+  border-top: 1px solid var(--nn-linha);
+  padding-top: 6px;
 }
 
 .nn-historia .nn-hist-texto {
-  font-size: 17px;
+  font-size: 16px;
+  max-width: 46ch;
 }
 
 .nn-historia .nn-tabela th {
@@ -2249,9 +3167,15 @@ html:has(.nn-modal[open]) {
     gap: 12px;
   }
 
-  /* o título da seção alinha com a borda esquerda do primeiro cartão: botão 44 + vão 12 + recuo da lista 40 */
+  /* a faixa vai de canto a canto da tela, com um respiro nas laterais; o título fica na largura padrão do site */
+  .nn-js .nn-historia .nn-hist-linha {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding-inline: clamp(24px, 4vw, 72px);
+  }
+
   .nn-js .nn-historia .nn-hist-linha > .nn-hist-secao {
-    padding-left: 96px;
+    padding-left: max(0px, calc(var(--nn-borda-cheia) - clamp(24px, 4vw, 72px)));
   }
 
   .nn-js .nn-historia .nn-faixa-seta {
@@ -2480,6 +3404,85 @@ html:has(.nn-modal[open]) {
 
   .nn-desenha.nn-visivel circle {
     animation: nn-surgir 0.4s ease-out 1.1s forwards;
+  }
+
+  /* o menu do alto: o painel e a gaveta descem com um esmaecido (@starting-style anima a abertura do <details>) */
+  .nn .nn-topo .nn-menu-grupo > summary {
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .nn-menu-seta {
+    transition: transform 0.3s ease;
+  }
+
+  .nn-menu-painel,
+  .nn-gaveta {
+    transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @starting-style {
+    .nn-menu-grupo[open] .nn-menu-painel,
+    .nn-menu-movel[open] .nn-gaveta {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  .nn .nn-menu-cartao,
+  .nn-menu-cartao::after {
+    transition: border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+  }
+
+  .nn .nn-topo-botao {
+    transition: background-color 0.2s ease;
+  }
+
+  .nn-topo-botao-seta {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .nn-menu-hamburguer,
+  .nn-menu-hamburguer::before,
+  .nn-menu-hamburguer::after {
+    transition: transform 0.25s ease, background-color 0.25s ease;
+  }
+
+  /* o menu lateral das perguntas aparece com um esmaecido depois do placar */
+  .nn-indice {
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  }
+
+  /* voltar ao topo: entra com um leve salto, a seta sobe no hover e dá dois pulinhos quando o botão aparece */
+  .nn-voltar {
+    transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1), box-shadow 0.25s ease, visibility 0.3s;
+  }
+
+  .nn-voltar:active {
+    transform: scale(0.94);
+  }
+
+  .nn-voltar-progresso {
+    transition: stroke-dashoffset 0.12s linear;
+  }
+
+  .nn-voltar-seta {
+    transition: transform 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+
+  .nn-voltar-visivel .nn-voltar-seta {
+    animation: nn-pulinho 2.4s ease-in-out 1s 2;
+  }
+
+  @keyframes nn-pulinho {
+    0%,
+    100% {
+      transform: none;
+    }
+
+    50% {
+      transform: translateY(-4px);
+    }
   }
 
   @keyframes nn-subir {

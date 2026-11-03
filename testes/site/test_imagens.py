@@ -142,7 +142,8 @@ def test_foto_aparece_na_abertura_e_o_credito_no_rodape_e_em_sobre(tmp_path, bas
     for pagina in ("index.html", "sobre/index.html", "dados/index.html"):
         arvore = Arvore((saida / pagina).read_text(encoding="utf-8"))
         links = [e for e in arvore.achar("a") if e["attrs"].get("href") == FOTO["url"]]
-        assert [Arvore.texto(e) for e in links] == [FOTO["credito"]] * (2 if pagina == "sobre/index.html" else 1), pagina
+        # em Sobre, o credito da abertura e o da capa, que usa a mesma foto
+        assert [Arvore.texto(e) for e in links] == [FOTO["credito"]] * (3 if pagina == "sobre/index.html" else 1), pagina
 
 
 def _creditos(saida: Path) -> tuple[str, str]:
@@ -169,7 +170,7 @@ def test_rotulo_e_descricao_da_imagem_no_rodape_e_em_sobre(tmp_path, base_com_fo
         f"Imagem da abertura: {FOTO['credito']} (composição de duas fotos).",
     )
     # so o nome do autor e link; o rotulo e a descricao ficam fora dele
-    for pagina, vezes in (("index.html", 1), ("sobre/index.html", 2)):
+    for pagina, vezes in (("index.html", 1), ("sobre/index.html", 3)):  # em Sobre, tambem a capa
         links = [e for e in Arvore((saida / pagina).read_text(encoding="utf-8")).achar("a") if e["attrs"].get("href") == FOTO["url"]]
         assert [Arvore.texto(e) for e in links] == [FOTO["credito"]] * vezes, pagina
 

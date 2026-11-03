@@ -19,5 +19,11 @@
 {% include "_rodape.html" %}
 {% include "_modal_autor.html" %}
 </div>
+{# Voltar ao topo: sem JavaScript, um link para o alto sempre à vista; com ele, aparece depois de 80% de uma tela, com o
+   anel do quanto já se leu, e some quando o rodapé entra na tela. #}
+<a class="nn-voltar" href="#" aria-label="{{ menu.voltar_ao_topo }}">
+  <svg class="nn-icone nn-voltar-anel" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle class="nn-voltar-trilho" cx="28" cy="28" r="25"/><circle class="nn-voltar-progresso" cx="28" cy="28" r="25"/></svg>
+  <svg class="nn-icone nn-voltar-seta" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M12 19V5m0 0l-6 6m6-6l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
 </body>
 </html>

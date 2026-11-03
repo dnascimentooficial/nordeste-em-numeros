@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set sobre_foto = true %}
 {% from "_componentes.html" import atualizacoes, legenda %}
 {% from "_modal_grafico.html" import ampliado, dialogo %}
 {% from "_epoca.html" import credito %}
@@ -33,15 +34,111 @@
 
 {% set faixa = textos.faixa %}
 <section class="nn-faixa-abertura" aria-label="{{ faixa.rotulo }}">
-{% if faixa.texto %}
+{% if faixa.numeros %}
   <ul class="nn-numeros">
 {% for n in faixa.numeros %}
-    <li class="nn-numero"><span class="nn-numero-valor">{{ n.valor }}</span><span class="nn-numero-rotulo">{{ n.rotulo }}</span><span class="nn-numero-ano">{{ n.ano }}</span></li>
+    <li class="nn-numero"><span class="nn-numero-valor">{{ n.valor }}</span><span class="nn-numero-rotulo">{{ n.rotulo }} <span class="nn-numero-ano">({{ n.ano }})</span></span><span class="nn-numero-comparacao">{% for parte in n.comparacao %}{% if parte.forte %}<b>{{ parte.texto }}</b>{% else %}{{ parte.texto }}{% endif %}{% endfor %}</span></li>
 {% endfor %}
   </ul>
-  <p class="nn-faixa-texto">{{ faixa.texto }}</p>
 {% endif %}
   <p class="nn-faixa-nota">{{ faixa.nota }}</p>
+</section>
+
+{% if placar %}
+{% set t = textos.placar %}
+<section class="nn-card nn-placar" aria-labelledby="titulo-placar">
+  <p class="nn-eyebrow">{{ t.eyebrow }}</p>
+  <h2 id="titulo-placar">{{ t.titulo }}</h2>
+  <ol class="nn-placar-lista">
+{% for linha in placar %}
+    <li><a href="#q-{{ linha.id }}"><span class="nn-placar-num" aria-hidden="true">{{ linha.numero }}</span><span class="nn-placar-tema">{{ linha.rotulo }}</span><span class="nn-so-leitor">{{ linha.mito }}</span>{% if linha.veredito %}<span class="nn-placar-veredito">{{ linha.veredito }}</span>{% else %}<span class="nn-placar-veredito nn-placar-sem-veredito">{{ t.sem_veredito }}</span>{% endif %}<span class="nn-placar-ir" aria-hidden="true">→</span></a></li>
+{% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+{% set r = textos.perguntas_rotulos %}
+{% set s = textos.saidas %}
+<section class="nn-pagina nn-editorial" id="resumo" aria-label="As perguntas">
+  <nav class="nn-indice" aria-label="{{ r.indice }}">
+    <p class="nn-indice-titulo" aria-hidden="true">{{ r.indice }}</p>
+    <ol>
+{% for p in perguntas %}
+      <li><a href="#q-{{ p.id }}"><span class="nn-indice-num" aria-hidden="true">{{ "%02d"|format(loop.index) }}</span><span class="nn-indice-texto"><b>{{ p.rotulo }}</b><small>{{ p.mito }}</small></span></a></li>
+{% endfor %}
+    </ol>
+  </nav>
+  <div class="nn-folha">
+{{ legenda(siglas, r.legenda_siglas) }}
+{% for p in perguntas %}
+
+    <article class="nn-capitulo{% if loop.index is even %} nn-capitulo-invertido{% endif %}" id="q-{{ p.id }}">
+      <p class="nn-eyebrow"><span class="nn-capitulo-num">{{ "%02d"|format(loop.index) }}</span> / {{ p.rotulo }}</p>
+      <h2>{{ p.frase_feita }}</h2>
+{% if p.fecho %}
+      <p class="nn-fecho"><b>No frigir dos ovos:</b> {{ p.fecho }}</p>
+{% endif %}
+      <div class="nn-pergunta-corpo">
+{% if p.graficos %}
+{{ grafico(p.graficos[0], p, textos.ampliar) }}
+{% endif %}
+        <div class="nn-pergunta-texto">
+{% if p.explicacao %}
+          <p class="nn-muted">{{ p.explicacao }}</p>
+{% endif %}
+          <p class="nn-frase">{{ p.lide }}</p>
+        </div>
+      </div>
+{% set resto = p.graficos[1:] %}
+{% if resto %}
+      <details class="nn-mais-graficos">
+        <summary>{% if resto|length == 1 %}{{ r.mais_um_grafico }}{% else %}{{ r.mais_graficos|replace("[n]", resto|length|string) }}{% endif %}</summary>
+        <div class="nn-grade">
+{% for g in resto %}
+{{ grafico(g, p, textos.ampliar) }}
+{% endfor %}
+        </div>
+      </details>
+{% endif %}
+{% if p.tabela %}
+{% set varios = p.graficos|length > 1 %}
+      <details>
+        <summary>Ver os números {{ "destes gráficos" if varios else "deste gráfico" }}</summary>
+        <div class="nn-tabela">
+          <table>
+            <thead><tr>{% if varios %}<th scope="col">Gráfico</th>{% endif %}<th scope="col">Ano</th><th scope="col">Série</th><th scope="col" class="nn-num">Valor</th></tr></thead>
+            <tbody>
+{% for linha in p.tabela %}
+              <tr>{% if varios %}<td>{{ linha.grafico }}</td>{% endif %}<td>{{ linha.ano }}</td><td>{{ linha.serie }}</td><td class="nn-num">{{ linha.valor }}</td></tr>
+{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </details>
+{% endif %}
+      <details class="nn-fonte-metodo">
+        <summary>{{ r.fonte_metodo }}</summary>
+        <div class="nn-fonte-metodo-corpo">
+{% if p.alerta %}
+          <p class="nn-muted nn-alerta">{{ p.alerta }}</p>
+{% endif %}
+          <div class="nn-fonte">
+{% for linha in p.fonte %}
+            <span>{{ linha }}</span>
+{% endfor %}
+{{ atualizacoes(p.atualizacoes) }}          </div>
+        </div>
+      </details>
+      <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ p.rotulo }}">
+{% if p.card %}
+        <a class="nn-saida-card" href="/cards/{{ p.card }}/">{{ s.card }}</a>
+{% endif %}
+        <a href="/estados/">{{ s.estados }}</a>
+        <a href="/explorar/">{{ s.explorar }}</a>
+      </nav>
+    </article>
+{% endfor %}
+  </div>
 </section>
 
 {% if chamada_historia %}
@@ -56,57 +153,6 @@
   <p class="nn-chamada-credito">{{ c.credito }}: {{ credito(c.imagem) }}.</p>
 </section>
 {% endif %}
-
-<section class="nn-pagina" id="resumo" aria-label="As perguntas">
-{{ legenda() }}
-{% for p in perguntas %}
-
-  <article class="nn-card" id="q-{{ p.id }}">
-    <p class="nn-eyebrow">{{ p.rotulo }}</p>
-    <h2>{{ p.frase_feita }}</h2>
-{% if p.explicacao %}
-    <p class="nn-muted">{{ p.explicacao }}</p>
-{% endif %}
-    <p class="nn-frase">{{ p.lide }}</p>
-{% if p.graficos|length > 1 %}
-    <div class="nn-grade">
-{% for g in p.graficos %}
-{{ grafico(g, p, textos.ampliar) }}
-{% endfor %}
-    </div>
-{% elif p.graficos %}
-{{ grafico(p.graficos[0], p, textos.ampliar) }}
-{% endif %}
-{% if p.fecho %}
-    <p class="nn-fecho"><b>No frigir dos ovos:</b> {{ p.fecho }}</p>
-{% endif %}
-{% if p.alerta %}
-    <p class="nn-muted nn-alerta">{{ p.alerta }}</p>
-{% endif %}
-{% if p.tabela %}
-{% set varios = p.graficos|length > 1 %}
-    <details>
-      <summary>Ver os números {{ "destes gráficos" if varios else "deste gráfico" }}</summary>
-      <div class="nn-tabela">
-        <table>
-          <thead><tr>{% if varios %}<th scope="col">Gráfico</th>{% endif %}<th scope="col">Ano</th><th scope="col">Série</th><th scope="col" class="nn-num">Valor</th></tr></thead>
-          <tbody>
-{% for linha in p.tabela %}
-            <tr>{% if varios %}<td>{{ linha.grafico }}</td>{% endif %}<td>{{ linha.ano }}</td><td>{{ linha.serie }}</td><td class="nn-num">{{ linha.valor }}</td></tr>
-{% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </details>
-{% endif %}
-    <div class="nn-fonte">
-{% for linha in p.fonte %}
-      <span>{{ linha }}</span>
-{% endfor %}
-{{ atualizacoes(p.atualizacoes) }}    </div>
-  </article>
-{% endfor %}
-</section>
 {% for p in perguntas %}
 {% for g in p.graficos %}
 {{ ampliado(p, g, textos.ampliar) }}

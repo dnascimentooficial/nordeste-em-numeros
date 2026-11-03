@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% set sobre_foto = true %}
 {% from "_epoca.html" import epoca %}
+{% from "_componentes.html" import capa %}
 {% block atributos_main %} class="nn-historia"{% endblock %}
 {# a serifada dos titulos so existe nesta pagina: o estilo.css declara a fonte, e so aqui ela e pedida (spec, secao 7) #}
 {# o nn-js.js liga a classe nn-js antes do primeiro desenho (o site.js e defer): sem ela a lista inteira dos artigos aparece
@@ -10,39 +12,49 @@
 {% endblock %}
 {% block conteudo %}
 {% set h = historia %}
+{{ capa(capas["como-chegamos"], h.abertura.titulo, h.abertura.subtitulo, "nn-hist-titulo", "nn-hist-subtitulo") }}
 {% if h.previa %}
 <p class="nn-hist-previa" role="note"><strong>{{ h.previa }}.</strong> Só publico esta página depois da revisão do texto.</p>
 {% endif %}
-<section class="nn-hist-abertura nn-hist-bloco" aria-labelledby="titulo-principal">
-  <h1 class="nn-hist-titulo" id="titulo-principal">{{ h.abertura.titulo }}</h1>
-  <p class="nn-hist-subtitulo">{{ h.abertura.subtitulo }}</p>
-  <p class="nn-hist-numero">
+{# a abertura em duas colunas: a conta dos censos (o primeiro e o último, com a variação entre eles) e o texto à
+   esquerda, o gráfico à direita; embaixo, os números de cada censo #}
+<section class="nn-hist-abertura nn-hist-bloco" aria-labelledby="titulo-abertura">
+  <div class="nn-hist-grade">
+    <div class="nn-hist-resumo">
+      <p class="nn-hist-eyebrow" id="titulo-abertura">A conta dos censos</p>
+      <div class="nn-hist-numero">
 {% for n in h.numeros %}
-    <span class="nn-hist-parcela"><strong class="nn-hist-valor">{{ n.valor }}</strong> <span class="nn-hist-rotulo">{% if loop.first %}dos brasileiros viviam no Nordeste em {{ n.ano }}{% else %}em {{ n.ano }}{% endif %}</span></span>
+{% if not loop.first and h.variacao %}
+        <p class="nn-hist-variacao"><span class="nn-hist-fio" aria-hidden="true"></span><span class="nn-hist-etiqueta">{{ h.variacao.pontos }} pontos em {{ h.variacao.anos }} anos</span></p>
+{% endif %}
+        <p class="nn-hist-parcela"><span class="nn-hist-ano">{{ n.ano }}</span> <strong class="nn-hist-valor">{{ n.valor }}</strong> <span class="nn-hist-rotulo">{% if loop.first %}dos brasileiros viviam no Nordeste{% else %}no Censo de {{ n.ano }}{% endif %}</span></p>
 {% endfor %}
-  </p>
-  <figure class="nn-hist-grafico">
-    <div class="nn-graf" id="{{ h.grafico.id }}">
-      <div class="nn-graf-largo">{{ h.grafico.largo|safe }}</div>
-      <div class="nn-graf-estreito">{{ h.grafico.estreito|safe }}</div>
+      </div>
+      <p class="nn-hist-texto">{{ h.abertura.texto }}</p>
     </div>
-    <figcaption class="nn-hist-legenda">{{ h.abertura.legenda }}</figcaption>
-  </figure>
-  <p class="nn-hist-nota">{{ h.abertura.nota_estados }}</p>
-  <details>
-    <summary>Ver os números dos censos</summary>
-    <div class="nn-tabela">
-      <table>
-        <thead><tr><th scope="col">Censo</th><th scope="col" class="nn-num">Nordeste</th><th scope="col" class="nn-num">Brasil</th><th scope="col" class="nn-num">Parcela do Nordeste</th><th scope="col">Fonte</th></tr></thead>
-        <tbody>
+    <figure class="nn-hist-grafico">
+      <div class="nn-graf" id="{{ h.grafico.id }}">
+        <div class="nn-graf-largo">{{ h.grafico.largo|safe }}</div>
+        <div class="nn-graf-estreito">{{ h.grafico.estreito|safe }}</div>
+      </div>
+      <figcaption class="nn-hist-legenda">{{ h.abertura.legenda }} <span class="nn-hist-nota">{{ h.abertura.nota_estados }}</span></figcaption>
+    </figure>
+  </div>
+  <div class="nn-hist-pe">
+    <details>
+      <summary>Ver os números dos censos</summary>
+      <div class="nn-tabela">
+        <table>
+          <thead><tr><th scope="col">Censo</th><th scope="col" class="nn-num">Nordeste</th><th scope="col" class="nn-num">Brasil</th><th scope="col" class="nn-num">Parcela do Nordeste</th><th scope="col">Fonte</th></tr></thead>
+          <tbody>
 {% for linha in h.tabela %}
-          <tr><td>{{ linha.ano }}</td><td class="nn-num">{{ linha.nordeste }}</td><td class="nn-num">{{ linha.brasil }}</td><td class="nn-num">{{ linha.parcela }}</td><td>{{ linha.fonte }}</td></tr>
+            <tr><td>{{ linha.ano }}</td><td class="nn-num">{{ linha.nordeste }}</td><td class="nn-num">{{ linha.brasil }}</td><td class="nn-num">{{ linha.parcela }}</td><td>{{ linha.fonte }}</td></tr>
 {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </details>
-  <p class="nn-hist-texto">{{ h.abertura.texto }}</p>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
 </section>
 
 <section class="nn-hist-linha" aria-labelledby="titulo-linha">

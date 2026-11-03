@@ -1,14 +1,60 @@
-<header class="nn-topo">
-  <div class="nn-hero-topo">
-    <div class="nn-topo-titulo">
-      <a class="nn-marca" href="/">Nordeste em Números</a>
-      <p class="nn-autoria">por <a href="{{ autor_url }}"><strong>{{ autor.nome }}</strong></a></p>
-    </div>
-    <div class="nn-topo-linha" aria-hidden="true"></div>
-    <nav class="nn-menu" aria-label="Páginas do site">
-{% for item in menu %}
-      <a href="{{ item.rota }}"{% if item.chave == pagina.chave %} aria-current="page"{% endif %}>{{ item.rotulo }}</a>
+{# O menu do alto (textos.yaml, menu). No computador: a marca, a barra preta pendurada no topo com Início, os grupos
+   Histórias e Dados (<details name="nn-menu">, que abrem sem JavaScript; o painel desce como continuação da barra) e
+   Sobre os dados, e o botão laranja. Abaixo de 1100 px a barra some e o botão de menu abre a gaveta, com os grupos em
+   sanfona. `sobre_foto`: a página começa por uma abertura ou capa escura, que sobe por baixo do menu. #}
+{% set atual = pagina.chave %}
+{% macro corrente(chave) %}{% if chave == atual %} aria-current="page"{% endif %}{% endmacro %}
+{% macro seta() %}<svg class="nn-icone nn-menu-seta" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endmacro %}
+{% macro icone(chave) %}
+{% if chave == "estados" %}<svg class="nn-icone" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+{%- elif chave == "explorar" %}<svg class="nn-icone" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M3 19h18M5 15l4-5 4 3 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+{%- elif chave == "dados" %}<svg class="nn-icone" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+{%- elif chave == "cards" %}<svg class="nn-icone" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 15l3-3 2 2 3-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+{%- endif %}
+{% endmacro %}
+{% set m = menu %}
+<header class="nn-topo{% if sobre_foto is defined and sobre_foto %} nn-topo-sobre-foto{% endif %}">
+  <div class="nn-topo-barra">
+    <a class="nn-marca" href="/">Nordeste em Números</a>
+    <div class="nn-topo-alca">
+      <nav class="nn-menu" aria-label="{{ m.rotulo }}">
+        <a href="/"{{ corrente("index") }}>{{ m.inicio }}</a>
+{% for g in m.grupos %}
+        <details class="nn-menu-grupo" name="nn-menu"{% if g.itens|selectattr("chave", "equalto", atual)|list %} data-atual{% endif %}>
+          <summary>{{ g.rotulo }}{{ seta() }}</summary>
+          <div class="nn-menu-painel nn-menu-painel-{{ g.itens|length }}">
+{% for c in g.itens %}
+            <a class="nn-menu-cartao nn-menu-cartao-{{ c.chave }}" href="{{ c.rota }}"{{ corrente(c.chave) }}>{% if c.chave != "como-chegamos" %}<span class="nn-menu-icone">{{ icone(c.chave) }}</span>{% endif %}<span class="nn-menu-cartao-titulo">{{ c.titulo }}</span><span class="nn-menu-cartao-texto">{{ c.texto }}</span></a>
 {% endfor %}
-    </nav>
+          </div>
+        </details>
+{% endfor %}
+        <a href="/sobre/"{{ corrente("sobre") }}>{{ m.sobre }}</a>
+      </nav>
+    </div>
+    <div class="nn-topo-direita">
+{% if m.com_historia and atual != "como-chegamos" %}
+      <a class="nn-topo-botao" href="/como-chegamos/"><span class="nn-topo-botao-longo">{{ m.botao_historia.antes }}</span> {{ m.botao_historia.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
+{% else %}
+      <a class="nn-topo-botao" href="/cards/">{{ m.botao_cards.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
+{% endif %}
+      <details class="nn-menu-movel">
+        <summary aria-label="{{ m.abrir }}"><span class="nn-menu-hamburguer" aria-hidden="true"></span></summary>
+        <nav class="nn-gaveta" aria-label="{{ m.rotulo }}">
+          <a href="/"{{ corrente("index") }}>{{ m.inicio }}</a>
+{% for g in m.grupos %}
+          <details name="nn-gaveta"{% if g.itens|selectattr("chave", "equalto", atual)|list %} data-atual{% endif %}>
+            <summary>{{ g.rotulo }}{{ seta() }}</summary>
+            <div class="nn-gaveta-itens">
+{% for c in g.itens %}
+              <a href="{{ c.rota }}"{{ corrente(c.chave) }}>{{ c.titulo }}</a>
+{% endfor %}
+            </div>
+          </details>
+{% endfor %}
+          <a href="/sobre/"{{ corrente("sobre") }}>{{ m.sobre }}</a>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>

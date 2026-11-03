@@ -178,7 +178,7 @@ _CHAVES_DO_CARD = {
 }
 _CHAVES_DA_PERGUNTA = {
     "obrigatorias": {"id", "rotulo", "frase_feita", "lide", "graficos", "fecho", "fonte"},
-    "opcionais": {"explicacao", "alerta"},
+    "opcionais": {"explicacao", "alerta", "card"},  # card: id em cards.yaml (o botao "Baixar o card" da pergunta)
 }
 _CHAVES_DO_GRAFICO = {
     "obrigatorias": {"id", "casas", "linhas"},
@@ -262,6 +262,16 @@ def _validar_perguntas(perguntas: object) -> dict[str, dict]:
     return graficos
 
 
+def _validar_cards_das_perguntas(perguntas: list[dict], cards: list[dict]) -> None:
+    """O `card` de cada pergunta, quando existe, e o id de um card de cards.yaml."""
+    ids = {card["id"] for card in cards}
+    for pergunta in perguntas:
+        if "card" in pergunta and pergunta["card"] not in ids:
+            raise ErroConteudo(
+                f"pergunta {pergunta['id']}: card {pergunta['card']!r} nao esta em cards.yaml (ids: {', '.join(sorted(ids))})."
+            )
+
+
 def _validar_cards(cards: object, graficos: dict[str, dict]) -> None:
     """Valida os cards e troca `grafico` por id pelo dicionario do grafico da pergunta (o inline fica como esta)."""
     if not isinstance(cards, list):
@@ -317,6 +327,7 @@ def carregar_conteudo(pasta: Path) -> Conteudo:
     destaques, perguntas, cards, textos = (_ler(pasta, n) for n in ("destaques", "perguntas", "cards", "textos"))
     _validar_destaques(destaques)
     _validar_cards(cards, _validar_perguntas(perguntas))
+    _validar_cards_das_perguntas(perguntas, cards)
     if not isinstance(textos, dict):
         raise ErroConteudo("textos.yaml: esperava um mapa.")
     for nome, parte in (("perguntas.yaml", perguntas), ("cards.yaml", cards), ("textos.yaml", textos)):

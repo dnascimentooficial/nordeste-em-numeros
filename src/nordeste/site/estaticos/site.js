@@ -1095,13 +1095,130 @@
     if (inicial) mostrar(inicial.li, inicial.marco);
   }
 
-  /* --- menu em abas: no celular, a aba da página aberta fica à vista ------------------------------------------ */
+  /* --- menu do alto ------------------------------------------------------------------------------------------- */
 
-  function centralizarAba() {
+  /* Histórias e Dados (e, no celular, a gaveta) são <details>: abrem e fecham sem JavaScript, e o atributo name deixa
+     um grupo aberto por vez onde ele já vale. Aqui: Esc fecha o que estiver aberto e devolve o foco ao summary, o
+     clique fora fecha, e um grupo aberto fecha o outro também onde o name ainda não vale. */
+  function ligarMenu() {
     const menu = document.querySelector('.nn-menu');
-    const atual = menu && menu.querySelector('[aria-current="page"]');
-    if (!atual || menu.scrollWidth <= menu.clientWidth) return;
-    menu.scrollLeft = atual.offsetLeft - (menu.clientWidth - atual.offsetWidth) / 2;
+    if (!menu) return;
+    const topo = menu.closest('.nn-topo');
+    const grupos = [...topo.querySelectorAll('.nn-menu-grupo, .nn-menu-movel')];
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key !== 'Escape') return;
+      const abertos = grupos.filter((d) => d.open);
+      if (!abertos.length) return;
+      abertos.forEach((d) => { d.open = false; });
+      abertos[0].querySelector(':scope > summary').focus();
+    });
+    document.addEventListener('click', (evento) => {
+      grupos.forEach((d) => { if (d.open && !d.contains(evento.target)) d.open = false; });
+    });
+    topo.querySelectorAll('details[name]').forEach((d) => {
+      d.addEventListener('toggle', () => {
+        if (!d.open) return;
+        topo.querySelectorAll('details[name]').forEach((outro) => {
+          if (outro !== d && outro.open && outro.getAttribute('name') === d.getAttribute('name')) outro.open = false;
+        });
+      });
+    });
+  }
+
+  /* --- Início: o menu lateral das perguntas ------------------------------------------------------------------- */
+
+  /* Sem JavaScript o menu fica sempre à vista e os links são âncoras. Com ele (nn-indice-ligado), o menu aparece
+     depois que o placar sai da tela (nn-indice-visivel) e o item da pergunta em leitura ganha aria-current; na faixa
+     de atalhos (até 1100 px) a pílula dela rola para dentro da vista. A posição sai do scroll (passive), um cálculo
+     por quadro, sem setInterval. */
+  function ligarIndice() {
+    const indice = document.querySelector('.nn-indice');
+    if (!indice) return;
+    const placar = document.querySelector('.nn-placar');
+    const links = [...indice.querySelectorAll('a[href^="#q-"]')];
+    const capitulos = links.map((a) => document.getElementById(a.getAttribute('href').slice(1)));
+    const faixa = window.matchMedia('(max-width: 1100px)');
+    const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    let atual = -1;
+    let pedido = false;
+
+    function marcar() {
+      pedido = false;
+      const linha = window.innerHeight * 0.3;
+      let lendo = 0;
+      capitulos.forEach((capitulo, i) => {
+        if (capitulo && capitulo.getBoundingClientRect().top <= linha) lendo = i;
+      });
+      if (lendo !== atual) {
+        links.forEach((a, i) => {
+          if (i === lendo) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+        if (faixa.matches && atual !== -1 && indice.scrollWidth > indice.clientWidth) {
+          indice.scrollTo({ left: links[lendo].offsetLeft - 16, behavior: movimento.matches ? 'smooth' : 'auto' });
+        }
+        atual = lendo;
+      }
+      indice.classList.toggle('nn-indice-visivel', !placar || placar.getBoundingClientRect().bottom < 80);
+    }
+
+    function pedir() {
+      if (pedido) return;
+      pedido = true;
+      window.requestAnimationFrame(marcar);
+    }
+
+    indice.classList.add('nn-indice-ligado');
+    marcar();
+    window.addEventListener('scroll', pedir, { passive: true });
+    window.addEventListener('resize', pedir);
+  }
+
+  /* --- voltar ao topo ----------------------------------------------------------------------------------------- */
+
+  /* Sem JavaScript, o link href="#" sempre à vista. Com ele, o botão aparece depois de 80% de uma tela, o anel mostra
+     quanto da página já foi lido (stroke-dashoffset pelo CSSOM: a CSP barra o atributo style no HTML, não isto), some
+     enquanto o rodapé está na tela e rola suave até o alto (na hora, com movimento reduzido), levando o foco à marca. */
+  function ligarVoltar() {
+    const botao = document.querySelector('.nn-voltar');
+    if (!botao) return;
+    const anel = botao.querySelector('.nn-voltar-progresso');
+    const volta = 2 * Math.PI * Number(anel.getAttribute('r'));
+    const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let pedido = false;
+    anel.style.strokeDasharray = String(volta);
+
+    function atualizar() {
+      pedido = false;
+      const raiz = document.documentElement;
+      const maximo = raiz.scrollHeight - window.innerHeight;
+      const lido = maximo > 0 ? Math.min(1, window.scrollY / maximo) : 0;
+      anel.style.strokeDashoffset = String(volta * (1 - lido));
+      botao.classList.toggle('nn-voltar-visivel', window.scrollY > window.innerHeight * 0.8);
+    }
+
+    function pedir() {
+      if (pedido) return;
+      pedido = true;
+      window.requestAnimationFrame(atualizar);
+    }
+
+    const rodape = document.querySelector('.nn-rodape');
+    if (rodape && 'IntersectionObserver' in window) {
+      new IntersectionObserver((entradas) => {
+        entradas.forEach((entrada) => botao.classList.toggle('nn-voltar-no-rodape', entrada.isIntersecting));
+      }).observe(rodape);
+    }
+    botao.addEventListener('click', (evento) => {
+      evento.preventDefault();
+      window.scrollTo({ top: 0, behavior: reduzido.matches ? 'auto' : 'smooth' });
+      const marca = document.querySelector('.nn-marca');
+      if (marca) marca.focus({ preventScroll: true });
+    });
+    botao.classList.add('nn-voltar-ligado');
+    atualizar();
+    window.addEventListener('scroll', pedir, { passive: true });
+    window.addEventListener('resize', pedir);
   }
 
   /* --- movimento ---------------------------------------------------------------------------------------------- */
@@ -1135,8 +1252,9 @@
     });
   }
 
-  /* Números da abertura (texto do hero e faixa de números) contando até o valor que já está escrito no HTML. */
-  const TEXTOS_COM_NUMEROS = '.nn-hero-intro, .nn-faixa-texto, .nn-numero-valor';
+  /* Números da abertura (texto do hero e faixa de números, com as comparações) contando até o valor que já está
+     escrito no HTML. */
+  const TEXTOS_COM_NUMEROS = '.nn-hero-intro, .nn-numero-comparacao, .nn-numero-valor';
 
   function contarNumeros() {
     const alvos = [];
@@ -1211,7 +1329,9 @@
   }
 
   function iniciar() {
-    tentar(centralizarAba);
+    tentar(ligarMenu);
+    tentar(ligarIndice);
+    tentar(ligarVoltar);
     tentar(() => document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica));
     tentar(ligarAmpliar);
     tentar(ligarAutor);

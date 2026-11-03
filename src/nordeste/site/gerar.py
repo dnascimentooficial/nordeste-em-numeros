@@ -30,7 +30,7 @@ from nordeste.site.explorar import (
     IndicadorExplorar, dados_explorar, pontos, pontos_do_indicador, referencias, tabela_do_territorio, vistas_estados,
 )
 from nordeste.site.formatacao import numero
-from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico
+from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico, siglas_dos_governos
 from nordeste.site.historia import (
     PESO_MAXIMO_DA_EPOCA,
     PESO_MAXIMO_DO_CARTAO,
@@ -53,16 +53,22 @@ URL_DO_AUTOR = "https://dnascimento.com.br"
 LICENCA = "https://creativecommons.org/licenses/by/4.0/"
 PASTA_MODELOS = Path(__file__).parent / "modelos"
 PASTA_ESTATICOS = Path(__file__).parent / "estaticos"  # estilo, script, fontes, foto e .htaccess, copiados na raiz do site
-ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js")  # pedidos com ?v=<hash>: CDN e navegador nao servem a versao velha
+ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js")
+ARQUIVOS_ENXUTOS = ("estilo.css", "site.js")  # publicados sem comentarios nem recuo (_enxuto)  # pedidos com ?v=<hash>: CDN e navegador nao servem a versao velha
 
 
 def versoes_dos_estaticos() -> dict[str, str]:
     """`arquivo -> endereco com ?v=` (oito primeiros caracteres do sha256 do conteudo): cada versao nova do CSS ou do JS
     ganha um endereco novo, e nenhum cache entrega a antiga com o HTML novo (a Hostinger fez isso duas vezes)."""
-    return {
-        nome: f"/{nome}?v={hashlib.sha256((PASTA_ESTATICOS / nome).read_bytes()).hexdigest()[:8]}"
-        for nome in ARQUIVOS_VERSIONADOS
-    }
+    return {nome: f"/{nome}?v={hashlib.sha256(_publicado(nome)).hexdigest()[:8]}" for nome in ARQUIVOS_VERSIONADOS}
+
+
+def _publicado(nome: str) -> bytes:
+    """Os bytes do estatico como vao para o site: o estilo.css e o site.js enxutos (_enxuto), o resto como esta."""
+    arquivo = PASTA_ESTATICOS / nome
+    if nome in ARQUIVOS_ENXUTOS:
+        return _enxuto(arquivo.read_text(encoding="utf-8")).encode("utf-8")
+    return arquivo.read_bytes()
 CONTORNO = ("site", "nordeste-contorno.svg")  # em metadados/; ferramentas/gerar_contorno.py o gera
 OG = (1200, 630)  # imagem de compartilhamento das paginas
 COMPARTILHAR = "compartilhar.jpg"  # em estaticos/: a imagem de compartilhamento de todas as paginas que nao sao de card
@@ -85,7 +91,15 @@ ARQUIVOS_DE_DADOS = ("base_nordeste.csv", "derivados.csv")
 EXPLORAR_INICIAL = ("pib_pc", "NE")  # a vista que ja vem desenhada no HTML: indicador e territorio
 TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos modelos
     "abertura": {"eyebrow", "titulo", "destaque", "intro"},
-    "faixa": {"rotulo", "id", "numeros", "texto", "nota"},  # + `condicao`, opcional (Ruling S-V)
+    "faixa": {"rotulo", "id", "numeros", "nota"},  # + `condicao`, opcional (Ruling S-V)
+    "placar": {"eyebrow", "titulo", "sem_veredito"},  # o placar das perguntas, logo depois da faixa
+    "perguntas_rotulos": {"mais_um_grafico", "mais_graficos", "fonte_metodo", "legenda_siglas", "indice"},
+    "saidas": {"rotulo", "card", "estados", "explorar"},  # os links do pe de cada pergunta
+    "menu": {  # o menu do alto de todas as paginas (_cabecalho.html)
+        **dict.fromkeys(("rotulo", "abrir", "inicio", "historias", "dados", "sobre", "voltar_ao_topo")),
+        "cartoes": {chave: {"titulo", "texto"} for chave in ("como-chegamos", "cards", "estados", "explorar", "dados")},
+        "botao_historia": {"antes", "texto"}, "botao_cards": {"texto"},
+    },
     "chamada_historia": {"eyebrow", "titulo", "texto", "botao", "credito"},  # o bloco do Inicio que leva a Como chegamos
     "compartilhamento": {"alt", "credito"},  # a imagem de compartilhamento das paginas (estaticos/compartilhar.jpg)
     "ampliar": {"botao", "rotulo", "fechar", "gire", "quebra"},
@@ -133,6 +147,24 @@ EPOCA_DA_CHAMADA = "1530"  # a epoca cuja imagem (e credito) fundo o bloco do In
 MARCADORES_DA_CHAMADA = ("ano_inicial", "parcela_inicial", "ano_final", "parcela_final")  # no titulo, entre [colchetes]
 PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site so com a pagina
 AVISO_DA_PREVIA = "Prévia: texto provisório"
+# A capa (seção cheia, com a imagem por baixo do menu) de cada página interna: o arquivo em estaticos/historia/, de uma
+# época ou de um marco do historia.yaml (o crédito vem de lá). Sem a página histórica, ou se o historia.yaml não tiver
+# mais essa imagem, a capa usa a foto da abertura; sem ela também, fica preta. None: sempre a foto da abertura. O
+# estilo.css tem uma classe nn-capa-<nome do arquivo sem .webp> para cada uma (a CSP não deixa pôr a imagem no HTML).
+CAPAS = {
+    "como-chegamos": "1530.webp",
+    "estados": "1964.webp",
+    "explorar": "1950.webp",
+    "cards": "marco-1932.webp",
+    "dados": "marco-1934.webp",
+    "sobre": None,
+}
+CLASSE_DA_CAPA_DA_FOTO = "nn-capa-abertura"
+# os marcadores dos textos do menu (textos.yaml, menu.cartoes): cada um aparece uma vez no texto do seu cartao
+MARCADORES_DO_MENU = {"como-chegamos": "epocas", "cards": "cards"}
+POR_EXTENSO = ("zero", "uma", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez")  # épocas, frases
+SERA = re.compile(r"\s*Será\?\s*$")  # o "Será?" do fim da frase feita, que o placar e o menu lateral deixam de fora
+NEGRITO = "**"  # na comparacao da faixa de numeros, o trecho entre ** e ** sai em negrito
 
 
 def paginas_do_site(com_historia: bool) -> tuple[Pagina, ...]:
@@ -274,13 +306,26 @@ def _atualizacoes(dados: DadosSite, indicadores: list[str]) -> list[dict]:
     return atualizacoes
 
 
+def sem_o_sera(frase_feita: str) -> str:
+    """A frase feita sem o "Será?" do fim: `“O Nordeste não sai do lugar.” Será?` -> `“O Nordeste não sai do lugar.”`."""
+    return SERA.sub("", frase_feita)
+
+
+def veredito(fecho: str | None) -> str | None:
+    """O fecho como resposta solta, no placar: a primeira letra em maiuscula (o fecho continua "No frigir dos ovos: ...")."""
+    return fecho[:1].upper() + fecho[1:] if fecho else None
+
+
 def _pergunta(dados: DadosSite, destaques: dict[str, Destaque], p: dict, com_fecho: bool) -> dict:
     graficos = [g for g in (_montar_grafico(dados, destaques, g) for g in p["graficos"]) if g is not None]
     indicadores = list(dict.fromkeys(l["indicador"] for g in p["graficos"] for l in g["linhas"]))
+    frase_feita = preencher(p["frase_feita"], destaques)
     return {
         "id": p["id"],
         "rotulo": preencher(p["rotulo"], destaques),
-        "frase_feita": preencher(p["frase_feita"], destaques),
+        "frase_feita": frase_feita,
+        "mito": sem_o_sera(frase_feita),
+        "card": p.get("card"),  # o gerador apaga o card que nao foi publicado (_ligar_cards)
         "explicacao": preencher(p["explicacao"], destaques) if "explicacao" in p else None,
         "lide": preencher(p["lide"], destaques),
         "graficos": graficos,
@@ -310,6 +355,15 @@ def _perguntas(dados: DadosSite, destaques: dict[str, Destaque], conteudo: Conte
             suprimidas.append(p["id"])
         publicadas.append(_pergunta(dados, destaques, p, com_fecho))
     return publicadas, suprimidas
+
+
+def _placar(perguntas: list[dict]) -> list[dict]:
+    """Uma linha por pergunta publicada, na ordem da pagina, montada das proprias perguntas (nenhum texto paralelo): o
+    numero, o tema, a frase feita sem o "Será?" e o veredito, que e o fecho (None quando ele saiu)."""
+    return [
+        {"id": p["id"], "numero": f"{i:02d}", "rotulo": p["rotulo"], "mito": p["mito"], "veredito": veredito(p["fecho"])}
+        for i, p in enumerate(perguntas, 1)
+    ]
 
 
 def _cards_suprimidos(conteudo: Conteudo, destaques: dict[str, Destaque]) -> list[str]:
@@ -459,12 +513,17 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
     )
     eixo = (primeiro.ano, ultimo.ano + 1)
     numeros = [{"valor": _parcela_em_texto(p), "ano": p.ano} for p in dict.fromkeys((primeiro, ultimo))]
+    # a queda e o intervalo da etiqueta entre os dois numeros: das parcelas como a pagina as mostra (46,7% - 26,9%)
+    queda = round(primeiro.valor, 1) - round(ultimo.valor, 1)
     return {
         "numeros": numeros,
+        "variacao": {  # "−19,8 pontos em 150 anos": o sinal de menos tipografico na queda, o de mais na alta
+            "pontos": ("−" if queda > 0 else "+") + numero(abs(queda), 1), "anos": ultimo.ano - primeiro.ano,
+        } if len(numeros) == 2 else None,
         "grafico": {
             "id": "g-censos",
-            "largo": grafico_linhas(linhas, cfg, governos, **LARGO, eixo=eixo, emendar=True),
-            "estreito": grafico_linhas(linhas, cfg, governos, **ESTREITO, eixo=eixo, emendar=True),
+            "largo": grafico_linhas(linhas, cfg, governos, **LARGO, eixo=eixo, emendar=True, pontas=True),
+            "estreito": grafico_linhas(linhas, cfg, governos, **ESTREITO, eixo=eixo, emendar=True, pontas=True),
         },
         "tabela": [
             {"ano": ano, "nordeste": numero(nordeste, 0), "brasil": numero(brasil, 0),
@@ -732,6 +791,11 @@ def _validar_textos(textos: object, paginas: tuple[Pagina, ...] = PAGINAS) -> No
     if "foto" in textos:
         _validar_foto(textos["foto"])
     _validar_autor(textos["autor"])
+    _validar_menu(textos["menu"])
+    rotulos = textos["perguntas_rotulos"]
+    if not isinstance(rotulos["mais_graficos"], str) or rotulos["mais_graficos"].count("[n]") != 1:
+        raise ErroConteudo("textos.yaml: perguntas_rotulos.mais_graficos usa o marcador [n] (quantos gráficos) uma vez; "
+                           f"veio {rotulos['mais_graficos']!r}.")
 
 
 def _validar_foto(foto: object) -> None:
@@ -863,23 +927,126 @@ def _paragrafos_da_abertura(itens: list, destaques: dict[str, Destaque]) -> tupl
 def _faixa(faixa: dict, destaques: dict[str, Destaque]) -> tuple[dict, list[str]]:
     """A faixa de numeros da abertura pronta para preencher e os ids que sairam (`[]` ou o id da faixa).
 
-    Os numeros grandes e o paragrafo valem juntos: saem se a condicao e falsa ou se algum texto cita destaque ausente
-    da base. A nota (de onde vem o dado, o que as faixas de governo nao dizem) nao tem numero e fica sempre.
+    Os numeros grandes e as comparacoes deles valem juntos: saem se a condicao e falsa ou se algum texto cita destaque
+    ausente da base. A nota (de onde vem o dado, o que as faixas de governo nao dizem) nao tem numero e fica sempre.
     """
     numeros = faixa["numeros"]
     formato_ok = isinstance(numeros, list) and numeros and all(
-        isinstance(n, dict) and n.keys() == {"valor", "rotulo", "ano"} for n in numeros
+        isinstance(n, dict) and n.keys() == {"valor", "rotulo", "ano", "comparacao"} for n in numeros
     )
     if not formato_ok or faixa.keys() - {*TEXTOS_EXIGIDOS["faixa"], "condicao"}:
-        raise ErroConteudo("textos.yaml, faixa: numeros é uma lista de valor, rotulo e ano; as demais chaves são "
-                           "rotulo, id, texto, nota e, se houver, condicao.")
-    vale = _cita_so_o_que_existe([faixa["texto"], numeros], destaques)
+        raise ErroConteudo("textos.yaml, faixa: numeros é uma lista de valor, rotulo, ano e comparacao; as demais chaves "
+                           "são rotulo, id, nota e, se houver, condicao.")
+    for n in numeros:
+        if not isinstance(n["comparacao"], str) or n["comparacao"].count(NEGRITO) % 2:
+            raise ErroConteudo(f"textos.yaml, faixa: a comparacao {n['comparacao']!r} abre um {NEGRITO} sem fechar.")
+    vale = _cita_so_o_que_existe(numeros, destaques)
     if vale and "condicao" in faixa:
         vale = avaliar_condicao(faixa["condicao"], destaques)
-    pronta = {"rotulo": faixa["rotulo"], "nota": faixa["nota"], "texto": None, "numeros": []}
+    pronta = {"rotulo": faixa["rotulo"], "nota": faixa["nota"], "numeros": []}
     if not vale:
         return pronta, [faixa["id"]]
-    return {**pronta, "texto": faixa["texto"], "numeros": numeros}, []
+    return {**pronta, "numeros": numeros}, []
+
+
+def partes_em_negrito(texto: str) -> list[dict]:
+    """`era **38,8%** em 2002` -> os pedacos do texto, cada um com `forte` (o que estava entre ** e **) ou nao; o modelo
+    poe o forte em <b> sem marcar o texto como seguro."""
+    return [{"texto": pedaco, "forte": bool(i % 2)} for i, pedaco in enumerate(texto.split(NEGRITO)) if pedaco]
+
+
+def _quantidade(n: int) -> str:
+    """Quantidade de coisas no feminino (epocas, frases), por extenso ate dez: `8` -> `oito`, `17` -> `17`."""
+    return POR_EXTENSO[n] if 0 <= n < len(POR_EXTENSO) else str(n)
+
+
+def _validar_menu(menu: dict) -> None:
+    """Os textos do menu (textos.yaml, menu) sao textos nao vazios, e o de cada cartao com marcador o cita uma vez."""
+    textos = {
+        **{chave: menu[chave] for chave in TEXTOS_EXIGIDOS["menu"] if not isinstance(menu[chave], dict)},
+        **{f"cartoes.{c}.{campo}": menu["cartoes"][c][campo] for c in menu["cartoes"] for campo in ("titulo", "texto")},
+        "botao_historia.antes": menu["botao_historia"]["antes"], "botao_historia.texto": menu["botao_historia"]["texto"],
+        "botao_cards.texto": menu["botao_cards"]["texto"],
+    }
+    for nome, texto in textos.items():
+        if not isinstance(texto, str) or not texto.strip():
+            raise ErroConteudo(f"textos.yaml: menu.{nome} é um texto, não vazio.")
+    marcador = re.compile(r"\[([^\[\]]*)\]")
+    for chave, cartao in menu["cartoes"].items():
+        esperados = [MARCADORES_DO_MENU[chave]] if chave in MARCADORES_DO_MENU else []
+        if marcador.findall(cartao["texto"]) != esperados or "[" in marcador.sub("", cartao["texto"]):
+            raise ErroConteudo(
+                f"textos.yaml: menu.cartoes.{chave}.texto "
+                + (f"usa o marcador [{esperados[0]}] uma vez" if esperados else "não usa marcador entre colchetes")
+                + f"; veio {cartao['texto']!r}."
+            )
+
+
+def _menu(menu: dict, com_historia: bool, epocas: int, cards: int) -> dict:
+    """O menu pronto para o _cabecalho.html: os dois grupos (Historias e Dados) com os cartoes de cada um, os rotulos e
+    os dois botoes. O cartao de Como chegamos so entra com a pagina; os marcadores viram as contagens da pagina e dos
+    cards publicados."""
+    contagens = {"epocas": _quantidade(epocas), "cards": _quantidade(cards)}
+
+    def cartao(chave: str, rota: str) -> dict:
+        texto = menu["cartoes"][chave]["texto"]
+        if chave in MARCADORES_DO_MENU:
+            nome = MARCADORES_DO_MENU[chave]
+            texto = texto.replace(f"[{nome}]", contagens[nome])
+            texto = texto[:1].upper() + texto[1:]  # "Oito épocas..." quando o marcador abre o texto
+        return {"chave": chave, "rota": rota, "titulo": menu["cartoes"][chave]["titulo"], "texto": texto}
+
+    historias = ([cartao("como-chegamos", PAGINA_HISTORIA.rota)] if com_historia else []) + [cartao("cards", "/cards/")]
+    return {
+        **{chave: menu[chave] for chave in ("rotulo", "abrir", "inicio", "sobre", "voltar_ao_topo")},
+        "com_historia": com_historia,
+        "grupos": [
+            {"id": "historias", "rotulo": menu["historias"], "itens": historias},
+            {"id": "dados", "rotulo": menu["dados"],
+             "itens": [cartao("estados", "/estados/"), cartao("explorar", "/explorar/"), cartao("dados", "/dados/")]},
+        ],
+        "botao_historia": menu["botao_historia"], "botao_cards": menu["botao_cards"],
+    }
+
+
+def _imagem_historica(historia: Historia, arquivo: str) -> ImagemHistorica | None:
+    """A imagem de epoca ou de marco do historia.yaml com esse arquivo, ou None."""
+    for epoca in historia.epocas:
+        for imagem in (epoca.imagem, *(m.imagem for m in epoca.marcos)):
+            if imagem is not None and imagem.arquivo == arquivo:
+                return imagem
+    return None
+
+
+def classe_da_capa(arquivo: str) -> str:
+    """`marco-1932.webp` -> `nn-capa-marco-1932`: a classe do estilo.css que poe essa imagem no fundo da capa."""
+    return "nn-capa-" + arquivo.removesuffix(".webp")
+
+
+def _capas(historia: Historia | None, foto: dict | None) -> dict[str, dict]:
+    """A capa de cada pagina interna: a classe do estilo.css (a imagem de fundo) e o credito, pequeno, na propria capa.
+
+    A imagem e a de CAPAS quando a pagina historica e gerada (a pasta historia/ vai junto) e o historia.yaml ainda a
+    tem; senao, a foto da abertura (se textos.yaml tem `foto`), com o credito dela; sem as duas, a capa e preta.
+    """
+    capas = {}
+    for chave, arquivo in CAPAS.items():
+        imagem = _imagem_historica(historia, arquivo) if historia is not None and arquivo else None
+        if imagem is not None:
+            capas[chave] = {
+                "classe": classe_da_capa(arquivo),
+                "credito": {"rotulo": "Imagem", "historica": True, "autor": imagem.autor, "data": imagem.data,
+                            "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url},
+            }
+        elif foto is not None:
+            capas[chave] = {
+                "classe": CLASSE_DA_CAPA_DA_FOTO,
+                "credito": {"rotulo": foto["rotulo"], "historica": False, "autor": foto["credito"], "url": foto["url"],
+                            "descricao": foto["descricao"]},
+            }
+        else:
+            capas[chave] = {"classe": None, "credito": None}
+    return capas
 
 
 def _copiar_estaticos(saida: Path, com_foto: bool, com_historia: bool) -> None:
@@ -890,12 +1057,27 @@ def _copiar_estaticos(saida: Path, com_foto: bool, com_historia: bool) -> None:
     """
     ignorar = ["__pycache__", "*.pyc"] + ([] if com_foto else [FOTO_ARQUIVO]) + ([] if com_historia else ["historia"])
     shutil.copytree(PASTA_ESTATICOS, saida, dirs_exist_ok=True, ignore=shutil.ignore_patterns(*ignorar))
+    for nome in ARQUIVOS_ENXUTOS:
+        (saida / nome).write_bytes(_publicado(nome))
+
+
+def _enxuto(codigo: str) -> str:
+    """O estilo.css e o site.js publicados sem os comentarios de bloco e sem o recuo das linhas (as quebras ficam, e o
+    ponto e virgula automatico do JS nao muda): os comentarios ficam no pacote, para quem edita; a primeira carga do
+    Inicio tem teto (test_peso_da_inicial) e o servidor nao comprime. Nenhum texto do CSS ou do JS contem "/*"."""
+    sem_comentarios = re.sub(r"/\*.*?\*/", "", codigo, flags=re.S)
+    return "\n".join(linha.strip() for linha in sem_comentarios.splitlines() if linha.strip()) + "\n"
+
+
+def _html_enxuto(html: str) -> str:
+    """O HTML sem o recuo das linhas (o site nao tem <pre> nem <textarea>): o recuo dos modelos e so para quem os le."""
+    return re.sub(r"\n[ \t]+", "\n", html)
 
 
 def _escrever(ambiente: Environment, saida: Path, modelo: str, arquivo: str, **contexto: object) -> None:
     destino = saida / arquivo
     destino.parent.mkdir(parents=True, exist_ok=True)
-    destino.write_bytes(ambiente.get_template(modelo).render(**contexto).encode("utf-8"))
+    destino.write_bytes(_html_enxuto(ambiente.get_template(modelo).render(**contexto)).encode("utf-8"))
 
 
 def _pagina(
@@ -966,18 +1148,25 @@ def gerar_site(
         "abertura": {**conteudo.textos["abertura"], "intro": abertura}, "faixa": faixa,
     }
     textos = _resolver(com_abertura, destaques, data)
+    for n in textos["faixa"]["numeros"]:
+        n["comparacao"] = partes_em_negrito(n["comparacao"])
     perguntas, fechos_suprimidos = _perguntas(dados, destaques, conteudo)
     cards_fora = _cards_suprimidos(conteudo, destaques)
     cards = [_cartao(dados, destaques, c) for c in conteudo.cards if c["id"] not in cards_fora]
+    for p in perguntas:  # o botao "Baixar o card" so leva a card publicado, nunca a um 404
+        if p["card"] in cards_fora:
+            p["card"] = None
     explorar = dados_explorar(dados)
     anos = _anos_da_base(dados)
     arquivos = _arquivos_de_dados(caminhos, textos)
     comum = {
-        "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in paginas_do_menu],
+        "menu": _menu(textos["menu"], com_historia, len(historia.epocas) if com_historia else 0, len(cards)),
+        "capas": _capas(historia if com_historia else None, _foto(textos.get("foto"))),
+        "siglas": siglas_dos_governos(dados.governos),
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR, "estaticos": versoes_dos_estaticos(),
         "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
-        "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
+        "perguntas": perguntas, "placar": _placar(perguntas), "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": "/".join(reversed(dados.data_base.split("-"))),
         "creditos_historia": _creditos_da_historia(historia) if com_historia else [],
         "chamada_historia": _chamada_da_historia(conteudo.textos["chamada_historia"], historia) if com_historia else None,

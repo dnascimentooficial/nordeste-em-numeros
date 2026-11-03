@@ -67,6 +67,11 @@ def dialogos_da_pagina(arvore: Arvore) -> list[dict]:
     return [d for d in arvore.achar("dialog") if "nn-modal-autor" not in d["attrs"].get("class", "").split()]
 
 
+def svgs_da_pagina(arvore: Arvore) -> list[dict]:
+    """Os <svg> da pagina menos os icones do menu do alto e do voltar ao topo (classe nn-icone), que estao em todas."""
+    return [s for s in arvore.achar("svg") if "nn-icone" not in s["attrs"].get("class", "").split()]
+
+
 def imagens_da_pagina(arvore: Arvore) -> list[dict]:
     """Os <img> da pagina menos os da autoria (a foto e a marca do rodape, a marca do modal), que estao em todas."""
     return [i for i in arvore.achar("img") if not i["attrs"].get("src", "").startswith(("/autor.webp", "/marca-autor"))]

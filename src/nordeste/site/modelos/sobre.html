@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% set sobre_foto = true %}
 {% from "_epoca.html" import credito %}
 {% from "_autor.html" import conteudo as conteudo_do_autor %}
+{% from "_componentes.html" import capa %}
 {% block conteudo %}
+{{ capa(capas.sobre, "Sobre os dados") }}
 <section class="nn-pagina" id="sobre" aria-labelledby="titulo-principal">
-  <h1 id="titulo-principal">Sobre os dados</h1>
 
   <article class="nn-card" id="sobre-o-que">
     <h2>{{ textos.por_que.titulo }}</h2>

@@ -73,45 +73,60 @@ def _com_textos_alterados(tmp_path: Path, alterar) -> Path:
     return raiz
 
 
-# --- cabecalho ---
+# --- cabecalho: so a marca e o menu; a autoria fica no rodape ---
 
 
 @pytest.mark.parametrize("pagina", PAGINAS)
-def test_cabecalho_tem_titulo_autor_separador_e_menu(gerado, pagina):
+def test_cabecalho_tem_a_marca_e_o_menu_sem_a_autoria(gerado, pagina):
     html, _ = _trecho(_html(gerado, pagina), "header")
     arvore = Arvore(html)
     marca = arvore.achar("a", classe="nn-marca")
     assert len(marca) == 1 and marca[0]["attrs"]["href"] == "/" and Arvore.texto(marca[0]) == "Nordeste em Números"
-    autoria = arvore.achar(classe="nn-autoria")
-    assert len(autoria) == 1 and Arvore.texto(autoria[0]) == "por Júlio Diógenes"
-    nome = [e for e in arvore.achar("a") if e["attrs"].get("href") == URL_DO_AUTOR]
-    assert len(nome) == 1 and Arvore.texto(nome[0]) == "Júlio Diógenes"
-    assert [Arvore.texto(e) for e in arvore.achar("strong")] == ["Júlio Diógenes"]
-    assert len(arvore.achar(classe="nn-topo-linha")) == 1
-    # a ordem: primeira linha (titulo e autor), separador, menu
-    assert html.index("nn-marca") < html.index("nn-autoria") < html.index("nn-topo-linha") < html.index("nn-menu")
+    # o "por Júlio Diógenes" saiu do cabecalho (continua no rodape, no bloco "Desenvolvido por")
+    assert not arvore.achar(classe="nn-autoria") and not arvore.achar(classe="nn-topo-linha")
+    assert not [e for e in arvore.achar("a") if e["attrs"].get("href") == URL_DO_AUTOR]
+    assert "Júlio Diógenes" not in Arvore.texto(arvore.elementos[0]) and not arvore.achar("strong")
+    assert html.index("nn-marca") < html.index("nn-menu")
+    _, rodape = _trecho(_html(gerado, pagina), "footer")
+    assert "Desenvolvido por Júlio Diógenes" in Arvore.texto(rodape.elementos[0])
 
 
 @pytest.mark.parametrize("pagina", PAGINAS)
 def test_cabecalho_tem_o_menu_inteiro_com_uma_pagina_atual_e_sem_o_link_solto(gerado, pagina):
     _, arvore = _trecho(_html(gerado, pagina), "header")
-    menu = arvore.achar("nav", classe="nn-menu")
-    assert len(menu) == 1 and menu[0]["attrs"]["aria-label"] == "Páginas do site"
-    itens = [e for e in arvore.achar("a") if e["attrs"].get("href", "").startswith("/") and "nn-marca" not in e["attrs"].get("class", "")]
-    assert [e["attrs"]["href"] for e in itens] == [
-        "/", "/como-chegamos/", "/estados/", "/explorar/", "/cards/", "/sobre/", "/dados/"
-    ]
-    atuais = [e for e in itens if e["attrs"].get("aria-current") == "page"]
     rota = "/" if pagina == "index.html" else "/" + pagina.removesuffix("index.html")
-    assert [e["attrs"]["href"] for e in atuais] == [rota]
+    for classe in ("nn-menu", "nn-gaveta"):  # a barra do computador e a gaveta do celular, com as mesmas paginas
+        menu = arvore.achar("nav", classe=classe)
+        assert len(menu) == 1 and menu[0]["attrs"]["aria-label"] == "Páginas do site"
+    # Inicio, os grupos Historias (Como chegamos, Cards) e Dados (Estados, Explorar, Dados) e Sobre os dados
+    trecho_menu = re.search(r'<nav class="nn-menu".*?</nav>', _html(gerado, pagina), flags=re.S)[0]
+    trecho_gaveta = re.search(r'<nav class="nn-gaveta".*?</nav>', _html(gerado, pagina), flags=re.S)[0]
+    esperadas = ["/", "/como-chegamos/", "/cards/", "/estados/", "/explorar/", "/dados/", "/sobre/"]
+    grupo_da_rota = {"/como-chegamos/": "Histórias", "/cards/": "Histórias", "/estados/": "Dados", "/explorar/": "Dados",
+                     "/dados/": "Dados"}
+    for trecho in (trecho_menu, trecho_gaveta):
+        itens = Arvore(trecho).achar("a")
+        assert [e["attrs"]["href"] for e in itens] == esperadas
+        assert [e["attrs"]["href"] for e in itens if e["attrs"].get("aria-current") == "page"] == [rota]
+        grupos = Arvore(trecho).achar("details")
+        assert [Arvore.texto(e) for e in Arvore(trecho).achar("summary")] == ["Histórias", "Dados"]
+        # o grupo que contem a pagina atual fica realcado
+        atuais = [Arvore.texto(Arvore(g).achar("summary")[0]) for g in re.findall(r"<details[^>]*data-atual.*?</summary>", trecho, flags=re.S)]
+        assert atuais == ([grupo_da_rota[rota]] if rota in grupo_da_rota else []), rota
+        assert len(grupos) == 2
+    assert all(d["attrs"].get("name") == "nn-menu" for d in Arvore(trecho_menu).achar("details"))
     assert not [e for e in arvore.achar("a") if Arvore.texto(e) == "dnascimento.com.br"]
     assert not arvore.achar("a", classe="nn-hero-site")
 
 
-def test_paginas_de_card_tambem_tem_o_cabecalho_novo(gerado):
+def test_paginas_de_card_tambem_tem_o_menu_novo_sem_capa(gerado):
     card = next((gerado / "cards").glob("*/index.html"))
-    _, arvore = _trecho(card.read_text(encoding="utf-8"), "header")
-    assert arvore.achar(classe="nn-autoria") and arvore.achar(classe="nn-topo-linha")
+    html = card.read_text(encoding="utf-8")
+    trecho, arvore = _trecho(html, "header")
+    assert arvore.achar("nav", classe="nn-menu") and arvore.achar("a", classe="nn-marca")
+    assert not arvore.achar(classe="nn-autoria")
+    # a pagina de cada card nao ganha capa: o menu fica sobre o fundo da pagina, com a marca na tinta do tema
+    assert "nn-topo-sobre-foto" not in trecho and "nn-capa" not in html
 
 
 # --- rodape: bloco de autoria ---

@@ -137,6 +137,13 @@ def faixas_em_json(governos: pd.DataFrame) -> str:
     )
 
 
+def siglas_dos_governos(governos: pd.DataFrame) -> list[dict]:
+    """A letra com que a faixa estreita de cada governo aparece no grafico (`nome[:1]`, como no desenho) e o apelido, na
+    ordem do tempo e sem repetir: a legenda das perguntas explica `F = FHC · L = Lula ...` com o que o CSV traz."""
+    nomes = dict.fromkeys(f.nome for f in _faixas(governos) if not f.interino and f.fim > ANO_INICIAL)
+    return [{"sigla": nome[:1], "nome": nome} for nome in nomes]
+
+
 # --- linhas -----------------------------------------------------------------------------------------------------
 
 
@@ -162,9 +169,15 @@ def _trechos(pontos: list[Ponto], emendar: bool = False) -> list[list[Ponto]]:
     return trechos
 
 
-def _desenhar_linha(l: Linha, x: Callable[[Ponto], float], y: Escala, emendar: bool = False) -> str:
+RAIO_DA_PONTA = "5"  # com `pontas`, o primeiro e o ultimo ponto da linha em destaque
+
+
+def _desenhar_linha(
+    l: Linha, x: Callable[[Ponto], float], y: Escala, emendar: bool = False, pontas: bool = False,
+) -> str:
     classe = "nn-linha-ne" if l.destaque else "nn-linha-ref"
     espessura = "2.6" if l.destaque else "2"
+    extremos = {id(l.pontos[0]), id(l.pontos[-1])} if pontas and l.destaque else set()
     partes = [f'<g class="{classe}">']
     for trecho in _trechos(l.pontos, emendar):
         if len(trecho) > 1:
@@ -173,7 +186,11 @@ def _desenhar_linha(l: Linha, x: Callable[[Ponto], float], y: Escala, emendar: b
                 f'<path d="{caminho}" fill="none" stroke-width="{espessura}" stroke-linejoin="round" stroke-linecap="round"/>'
             )
         raio = "2.2" if len(trecho) > 1 else "3.4"
-        partes += [f'<circle cx="{_c(x(p))}" cy="{_c(y(p.valor))}" r="{raio}" stroke="none"/>' for p in trecho]
+        partes += [
+            f'<circle class="nn-ponta" cx="{_c(x(p))}" cy="{_c(y(p.valor))}" r="{RAIO_DA_PONTA}"/>' if id(p) in extremos
+            else f'<circle cx="{_c(x(p))}" cy="{_c(y(p.valor))}" r="{raio}" stroke="none"/>'
+            for p in trecho
+        ]
     partes.append("</g>")
     return "".join(partes)
 
@@ -252,13 +269,15 @@ def _passo_dos_anos(estreito: bool, vao: int = ANO_FINAL - ANO_INICIAL) -> int:
 
 def grafico_linhas(
     linhas: list[Linha], cfg: ConfigGrafico, governos: pd.DataFrame, largura: int = 720, altura: int = 300, *,
-    eixo: tuple[int, int] = (ANO_INICIAL, ANO_FINAL), emendar: bool = False,
+    eixo: tuple[int, int] = (ANO_INICIAL, ANO_FINAL), emendar: bool = False, pontas: bool = False,
 ) -> str:
     """`<svg>` do grafico de linhas; vazio (`""`) quando nenhuma linha tem ponto dentro do eixo.
 
     Os atributos `data-pontos`, `data-casas` e `data-sufixo` levam os dados completos recebidos (inclusive fora do
     eixo) para o site.js redesenhar com zoom e comparacao. `eixo` (`[inicio, fim)`, em anos) troca o eixo padrao de
     2000 a 2026, e vai ao site.js em `data-eixo`; `emendar` liga os pontos de uma serie que nao e anual (censos).
+    `pontas` aumenta o primeiro e o ultimo ponto da linha em destaque e escreve `ano · valor` junto do primeiro (o do
+    ultimo ja e o rotulo da ponta).
     """
     ano_inicial, ano_final = eixo_anos = eixo
     visiveis = _visiveis(linhas, eixo_anos)
@@ -364,7 +383,13 @@ def grafico_linhas(
             )
 
     for l in visiveis:
-        partes.append(_desenhar_linha(l, x_ponto, y, emendar))
+        partes.append(_desenhar_linha(l, x_ponto, y, emendar, pontas))
+        if pontas and l.destaque:
+            p = l.pontos[0]
+            rotulo = f"{p.ano} · {numero(p.valor, cfg.casas)}{cfg.sufixo}"
+            partes.append(
+                f'<text class="nn-ponta-rotulo" x="{_c(x_ponto(p) + 10)}" y="{_c(y(p.valor) - 10)}">{escape(rotulo, quote=False)}</text>'
+            )
 
     # rotulos da ponta
     alvos = [y(l.pontos[-1].valor) + 4 for l in visiveis]

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% set sobre_foto = true %}
 {% from "_vista_explorar.html" import vista %}
+{% from "_componentes.html" import capa %}
 {% block conteudo %}
 {% set t = textos.explorar %}
 {% set e = explorar %}
+{{ capa(capas.explorar, t.titulo, t.intro) }}
 <section class="nn-pagina" id="explorar" aria-labelledby="titulo-principal">
-  <h1 id="titulo-principal">{{ t.titulo }}</h1>
-  <p class="nn-muted">{{ t.intro }}</p>
   <div class="nn-controles">
     <label for="sel-expl-ind">Indicador
       <select id="sel-expl-ind" class="nn-sel-expl-ind">

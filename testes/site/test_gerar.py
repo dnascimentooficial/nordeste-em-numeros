@@ -147,12 +147,16 @@ def test_ordem_dos_elementos_da_pergunta_segue_o_prototipo(gerado):
     html = _ler(saida, "index.html")
 
     def artigo(id_):
-        inicio = html.index(f'<article class="nn-card" id="q-{id_}">')
+        inicio = re.search(rf'<article class="nn-capitulo[^"]*" id="q-{id_}">', html).start()
         return html[inicio:html.index("</article>", inicio)]
 
+    # a resposta primeiro: o veredito logo depois do titulo, o primeiro grafico com a explicacao ao lado e o resto
+    # (os outros graficos, os numeros, a fonte e o alerta) recolhido; as saidas no pe
     for id_, marcas in (
-        ("renda-per-capita", ['nn-eyebrow', '<h2', 'nn-muted', 'nn-frase', 'nn-graf"', 'nn-fecho', 'nn-fonte']),
-        ("escola", ['nn-eyebrow', '<h2', 'nn-frase', 'nn-graf"', 'nn-fecho', 'nn-alerta', 'nn-fonte']),
+        ("renda-per-capita", ['nn-eyebrow', '<h2', 'nn-fecho', 'nn-pergunta-corpo', 'nn-graf"', 'nn-pergunta-texto',
+                              'nn-muted', 'nn-frase', '<summary>Ver os números', 'nn-fonte-metodo', 'nn-fonte"', 'nn-saidas']),
+        ("escola", ['nn-eyebrow', '<h2', 'nn-fecho', 'nn-pergunta-corpo', 'nn-graf"', 'nn-frase', 'nn-mais-graficos',
+                    '<summary>Ver os números', 'nn-fonte-metodo', 'nn-alerta', 'nn-fonte"', 'nn-saidas']),
     ):
         texto = artigo(id_)
         posicoes = [texto.index(m) for m in marcas]
@@ -167,14 +171,19 @@ def test_cada_grafico_sai_em_duas_larguras(gerado, conteudo):
     largos = arvore.achar("div", classe="nn-graf-largo")
     estreitos = arvore.achar("div", classe="nn-graf-estreito")
     assert len(largos) == len(estreitos) == graficos
-    svgs = arvore.achar("svg")
+    svgs = [s for s in arvore.achar("svg") if "data-pontos" in s["attrs"]]  # os do menu e do voltar ao topo sao icones
     assert len(svgs) == 3 * graficos  # as duas da pagina e a ampliada, guardada num <template> (Ruling S-W)
     assert [s["attrs"]["viewbox"] for s in svgs[:2]] == ["0 0 720 300", "0 0 360 240"]
     assert {s["attrs"]["viewbox"] for s in svgs[2 * graficos:]} == {"0 0 1100 520"}
     for contenedor in arvore.achar("div", classe="nn-graf"):
         assert contenedor["attrs"]["id"].startswith("g-")
-    # cada grafico traz os numeros numa tabela, como a descricao acessivel promete
-    assert len(arvore.achar("details")) == len(conteudo.perguntas)
+    # cada pergunta traz os numeros numa tabela, como a descricao acessivel promete, e a fonte e o metodo recolhidos;
+    # os graficos alem do primeiro ficam num terceiro <details>
+    com_mais = sum(len(p["graficos"]) > 1 for p in conteudo.perguntas)
+    assert len(arvore.achar("details", classe="nn-fonte-metodo")) == len(conteudo.perguntas)
+    assert len(arvore.achar("details", classe="nn-mais-graficos")) == com_mais
+    assert len([d for d in arvore.achar("details") if not d["attrs"].get("class")
+                and not d["attrs"].get("name")]) == len(conteudo.perguntas)
 
 
 def test_sem_style_nem_script_inline(gerado):
@@ -429,9 +438,9 @@ def test_paragrafo_da_abertura_com_condicao_falsa_some_e_vai_ao_relatorio(tmp_pa
     saida = tmp_path / "saida"
     relatorio = gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
     assert "abertura_numeros" in relatorio.fechos_suprimidos
-    normais = [Arvore.texto(e) for e in Arvore(_ler(saida_normal, "index.html")).achar("p", classe="nn-faixa-texto")]
-    sem = [Arvore.texto(e) for e in Arvore(_ler(saida, "index.html")).achar("p", classe="nn-faixa-texto")]
-    assert len(normais) == 1 and sem == []  # o paragrafo de numeros sai da faixa com a condicao falsa
+    normais = Arvore(_ler(saida_normal, "index.html")).achar(classe="nn-numero-comparacao")
+    sem = Arvore(_ler(saida, "index.html")).achar(classe="nn-numero-comparacao")
+    assert len(normais) == 2 and sem == []  # os numeros e as comparacoes saem da faixa com a condicao falsa
     # o paragrafo da abertura sem afirmacao de direcao continua no hero
     hero = [Arvore.texto(e) for e in Arvore(_ler(saida, "index.html")).achar("p", classe="nn-hero-intro")]
     assert len(hero) == 1
@@ -441,8 +450,8 @@ def test_faixa_com_numero_sem_ano_e_erro_de_conteudo(tmp_path):
     raiz = copiar_base(tmp_path / "repo")
     textos = raiz / "metadados" / "site" / "textos.yaml"
     texto = textos.read_text(encoding="utf-8")
-    assert texto.count('      ano: "em {pob_br.ano_ultimo}"\n') == 1
-    textos.write_text(texto.replace('      ano: "em {pob_br.ano_ultimo}"\n', ""), encoding="utf-8")
+    assert texto.count('      ano: "{pob_ne.ano_ultimo}"\n') == 1
+    textos.write_text(texto.replace('      ano: "{pob_ne.ano_ultimo}"\n', ""), encoding="utf-8")
     with pytest.raises(ErroConteudo, match="faixa"):
         gerar_site(Caminhos(raiz=raiz), tmp_path / "saida", imagens=False)
 
@@ -457,7 +466,7 @@ def test_abertura_sem_id_ou_texto_e_erro_de_conteudo(tmp_path):
 
 # --- faixa de numeros (Ruling S-V), modal "Ampliar" (Ruling S-W) e foto de fundo (Ruling S-U) ---
 
-MARCADORES_DA_FAIXA = ("{pib_pc_razao.ultimo:1%}", "{pob_ne.ultimo:1%}", "{pob_br.ultimo:1%}")
+MARCADORES_DA_FAIXA = ("{pib_pc_razao.ultimo:1%}", "{pob_ne.ultimo:1%}")
 
 
 def _inicio(saida: Path) -> tuple[str, Arvore]:
@@ -525,28 +534,51 @@ def test_um_unico_dialog_por_pagina(gerado):
         assert not dialogos_da_pagina(Arvore(_ler(saida, pagina))), pagina  # so o Inicio tem graficos ampliaveis
 
 
-def test_faixa_de_numeros_entre_hero_e_legenda(gerado, dados, conteudo):
+def test_faixa_de_numeros_em_pares_entre_hero_e_legenda(gerado, dados, conteudo):
     saida, _ = gerado
     html, arvore = _inicio(saida)
     destaques = calcular_destaques(dados, conteudo)
     hero, faixa, legenda = html.index('id="topo"'), html.index('class="nn-faixa-abertura"'), html.index('class="nn-legenda"')
     assert hero < faixa < legenda
+    # dois numeros, a riqueza por pessoa e a pobreza, cada um com a comparacao
+    numeros = arvore.achar("li", classe="nn-numero")
+    assert len(numeros) == 2
     esperados = [preencher(m, destaques) for m in MARCADORES_DA_FAIXA]
     assert [Arvore.texto(e) for e in arvore.achar(classe="nn-numero-valor")] == esperados
     assert all(re.fullmatch(r"\d{1,3}(\.\d{3})*,\d%", e) for e in esperados)  # formato brasileiro, uma casa
     anos = [Arvore.texto(e) for e in arvore.achar(classe="nn-numero-ano")]
-    assert anos == [f"em {destaques[i].ultimo.ano}" for i in ("pib_pc_razao", "pob_ne", "pob_br")]
-    assert len(arvore.achar(classe="nn-numero-rotulo")) == 3
-    # os dois paragrafos saem do hero e vem depois dos numeros
-    assert [Arvore.texto(e) for e in arvore.achar("p", classe="nn-faixa-texto")] == [
-        " ".join(preencher(conteudo.textos["faixa"]["texto"], destaques).split())
-    ]
+    assert anos == [f"({destaques[i].ultimo.ano})" for i in ("pib_pc_razao", "pob_ne")]
+    comparacoes = [Arvore.texto(e) for e in arvore.achar(classe="nn-numero-comparacao")]
+    assert len(comparacoes) == 2 and all(re.search(r"\d", c) for c in comparacoes)
+    pib, pob_ne, pob_br = destaques["pib_pc_razao"], destaques["pob_ne"], destaques["pob_br"]
+    assert comparacoes[0] == f"era {preencher('{pib_pc_razao.primeiro:1%}', destaques)} em {pib.primeiro.ano}"
+    assert comparacoes[1].endswith(f"no Brasil, hoje, {preencher('{pob_br.ultimo:1%}', destaques)}")
+    # os numeros em negrito, sem marcar o texto como seguro (o ** some e vira <b>)
+    trecho = html[faixa:html.index("</section>", faixa)]
+    assert "**" not in trecho and trecho.count("<b>") == 3
+    # o paragrafo repetido saiu, e todo numero que ele trazia aparece em algum lugar da faixa
+    assert not arvore.achar("p", classe="nn-faixa-texto")
+    texto_da_faixa = Arvore.texto(arvore.achar("section", classe="nn-faixa-abertura")[0])
+    for marcador in ("{pib_pc_razao.ano_ultimo}", "{pib_pc_razao.ultimo:1%}", "{pib_pc_razao.ano_primeiro}",
+                     "{pib_pc_razao.primeiro:1%}", "{pob_ne.primeiro:1%}", "{pob_ne.ultimo:1%}", "{pob_ne.ano_primeiro}",
+                     "{pob_ne.ano_ultimo}", "{pob_br.ultimo:1%}"):
+        assert preencher(marcador, destaques) in texto_da_faixa, marcador
+    assert pob_ne.ultimo.ano and pob_br.ultimo.valor
     nota = [Arvore.texto(e) for e in arvore.achar("p", classe="nn-faixa-nota")]
     assert nota == [" ".join(conteudo.textos["faixa"]["nota"].split())]
-    assert faixa < html.index('class="nn-faixa-texto"') < html.index('class="nn-faixa-nota"') < legenda
     assert not arvore.achar("p", classe="nn-hero-nota")
     # no hero ficam so o selo, o titulo e o primeiro paragrafo
     assert len(arvore.achar("p", classe="nn-hero-intro")) == 1
+
+
+def test_comparacao_com_negrito_aberto_e_erro_de_conteudo(tmp_path):
+    raiz = copiar_base(tmp_path / "repo")
+    textos = raiz / "metadados" / "site" / "textos.yaml"
+    texto = textos.read_text(encoding="utf-8")
+    assert texto.count("era **{pib_pc_razao.primeiro:1%}**") == 1
+    textos.write_text(texto.replace("era **{pib_pc_razao.primeiro:1%}**", "era **{pib_pc_razao.primeiro:1%}"), encoding="utf-8")
+    with pytest.raises(ErroConteudo, match="comparacao"):
+        gerar_site(Caminhos(raiz=raiz), tmp_path / "saida", imagens=False)
 
 
 def _subir_a_pobreza(base):
@@ -569,7 +601,7 @@ def test_faixa_some_com_a_condicao_da_abertura(tmp_path, alterar):
     assert "abertura_numeros" in relatorio.fechos_suprimidos
     # os numeros grandes e o paragrafo somem juntos...
     assert not arvore.achar(classe="nn-numero-valor") and not arvore.achar(classe="nn-numero-rotulo")
-    assert not arvore.achar("p", classe="nn-faixa-texto")
+    assert not arvore.achar(classe="nn-numero-comparacao")
     # ...mas a nota de que nada aqui atribui resultado a governo fica, e o resto da pagina tambem
     assert len(arvore.achar("p", classe="nn-faixa-nota")) == 1
     assert arvore.achar("section", id="topo") and arvore.achar("dialog")
