@@ -217,6 +217,7 @@ def test_cada_epoca_tem_artigo_completo(gerado):
         botao = arvore.achar("button", classe="nn-epoca-abrir")
         assert len(botao) == 1 and botao[0]["attrs"]["data-epoca"] == epoca["id"]
         assert botao[0]["attrs"]["type"] == "button"
+        assert "aria-haspopup" not in botao[0]["attrs"]  # sem JavaScript o cartao nao abre nada: o site.js poe o aviso
         cartao = Arvore.texto(botao[0])
         assert f"{epoca['inicio']}–{epoca['fim']}" in cartao and epoca["nome"] in cartao
         img_cartao = [e for e in arvore.achar("img") if any(e is f for f in _filhos(arvore, botao[0]))]
@@ -334,6 +335,7 @@ def test_um_unico_dialog_vazio_no_fim(gerado):
     dialogos = dialogos_da_pagina(arvore)  # o "Sobre o autor", de toda pagina, tem teste proprio (test_autoria.py)
     assert len(dialogos) == 1
     assert dialogos[0]["attrs"]["class"].split() == ["nn-modal", "nn-modal-historia"]
+    assert "aria-labelledby" not in dialogos[0]["attrs"]  # o site.js o liga ao titulo da epoca aberta (nao ha titulo aqui)
     dialogo = _trecho(html, "<dialog", "</dialog>")
     assert "nn-epoca-conteudo" not in dialogo and "nn-modal-fechar" in dialogo and "nn-modal-corpo" in dialogo
     assert html.index("<dialog") > html.index('<ol class="nn-linha-tempo"')
@@ -354,7 +356,7 @@ def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
             url = e["attrs"].get("src") or e["attrs"]["href"]
             assert url.startswith("/") or url.startswith(SITE), url
     for script in arvore.achar("script"):
-        assert script["attrs"].get("src") == "/site.js" and not Arvore.texto(script)
+        assert script["attrs"].get("src") in ("/nn-js.js", "/site.js") and not Arvore.texto(script)
     visivel = arvore.texto_visivel()
     assert not re.search(r"\b(nan|none|undefined|null)\b", visivel, flags=re.IGNORECASE)
     assert "{" not in visivel and "Prévia" not in visivel

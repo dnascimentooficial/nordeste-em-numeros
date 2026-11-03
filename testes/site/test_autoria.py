@@ -123,7 +123,7 @@ def test_rodape_mantem_o_que_ja_tinha_e_ganha_o_bloco_de_autoria(gerado, pagina)
     _, rodape = _trecho(html, "footer")
     texto = Arvore.texto(rodape.elementos[0])
     assert re.search(r"publicados em \d{1,2}º? de \w+ de \d{4}", texto) and "sha256 da base:" in texto
-    assert "CC BY 4.0" in texto and "Foto:" in texto
+    assert "CC BY 4.0" in texto and "Imagem: Júlio Diógenes" in texto
     # as duas linhas antigas, que o bloco de autoria passou a cobrir, sairam do rodape
     assert "Nordeste em Números" not in texto
     assert not [a for a in rodape.achar("a") if Arvore.texto(a) == "dnascimento.com.br"]

@@ -57,6 +57,8 @@ OG = (1200, 630)  # imagem de compartilhamento das paginas
 CARD = (1080, 1350)  # PNG de cada card
 FOTO_TAMANHO_MAXIMO = 200_000  # bytes: a foto pesa na primeira tela
 FOTO_EXIGIDA = ("credito", "url")  # `foto` e opcional em textos.yaml; se existir, traz tudo isso (Ruling S-Z)
+FOTO_OPCIONAL = ("rotulo", "descricao")  # texto antes do credito ("Imagem") e o que a imagem e, entre parenteses
+FOTO_ROTULO_PADRAO = "Foto"  # sem `rotulo`: "Foto: <credito>" no rodape e "Foto da abertura: <credito>." em Sobre
 FOTO_ARQUIVO = "foto-abertura.webp"  # em estaticos/; o estilo.css aponta para este nome (fundo da abertura, Ruling S-U)
 AUTOR_FOTO = "autor.webp"  # em estaticos/, opcional: a foto do circulo do rodape; sem ela o circulo mostra as iniciais
 AUTOR_FOTO_TAMANHO_MAXIMO = 100_000  # bytes: o rodape esta em todas as paginas
@@ -687,11 +689,18 @@ def _validar_textos(textos: object, paginas: tuple[Pagina, ...] = PAGINAS) -> No
 
 
 def _validar_foto(foto: object) -> None:
-    """`foto: {credito, url}` (Rulings S-Q e S-Z): o credito aponta para a pagina da licenca, e a foto e o
-    estaticos/foto-abertura.webp do pacote, o nome que o estilo.css usa."""
+    """`foto: {credito, url, rotulo?, descricao?}` (Rulings S-Q e S-Z): o credito aponta para a pagina da licenca, e a
+    foto e o estaticos/foto-abertura.webp do pacote, o nome que o estilo.css usa. `rotulo` troca o "Foto" antes do
+    credito (uma composicao e "Imagem") e `descricao` sai entre parenteses depois dele."""
     _exigir(foto, set(FOTO_EXIGIDA), "textos.foto")
     if not all(isinstance(foto[chave], str) and foto[chave].strip() for chave in FOTO_EXIGIDA):
         raise ErroConteudo("textos.yaml: foto.credito e foto.url são textos, não vazios.")
+    if desconhecidas := sorted(set(foto) - set(FOTO_EXIGIDA) - set(FOTO_OPCIONAL)):
+        raise ErroConteudo(f"textos.yaml: foto tem chave desconhecida: {', '.join(desconhecidas)} "
+                           f"(valem {', '.join(FOTO_EXIGIDA + FOTO_OPCIONAL)}).")
+    for chave in FOTO_OPCIONAL:
+        if chave in foto and not (isinstance(foto[chave], str) and foto[chave].strip()):
+            raise ErroConteudo(f"textos.yaml: foto.{chave}, quando existe, é texto não vazio.")
     arquivo = PASTA_ESTATICOS / FOTO_ARQUIVO
     if not arquivo.is_file():
         raise ErroConteudo(f"textos.yaml tem foto, mas {FOTO_ARQUIVO} não está em estaticos/ do pacote.")
@@ -776,6 +785,14 @@ def _contexto_do_autor(autor: dict) -> dict:
             "vazio": _com_link(autor["formacao_vazia"], autor["link"]),
         },
     }
+
+
+def _foto(foto: dict | None) -> dict | None:
+    """O credito da foto como os modelos o leem: `rotulo` sempre preenchido (o padrao e "Foto") e `descricao` None
+    quando nao ha (os modelos usam StrictUndefined)."""
+    if foto is None:
+        return None
+    return {**foto, "rotulo": foto.get("rotulo", FOTO_ROTULO_PADRAO), "descricao": foto.get("descricao")}
 
 
 def _paragrafos_da_abertura(itens: list, destaques: dict[str, Destaque]) -> tuple[list[str], list[str]]:
@@ -881,7 +898,7 @@ def gerar_site(
     comum = {
         "menu": [{"chave": p.chave, "rota": p.rota, "rotulo": p.rotulo} for p in paginas_do_menu],
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR,
-        "foto": textos.get("foto"), "autor": _contexto_do_autor(textos["autor"]),
+        "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
         "perguntas": perguntas, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": "/".join(reversed(dados.data_base.split("-"))),

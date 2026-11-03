@@ -12,7 +12,7 @@ está em `docs/specs/2026-10-31-base-historica-design.md`; as conferências feit
 
 O site **Nordeste em Números** (https://nordeste.dnascimento.com.br) é gerado a partir desta base pelo comando
 `python -m nordeste site` e atualizado toda semana pelo workflow `.github/workflows/atualizar.yml`, que publica
-na branch `site-publicado`. A compilação está sob **CC BY 4.0**; exceções (fontes, axe-core, foto da abertura)
+na branch `site-publicado`. A compilação está sob **CC BY 4.0**; exceções (fontes, axe-core, imagem da abertura)
 em [`LICENSE.md`](LICENSE.md).
 
 ## Situação da publicação
@@ -280,9 +280,13 @@ redistribuída em CC0 pelo repositório `tbrugz/geodata-br` (`geojson/geojs-21-m
 O contorno é só desenho: baías e frestas estreitas (falhas da malha) são fechadas e a ilha de Fernando de Noronha
 não aparece. A origem e a data também estão no comentário no topo do SVG.
 
-**Foto da abertura** (opcional): a chave `foto: {credito, url}` de `metadados/site/textos.yaml` põe a imagem
-`src/nordeste/site/estaticos/foto-abertura.webp` (até 200 KB) na abertura e o crédito, com link para a página da
-licença, no rodapé e em Sobre os dados. Sem a chave, não há foto nem crédito, e o arquivo não vai para o site.
+**Imagem da abertura** (opcional): a chave `foto: {credito, url, rotulo, descricao}` de `metadados/site/textos.yaml`
+põe a imagem `src/nordeste/site/estaticos/foto-abertura.webp` (até 200 KB) na abertura e o crédito, com link para a
+página do autor, no rodapé e em Sobre os dados. `credito` e `url` são obrigatórios; `rotulo` é o texto antes do crédito
+(sem ele, "Foto") e `descricao`, opcional, sai entre parênteses depois dele. A imagem atual é uma composição com praia
+(Farol da Barra), mata e sertão do Nordeste, não a foto de um lugar só, por isso o rodapé diz "Imagem: Júlio Diógenes
+(composição com praia, mata e sertão do Nordeste)" e Sobre, "Imagem da abertura: Júlio Diógenes (composição ...)".
+Sem a chave, não há imagem nem crédito, e o arquivo não vai para o site.
 
 ## Testes
 

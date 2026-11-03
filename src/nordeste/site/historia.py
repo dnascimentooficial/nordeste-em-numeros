@@ -2,11 +2,13 @@
 
 Excecao a regra "nenhum numero digitado em YAML": aqui os numeros historicos ficam em `historia.yaml`, cada um com
 `tipo` e `fonte`. A parcela da populacao nunca e digitada: o gerador a calcula de `historia/censos.csv`.
-Toda recusa levanta ErroConteudo com o caminho do campo (ex. `epocas[2].numeros[0].fonte`).
+Toda recusa levanta ErroConteudo com o caminho do campo (ex. `epocas[2].numeros[0].fonte`); quando o id da epoca ja e
+conhecido, o caminho vem seguido dele (ex. `epocas[2].numeros[0].fonte (epoca 1654): ...`).
 """
 
 import csv
 import datetime
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -26,6 +28,9 @@ NUMEROS_POR_EPOCA = (1, 3)
 # o modelo _epoca.html poe o ponto depois do titulo do marco e da fonte do numero ("<b>{{ m.titulo }}.</b>",
 # "Fonte: {{ n.fonte }}."): com pontuacao no fim do campo sairia ".." ou "?."
 PONTUACAO_FINAL = (".", "?", "!")
+# o id da epoca vira o id do HTML e o endereco `#<id>`: o ano em que ela comeca, com quatro digitos. Assim nunca bate com o
+# id de um marco (`m<ano>`) nem com os ids fixos da pagina (`conteudo`, `titulo-principal`, `t-<id>`, `g-censos`...)
+FORMATO_DO_ID = re.compile(r"[0-9]{4}")
 # imagens (WebP em estaticos/historia/, recortadas em 21:9): a da epoca vai no cartao e no topo do artigo; a do marco,
 # opcional, so quando ha imagem livre do proprio fato, carrega so com o modal aberto
 PESO_MAXIMO_DA_EPOCA = 150_000
@@ -206,6 +211,19 @@ def _validar_imagem(imagem: object, onde: str) -> ImagemHistorica:
 
 
 def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
+    try:
+        return _validar_campos_da_epoca(epoca, onde, provisoria)
+    except ErroConteudo as erro:
+        # o caminho do campo diz a posicao na lista; o id diz a epoca sem precisar contar as entradas do YAML
+        id_ = epoca.get("id") if isinstance(epoca, dict) else None
+        mensagem = str(erro)
+        if isinstance(id_, (str, int)) and not isinstance(id_, bool) and str(id_).strip() and not mensagem.startswith(f"{onde}.id"):
+            caminho, dois_pontos, resto = mensagem.partition(": ")
+            raise ErroConteudo(f"{caminho} (epoca {str(id_).strip()}){dois_pontos}{resto}") from erro
+        raise
+
+
+def _validar_campos_da_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
     _mapa(
         epoca, onde,
         ("id", "inicio", "fim", "nome", "resumo", "texto", "marcos", "numeros", "o_que_ficou", "fontes"), ("imagem",),
@@ -214,6 +232,8 @@ def _validar_epoca(epoca: object, onde: str, provisoria: bool) -> Epoca:
     if isinstance(id_, int) and not isinstance(id_, bool):
         id_ = str(id_)
     id_ = _texto(id_, f"{onde}.id")
+    if not FORMATO_DO_ID.fullmatch(id_):
+        raise ErroConteudo(f"{onde}.id: {id_!r} fora do formato; esperava o ano em que a epoca comeca, com quatro digitos (ex. '1654').")
     inicio, fim = _inteiro(epoca["inicio"], f"{onde}.inicio"), _inteiro(epoca["fim"], f"{onde}.fim")
     if fim <= inicio:
         raise ErroConteudo(f"{onde}.fim: {fim} nao e depois do inicio ({inicio}).")
@@ -328,7 +348,8 @@ def carregar_historia(pasta: Path) -> Historia | None:
         for marco in epoca.marcos:
             if marco.ano in marcos_vistos:
                 raise ErroConteudo(
-                    f"epocas[{i}].marcos: ano {marco.ano} repetido (ja e marco de epocas[{marcos_vistos[marco.ano]}])."
+                    f"epocas[{i}].marcos (epoca {epoca.id}): ano {marco.ano} repetido "
+                    f"(ja e marco de epocas[{marcos_vistos[marco.ano]}], epoca {epocas[marcos_vistos[marco.ano]].id})."
                 )
             marcos_vistos[marco.ano] = i
     fecho = _validar_fecho(bruto["fecho"])

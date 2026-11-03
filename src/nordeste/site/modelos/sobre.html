@@ -11,7 +11,7 @@
     <p>{{ paragrafo }}</p>
 {% endfor %}
 {% if foto %}
-    <p class="nn-muted nn-credito-sobre">Foto da abertura: <a href="{{ foto.url }}">{{ foto.credito }}</a>.</p>
+    <p class="nn-muted nn-credito-sobre">{{ foto.rotulo }} da abertura: <a href="{{ foto.url }}">{{ foto.credito }}</a>{% if foto.descricao %} ({{ foto.descricao }}){% endif %}.</p>
 {% endif %}
     <h3>{{ textos.como_ler.titulo }}</h3>
     <ul class="nn-lista">

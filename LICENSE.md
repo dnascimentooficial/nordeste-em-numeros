@@ -17,12 +17,12 @@ para a licença e indique se fez alterações.
 
 - Os números de origem pertencem aos órgãos que os publicam (IBGE, INEP, Ipea, Atlas Brasil) e seguem
   as condições de cada fonte; a licença acima cobre a compilação, a padronização e os derivados.
-- Fontes Manrope e DM Sans (`src/nordeste/site/estaticos/fontes/`): SIL Open Font License 1.1, texto
-  ao lado de cada fonte.
+- Fontes Manrope, DM Sans e EB Garamond (`src/nordeste/site/estaticos/fontes/`): SIL Open Font License 1.1,
+  texto ao lado de cada fonte.
 - axe-core (`testes/navegador/axe.min.js`), usado só nos testes: Mozilla Public License 2.0, texto ao
   lado do arquivo.
-- Foto da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`): © Júlio Diógenes, todos os
-  direitos reservados; não está coberta pela CC BY 4.0.
+- Imagem da abertura (`src/nordeste/site/estaticos/foto-abertura.webp`, composição com praia, mata e
+  sertão do Nordeste): © Júlio Diógenes, todos os direitos reservados; não está coberta pela CC BY 4.0.
 - Foto do autor (`src/nordeste/site/estaticos/autor.webp`): © Júlio Diógenes, todos os direitos reservados; não está
   coberta pela CC BY 4.0.
 - Marca do autor, as duas versões do logotipo (`src/nordeste/site/estaticos/marca-autor-clara.webp` e

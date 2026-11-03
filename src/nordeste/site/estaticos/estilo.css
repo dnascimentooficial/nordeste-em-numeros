@@ -419,9 +419,11 @@ body {
    ::before, sem passar por baixo de nenhum texto: no desktop (> 900 px) é a metade direita da abertura e o título cede
    a coluna da esquerda; até 900 px é uma faixa no topo e o texto vem abaixo. A foto leva só uma camada leve (15%) e um
    degradê que a funde no preto na emenda. O destaque do título segue #ea2e00 (4,7:1 sobre #080808). O círculo grande do
-   ::before dá lugar à foto; o círculo pequeno do ::after continua, por cima da foto. No desktop a foto é ampliada (115% da
-   altura) e recortada à esquerda do sol: o canto superior direito da foto (sol e o reflexo dele no mar) fica fora do
-   quadro, o Farol da Barra inteiro, e a coluna do texto ganha largura para o título voltar a ~72 px. */
+   ::before dá lugar à foto; o círculo pequeno do ::after continua, por cima da foto. A imagem é uma composição (1500x844):
+   mata e cidade à esquerda, o Farol da Barra no meio (x 39 a 59% da largura, y 25 a 46% da altura) e o sertão à direita,
+   com o sol no canto (x ~96%, y ~31%). No desktop a coluna da foto tem ~1:1, então `cover` mostra ~55% da largura; o
+   recorte a 48% vai de x ~22% a ~77%: farol inteiro no meio, a mata se apagando na emenda, o sertão à direita e o sol fora
+   do quadro. A coluna do texto tem largura para o título chegar a ~72 px. */
 
 .nn-hero-com-foto {
   --nn-foto-alt: clamp(170px, 42vw, 340px); /* altura da faixa de foto até 900 px */
@@ -446,10 +448,10 @@ body {
     --nn-foto-fusao: linear-gradient(90deg, #080808 0%, rgba(8, 8, 8, 0) 36%);
     inset: 0 0 0 auto;
     width: 48%;
-    /* a altura da foto vale 115% da abertura (a largura, 1,53 vez a altura, cobre a coluna, que tem ~1:1); o recorte
-       a 35% / 20% pega céu, cidade, farol e pedras e para antes do sol e do reflexo dele, no terço direito da foto */
-    background-size: auto, auto, auto 115%;
-    background-position: 0 0, 0 0, 35% 20%;
+    /* a foto cobre a coluna pela altura (a largura é 1,78 vez a altura; a coluna tem ~1:1); o recorte a 48% põe o farol
+       no meio da coluna, com a mata à esquerda e o sertão à direita, e para antes do sol (x ~96% da foto) */
+    background-size: auto, auto, cover;
+    background-position: 0 0, 0 0, 48% 50%;
   }
 
   .nn-hero-com-foto::after {
@@ -471,7 +473,9 @@ body {
     inset: 0 0 auto 0;
     width: auto;
     height: var(--nn-foto-alt);
-    background-position: 0 0, 0 0, 50% 48%; /* enquadra o Farol da Barra */
+    /* a faixa (2:1 a 2,5:1) mostra a largura toda da composição, com o farol no meio; 30% sobe o recorte para o farol
+       ficar no meio da altura visível, acima do degradê */
+    background-position: 0 0, 0 0, 50% 30%;
   }
 
   .nn-hero-com-foto::after {

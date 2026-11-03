@@ -104,8 +104,10 @@ def test_esc_fecha_e_o_foco_volta_ao_botao_que_abriu(navegador, endereco):
         assert pagina.evaluate("document.activeElement.closest('dialog') !== null")  # o foco entrou no modal
         pagina.keyboard.press("Escape")
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
+        # o evento close do <dialog> chega numa tarefa depois do Esc: espera a limpeza em vez de medir no mesmo instante
+        # (na CI, mais lenta, o clone ainda estava lá quando o assert rodou)
+        pagina.wait_for_function("() => document.querySelectorAll('dialog .nn-ampliado-conteudo').length === 0", timeout=5000)
         assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[2] === document.activeElement")
-        assert pagina.locator("dialog .nn-ampliado-conteudo").count() == 0  # o clone saiu
     finally:
         contexto.close()
 

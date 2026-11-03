@@ -152,9 +152,30 @@ def test_paginas_usam_os_estaticos_gerados(saida):
         arvore = Arvore(pagina.read_text(encoding="utf-8"))
         locais = [e["attrs"]["href"] for e in arvore.achar("link", rel="stylesheet")]
         locais += [e["attrs"]["src"] for e in arvore.achar("script") if "src" in e["attrs"]]
-        assert locais == ["/estilo.css", "/site.js"], pagina
+        # a pagina Como chegamos tem ainda o nn-js.js, sem defer e antes do estilo (ver o teste abaixo)
+        esperados = ["/estilo.css", "/nn-js.js", "/site.js"] if pagina.parent.name == "como-chegamos" else ["/estilo.css", "/site.js"]
+        assert sorted(locais) == esperados, pagina
         for local in locais:
             assert (saida / local.lstrip("/")).is_file(), local
+
+
+def test_nn_js_so_na_pagina_como_chegamos_e_antes_do_estilo(saida):
+    """A classe nn-js tem de estar no <html> antes do primeiro desenho: o script e externo (a CSP nao admite inline),
+    pequeno, sem defer nem async, e vem no <head> antes do estilo.css. As outras paginas nao o pedem."""
+    script = (saida / "nn-js.js").read_text(encoding="utf-8")
+    assert script.strip() == 'document.documentElement.classList.add("nn-js");'
+    for pagina in _arquivos(saida, ".html"):
+        texto = pagina.read_text(encoding="utf-8")
+        pede = '<script src="/nn-js.js">' in texto
+        assert pede == (pagina.parent.name == "como-chegamos"), pagina
+        if pede:
+            arvore = Arvore(texto)
+            [tag] = [s for s in arvore.achar("script") if s["attrs"].get("src") == "/nn-js.js"]
+            assert "defer" not in tag["attrs"] and "async" not in tag["attrs"] and "type" not in tag["attrs"]
+            assert texto.index('<script src="/nn-js.js">') < texto.index('<link rel="stylesheet"') < texto.index("</head>")
+            assert texto.index("<head>") < texto.index('<script src="/nn-js.js">')
+    # a classe nao vem mais do site.js (depois do primeiro desenho seria tarde): so o remove, quando nao ha <dialog>
+    assert "classList.add('nn-js')" not in (saida / "site.js").read_text(encoding="utf-8")
 
 
 # --- identidade visual ---
@@ -192,8 +213,29 @@ def _seletores(cabecalho: str) -> list[str]:
 
 
 def _sob_a_historia(seletor: str) -> bool:
-    """O seletor so casa dentro de `.nn-historia` (a classe do <main> da pagina Como chegamos)."""
-    return bool(re.search(r"(^|[\s>+~])\.nn-historia(?![\w-])", seletor) or seletor.startswith(".nn-historia"))
+    """O seletor so casa dentro de `.nn-historia` (a classe do <main> da pagina Como chegamos).
+
+    Os `:not(...)` saem antes: o que esta dentro deles exclui elementos, nao situa o seletor (`:not(.a .nn-historia) h1`
+    casa em qualquer pagina). `.nn-historia-foo` nao conta: depois do nome vem algo que nao e parte de um identificador.
+    """
+    sem_negacao = re.sub(r":not\((?:[^()]|\([^()]*\))*\)", "", seletor)
+    return bool(re.search(r"(^|[\s>+~])\.nn-historia(?![\w-])", sem_negacao))
+
+
+@pytest.mark.parametrize("seletor, esperado", [
+    (".nn-historia h1", True),
+    (".nn-js .nn-historia .nn-faixa", True),
+    (".nn-historia", True),
+    (".nn-historia-foo h1", False),
+    (".nn-historia-foo", False),
+    (":not(.a .nn-historia) h1", False),
+    (":not(.nn-historia) h1", False),
+    ("h1:not(.a .nn-historia)", False),
+    (".nn-historia h1:not(.x)", True),
+    (".nn-historia :not(.a .b) h1", True),
+])
+def test_o_auxiliar_sob_a_historia_nao_deixa_passar_seletor_solto(seletor, esperado):
+    assert _sob_a_historia(seletor) is esperado, seletor
 
 
 def test_fonte_serifada_so_na_pagina_de_historia(saida):
@@ -214,6 +256,14 @@ def test_fonte_serifada_so_na_pagina_de_historia(saida):
                 assert _sob_a_historia(seletor), (seletor, declaracao)
     assert any(p in ("font-family", "font") for _, p in usos), usos  # e ela e usada (titulos da pagina)
     assert {":root", "body", "html", ".nn"}.isdisjoint(s for c, _ in usos for s in _seletores(c))
+
+
+def test_licenca_cita_as_tres_fontes_da_ofl():
+    """O LICENSE.md diz que tudo fora das excecoes e CC BY 4.0: toda fonte com OFL.txt tem de estar entre as excecoes."""
+    licenca = " ".join((RAIZ / "LICENSE.md").read_text(encoding="utf-8").split())
+    fontes = sorted(p.parent.name for p in (RAIZ / "src" / "nordeste" / "site" / "estaticos" / "fontes").glob("*/OFL.txt"))
+    assert fontes == ["dm-sans", "eb-garamond", "manrope"]
+    assert "Fontes Manrope, DM Sans e EB Garamond (`src/nordeste/site/estaticos/fontes/`): SIL Open Font License 1.1" in licenca
 
 
 def test_ebgaramond_local_com_licenca(saida):
@@ -289,6 +339,13 @@ def _regra_em(css: str, cabecalho: tuple[str, ...], seletor: str) -> dict[str, s
     return achadas
 
 
+# a composicao da abertura (foto-abertura.webp, 1500x844): o Farol da Barra (torre e forte) vai de x 39,5% a 58,6% da
+# largura e o sol fica em x ~95,7% (medidos na imagem original, 1672x941)
+FOTO_PROPORCAO = 1500 / 844
+FOTO_FAROL_X = (0.395, 0.586)
+FOTO_SOL_X = 0.957
+
+
 def test_css_da_foto_abertura_dividida(saida):
     css = (saida / "estilo.css").read_text(encoding="utf-8")
     # a foto e o ::before (local: a CSP e default-src 'self'), com so uma camada leve e o degradê da emenda; nada de <img>
@@ -301,12 +358,20 @@ def test_css_da_foto_abertura_dividida(saida):
     desktop = _regra_em(css, ("@media (min-width: 901px)",), ".nn-hero-com-foto::before")
     largura = float(re.fullmatch(r"(\d+)%", desktop["width"])[1])
     assert 48 <= largura <= 50  # Rodada 4: a coluna do texto fica com 50 a 52% para o titulo crescer
-    # o sol (canto superior direito da foto) sai do quadro: a foto e ampliada pela altura (>= 100%, cobre a coluna, que e
-    # mais alta que 1:1,33) e o recorte fica do lado esquerdo (x <= 50%); o teste de navegador mede a area estourada
-    tamanho = re.fullmatch(r"auto (\d+)%", desktop["background-size"].rsplit(",", 1)[1].strip())
-    assert tamanho and 100 <= int(tamanho[1]) <= 130, desktop["background-size"]
+    # Rodada 5 (composicao 1500x844): a foto cobre a coluna pela altura (`cover` ou `auto N%`, 100 <= N <= 130) e o
+    # recorte horizontal deixa o Farol da Barra inteiro dentro do quadro e o sol (canto direito) fora, para qualquer
+    # coluna de 0,9:1 a 1,1:1 (medida: ~0,97:1 de 901 a 1440 px); o teste de navegador mede a area estourada
+    tamanho = desktop["background-size"].rsplit(",", 1)[1].strip()
+    ampliada = re.fullmatch(r"auto (\d+)%", tamanho)
+    assert tamanho == "cover" or (ampliada and 100 <= int(ampliada[1]) <= 130), desktop["background-size"]
     posicao_x = re.fullmatch(r"(\d+)% (\d+)%", desktop["background-position"].rsplit(",", 1)[1].strip())
-    assert posicao_x and int(posicao_x[1]) <= 50, desktop["background-position"]
+    assert posicao_x, desktop["background-position"]
+    for proporcao in (0.9, 1.0, 1.1):  # largura / altura da coluna da foto
+        largura_foto = FOTO_PROPORCAO * (int(ampliada[1]) / 100 if ampliada else 1.0)  # em alturas da coluna
+        inicio = (largura_foto - proporcao) * int(posicao_x[1]) / 100 / largura_foto  # fracao da largura da foto
+        fim = inicio + proporcao / largura_foto
+        assert inicio <= FOTO_FAROL_X[0] - 0.02 and FOTO_FAROL_X[1] + 0.02 <= fim, (proporcao, inicio, fim)
+        assert fim <= FOTO_SOL_X - 0.06, (proporcao, fim)  # o sol e o brilho em volta dele ficam fora do quadro
     # o titulo volta a ~72 px (teto entre 72 e 80 px), sem passar de 64 px a 901 px nem de 72 px a 1280 px na inclinacao
     titulo = re.fullmatch(r"clamp\((\d+)px, ([\d.]+)vw, (\d+)px\)",
                           _regra_em(css, ("@media (min-width: 901px)",), ".nn .nn-hero-com-foto .nn-hero-titulo")["font-size"])
@@ -317,6 +382,8 @@ def test_css_da_foto_abertura_dividida(saida):
     faixa = _regra_em(css, ("@media (max-width: 900px)",), ".nn-hero-com-foto::before")
     assert faixa["--nn-foto-fusao"].endswith("#080808 100%)") and faixa["--nn-foto-fusao"].startswith("linear-gradient(180deg, ")
     assert faixa["height"] == "var(--nn-foto-alt)"
+    # a faixa mostra a largura toda da composicao (`cover` da regra geral), com o farol no meio: recorte centrado em x
+    assert "background-size" not in faixa and faixa["background-position"].rsplit(",", 1)[1].strip().startswith("50% ")
     assert _regra_em(css, ("@media (max-width: 900px)",), ".nn-hero-com-foto")["padding-top"].startswith("calc(var(--nn-foto-alt)")
     assert re.fullmatch(r"clamp\((\d+)px, (\d+)vw, (\d+)px\)", _declaracoes(css, ".nn-hero-com-foto")["--nn-foto-alt"])
     # o texto fica sempre sobre #080808 e o destaque do titulo segue #ea2e00 (4,7:1), sem regra propria com foto

@@ -836,13 +836,20 @@
   function ligarHistoria() {
     const faixa = document.querySelector('ol.nn-linha-tempo');
     const dialogo = document.querySelector('dialog.nn-modal-historia');
-    if (!faixa || !dialogo || typeof dialogo.showModal !== 'function') return;
+    if (!faixa || !dialogo || typeof dialogo.showModal !== 'function') {
+      /* sem <dialog> (ou fora desta página), nada abre as épocas: a lista com os artigos tem de ficar à vista */
+      document.documentElement.classList.remove('nn-js');
+      return;
+    }
     const corpo = dialogo.querySelector('.nn-modal-corpo');
     const largo = window.matchMedia('(min-width: 901px)');
     const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)');
     let aberta = null; /* o <li> da época cujo artigo está no modal */
     let empurrado = false; /* a abertura criou uma entrada no histórico, que o fechar desfaz */
     let pelaNavegacao = false; /* o modal fecha porque o endereço mudou: o histórico já está certo */
+    let fechando = false; /* o fechar chamou history.back(): o popstate que vem daí não pode reabrir uma época */
+
+    faixa.querySelectorAll('.nn-epoca-abrir').forEach((botao) => botao.setAttribute('aria-haspopup', 'dialog')); /* sem JS o cartão não abre nada */
 
     const epocas = () => [...faixa.querySelectorAll(':scope > li.nn-epoca')];
     const cartao = (li) => li.querySelector('.nn-epoca-abrir');
@@ -902,6 +909,7 @@
     }
 
     function abrir(li, marco) {
+      fechando = false;
       mostrar(li, marco);
       const hash = '#' + (marco ? marco.id : li.id);
       if (location.hash !== hash) {
@@ -913,6 +921,11 @@
     /* o endereço mudou por fora (voltar, avançar, hash digitado): o modal segue o endereço */
     function seguirEndereco() {
       const alvo = resolver(location.hash);
+      if (fechando) { /* é o history.back() do fechar: a entrada em que ele caiu pode ainda citar uma época (#1530 -> #1808 -> Esc) */
+        fechando = false;
+        if (alvo && !dialogo.open) history.replaceState(history.state, '', location.pathname + location.search);
+        return;
+      }
       if (alvo) {
         if (!dialogo.open) empurrado = true; /* a entrada anterior é a página sem época */
         if (!dialogo.open || alvo.li !== aberta || alvo.marco) mostrar(alvo.li, alvo.marco);
@@ -935,8 +948,10 @@
       devolver();
       aberta = null;
       if (!pelaNavegacao) {
-        if (empurrado) history.back();
-        else if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+        if (empurrado) {
+          fechando = true;
+          history.back();
+        } else if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
       }
       empurrado = false;
       pelaNavegacao = false;
@@ -992,9 +1007,9 @@
       const teclas = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: cartoes.length - 1 };
       if (!largo.matches) Object.assign(teclas, { ArrowDown: i + 1, ArrowUp: i - 1 });
       const destino = teclas[evento.key];
-      if (destino === undefined) return;
+      if (destino === undefined || !cartoes[destino]) return; /* sem cartão para onde ir, a seta rola a página como sempre */
       evento.preventDefault();
-      if (cartoes[destino]) cartoes[destino].focus();
+      cartoes[destino].focus();
     });
 
     /* arrasto com mouse ou caneta, só na faixa horizontal; no toque, a rolagem nativa da faixa já basta */
@@ -1177,22 +1192,40 @@
   if (typeof module === 'object' && module.exports) module.exports = { numero };
   if (typeof document === 'undefined') return;
 
-  /* o quanto antes (o script é defer): o CSS esconde os artigos das épocas na lista e liga o que só existe com JS */
-  document.documentElement.classList.add('nn-js');
+  /* A classe nn-js (o CSS esconde os artigos das épocas na lista e liga o que só existe com JS) vem do nn-js.js, um
+     script pequeno e sem defer no <head> da página Como chegamos: aqui, depois do primeiro desenho, seria tarde. */
+
+  /* cada ligação é isolada: se uma falha, as outras seguem e a página não perde o que já funcionava */
+  function tentar(ligar) {
+    try {
+      ligar();
+    } catch (erro) {
+      console.error(erro);
+    }
+  }
 
   function iniciar() {
-    centralizarAba();
-    document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica);
-    ligarAmpliar();
-    ligarAutor();
-    ligarHistoria();
-    ligarEstados();
-    ligarExplorar();
-    const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-    if (movimento && 'IntersectionObserver' in window) {
-      animarAoRolar();
-      contarNumeros();
-    }
+    tentar(centralizarAba);
+    tentar(() => document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica));
+    tentar(ligarAmpliar);
+    tentar(ligarAutor);
+    tentar(() => {
+      try {
+        ligarHistoria();
+      } catch (erro) {
+        document.documentElement.classList.remove('nn-js'); /* ligada pela metade: o conteúdo tem de ficar à vista */
+        throw erro;
+      }
+    });
+    tentar(ligarEstados);
+    tentar(ligarExplorar);
+    tentar(() => {
+      const movimento = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+      if (movimento && 'IntersectionObserver' in window) {
+        animarAoRolar();
+        contarNumeros();
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
