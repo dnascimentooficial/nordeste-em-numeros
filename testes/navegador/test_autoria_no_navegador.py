@@ -18,7 +18,8 @@ pytestmark = pytest.mark.navegador
 MODAL = "dialog.nn-modal-autor"
 GATILHO = "a.nn-autor-abrir"
 LIMITE_DO_CONTRASTE = 4.5
-PAGINAS_COM_CABECALHO = ["/", "/como-chegamos/", "/estados/", "/sobre/"]  # a abertura com foto, o papel antigo e duas comuns
+# a abertura com foto, o papel antigo e duas comuns; e as duas primeiras em ingles (o seletor de idioma no menu)
+PAGINAS_COM_CABECALHO = ["/", "/como-chegamos/", "/estados/", "/sobre/", "/en/", "/en/how-we-got-here/"]
 
 _ESTADO = """() => {
   const d = document.querySelector('dialog.nn-modal-autor');
@@ -178,7 +179,7 @@ def test_menu_no_desktop_marca_a_esquerda_barra_preta_no_centro_e_botao_laranja_
         # a pagina atual marcada uma vez (o link de cima ou o cartao dentro do grupo, que tambem marca o grupo)
         assert pagina.locator(".nn-menu [aria-current='page']").count() == 1
         grupo_atual = pagina.locator(".nn-menu-grupo[data-atual]").count()
-        assert grupo_atual == (1 if rota in ("/como-chegamos/", "/estados/") else 0)
+        assert grupo_atual == (1 if rota in ("/como-chegamos/", "/estados/", "/en/how-we-got-here/") else 0)
         assert pagina.locator(".nn-menu > a").count() == 2 and pagina.locator(".nn-menu-grupo").count() == 2
 
 
@@ -219,7 +220,7 @@ def test_menu_no_celular_a_barra_some_o_botao_de_menu_abre_a_gaveta_e_nada_estou
         assert _estouro(pagina) == {}
 
 
-@pytest.mark.parametrize("largura", [360, CELULAR])
+@pytest.mark.parametrize("largura", [320, 360, CELULAR])
 @pytest.mark.parametrize("rota", PAGINAS_COM_CABECALHO)
 def test_menu_no_celular_marca_botao_e_menu_cabem_na_largura_e_a_marca(abrir, rota, largura):
     """A marca, o botao laranja e o botao de menu cabem lado a lado em 360 px (somavam 384 e o de menu saia da tela)."""
@@ -287,13 +288,13 @@ def _pior_contraste(pagina, seletor_da_caixa: str, seletor_dos_textos: str) -> t
 
 @pytest.mark.parametrize("esquema", ["light", "dark"])
 @pytest.mark.parametrize("largura", [CELULAR, DESKTOP])
-@pytest.mark.parametrize("rota", ["/", "/como-chegamos/"])
+@pytest.mark.parametrize("rota", ["/", "/como-chegamos/", "/en/"])
 def test_contraste_do_menu_nos_pixels_reais(abrir, rota, largura, esquema):
     """Marca, abas, grupos e botao laranja >= 4,5:1 contra o pior pixel atras de cada linha: sobre a abertura com foto
     (o Inicio) e sobre a capa da pagina de papel antigo (Como chegamos), nos dois temas, com o menu fechado e com o
     painel (desktop) ou a gaveta (celular) aberto. O teste confere o que o navegador de fato pinta."""
     desktop = largura >= MENU_FIXO
-    textos = ".nn-marca, .nn-topo-botao" + (", .nn-menu > a, .nn-menu-grupo > summary" if desktop else "")
+    textos = ".nn-marca, .nn-topo-botao" + (", .nn-menu > a, .nn-menu-grupo > summary, .nn-menu .nn-idioma" if desktop else "")
     with abrir(rota, largura=largura, color_scheme=esquema, reduced_motion="reduce") as pagina:
         pagina.evaluate("() => document.fonts.ready")
         pior, quantos = _pior_contraste(pagina, ".nn-topo", textos)

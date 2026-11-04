@@ -295,6 +295,10 @@ def test_og_1200x630_por_pagina(com_imagens):
         assert _tamanho_do_png(saida / "og" / f"{pagina}.png") == (1200, 630), pagina
     # as paginas de card usam o proprio PNG do card (og:image aponta para /cards/<id>.png), nao uma imagem og/
     assert sorted(p.name for p in (saida / "og").iterdir()) == sorted(f"{p}.png" for p in PAGINAS_COM_OG)
+    # as paginas em ingles tem as suas, em en/og/, com os mesmos nomes
+    assert sorted(p.name for p in (saida / "en" / "og").iterdir()) == sorted(f"{p}.png" for p in PAGINAS_COM_OG)
+    for pagina in PAGINAS_COM_OG:
+        assert _tamanho_do_png(saida / "en" / "og" / f"{pagina}.png") == (1200, 630), pagina
 
 
 @pytest.mark.navegador
@@ -305,6 +309,10 @@ def test_png_do_card_1080x1350(com_imagens):
     for id_ in ids:
         assert _tamanho_do_png(saida / "cards" / f"{id_}.png") == (1080, 1350), id_
     assert sorted(p.stem for p in (saida / "cards").glob("*.png")) == sorted(ids)
+    # o card em ingles (com o aviso "A common saying in Brazil"), em en/cards/<id>.png
+    assert sorted(p.stem for p in (saida / "en" / "cards").glob("*.png")) == sorted(ids)
+    for id_ in ids:
+        assert _tamanho_do_png(saida / "en" / "cards" / f"{id_}.png") == (1080, 1350), id_
 
 
 @pytest.mark.navegador

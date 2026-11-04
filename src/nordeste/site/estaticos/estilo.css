@@ -584,6 +584,29 @@ body {
   background: #1c1c1f;
 }
 
+/* entre 1100 e 1199 px a barra é mais estreita: itens um pouco mais juntos, para o seletor caber na mesma linha */
+@media (max-width: 1199px) {
+  .nn .nn-menu > a,
+  .nn .nn-topo .nn-menu-grupo > summary {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .nn .nn-idiomas .nn-idioma {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .nn-menu {
+    padding: 0 8px;
+  }
+
+  .nn-idiomas {
+    margin-left: 4px;
+    padding-left: 6px;
+  }
+}
+
 .nn-bandeira {
   display: block;
   width: 18px;
@@ -788,6 +811,27 @@ body {
 
   .nn-topo-botao-seta {
     display: none;
+  }
+}
+
+/* abaixo de 360 px (320 px do iPhone SE e dos Galaxy pequenos): ainda faltavam até 35 px; marca e botão um pouco
+   menores, vãos mais curtos */
+@media (max-width: 359px) {
+  .nn-topo-barra {
+    gap: 5px;
+  }
+
+  .nn-topo-direita {
+    gap: 4px;
+  }
+
+  .nn .nn-marca {
+    font-size: 13px;
+  }
+
+  .nn .nn-topo-botao {
+    padding: 8px 6px;
+    font-size: 11.5px;
   }
 }
 
