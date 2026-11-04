@@ -10,6 +10,7 @@ const BASE = 24;
 const LARGO = { largura: 720, altura: 300 };
 const ESTREITO = { largura: 360, altura: 240 };
 const SVG = 'http://www.w3.org/2000/svg';
+const IDIOMA = typeof document !== 'undefined' && /^en\b/i.test(document.documentElement.lang) ? 'en' : 'pt';
 function arredondar(valor, casas) {
 const absoluto = Math.abs(valor);
 let fixo = absoluto.toFixed(casas);
@@ -23,11 +24,21 @@ fixo = casas ? digitos.slice(0, -casas) + '.' + digitos.slice(-casas) : digitos;
 }
 return fixo;
 }
-function numero(valor, casas) {
+function numero(valor, casas, idioma) {
+const [milhar, decimal] = (idioma || IDIOMA) === 'en' ? [',', '.'] : ['.', ','];
 const fixo = arredondar(valor, casas);
 const [inteiro, decimais] = fixo.split('.');
 const negativo = valor < 0 && /[1-9]/.test(fixo);
-return (negativo ? '-' : '') + inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (decimais ? ',' + decimais : '');
+return (negativo ? '-' : '') + inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, milhar) + (decimais ? decimal + decimais : '');
+}
+let rotulos = {
+desc: 'Gráfico de linhas, {titulo}. {partes}. A tabela com todos os valores está logo abaixo.',
+parte: '{rotulo}: {primeiro} em {ano_primeiro} e {ultimo} em {ano_ultimo}',
+e: 'e',
+colunas: ['Ano', 'Território', 'Valor', 'Série da fonte'],
+};
+function preencherModelo(modelo, valores) {
+return modelo.replace(/\{(\w+)\}/g, (inteiro, nome) => (nome in valores ? String(valores[nome]) : inteiro));
 }
 function coord(valor) {
 let texto = arredondar(valor, 1);
@@ -112,10 +123,12 @@ function descricao(linhas, cfg) {
 const partes = linhas.map((l) => {
 const primeiro = l.pontos[0];
 const ultimo = l.pontos[l.pontos.length - 1];
-return `${l.rotulo}: ${numero(primeiro[1], cfg.casas)}${cfg.sufixo} em ${primeiro[0]} ` +
-`e ${numero(ultimo[1], cfg.casas)}${cfg.sufixo} em ${ultimo[0]}`;
+return preencherModelo(rotulos.parte, {
+rotulo: l.rotulo, primeiro: numero(primeiro[1], cfg.casas) + cfg.sufixo, ano_primeiro: primeiro[0],
+ultimo: numero(ultimo[1], cfg.casas) + cfg.sufixo, ano_ultimo: ultimo[0],
 });
-return `Gráfico de linhas, ${cfg.titulo}. ${partes.join('; ')}. A tabela com todos os valores está logo abaixo.`;
+});
+return preencherModelo(rotulos.desc, { titulo: cfg.titulo, partes: partes.join('; ') });
 }
 let contadorDeIds = 0;
 function grafico(linhas, cfg, faixas, tamanho, periodo) {
@@ -444,6 +457,7 @@ const { zoomDe, zoomAte, botaoAmpliar, botaoTodo } = montarZoom(painel);
 const vista = document.getElementById('explorar-vista');
 const titulo = document.getElementById('explorar-titulo');
 const faixas = JSON.parse(cartao.getAttribute('data-governos'));
+if (cartao.hasAttribute('data-rotulos')) rotulos = Object.assign(rotulos, JSON.parse(cartao.getAttribute('data-rotulos')));
 const nomes = {};
 const etiquetas = {};
 [...selTerritorio.options].forEach((o) => {
@@ -514,7 +528,7 @@ caixa.className = 'nn-tabela';
 const tab = document.createElement('table');
 const cabeca = document.createElement('thead');
 const linhaCabeca = document.createElement('tr');
-[['Ano', ''], ['Território', ''], ['Valor', 'nn-num'], ['Série da fonte', '']].forEach(([texto, classe]) => {
+rotulos.colunas.map((texto, i) => [texto, i === 2 ? 'nn-num' : '']).forEach(([texto, classe]) => {
 const th = document.createElement('th');
 th.scope = 'col';
 th.textContent = texto;
@@ -558,7 +572,7 @@ a0: estado.de ? Number(estado.de) : ANO_INICIAL,
 a1: estado.ate ? Number(estado.ate) + 1 : ANO_FINAL,
 ampliar: estado.ampliar,
 };
-const nomeDoGrafico = `${cfg.nome}, ${nomes[estado.territorio]}${comparado ? ` e ${nomes[comparado]}` : ''}`;
+const nomeDoGrafico = `${cfg.nome}, ${nomes[estado.territorio]}${comparado ? ` ${rotulos.e} ${nomes[comparado]}` : ''}`;
 const config = { titulo: nomeDoGrafico, casas: cfg.casas, sufixo: cfg.sufixo };
 const noPeriodo = visiveis([principal], periodo.a0, periodo.a1).length;
 const largo = noPeriodo ? grafico(linhas, config, faixas, LARGO, periodo) : null;
@@ -924,8 +938,8 @@ faixa.scrollBy({ left: lado * passo, behavior: movimento.matches ? 'smooth' : 'a
 });
 return botao;
 };
-const anterior = seta('nn-faixa-anterior', 'Épocas anteriores', '‹', -1);
-const proxima = seta('nn-faixa-proxima', 'Próximas épocas', '›', 1);
+const anterior = seta('nn-faixa-anterior', faixa.getAttribute('data-anteriores') || 'Épocas anteriores', '‹', -1);
+const proxima = seta('nn-faixa-proxima', faixa.getAttribute('data-proximas') || 'Próximas épocas', '›', 1);
 faixa.before(moldura);
 moldura.append(anterior, faixa, proxima);
 const marcarPontas = () => {
@@ -1065,6 +1079,8 @@ observador.observe(caixa);
 });
 }
 const TEXTOS_COM_NUMEROS = '.nn-hero-intro, .nn-numero-comparacao, .nn-numero-valor';
+const NUMERO_COM_DECIMAIS = IDIOMA === 'en' ? /(\d{1,3}(?:,\d{3})*\.\d+%?)/ : /(\d{1,3}(?:\.\d{3})*,\d+%?)/;
+const [MILHAR, DECIMAL] = IDIOMA === 'en' ? [',', '.'] : ['.', ','];
 function contarNumeros() {
 const alvos = [];
 document.querySelectorAll(TEXTOS_COM_NUMEROS).forEach((paragrafo) => {
@@ -1072,7 +1088,7 @@ const caminhante = document.createTreeWalker(paragrafo, NodeFilter.SHOW_TEXT);
 const textos = [];
 while (caminhante.nextNode()) textos.push(caminhante.currentNode);
 textos.forEach((texto) => {
-const partes = texto.data.split(/(\d{1,3}(?:\.\d{3})*,\d+%?)/);
+const partes = texto.data.split(NUMERO_COM_DECIMAIS);
 if (partes.length < 2) return;
 const pedaco = document.createDocumentFragment();
 partes.forEach((parte, i) => {
@@ -1095,8 +1111,8 @@ const contar = (span) => {
 const final = span.textContent;
 const sufixo = final.endsWith('%') ? '%' : '';
 const corpo = final.slice(0, final.length - sufixo.length);
-const casas = corpo.split(',')[1].length;
-const valor = Number(corpo.replace(/\./g, '').replace(',', '.'));
+const casas = corpo.split(DECIMAL)[1].length;
+const valor = Number(corpo.split(MILHAR).join('').replace(DECIMAL, '.'));
 const comeco = performance.now();
 const passo = (agora) => {
 const t = Math.min(1, (agora - comeco) / duracao);
