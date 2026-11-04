@@ -252,6 +252,13 @@ arquivos:
   titulo: "Os arquivos por trás dos números"
   intro: "O site lê só a base publicada, exatamente como está nos arquivos da página Dados, com a data e o sha256 de cada um."
 
+medicao:
+  titulo: "O que eu meço neste site"
+  paragrafos:
+    - "Uso o Umami, um medidor de audiência de código aberto, para saber como o site é lido. Ele não usa cookies, não grava sessões e não coleta dados pessoais, e eu não guardo o endereço IP de ninguém."
+    - "O que ele conta: as páginas visitadas, o tempo em cada uma, o país e o tipo de aparelho, o site de onde a pessoa veio e os cliques nos recursos do site (cards baixados, planilhas baixadas, gráficos ampliados, seções lidas). Uso esses números só para decidir o que melhorar aqui."
+    - "Navegadores com o “Do Not Track” ligado não são contados. Para ficar de fora, grave no localStorage a chave umami.disabled com o valor 1. Vale só para aquele navegador, naquele aparelho."
+
 dados:
   titulo: "Dados para baixar"
   intro: "Estes são os arquivos que o site lê, do jeito que foram publicados. Pode baixar, conferir e usar, com crédito a mim e à fonte oficial de cada série. Os dados de origem são públicos: IBGE, INEP, Ipea, Atlas Brasil, INPI e Cetic.br."

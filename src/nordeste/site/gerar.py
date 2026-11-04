@@ -139,7 +139,9 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
     "ampliar": {"botao", "rotulo", "fechar", "gire", "quebra"},
     "por_que": {"titulo", "paragrafos"}, "como_ler": {"titulo", "itens"}, "o_que_falta": {"titulo", "itens"},
     "dataset": {"nome", "descricao"}, "fontes": {"titulo", "intro"}, "formulas": {"titulo", "intro", "blocos"},
-    "arquivos": {"titulo", "intro"}, "dados": {"titulo", "intro", "conferir", "arquivos"},
+    "arquivos": {"titulo", "intro"},
+    "medicao": {"titulo", "paragrafos"},  # "O que eu meço neste site", em Sobre: o que a medicao de audiencia conta
+    "dados": {"titulo", "intro", "conferir", "arquivos"},
     "estados": {
         "titulo", "intro", "titulo_mapa", "titulo_ranking", "escala_pior", "escala_melhor", "nota_do_mapa", "rolagem",
         "tabela", "fonte", "sem_dados",
