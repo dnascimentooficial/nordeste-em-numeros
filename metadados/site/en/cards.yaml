@@ -1,0 +1,255 @@
+# The 18 shareable cards: a common saying, the before and after numbers, the context sentence,
+# the closing line and the condition that backs it. Condition expressions and markers are unchanged.
+
+- id: pobreza
+  rotulo: "Poverty"
+  frase_feita: "“The poor are no better off.”"
+  de: "{pob_ne.primeiro:1%}"
+  para: "{pob_ne.ultimo:1%}"
+  frase: "of people in the Northeast lived below the poverty line, from {pob_ne.ano_primeiro} to {pob_ne.ano_ultimo}. In Brazil today, {pob_br.ultimo:1%}."
+  grafico: g_pob
+  fecho: "It fell. Still above Brazil."
+  condicao: "pob_ne.ultimo < pob_ne.primeiro e pob_ne.ultimo > pob_br.ultimo"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: extrema
+  rotulo: "Extreme poverty"
+  frase_feita: "“Northeast poverty never changes.”"
+  de: "{ext_ne.primeiro:1%}"
+  para: "{ext_ne.ultimo:1%}"
+  frase: "lived on less than US$ 3.00 a day, from {ext_ne.ano_primeiro} to {ext_ne.ano_ultimo}. In Brazil today, {ext_br.ultimo:1%}."
+  grafico: g_ext
+  fecho: "It was cut in half."
+  condicao: "ext_ne.ultimo <= ext_ne.primeiro * 0.55"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: gini
+  rotulo: "Inequality"
+  frase_feita: "“The Northeast is the most unequal.”"
+  de: "{gini_ne.primeiro:3}"
+  para: "{gini_ne.ultimo:3}"
+  frase: "is the Northeast's Gini index, from {gini_ne.ano_primeiro} to {gini_ne.ano_ultimo}. It runs from 0 to 1: the higher, the more unequal. Brazil's is {gini_br.ultimo:3}."
+  grafico:
+    id: g_gini
+    descricao: "Gini index, Northeast and Brazil"
+    casas: 3
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: gini, territorio: NE, serie: pnadc}
+      - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: gini, territorio: BR, serie: pnadc}
+  fecho: "Now less unequal than Brazil overall."
+  condicao: "gini_ne.ultimo < gini_br.ultimo"  # cobre o fecho inteiro
+  fonte: "IBGE, PNAD Contínua"
+
+- id: ideb
+  rotulo: "Education, early grades"
+  frase_feita: "“Schools here haven't improved.”"
+  de: "{ideb_ai_ne.primeiro:1}"
+  para: "{ideb_ai_ne.ultimo:1}"
+  frase: "is the Northeast's IDEB score for grades 1 to 5, from {ideb_ai_ne.ano_primeiro} to {ideb_ai_ne.ano_ultimo}, on a scale of 0 to 10. Brazil is at {ideb_ai_br.ultimo:1}."
+  grafico: g_ideb_ai
+  fecho: "It more than doubled."
+  condicao: "ideb_ai_ne.ultimo > ideb_ai_ne.primeiro * 2"
+  fonte: "INEP, IDEB"
+
+- id: ideb_af
+  rotulo: "Education, late grades"
+  frase_feita: "“After fifth grade, school falls apart.”"
+  de: "{ideb_af_ne.primeiro:1}"
+  para: "{ideb_af_ne.ultimo:1}"
+  frase: "is the Northeast's IDEB score for grades 6 to 9, from {ideb_af_ne.ano_primeiro} to {ideb_af_ne.ano_ultimo}. Brazil is at {ideb_af_br.ultimo:1}."
+  grafico: g_ideb_af
+  fecho: "It improved, nearly matching Brazil."
+  condicao: "ideb_af_ne.ultimo > ideb_af_ne.primeiro e ideb_af_ne.ultimo >= ideb_af_br.ultimo * 0.9"
+  fonte: "INEP, IDEB"
+
+- id: ideb_em
+  rotulo: "High school"
+  frase_feita: "“High school here is a lost cause.”"
+  de: "{ideb_em_ne.primeiro:1}"
+  para: "{ideb_em_ne.ultimo:1}"
+  frase: "is the Northeast's IDEB score for high school, from {ideb_em_ne.ano_primeiro} to {ideb_em_ne.ano_ultimo}. Brazil is at {ideb_em_br.ultimo:1}."
+  grafico: g_ideb_em
+  fecho: "Small gain. And all of Brazil does badly here."
+  condicao: "ideb_em_ne.ultimo > ideb_em_ne.primeiro e ideb_em_ne.ultimo < ideb_em_ne.primeiro * 1.5 e ideb_em_br.ultimo < 5"
+  fonte: "INEP, IDEB"
+
+- id: superior
+  rotulo: "Higher education"
+  frase_feita: "“Northeasterners don't reach college.”"
+  longo: true
+  de: "{superior_ne.primeiro:auto}"
+  para: "{superior_ne.ultimo:auto}"
+  frase: "in college enrollments in the Northeast, from {superior_ne.ano_primeiro} to {superior_ne.ano_ultimo}."
+  grafico:
+    id: g_superior
+    descricao: "Higher education enrollments, Northeast"
+    casas: 0
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: superior, territorio: NE, sub: matriculas, rede: total, serie: censup}
+  fecho: "Nearly doubled. Population grew far less."
+  condicao: "superior_ne.ultimo >= superior_ne.primeiro * 1.8 e superior_ne.ultimo < superior_ne.primeiro * 2"
+  fonte: "INEP, Censo da Educação Superior"
+
+- id: creche
+  rotulo: "Daycare"
+  frase_feita: "“Daycare here is a luxury.”"
+  longo: true
+  de: "{creche_ne.primeiro:auto}"
+  para: "{creche_ne.ultimo:auto}"
+  frase: "children enrolled in daycare in the Northeast, from {creche_ne.ano_primeiro} to {creche_ne.ano_ultimo}."
+  grafico:
+    id: g_creche
+    descricao: "Daycare enrollments, Northeast"
+    casas: 0
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: matriculas_basica, territorio: NE, etapa: creche, rede: total, serie: educacenso}
+  fecho: "It more than doubled."
+  condicao: "creche_ne.ultimo > creche_ne.primeiro * 2"
+  fonte: "INEP, Censo Escolar"
+
+- id: pibpc
+  rotulo: "Wealth per person"
+  frase_feita: "“The Northeast is going nowhere.”"
+  de: "{pib_pc_razao.primeiro:1%}"
+  para: "{pib_pc_razao.ultimo:1%}"
+  frase: "is the Northeast's wealth per person for every 100% in the rest of the country, from {pib_pc_razao.ano_primeiro} to {pib_pc_razao.ano_ultimo}."
+  grafico: g_pibpc
+  fecho: "It moved. Slowly."
+  condicao: "pib_pc_razao.ultimo > pib_pc_razao.primeiro e pib_pc_razao.ultimo < pib_pc_razao.primeiro * 1.25"
+  fonte: "IBGE, Contas Regionais"
+
+- id: vol
+  rotulo: "Growth"
+  frase_feita: "“The economy here doesn't grow.”"
+  de: "{vol_ne.primeiro:0}"
+  para: "{vol_ne.ultimo:0}"
+  frase: "is the size of the Northeast's economy in {vol_ne.ano_ultimo}, if {vol_ne.ano_primeiro} is set at 100, adjusted for inflation. Brazil reached {vol_br.ultimo:0}."
+  grafico: g_vol
+  fecho: "It grew, and faster than the country."
+  condicao: "vol_ne.ultimo > vol_ne.primeiro e vol_ne.ultimo > vol_br.ultimo"
+  fonte: "IBGE, Contas Regionais"
+
+- id: part
+  rotulo: "Economic weight"
+  frase_feita: "“The Northeast doesn't matter economically.”"
+  de: "{part_ne.primeiro:1%}"
+  para: "{part_ne.ultimo:1%}"
+  frase: "is the Northeast's share of Brazil's GDP, from {part_ne.ano_primeiro} to {part_ne.ano_ultimo}. The region has about a quarter of the population."
+  grafico: g_part
+  fecho: "Small weight, barely changed. This one has some truth."
+  condicao: "part_ne.ultimo < 25 e part_ne.ultimo > part_ne.primeiro * 0.9 e part_ne.ultimo < part_ne.primeiro * 1.1"
+  fonte: "IBGE, Contas Regionais"
+
+- id: renda
+  rotulo: "Income compared"
+  frase_feita: "“Northeasterners earn the same pittance.”"
+  de: "{renda_razao.primeiro:1%}"
+  para: "{renda_razao.ultimo:1%}"
+  frase: "is Northeast income per person per 100% elsewhere in Brazil, from {renda_razao.ano_primeiro} to {renda_razao.ano_ultimo}."
+  grafico: g_renda
+  fecho: "It rose. Still a long way to go."
+  condicao: "renda_razao.ultimo > renda_razao.primeiro e renda_razao.ultimo < 60"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: renda_rs
+  rotulo: "Income in reais"
+  frase_feita: "“Money doesn't go far here.”"
+  longo: true
+  de: "R$ {renda_ne.primeiro:0}"
+  para: "R$ {renda_ne.ultimo:0}"
+  frase: "was income per person, per month, in the Northeast in {renda_ne.ano_primeiro} and in {renda_ne.ano_ultimo}, adjusted for inflation. In the rest of the country today, R$ {renda_ref.ultimo:0}."
+  grafico:
+    id: g_renda_rs
+    descricao: "Household income per person, in reais, Northeast and Brazil outside the Northeast"
+    casas: 0
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: renda_dom_pc, territorio: NE}
+      - {rotulo: "Brazil outside NE", rotulo_curto: "Brazil outside NE", destaque: false, tipo: serie, indicador: renda_dom_pc, territorio: BR_FORA_NE}
+  fecho: "Up by more than a third."
+  condicao: "renda_ne.ultimo >= renda_ne.primeiro * 1.33"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: rend
+  rotulo: "Work"
+  frase_feita: "“Working here doesn't pay.”"
+  longo: true
+  de: "R$ {rend_ne.primeiro:0}"
+  para: "R$ {rend_ne.ultimo:0}"
+  frase: "was average monthly earnings from work in the Northeast, from {rend_ne.ano_primeiro} to {rend_ne.ano_ultimo}, in today's money. In Brazil, R$ {rend_br.ultimo:0}."
+  grafico:
+    id: g_rend
+    descricao: "Earnings from work, in reais, Northeast and Brazil"
+    casas: 0
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: rendimento_trabalho, territorio: NE}
+      - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: rendimento_trabalho, territorio: BR}
+  fecho: "Up, but still about two-thirds of the national average."
+  condicao: "rend_ne.ultimo > rend_ne.primeiro e rend_ne.ultimo >= rend_br.ultimo * 0.6 e rend_ne.ultimo <= rend_br.ultimo * 0.75"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: desoc
+  rotulo: "Jobs"
+  frase_feita: "“There are no jobs here.”"
+  de: "{desoc_ne.primeiro:1%}"
+  para: "{desoc_ne.ultimo:1%}"
+  frase: "was the unemployment rate in the Northeast, from {desoc_ne.ano_primeiro} to {desoc_ne.ano_ultimo}. In Brazil, {desoc_br.ultimo:1%}."
+  grafico: g_desoc
+  fecho: "It fell, but is still above Brazil."
+  condicao: "desoc_ne.ultimo < desoc_ne.primeiro e desoc_ne.ultimo > desoc_br.ultimo"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: informal
+  rotulo: "Informal work"
+  frase_feita: "“Everyone here is informal.”"
+  de: "{informal_ne.primeiro:1%}"
+  para: "{informal_ne.ultimo:1%}"
+  frase: "of workers in the Northeast were in informal work, from {informal_ne.ano_primeiro} to {informal_ne.ano_ultimo}. In the rest of the country, {informal_ref.ultimo:1%}."
+  grafico:
+    id: g_informal
+    descricao: "Informal work, Northeast and Brazil outside the Northeast"
+    casas: 1
+    sufixo: "%"
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: informalidade, territorio: NE}
+      - {rotulo: "Brazil outside NE", rotulo_curto: "Brazil outside NE", destaque: false, tipo: serie, indicador: informalidade, territorio: BR_FORA_NE}
+  fecho: "Half are. This one hurts."
+  condicao: "informal_ne.ultimo >= 45 e informal_ne.ultimo <= 55 e informal_ne.ultimo > informal_ref.ultimo"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: idhm
+  rotulo: "Human development"
+  frase_feita: "“Human development? Still at the bottom.”"
+  de: "{idhm_ne.primeiro:3}"
+  para: "{idhm_ne.ultimo:3}"
+  frase: "is the Northeast's HDI-M, on a scale of 0 to 1, from {idhm_ne.ano_primeiro} to {idhm_ne.ano_ultimo}. Brazil's is {idhm_br.ultimo:3}."
+  grafico: g_idhm
+  fecho: "It rose, with a pandemic stumble. The gap narrowed."
+  condicao: "idhm_ne.ultimo > idhm_ne.primeiro e idhm_ne.dif > idhm_br.dif"
+  fonte: "Atlas Brasil (PNUD, Ipea, FJP)"
+
+- id: internet
+  rotulo: "Internet at home"
+  frase_feita: "“No internet in the Northeast.”"
+  de: "{internet_ne.primeiro:0%}"
+  para: "{internet_ne.ultimo:0%}"
+  frase: "of households in the Northeast had internet access, from {internet_ne.ano_primeiro} to {internet_ne.ano_ultimo}. In Brazil today, {internet_br.ultimo:0%}."
+  grafico:
+    id: g_internet
+    titulo: "Households with internet access"
+    subtitulo: "% of households. Through 2013, computer access only; through 2007, urban areas only. The lines do not connect."
+    titulo: "Households with internet access"
+    subtitulo: "% of households. Through 2013, computer access only; through 2007, urban areas only. The lines do not connect."
+    descricao: "households with internet access, Northeast and Brazil"
+    casas: 0
+    sufixo: "%"
+    min0: true
+    quebras:
+      - {ano: 2008, rotulo: "rural areas added"}
+      - {ano: 2014, rotulo: "new definition"}
+      - {ano: 2020, rotulo: "COVID-19 edition"}
+    linhas:
+      - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: internet_domicilios, territorio: NE}
+      - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: internet_domicilios, territorio: BR}
+  fecho: "They do, nearly as many as Brazil."
+  condicao: "internet_ne.ultimo > 50 e internet_ne.ultimo >= internet_br.ultimo * 0.95 e internet_ne.ultimo > internet_ne.primeiro"
+  fonte: "Cetic.br, TIC Domicílios"

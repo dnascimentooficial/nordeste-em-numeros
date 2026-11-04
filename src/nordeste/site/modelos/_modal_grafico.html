@@ -1,4 +1,4 @@
-{% from "_componentes.html" import atualizacoes, legenda %}
+{% from "_componentes.html" import atualizacoes, legenda with context %}
 {# O gráfico grande e o contexto dele, guardados num <template> que o site.js clona no <dialog> (Ruling S-W). #}
 {% macro ampliado(p, g, t) %}
 <template class="nn-ampliado" id="nn-ampliado-{{ g.id }}">

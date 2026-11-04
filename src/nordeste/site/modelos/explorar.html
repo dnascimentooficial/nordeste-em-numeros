@@ -1,45 +1,45 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_vista_explorar.html" import vista %}
-{% from "_componentes.html" import capa %}
+{% from "_vista_explorar.html" import vista with context %}
+{% from "_componentes.html" import capa with context %}
 {% block conteudo %}
 {% set t = textos.explorar %}
 {% set e = explorar %}
 {{ capa(capas.explorar, t.titulo, t.intro) }}
 <section class="nn-pagina" id="explorar" aria-labelledby="titulo-principal">
   <div class="nn-controles">
-    <label for="sel-expl-ind">Indicador
+    <label for="sel-expl-ind">{{ ui.indicador }}
       <select id="sel-expl-ind" class="nn-sel-expl-ind">
 {% for i in e.indicadores %}
         <option value="{{ i.chave }}" data-nome="{{ i.nome }}" data-unidade="{{ i.unidade }}" data-casas="{{ i.casas }}" data-sufixo="{{ i.sufixo }}"{% if i.chave == e.inicial.indicador %} selected{% endif %}>{{ i.rotulo }}</option>
 {% endfor %}
       </select>
     </label>
-    <label for="sel-expl-terr">Território
+    <label for="sel-expl-terr">{{ ui.territorio }}
       <select id="sel-expl-terr" class="nn-sel-expl-terr">
 {% for x in e.territorios %}
         <option value="{{ x.id }}" data-etiqueta="{{ x.etiqueta }}"{% if x.id == e.inicial.territorio %} selected{% endif %}>{{ x.nome }}</option>
 {% endfor %}
       </select>
     </label>
-    <label for="sel-expl-terr2">Comparar lado a lado com
+    <label for="sel-expl-terr2">{{ ui.comparar_com }}
       <select id="sel-expl-terr2" class="nn-sel-expl-terr2">
-        <option value="" selected>nenhum</option>
+        <option value="" selected>{{ ui.nenhum }}</option>
 {% for x in e.territorios %}
         <option value="{{ x.id }}" data-etiqueta="{{ x.etiqueta }}">{{ x.nome }}</option>
 {% endfor %}
       </select>
     </label>
   </div>
-  <article class="nn-card" id="explorar-grafico" data-dados="/explorar/dados/" data-sem-dados="{{ t.sem_dados }}" data-sem-periodo="{{ t.sem_periodo }}" data-erro="{{ t.erro }}" data-tabela="{{ t.tabela }}" data-governos="{{ e.governos }}">
-    <p class="nn-eyebrow">Explorar</p>
+  <article class="nn-card" id="explorar-grafico" data-dados="/explorar/dados/" data-sem-dados="{{ t.sem_dados }}" data-sem-periodo="{{ t.sem_periodo }}" data-erro="{{ t.erro }}" data-tabela="{{ t.tabela }}" data-governos="{{ e.governos }}" data-rotulos="{{ e.rotulos }}">
+    <p class="nn-eyebrow">{{ ui.eyebrow_explorar }}</p>
     <h2 id="explorar-titulo" aria-live="polite">{{ e.vista.titulo }}</h2>
     <p class="nn-muted">{{ t.nota }}</p>
     <div class="nn-zoom" id="explorar-zoom" role="group" aria-label="{{ t.zoom.grupo }}" data-de="{{ t.zoom.de }}" data-ate="{{ t.zoom.ate }}" data-inicio="{{ t.zoom.inicio }}" data-fim="{{ t.zoom.fim }}" data-ampliar="{{ t.zoom.ampliar }}" data-todo="{{ t.zoom.todo }}" hidden>
       <p class="nn-muted">{{ t.zoom.ajuda }}</p>
     </div>
     <div id="explorar-vista">
-{{ vista(e.vista, t) }}
+{{ vista(e.vista, t, ui) }}
     </div>
     <div class="nn-fonte"><span>{{ t.fonte }}</span></div>
   </article>

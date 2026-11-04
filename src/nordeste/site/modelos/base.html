@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="{{ pagina.lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
 {% block cabeca %}{% endblock %}
 </head>
 <body>
-<a class="nn-pular" href="#conteudo">Ir para o conteúdo</a>
+<a class="nn-pular" href="#conteudo">{{ ui.pular }}</a>
 <div class="nn">
 {% include "_cabecalho.html" %}
 <main id="conteudo"{% block atributos_main %}{% endblock %}>

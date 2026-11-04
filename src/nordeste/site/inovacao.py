@@ -11,6 +11,7 @@ from pathlib import Path
 
 import yaml
 
+from nordeste.site.idioma import PADRAO, ErroTraducao, traduzir
 from nordeste.site.conteudo import (
     ErroConteudo, _exigir_chaves, _validar_destaques, _validar_grafico, _validar_textos_e_condicoes,
 )
@@ -88,7 +89,7 @@ def _validar_capitulo(capitulo: object, destaques: dict) -> None:
         _exigir_chaves(capitulo["posicoes"], _CHAVES_DAS_POSICOES, f"{onde}, posições")
 
 
-def carregar_inovacao(pasta: Path) -> dict | None:
+def carregar_inovacao(pasta: Path, idioma: str = PADRAO) -> dict | None:
     """Le e valida inovacao.yaml; None se o arquivo nao existe (a pagina nao e gerada)."""
     caminho = pasta / ARQUIVO
     if not caminho.exists():
@@ -97,6 +98,10 @@ def carregar_inovacao(pasta: Path) -> dict | None:
         conteudo = yaml.safe_load(caminho.read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError) as erro:
         raise ErroConteudo(f"{caminho}: não foi possível ler ({erro}).") from erro
+    try:
+        conteudo = traduzir(conteudo, pasta, "inovacao", idioma)
+    except ErroTraducao as erro:
+        raise ErroConteudo(str(erro)) from erro
     _exigir_chaves(conteudo, _CHAVES, ARQUIVO)
     _validar_destaques(conteudo["destaques"])
     regua = conteudo["regua"]

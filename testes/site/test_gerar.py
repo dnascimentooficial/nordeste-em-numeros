@@ -29,6 +29,12 @@ PAGINAS = {
     "como-chegamos/index.html": "/como-chegamos/",
     "inovacao/index.html": "/inovacao/",  # inovacao.yaml do repositorio: a pagina Inovacao sai em toda geracao
 }
+# as mesmas paginas em ingles (idioma.ROTAS), com os cards em /en/cards/<id>/
+PAGINAS_EN = {
+    "en/index.html": "/en/", "en/states/index.html": "/en/states/", "en/explore/index.html": "/en/explore/",
+    "en/cards/index.html": "/en/cards/", "en/about/index.html": "/en/about/", "en/data/index.html": "/en/data/",
+    "en/how-we-got-here/index.html": "/en/how-we-got-here/", "en/innovation/index.html": "/en/innovation/",
+}
 OG = {
     "index.html": "index", "estados/index.html": "estados", "explorar/index.html": "explorar",
     "cards/index.html": "cards", "sobre/index.html": "sobre", "dados/index.html": "dados",
@@ -77,8 +83,8 @@ def gerado(tmp_path_factory) -> tuple[Path, RelatorioSite]:
 def test_gera_as_paginas_do_nucleo(gerado):
     saida, relatorio = gerado
     cards = sorted(f"cards/{c['id']}/index.html" for c in carregar_conteudo(RAIZ / "metadados" / "site").cards)
-    assert sorted(relatorio.paginas) == sorted([*PAGINAS, *cards])
-    for pagina in PAGINAS:
+    assert sorted(relatorio.paginas) == sorted([*PAGINAS, *cards, *PAGINAS_EN, *(f"en/{c}" for c in cards)])
+    for pagina in [*PAGINAS, *PAGINAS_EN]:
         assert (saida / pagina).is_file()
     assert (saida / "dados" / "base_nordeste.csv").read_bytes() == (RAIZ / "dados/base/base_nordeste.csv").read_bytes()
     assert (saida / "dados" / "derivados.csv").read_bytes() == (RAIZ / "dados/base/derivados.csv").read_bytes()
@@ -663,10 +669,11 @@ def test_cli_site_sai_com_zero(tmp_path):
     assert codigo == 0
     assert (saida / "index.html").is_file()
     relatorio = json.loads(arquivo.read_text(encoding="utf-8"))
-    assert sorted(relatorio) == ["cards_suprimidos", "fechos_suprimidos", "historia_provisoria", "paginas"]
+    assert sorted(relatorio) == ["cards_suprimidos", "fechos_suprimidos", "historia_provisoria", "paginas", "traducoes_faltando"]
+    assert relatorio["traducoes_faltando"] == []  # as traducoes do repositorio estao completas
     assert relatorio["historia_provisoria"] is False  # historia.yaml do repositorio aprovado: a pagina entra
     cards = [f"cards/{c['id']}/index.html" for c in carregar_conteudo(RAIZ / "metadados" / "site").cards]
-    assert sorted(relatorio["paginas"]) == sorted([*PAGINAS, *cards])
+    assert sorted(relatorio["paginas"]) == sorted([*PAGINAS, *cards, *PAGINAS_EN, *(f"en/{c}" for c in cards)])
 
 
 def test_cli_site_com_conteudo_invalido_sai_com_um(tmp_path, capsys):

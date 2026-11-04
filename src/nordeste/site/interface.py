@@ -1,0 +1,285 @@
+"""Rotulos fixos do site que nao sao conteudo editorial (textos.yaml): os dos modelos, os das descricoes acessiveis dos
+graficos, os nomes dos territorios e dos indicadores de Estados e Explorar, o que o site.js escreve. Um dicionario por
+idioma, com as mesmas chaves (um teste confere). `t("chave")` devolve o rotulo no idioma da geracao em curso.
+
+Os textos em `{chaves}` sao modelos para `str.format`.
+"""
+
+from nordeste.site.idioma import idioma_atual
+
+ROTULOS: dict[str, dict[str, str]] = {
+    "pt": {
+        # base, rodape, menu
+        "pular": "Ir para o conteúdo",
+        "rodape_dados": "Dados oficiais publicados em",
+        "rodape_fontes": "Fontes e fórmulas em",
+        "rodape_sha": "sha256 da base:",
+        "rodape_licenca": "Compilação sob licença",
+        "desenvolvido_por": "Desenvolvido por",
+        "idioma_grupo": "Idioma",
+        # componentes
+        "atualizado_em": "Atualizado em",
+        "proximo_dado": "Próximo dado esperado:",
+        "legenda_graficos": "Legenda dos gráficos",
+        "legenda_ne": "Nordeste",
+        "legenda_ref": "Referência (Brasil ou Brasil fora do Nordeste)",
+        "legenda_faixas": "Faixas de governo",
+        "legenda_hachura": "Interinidade e anos ainda não publicados",
+        "card": "Card",
+        "para": "para",
+        "fonte": "Fonte",
+        "fontes": "Fontes",
+        "dados_de": "dados de",
+        "frase_comum": "",
+        # tabelas
+        "ano": "Ano",
+        "territorio": "Território",
+        "valor": "Valor",
+        "serie": "Série",
+        "serie_da_fonte": "Série da fonte",
+        "grafico": "Gráfico",
+        "estado": "Estado",
+        "indicador": "Indicador",
+        "orgao": "Órgão",
+        "tabela_usada": "Tabela ou arquivo usado",
+        "ver_numeros_varios": "Ver os números destes gráficos",
+        "ver_numeros_um": "Ver os números deste gráfico",
+        "numeros_de": "Números de {rotulo}",
+        "numeros_do_capitulo": "Números do capítulo {rotulo}",
+        # Inicio e Inovacao
+        "as_perguntas": "As perguntas",
+        "os_capitulos": "Os capítulos",
+        "frigir": "No frigir dos ovos:",
+        "baixar_dados": "Baixar os dados",
+        # Estados e Explorar
+        "eyebrow_estados": "Estados",
+        "ranking_rotulo": "Ranking dos estados do Nordeste",
+        "eyebrow_explorar": "Explorar",
+        "comparar_com": "Comparar lado a lado com",
+        "nenhum": "nenhum",
+        "sem_dado": "sem dado",
+        "no_pais": " no país",
+        "e": "e",
+        # graficos (Python e site.js)
+        "grafico_desc": "Gráfico de linhas, {titulo}. {partes}. A tabela com todos os valores está logo abaixo.",
+        "grafico_parte": "{rotulo}: {primeiro} em {ano_primeiro} e {ultimo} em {ano_ultimo}",
+        # Como chegamos
+        "previa_texto": "Só publico esta página depois da revisão do texto.",
+        "aviso_previa": "Prévia: texto provisório",
+        "conta_dos_censos": "A conta dos censos",
+        "pontos_em_anos": "{pontos} pontos em {anos} anos",
+        "viviam_no_ne": "dos brasileiros viviam no Nordeste",
+        "no_censo_de": "no Censo de {ano}",
+        "ver_censos": "Ver os números dos censos",
+        "censo": "Censo",
+        "nordeste": "Nordeste",
+        "brasil": "Brasil",
+        "parcela_ne": "Parcela do Nordeste",
+        "linha_do_tempo": "Linha do tempo",
+        "censos_titulo": "Parcela da população brasileira que vivia no Nordeste, por censo, de {inicio} a {fim}",
+        "marcos_de": "Marcos de {nome}",
+        "marco_de": "{nome}, marco de {ano}",
+        "imagem": "Imagem",
+        "foto": "Foto",
+        "marcos": "Marcos",
+        "numeros": "Números",
+        "o_que_ficou": "O que ficou disso",
+        "leitura_minha": "Leitura minha, a partir das fontes desta época",
+        "outras_epocas": "Outras épocas",
+        "epoca_anterior": "← época anterior",
+        "proxima_epoca": "próxima época →",
+        "epocas_anteriores": "Épocas anteriores",
+        "proximas_epocas": "Próximas épocas",
+        # Dados e Sobre
+        "publicados_em": "Publicados em",
+        "sobre_titulo": "Sobre os dados",
+        "da_abertura": "da abertura",
+        "imagens_historia_titulo": "Imagens da página Como chegamos até aqui",
+        "imagens_historia_antes": "As imagens das épocas e dos marcos da",
+        "imagens_historia_link": "linha do tempo",
+        "imagens_historia_depois": ", com autor, título, data e licença.",
+        "compartilhar_titulo": "Imagem de compartilhamento",
+        "compartilhar_texto": "É a imagem que aparece quando um link do site é enviado no WhatsApp ou nas redes. As fotos do mural não são documentos de arquivo.",
+        "compartilhar_historicas": "As imagens históricas com autor, data e fonte estão na",
+        "ir_para_dados": "Ir para Dados",
+        "cobertura": "Nordeste, Brasil",
+        # numeros e datas
+        "mil": "mil",
+        "mi": "mi",
+        "bi": "bi",
+    },
+    "en": {
+        "pular": "Skip to content",
+        "rodape_dados": "Official data published on",
+        "rodape_fontes": "Sources and formulas in",
+        "rodape_sha": "sha256 of the database:",
+        "rodape_licenca": "Compilation licensed under",
+        "desenvolvido_por": "Built by",
+        "idioma_grupo": "Language",
+        "atualizado_em": "Updated on",
+        "proximo_dado": "Next data expected:",
+        "legenda_graficos": "Chart legend",
+        "legenda_ne": "Northeast",
+        "legenda_ref": "Reference (Brazil or Brazil outside the Northeast)",
+        "legenda_faixas": "Presidential terms",
+        "legenda_hachura": "Interim presidency and years not yet published",
+        "card": "Card",
+        "para": "to",
+        "fonte": "Source",
+        "fontes": "Sources",
+        "dados_de": "data as of",
+        "frase_comum": "A common saying in Brazil",
+        "ano": "Year",
+        "territorio": "Area",
+        "valor": "Value",
+        "serie": "Series",
+        "serie_da_fonte": "Source series",
+        "grafico": "Chart",
+        "estado": "State",
+        "indicador": "Indicator",
+        "orgao": "Agency",
+        "tabela_usada": "Table or file used",
+        "ver_numeros_varios": "See the numbers for these charts",
+        "ver_numeros_um": "See the numbers for this chart",
+        "numeros_de": "Numbers for {rotulo}",
+        "numeros_do_capitulo": "Numbers for the chapter {rotulo}",
+        "as_perguntas": "The questions",
+        "os_capitulos": "The chapters",
+        "frigir": "In short:",
+        "baixar_dados": "Download the data",
+        "eyebrow_estados": "States",
+        "ranking_rotulo": "Ranking of the Northeast states",
+        "eyebrow_explorar": "Explore",
+        "comparar_com": "Compare side by side with",
+        "nenhum": "none",
+        "sem_dado": "no data",
+        "no_pais": " in Brazil",
+        "e": "and",
+        "grafico_desc": "Line chart, {titulo}. {partes}. The table with all values is right below.",
+        "grafico_parte": "{rotulo}: {primeiro} in {ano_primeiro} and {ultimo} in {ano_ultimo}",
+        "previa_texto": "I will only publish this page after the text is reviewed.",
+        "aviso_previa": "Preview: provisional text",
+        "conta_dos_censos": "What the censuses show",
+        "pontos_em_anos": "{pontos} points in {anos} years",
+        "viviam_no_ne": "of Brazilians lived in the Northeast",
+        "no_censo_de": "in the {ano} Census",
+        "ver_censos": "See the census numbers",
+        "censo": "Census",
+        "nordeste": "Northeast",
+        "brasil": "Brazil",
+        "parcela_ne": "Northeast share",
+        "linha_do_tempo": "Timeline",
+        "censos_titulo": "Share of Brazil's population living in the Northeast, by census, from {inicio} to {fim}",
+        "marcos_de": "Milestones of {nome}",
+        "marco_de": "{nome}, milestone of {ano}",
+        "imagem": "Image",
+        "foto": "Photo",
+        "marcos": "Milestones",
+        "numeros": "Numbers",
+        "o_que_ficou": "What it left behind",
+        "leitura_minha": "My reading, based on the sources for this era",
+        "outras_epocas": "Other eras",
+        "epoca_anterior": "← previous era",
+        "proxima_epoca": "next era →",
+        "epocas_anteriores": "Previous eras",
+        "proximas_epocas": "Next eras",
+        "publicados_em": "Published on",
+        "sobre_titulo": "About the data",
+        "da_abertura": "on the home page",
+        "imagens_historia_titulo": "Images on the How we got here page",
+        "imagens_historia_antes": "The images of the eras and milestones on the",
+        "imagens_historia_link": "timeline",
+        "imagens_historia_depois": ", with author, title, date and license.",
+        "compartilhar_titulo": "Sharing image",
+        "compartilhar_texto": "It is the image that appears when a link to the site is sent on WhatsApp or social media. The photos on the board are not archival documents.",
+        "compartilhar_historicas": "The historical images, with author, date and source, are on the",
+        "ir_para_dados": "Go to Data",
+        "cobertura": "Northeast, Brazil",
+        "mil": "thousand",
+        "mi": "million",
+        "bi": "billion",
+    },
+}
+
+# o tipo de cada numero historico (historia.yaml) e a licenca das imagens, como a pagina os mostra
+TIPOS = {
+    "pt": {"oficial": "dado oficial", "historiador": "estimativa de historiador", "interpretacao": "interpretação"},
+    "en": {"oficial": "official data", "historiador": "historian's estimate", "interpretacao": "interpretation"},
+}
+LICENCAS = {
+    "pt": {"dominio-publico": "domínio público", "ilustracao-do-autor": "ilustração do autor", "cc-by": "CC BY"},
+    "en": {"dominio-publico": "public domain", "ilustracao-do-autor": "illustration by the author", "cc-by": "CC BY"},
+}
+MESES = {
+    "pt": ("janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
+           "novembro", "dezembro"),
+    "en": ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+           "November", "December"),
+}
+MESES_CURTOS_EN = ("Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec.")  # AP
+POR_EXTENSO = {  # quantidades no menu (epocas, frases), ate dez
+    "pt": ("zero", "uma", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"),
+    "en": ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"),
+}
+
+# Estados e Explorar: (id do territorio) -> (nome, etiqueta curta na ponta do grafico)
+TERRITORIOS_EN = {
+    "NE": ("Northeast", "NE"),
+    "BR": ("Brazil", "BR"),
+    "BR_FORA_NE": ("Brazil outside the Northeast", "BR excl. NE"),
+    "N": ("North region", "North"),
+    "SE": ("Southeast region", "Southeast"),
+    "S": ("South region", "South"),
+    "CO": ("Center-West region", "C.-West"),
+}
+
+# Explorar: chave -> (rotulo do seletor, nome, unidade)
+INDICADORES_EXPLORAR_EN = {
+    "pib_pc": ("GDP per capita (current R$)", "GDP per capita", "current R$"),
+    "pib_vol": ("GDP volume (index, first year = 100)", "GDP volume", "index, first year = 100"),
+    "pib_part": ("Share of Brazil's GDP (%)", "Share of Brazil's GDP", "%"),
+    "renda": ("Household income per capita (R$ per month)", "Household income per capita",
+              "R$ per month, at prices of the series' latest year"),
+    "rend_trab": ("Average earnings from work (R$ per month)", "Average earnings from work",
+                  "R$ per month, at prices of the series' latest year"),
+    "desoc": ("Unemployment rate (%)", "Unemployment rate", "% of the labor force"),
+    "informal": ("Informality (%)", "Informality", "% of employed people"),
+    "pobreza": ("Poverty (%)", "Poverty", "% of the population below US$ 8.30 a day"),
+    "extrema": ("Extreme poverty (%)", "Extreme poverty", "% of the population below US$ 3.00 a day"),
+    "gini": ("Gini index (0 to 1)", "Gini index", "0 to 1, higher is more unequal"),
+    "idhm": ("HDI-M (0 to 1)", "HDI-M", "0 to 1"),
+    "ideb_ai": ("IDEB, early primary grades", "IDEB, early primary grades", "0 to 10"),
+    "ideb_af": ("IDEB, late primary grades", "IDEB, late primary grades", "0 to 10"),
+    "ideb_em": ("IDEB, high school", "IDEB, high school", "0 to 10"),
+    "aband": ("High school dropout (%)", "High school dropout", "% of enrolled students"),
+    "matric": ("Basic education enrollments", "Basic education enrollments", "enrollments"),
+    "superior": ("Higher education enrollments", "Higher education enrollments", "enrollments"),
+    "ibid": ("IBID, innovation (0 to 1, each year's scale)", "Brazil Innovation and Development Index (IBID)",
+             "0 to 1, higher is more innovation; each year has its own scale, and values are not comparable across years"),
+    "internet": ("Households with internet (%)", "Households with internet access", "% of households"),
+    "pop": ("Population", "Population", "people"),
+}
+
+# Estados: chave -> (rotulo do seletor, nome no titulo da vista)
+INDICADORES_ESTADOS_EN = {
+    "pib_pc": ("GDP per capita (% of Brazil outside the NE)", "GDP per capita as % of Brazil outside the Northeast"),
+    "renda": ("Household income per capita (% of Brazil outside the NE)",
+              "household income per capita as % of Brazil outside the Northeast"),
+    "pobreza": ("Poverty (% of the population)", "poverty, % of the population"),
+    "desoc": ("Unemployment rate (% of the labor force)", "unemployment rate, % of the labor force"),
+    "ideb_ai": ("IDEB, early primary grades (0 to 10)", "IDEB for the early primary grades"),
+    "idhm": ("HDI-M (0 to 1)", "HDI-M"),
+    "aband": ("High school dropout (%)", "high school dropout, %"),
+    "ibid": ("IBID, rank in the INPI ranking (1 to 27)", "IBID, each state's rank in INPI's national ranking"),
+}
+
+
+def t(chave: str, **valores: object) -> str:
+    """O rotulo no idioma da geracao em curso, com os `{campos}` preenchidos."""
+    texto = ROTULOS[idioma_atual()][chave]
+    return texto.format(**valores) if valores else texto
+
+
+def ui() -> dict[str, str]:
+    """Todos os rotulos do idioma em curso, para os modelos (`ui.chave`)."""
+    return ROTULOS[idioma_atual()]

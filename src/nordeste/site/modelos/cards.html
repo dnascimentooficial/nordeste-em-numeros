@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_componentes.html" import capa %}
+{% from "_componentes.html" import capa with context %}
 {% block conteudo %}
 {{ capa(capas.cards, textos.cards.titulo, textos.cards.intro) }}
 <section class="nn-pagina" id="cards" aria-labelledby="titulo-principal">
   <ul class="nn-cartoes-lista">
 {% for c in cards %}
-    <li><a class="nn-cartao-link" href="/cards/{{ c.id }}/"><span class="nn-eyebrow">{{ c.rotulo }}</span><span class="nn-c-mito">{{ c.frase_feita }}</span><span class="nn-c-numero{% if c.longo %} nn-c-longo{% endif %}">{{ c.de }} → {{ c.para }}</span></a></li>
+    <li><a class="nn-cartao-link" href="{{ rotas.cards }}{{ c.id }}/"><span class="nn-eyebrow">{{ c.rotulo }}</span><span class="nn-c-mito">{{ c.frase_feita }}</span><span class="nn-c-numero{% if c.longo %} nn-c-longo{% endif %}">{{ c.de }} → {{ c.para }}</span></a></li>
 {% endfor %}
   </ul>
 </section>

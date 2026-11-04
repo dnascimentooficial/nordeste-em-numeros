@@ -162,7 +162,8 @@ def test_paginas_usam_os_estaticos_gerados(saida):
             assert versao == hashlib.sha256((saida / caminho.lstrip("/")).read_bytes()).hexdigest()[:8], local
         locais = [local.partition("?")[0] for local in locais]
         # a pagina Como chegamos tem ainda o nn-js.js, sem defer e antes do estilo (ver o teste abaixo)
-        esperados = ["/estilo.css", "/nn-js.js", "/site.js"] if pagina.parent.name == "como-chegamos" else ["/estilo.css", "/site.js"]
+        historia = pagina.parent.name in ("como-chegamos", "how-we-got-here")  # a mesma pagina em ingles
+        esperados = ["/estilo.css", "/nn-js.js", "/site.js"] if historia else ["/estilo.css", "/site.js"]
         assert sorted(locais) == esperados, pagina
         for local in locais:
             assert (saida / local.lstrip("/")).is_file(), local
@@ -176,7 +177,7 @@ def test_nn_js_so_na_pagina_como_chegamos_e_antes_do_estilo(saida):
     for pagina in _arquivos(saida, ".html"):
         texto = pagina.read_text(encoding="utf-8")
         pede = '<script src="/nn-js.js?v=' in texto
-        assert pede == (pagina.parent.name == "como-chegamos"), pagina
+        assert pede == (pagina.parent.name in ("como-chegamos", "how-we-got-here")), pagina
         if pede:
             arvore = Arvore(texto)
             [tag] = [s for s in arvore.achar("script") if s["attrs"].get("src", "").startswith("/nn-js.js?v=")]

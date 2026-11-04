@@ -1,18 +1,18 @@
 <footer class="nn-rodape">
-  <span>Dados oficiais publicados em {{ data_base }}. Fontes e fórmulas em <a href="/sobre/">Sobre os dados</a>.</span>
-  <span>sha256 da base: <code class="nn-sha-base">{{ sha256_base }}</code></span>
-  <span>Compilação sob licença <a href="{{ licenca }}">CC BY 4.0</a>.</span>
+  <span>{{ ui.rodape_dados }} {{ data_base }}. {{ ui.rodape_fontes }} <a href="{{ rotas.sobre }}">{{ ui.sobre_titulo }}</a>.</span>
+  <span>{{ ui.rodape_sha }} <code class="nn-sha-base">{{ sha256_base }}</code></span>
+  <span>{{ ui.rodape_licenca }} <a href="{{ licenca }}">CC BY 4.0</a>.</span>
 {% if foto %}
   <span class="nn-credito">{{ foto.rotulo }}: {% if foto.url %}<a href="{{ foto.url }}">{{ foto.credito }}</a>{% else %}{{ foto.credito }}{% endif %}{% if foto.descricao %} ({{ foto.descricao }}){% endif %}</span>
 {% endif %}
   <div class="nn-autor-bloco">
-    <a class="nn-autor-abrir" href="/sobre/#autor" aria-haspopup="dialog">
+    <a class="nn-autor-abrir" href="{{ rotas.sobre }}#autor" aria-haspopup="dialog">
 {% if autor.foto %}
       <span class="nn-autor-circulo"><img src="{{ autor.foto.src }}" alt="{{ autor.nome }}" width="{{ autor.foto.largura }}" height="{{ autor.foto.altura }}" loading="lazy" decoding="async"></span>
 {% else %}
       <span class="nn-autor-circulo" aria-hidden="true">{{ autor.iniciais }}</span>
 {% endif %}
-      <span class="nn-autor-texto">Desenvolvido por <strong class="nn-autor-nome">{{ autor.nome }}</strong></span>
+      <span class="nn-autor-texto">{{ ui.desenvolvido_por }} <strong class="nn-autor-nome">{{ autor.nome }}</strong></span>
     </a>
 {% if autor.marca %}
     <img class="nn-autor-marca" src="{{ autor.marca.clara }}" alt="" width="{{ autor.marca.largura }}" height="{{ autor.marca.altura }}" loading="lazy" decoding="async">

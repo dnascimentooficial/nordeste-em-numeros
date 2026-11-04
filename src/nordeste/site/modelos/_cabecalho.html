@@ -14,12 +14,20 @@
 {%- endif %}
 {% endmacro %}
 {% set m = menu %}
+{# o seletor de idioma: a mesma pagina no outro idioma, bandeira redonda e sigla (o nome por extenso para leitor de tela) #}
+{% macro idiomas(classe) %}
+<div class="{{ classe }}" role="group" aria-label="{{ ui.idioma_grupo }}">
+{% for i in pagina.idiomas %}
+  <a class="nn-idioma" href="{{ i.rota }}" lang="{{ i.lang }}" hreflang="{{ i.lang }}"{% if i.atual %} aria-current="true"{% endif %}><img class="nn-bandeira" src="{{ estaticos['bandeira-br.svg' if i.idioma == 'pt' else 'bandeira-us.svg'] }}" alt="" width="18" height="18">{{ i.idioma|upper }}<span class="nn-so-leitor"> ({{ "Português" if i.idioma == "pt" else "English" }})</span></a>
+{% endfor %}
+</div>
+{% endmacro %}
 <header class="nn-topo{% if sobre_foto is defined and sobre_foto %} nn-topo-sobre-foto{% endif %}">
   <div class="nn-topo-barra">
-    <a class="nn-marca" href="/">Nordeste em Números</a>
+    <a class="nn-marca" href="{{ rotas.index }}">Nordeste em Números</a>
     <div class="nn-topo-alca">
       <nav class="nn-menu" aria-label="{{ m.rotulo }}">
-        <a href="/"{{ corrente("index") }}>{{ m.inicio }}</a>
+        <a href="{{ rotas.index }}"{{ corrente("index") }}>{{ m.inicio }}</a>
 {% for g in m.grupos %}
         <details class="nn-menu-grupo" name="nn-menu"{% if g.itens|selectattr("chave", "equalto", atual)|list %} data-atual{% endif %}>
           <summary>{{ g.rotulo }}{{ seta() }}</summary>
@@ -30,19 +38,19 @@
           </div>
         </details>
 {% endfor %}
-        <a href="/sobre/"{{ corrente("sobre") }}>{{ m.sobre }}</a>
-      </nav>
+        <a href="{{ rotas.sobre }}"{{ corrente("sobre") }}>{{ m.sobre }}</a>
+{{ idiomas("nn-idiomas") }}      </nav>
     </div>
     <div class="nn-topo-direita">
 {% if m.com_historia and atual != "como-chegamos" %}
-      <a class="nn-topo-botao" href="/como-chegamos/"><span class="nn-topo-botao-longo">{{ m.botao_historia.antes }}</span> {{ m.botao_historia.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
+      <a class="nn-topo-botao" href="{{ rotas['como-chegamos'] }}"><span class="nn-topo-botao-longo">{{ m.botao_historia.antes }}</span> {{ m.botao_historia.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
 {% else %}
-      <a class="nn-topo-botao" href="/cards/">{{ m.botao_cards.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
+      <a class="nn-topo-botao" href="{{ rotas.cards }}">{{ m.botao_cards.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
 {% endif %}
       <details class="nn-menu-movel">
         <summary aria-label="{{ m.abrir }}"><span class="nn-menu-hamburguer" aria-hidden="true"></span></summary>
         <nav class="nn-gaveta" aria-label="{{ m.rotulo }}">
-          <a href="/"{{ corrente("index") }}>{{ m.inicio }}</a>
+          <a href="{{ rotas.index }}"{{ corrente("index") }}>{{ m.inicio }}</a>
 {% for g in m.grupos %}
           <details name="nn-gaveta"{% if g.itens|selectattr("chave", "equalto", atual)|list %} data-atual{% endif %}>
             <summary>{{ g.rotulo }}{{ seta() }}</summary>
@@ -53,8 +61,8 @@
             </div>
           </details>
 {% endfor %}
-          <a href="/sobre/"{{ corrente("sobre") }}>{{ m.sobre }}</a>
-        </nav>
+          <a href="{{ rotas.sobre }}"{{ corrente("sobre") }}>{{ m.sobre }}</a>
+{{ idiomas("nn-idiomas nn-idiomas-gaveta") }}        </nav>
       </details>
     </div>
   </div>

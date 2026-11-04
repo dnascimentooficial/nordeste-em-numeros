@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% from "_cartao.html" import cartao %}
+{% from "_cartao.html" import cartao with context %}
 {% block conteudo %}
 <section class="nn-pagina" id="card" aria-label="{{ card.rotulo }}">
-{{ cartao(card, textos.cards, data_curta) }}
-  <p><a class="nn-baixar" href="/cards/{{ card.id }}.png" download>{{ textos.cards.baixar }}</a></p>
-  <p><a href="/cards/">{{ textos.cards.voltar }}</a></p>
+{{ cartao(card, textos.cards, data_curta, ui) }}
+  <p><a class="nn-baixar" href="{{ rotas.cards }}{{ card.id }}.png" download>{{ textos.cards.baixar }}</a></p>
+  <p><a href="{{ rotas.cards }}">{{ textos.cards.voltar }}</a></p>
 </section>
 {% endblock %}

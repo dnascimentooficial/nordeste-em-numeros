@@ -1,0 +1,189 @@
+- id: renda-per-capita
+  card: pibpc
+  rotulo: Wealth
+  frase_feita: "“The Northeast is going nowhere.” Is it?"
+  explicacao: "How much the Northeast has for every 100 reais per person in the rest of the country. The dashed line at 100% would be parity."
+  lide: "GDP per capita is the wealth produced divided by the population. In {pib_pc_razao.ano_ultimo}, the Northeast's figure was {pib_pc_razao.ultimo:1%} of the one recorded in Brazil outside the Northeast. In {pib_pc_razao.ano_primeiro}, it was {pib_pc_razao.primeiro:1%}. Change over the period: {pib_pc_razao.dif:+1} percentage points."
+  graficos:
+    - id: g_pibpc
+      descricao: "Northeast GDP per capita as % of Brazil outside the Northeast"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      ref100: true
+      linhas:
+        - {rotulo: "Northeast ÷ Brazil outside the NE", rotulo_curto: NE, destaque: true, tipo: razao, indicador: pib_per_capita, territorio: NE, referencia: BR_FORA_NE}
+  fecho:
+    texto: "it has moved, but slowly. The gap has narrowed and is still wide."
+    condicao: "pib_pc_razao.ultimo > pib_pc_razao.primeiro e pib_pc_razao.ultimo < 60 e pib_pc_razao.ultimo < pib_pc_razao.primeiro * 1.25"
+  fonte:
+    - "Source: IBGE, Regional Accounts (2010 reference) and population estimates. Per capita and ratio calculated by the project."
+    - "2007 has no value: there is no published population for that year that would allow the calculation to be checked. Current values; the ratio needs no deflator."
+
+- id: economia
+  card: vol
+  rotulo: Economy
+  frase_feita: "“The economy here doesn't grow.”"
+  lide: "The volume index measures how much the economy grew without the effect of inflation. From {vol_ne.ano_primeiro} to {vol_ne.ano_ultimo}, the Northeast's GDP volume index went from {vol_ne.primeiro:0} to {vol_ne.ultimo:1}; Brazil's went to {vol_br.ultimo:1}. The Northeast's share of national GDP went from {part_ne.primeiro:1%} to {part_ne.ultimo:1%}."
+  graficos:
+    - id: g_vol
+      titulo: "GDP volume"
+      subtitulo: "Index, first year = 100, price effects removed."
+      descricao: "GDP volume index, Northeast and Brazil"
+      casas: 1
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: pib_volume, territorio: NE}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: pib_volume, territorio: BR}
+    - id: g_part
+      titulo: "Share of Brazil's GDP"
+      subtitulo: "Northeast GDP as % of Brazil's GDP, at current prices."
+      descricao: "Northeast share of Brazil's GDP"
+      casas: 2
+      sufixo: "%"
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: pib_participacao, territorio: NE}
+  fecho:
+    texto: "it grows, and it has grown a little faster than the national average. The Northeast's slice of the national pie has changed little."
+    condicao: "vol_ne.ultimo > vol_ne.primeiro e vol_ne.ultimo > vol_br.ultimo e vol_ne.ultimo < vol_br.ultimo * 1.1 e part_ne.ultimo > part_ne.primeiro * 0.9 e part_ne.ultimo < part_ne.primeiro * 1.1"
+  fonte:
+    - "Source: IBGE, Regional Accounts (2010 reference)."
+
+- id: escola
+  card: ideb
+  rotulo: Education
+  frase_feita: "“Education in the Northeast hasn't improved.”"
+  lide: "IDEB, Brazil's basic-education quality index, is the schools' score from 0 to 10. It combines what students learn with how many advance a grade. In the early primary grades (1st to 5th grade), the Northeast went from {ideb_ai_ne.primeiro:1} in {ideb_ai_ne.ano_primeiro} to {ideb_ai_ne.ultimo:1} in {ideb_ai_ne.ano_ultimo}. Brazil scored {ideb_ai_br.ultimo:1}."
+  graficos:
+    - id: g_ideb_ai
+      titulo: "IDEB, early primary grades"
+      descricao: "IDEB for early primary grades, Northeast and Brazil"
+      casas: 1
+      min0: true
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: ideb, territorio: NE, sub: anos_iniciais, rede: total}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: ideb, territorio: BR, sub: anos_iniciais, rede: total}
+    - id: g_ideb_af
+      titulo: "IDEB, late primary grades"
+      descricao: "IDEB for late primary grades, Northeast and Brazil"
+      casas: 1
+      min0: true
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: ideb, territorio: NE, sub: anos_finais, rede: total}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: ideb, territorio: BR, sub: anos_finais, rede: total}
+    - id: g_ideb_em
+      titulo: "IDEB, high school"
+      descricao: "IDEB for high school, Northeast and Brazil"
+      casas: 1
+      min0: true
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: ideb, territorio: NE, sub: ensino_medio, rede: total}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: ideb, territorio: BR, sub: ensino_medio, rede: total}
+    - id: g_aband
+      titulo: "High school dropout"
+      subtitulo: "% of enrolled students, all school systems."
+      descricao: "high school dropout, Northeast and Brazil"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: abandono_em, territorio: NE, rede: total}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: abandono_em, territorio: BR, rede: total}
+  fecho:
+    texto: "it has improved. The early-grades score more than doubled and came close to the Brazilian average. In the late grades and in high school, the gain was smaller."
+    condicao: "ideb_ai_ne.ultimo > ideb_ai_ne.primeiro * 2 e ideb_ai_ne.ultimo >= ideb_ai_br.ultimo * 0.9 e ideb_af_ne.dif > 0 e ideb_af_ne.dif < ideb_ai_ne.dif e ideb_em_ne.dif > 0 e ideb_em_ne.dif < ideb_ai_ne.dif"
+  alerta: "An honest asterisk: high school dropout plunged between 2022 and 2023 and between 2024 and 2025. The number is in the INEP data, but the reason is not explained. It could be a change in how students are recorded or in the promotion rules. The 2020 drop coincides with automatic promotion during the pandemic. That is why I do not use this figure as proof of anything."
+  fonte:
+    - "Source: INEP, IDEB (biennial, from 0 to 10) and School Flow Indicators."
+
+- id: trabalho
+  card: desoc
+  rotulo: Work and income
+  frase_feita: "“There are no jobs here and nobody earns anything.”"
+  lide: "In {desoc_ne.ano_ultimo}, the unemployment rate in the Northeast was {desoc_ne.ultimo:1%}, against {desoc_br.ultimo:1%} in Brazil. The region's household income per person was {renda_razao.ultimo:1%} of that of Brazil outside the Northeast in {renda_razao.ano_ultimo} ({renda_razao.primeiro:1%} in {renda_razao.ano_primeiro})."
+  graficos:
+    - id: g_desoc
+      titulo: "Unemployment rate"
+      subtitulo: "% of the labor force. The PNAD through 2014 and the PNAD Contínua since 2012 are different surveys: the lines are not spliced."
+      descricao: "unemployment rate, Northeast and Brazil"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      quebras:
+        - {ano: 2012, rotulo: "PNAD → PNAD Contínua"}
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: desocupacao, territorio: NE}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: desocupacao, territorio: BR}
+    - id: g_renda
+      titulo: "Household income per person"
+      subtitulo: "Northeast as % of Brazil outside the Northeast. 100% would be parity."
+      descricao: "Northeast household income per person as % of Brazil outside the Northeast"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      ref100: true
+      linhas:
+        - {rotulo: "Northeast ÷ Brazil outside the NE", rotulo_curto: NE, destaque: true, tipo: razao, indicador: renda_dom_pc, territorio: NE, referencia: BR_FORA_NE}
+  fecho:
+    texto: "this one has a grain of truth. Unemployment fell, but it is still higher than in the rest of the country. Income per person rose and is still far below the rest of the country's."
+    condicao: "desoc_ne.ultimo < desoc_ne.primeiro e desoc_ne.ultimo > desoc_br.ultimo e renda_razao.ultimo > renda_razao.primeiro e renda_razao.ultimo < 60"
+  fonte:
+    - "Source: IBGE, PNAD (annual, through 2014) and PNAD Contínua (since 2012). The PNAD was not in the field in 2010, the Census year."
+
+- id: idhm
+  card: idhm
+  rotulo: Human development
+  frase_feita: "“Human development? Still at the bottom.”"
+  explicacao: "For the Northeast as a region, the series starts in 2012."
+  lide: "HDI-M, the municipal human development index, combines income, education and life expectancy into a score from 0 to 1. The Northeast's went from {idhm_ne.primeiro:3} in {idhm_ne.ano_primeiro} to {idhm_ne.ultimo:3} in {idhm_ne.ano_ultimo}. Brazil's reached {idhm_br.ultimo:3}."
+  graficos:
+    - id: g_idhm
+      descricao: "HDI-M, Northeast and Brazil"
+      casas: 3
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: idhm, territorio: NE, sub: idhm}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: idhm, territorio: BR, sub: idhm}
+  fecho:
+    texto: "it rose, with a stumble in 2020 and 2021, and the gap with Brazil narrowed. It has not closed yet."
+    condicao: "idhm_ne.ultimo > idhm_ne.primeiro e idhm_ne.dif > idhm_br.dif e idhm_ne.ultimo < idhm_br.ultimo"
+  fonte:
+    - "Source: Atlas of Human Development in Brazil (UNDP, Ipea and Fundação João Pinheiro). The Northeast's HDI-M for 2000 and 2010 is not published."
+
+- id: pobreza
+  card: pobreza
+  rotulo: Poverty
+  frase_feita: "“The poor are in the same place as ever.”"
+  lide: "The poverty line here is $8.30 per person per day, the one used in the tables IBGE publishes for the UN indicators. In {pob_ne.ano_ultimo}, {pob_ne.ultimo:1%} of the Northeast's population lived below it, against {pob_br.ultimo:1%} in Brazil. In {pob_ne.ano_primeiro}, it was {pob_ne.primeiro:1%} in the region. In extreme poverty ($3.00 per day), the region had {ext_ne.ultimo:1%}."
+  graficos:
+    - id: g_pob
+      titulo: "Poverty"
+      subtitulo: "% of the population below $8.30 per day (2021 purchasing power parity)."
+      descricao: "poverty, Northeast and Brazil"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      quebras:
+        - {ano: 2020, rotulo: "5th interview"}
+        - {ano: 2023, rotulo: "1st interview"}
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: pobreza, territorio: NE}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: pobreza, territorio: BR}
+    - id: g_ext
+      titulo: "Extreme poverty"
+      subtitulo: "% of the population below $3.00 per day (2021 purchasing power parity)."
+      descricao: "extreme poverty, Northeast and Brazil"
+      casas: 1
+      sufixo: "%"
+      min0: true
+      quebras:
+        - {ano: 2020, rotulo: "5th interview"}
+        - {ano: 2023, rotulo: "1st interview"}
+      linhas:
+        - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: extrema_pobreza, territorio: NE}
+        - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: extrema_pobreza, territorio: BR}
+  fecho:
+    texto: "they are not. The share of poor people fell, and the share of extremely poor people fell more. The decline was not a straight line: in 2021, at the height of the pandemic, poverty rose again. And the Northeast still has far more poor people, proportionally, than Brazil."
+    condicao: "pob_ne.ultimo < pob_ne.primeiro e ext_ne.ultimo < ext_ne.primeiro e pob_ne.ultimo >= pob_br.ultimo * 1.5"
+  fonte:
+    - "Source: IBGE, PNAD Contínua (SIDRA, tables 5877 and 5817)."
+    - "Poverty line as declared by Ipeadata; not checked against an IBGE publication, because IBGE blocks automated access."
+    - "2012 to 2019 and 2023 to 2024 come from the survey's first interviews; 2020 to 2022, from the fifth. The comparison between the two blocks has not been verified. There is no regional series before 2012 in this database."

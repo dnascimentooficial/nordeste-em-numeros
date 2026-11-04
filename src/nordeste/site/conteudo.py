@@ -15,6 +15,7 @@ import yaml
 
 from nordeste.site.dados import DadosSite, Ponto
 from nordeste.site.formatacao import escala_auto, numero
+from nordeste.site.idioma import PADRAO, ErroTraducao, traduzir
 
 
 class ErroConteudo(ValueError):
@@ -324,9 +325,14 @@ def _ler(pasta: Path, nome: str) -> object:
         raise ErroConteudo(f"{caminho}: nao foi possivel ler ({erro}).") from erro
 
 
-def carregar_conteudo(pasta: Path) -> Conteudo:
-    """Le e valida destaques, perguntas, cards e textos de `pasta` (metadados/site)."""
-    destaques, perguntas, cards, textos = (_ler(pasta, n) for n in ("destaques", "perguntas", "cards", "textos"))
+def carregar_conteudo(pasta: Path, idioma: str = PADRAO) -> Conteudo:
+    """Le e valida destaques, perguntas, cards e textos de `pasta` (metadados/site); noutro idioma, com a traducao de
+    `pasta/<idioma>/` por cima (idioma.traduzir)."""
+    nomes = ("destaques", "perguntas", "cards", "textos")
+    try:
+        destaques, perguntas, cards, textos = (traduzir(_ler(pasta, n), pasta, n, idioma) for n in nomes)
+    except ErroTraducao as erro:
+        raise ErroConteudo(str(erro)) from erro
     _validar_destaques(destaques)
     _validar_cards(cards, _validar_perguntas(perguntas))
     _validar_cards_das_perguntas(perguntas, cards)

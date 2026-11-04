@@ -1,0 +1,286 @@
+# The Innovation page (/inovacao/): cover, scoreboard, numbered chapters with side menu and the ecosystem text
+# chapter. Same rules as Home: no typed data numbers (markers {highlight.field:format}, with the highlights declared
+# here), and each verdict has the condition that supports it. A verdict whose condition fails drops off the page
+# and the scoreboard. The `fatia` type is the Northeast as a % of Brazil, year by year, with the two values from the database.
+destaques:
+  inet_ne: {tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
+  inet_br: {tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}
+  dout_ne_ant: {tipo: serie, indicador: doutores_titulados, territorio: NE, serie: nota_3_ou_mais}
+  dout_ne: {tipo: serie, indicador: doutores_titulados, territorio: NE, serie: sem_filtro_de_nota}
+  dout_fatia: {tipo: fatia, indicador: doutores_titulados, territorio: NE, serie: sem_filtro_de_nota}
+  prog_ne_ant: {tipo: serie, indicador: programas_pos, territorio: NE, serie: nota_3_ou_mais}
+  prog_ne: {tipo: serie, indicador: programas_pos, territorio: NE, serie: sem_filtro_de_nota}
+  prog_fatia: {tipo: fatia, indicador: programas_pos, territorio: NE, serie: sem_filtro_de_nota}
+  gasto_fatia: {tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: ct}
+  pd_fatia: {tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: pd}
+  pat_ne: {tipo: serie, indicador: patentes_residentes, territorio: NE}
+  pat_fatia: {tipo: fatia, indicador: patentes_residentes, territorio: NE}
+  inov_ne: {tipo: serie, indicador: inovacao_industria, territorio: NE, serie: cnae2}
+  inov_br: {tipo: serie, indicador: inovacao_industria, territorio: BR, serie: cnae2}
+  pintec_total_ne: {tipo: serie, indicador: pintec_empresas, territorio: NE, sub: total, serie: cnae2}
+  pintec_inov_ne: {tipo: serie, indicador: pintec_empresas, territorio: NE, sub: inovadoras, serie: cnae2}
+  emp_ne_ant: {tipo: serie, indicador: empregos_ti, territorio: NE, serie: cempre_6450}
+  emp_ne: {tipo: serie, indicador: empregos_ti, territorio: NE, serie: cempre_9418}
+  emp_fatia: {tipo: fatia, indicador: empregos_ti, territorio: NE, serie: cempre_9418}
+  pop_fatia: {tipo: fatia, indicador: populacao, territorio: NE}
+
+capa:
+  titulo: "Innovation"
+  intro: "Northeast Brazil's knowledge base has grown a lot this century: home internet, graduate programs, PhDs. I went to the official numbers to check whether innovation output kept pace."
+
+placar:
+  eyebrow: "Four chapters with numbers"
+  titulo: "What the numbers answer"
+  sem_veredito: "See the answer"
+  indice: "The chapters"
+  fecho: "In short:"
+
+# The reading ruler: every share of Brazil appears next to the Northeast's share of the population in the same year (or
+# the nearest earlier year with published population), both taken from the database.
+regua:
+  titulo: "Reading ruler"
+  populacao: "Population of the Northeast"
+  destaque_populacao: pop_fatia
+  nota: "Next to each share of Brazil is the Northeast's share of the population in the same year. If the region had the same weight in that number as it has in people, the two bars would be the same size. The full bar is half of Brazil."
+
+capitulos:
+  - id: conectividade
+    rotulo: Connectivity
+    titulo: "Internet in households"
+    lide: "In {inet_ne.ano_primeiro}, {inet_ne.primeiro:0%} of Northeast households had internet access, against {inet_br.primeiro:0%} in Brazil. In {inet_ne.ano_ultimo}, it was {inet_ne.ultimo:0%}, and Brazil was at {inet_br.ultimo:0%}. This is the TIC Domicílios survey (Cetic.br's household ICT survey), which breaks results down by region only, not by state."
+    graficos:
+      - id: g_inov_inet
+        titulo: "Households with internet access"
+        subtitulo: "% of households, Northeast and Brazil. The 2020 edition had its methodology adapted to the pandemic."
+        descricao: "households with internet access, Northeast and Brazil"
+        casas: 0
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2020, rotulo: "COVID-19 edition"}
+        linhas:
+          - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
+          - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}
+    fecho:
+      texto: "the internet arrived. The gap with Brazil, which was large, has almost disappeared."
+      # "Was large" (the Northeast below 80% of Brazil in the first year); "almost disappeared" (at least 95% of Brazil today).
+      condicao: "inet_ne.primeiro < inet_br.primeiro * 0.8 e inet_ne.ultimo >= inet_br.ultimo * 0.95"
+    fonte:
+      - "Source: Cetic.br, TIC Domicílios, table A4 (series without the computer restriction, from 2014 onward)."
+      - "Before 2014 the survey counted only access by computer, and before 2008 only urban areas: those series are in Explore and do not link up with this one."
+
+  - id: conhecimento
+    rotulo: Knowledge
+    titulo: "PhDs, graduate programs and state spending on science"
+    explicacao: "Northeast share of PhDs awarded in Brazil. The ruler next to the text compares each share with the population's."
+    lide: "In {dout_ne_ant.ano_primeiro}, Northeast programs awarded {dout_ne_ant.primeiro:0} PhDs. In {dout_ne_ant.ano_ultimo}, {dout_ne_ant.ultimo:0}. Since {dout_ne.ano_primeiro}, when CAPES (the federal graduate-education agency) stopped filtering programs by grade, the count is different: {dout_ne.primeiro:0} in {dout_ne.ano_primeiro} and {dout_ne.ultimo:0} in {dout_ne.ano_ultimo}, {dout_fatia.ultimo:1%} of Brazil. Graduate programs in the region with a grade of 3 or higher went from {prog_ne_ant.primeiro:0} in {prog_ne_ant.ano_primeiro} to {prog_ne_ant.ultimo:0} in {prog_ne_ant.ano_ultimo}; counting all of them, there were {prog_ne.ultimo:0} in {prog_ne.ano_ultimo}. And the Northeast's share of what state governments spend on science and technology went from {gasto_fatia.primeiro:1%} in {gasto_fatia.ano_primeiro} to {gasto_fatia.ultimo:1%} in {gasto_fatia.ano_ultimo}, when the MCTI series (the federal science ministry's data) ends."
+    graficos:
+      - id: g_inov_dout
+        titulo: "PhDs awarded"
+        subtitulo: "Northeast as % of Brazil. Through 2016, only programs with a grade of 3 or higher; the two series do not link up."
+        descricao: "Northeast share of PhDs awarded in Brazil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2017, rotulo: "no grade filter"}
+        linhas:
+          - {rotulo: "Northeast, % of Brazil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: doutores_titulados, territorio: NE}
+      - id: g_inov_prog
+        titulo: "Graduate programs"
+        subtitulo: "Northeast as % of Brazil. Through 2016, only programs with a grade of 3 or higher."
+        descricao: "Northeast share of graduate programs in Brazil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        quebras:
+          - {ano: 2017, rotulo: "no grade filter"}
+        linhas:
+          - {rotulo: "Northeast, % of Brazil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: programas_pos, territorio: NE}
+      - id: g_inov_gasto
+        titulo: "State government spending on science"
+        subtitulo: "Northeast as % of Brazil, in S&T and in R&D. Series ended in 2019."
+        descricao: "Northeast share of state government spending on S&T and R&D"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "S&T, % of Brazil", rotulo_curto: "S&T", destaque: true, tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: ct}
+          - {rotulo: "R&D, % of Brazil", rotulo_curto: "R&D", destaque: false, tipo: fatia, indicador: gasto_estadual_cti, territorio: NE, sub: pd}
+    regua:
+      - {rotulo: "PhDs awarded", destaque: dout_fatia}
+      - {rotulo: "Graduate programs", destaque: prog_fatia}
+      - {rotulo: "State spending on S&T", destaque: gasto_fatia}
+    fecho:
+      texto: "the base has grown a lot, but it is still not the size of the region. The Northeast produces {dout_fatia.ultimo:1%} of the country's PhDs and has {pop_fatia.ultimo:0%} of Brazilians."
+      # "Grown a lot": PhDs in the old series multiplied by more than 10, rise in the new series and share of spending on
+      # S&T higher than at the start. "Not the size": PhD share below 3/4 of the population share.
+      condicao: "dout_ne_ant.ultimo > dout_ne_ant.primeiro * 10 e dout_ne.ultimo > dout_ne.primeiro e gasto_fatia.ultimo > gasto_fatia.primeiro e dout_fatia.ultimo < pop_fatia.ultimo * 0.75"
+    alerta: "State R&D includes an estimate made by the MCTI itself: what state universities spend on graduate education, used in place of their R&D. The MCTI series is in current reais and stops in 2019; that is why I show only the Northeast's share, which does not depend on inflation."
+    fonte:
+      - "Sources: CAPES, GeoCAPES (programs and PhDs awarded by the program's state; Northeast and Brazil as the sum of states) and MCTI, Indicadores Nacionais de CT&I (national S&T indicators), tables 2.3.3 and 2.3.5 (series ended in 2019)."
+      - "GeoCAPES has no open-data file: the numbers come from the same query the site's map makes, with no public documentation."
+
+  - id: inovacao
+    rotulo: Innovation
+    titulo: "Patents, innovating industry and the IBID"
+    explicacao: "Northeast share of patent applications by residents of Brazil (inventions and utility models)."
+    lide: "In {pat_ne.ano_primeiro}, Northeast residents filed {pat_ne.primeiro:0} invention and utility-model patents, {pat_fatia.primeiro:1%} of applications by Brazilian residents. In {pat_ne.ano_ultimo}, there were {pat_ne.ultimo:0}, {pat_fatia.ultimo:1%}. In industry, the latest PINTEC (IBGE's industrial innovation survey), from {inov_ne.ano_ultimo}, found {pintec_inov_ne.ultimo:0} companies that innovated out of the Northeast's {pintec_total_ne.ultimo:0}, or {inov_ne.ultimo:1%}. In Brazil, {inov_br.ultimo:1%}. Industry here innovates at the same rate; what is missing is industry."
+    graficos:
+      - id: g_inov_pat
+        titulo: "Patent applications by residents"
+        subtitulo: "Northeast as % of Brazil, by the state of the first applicant. 2024 and 2025 are partial: they may still grow."
+        descricao: "Northeast share of patent applications by residents of Brazil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "Northeast, % of Brazil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: patentes_residentes, territorio: NE}
+      - id: g_inov_pintec
+        titulo: "Industries that innovated"
+        subtitulo: "% of industrial companies that implemented an innovation in the three-year period. Triennial survey, ended in 2017."
+        descricao: "industry innovation rate, Northeast and Brazil"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        emendar: true
+        quebras:
+          - {ano: 2008, rotulo: "CNAE 2.0"}
+        linhas:
+          - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: inovacao_industria, territorio: NE}
+          - {rotulo: Brazil, rotulo_curto: BR, destaque: false, tipo: serie, indicador: inovacao_industria, territorio: BR}
+    regua:
+      - {rotulo: "Patent applications by residents", destaque: pat_fatia}
+    posicoes:
+      titulo: "State rankings in the IBID, INPI's Brazil Innovation and Development Index"
+      indicador: ibid_posicao
+      nota: "1 is the best-placed state among Brazil's 27 federative units. INPI (the national patent office) rescales the index every year, so the comparison across years is the rank, not the score."
+    fecho:
+      texto: "innovation output has grown and is still small for the size of the region: {pat_fatia.ultimo:1%} of resident patents, for {pop_fatia.ultimo:0%} of the population. The industry that exists innovates at the country's pace."
+      # "Grown": the patent share more than doubled. "Small for the size": below 60% of the population
+      # share. "At the country's pace": innovation rate at least 95% of Brazil's in the latest PINTEC.
+      condicao: "pat_fatia.ultimo > pat_fatia.primeiro * 2 e pat_fatia.ultimo < pop_fatia.ultimo * 0.6 e inov_ne.ultimo >= inov_br.ultimo * 0.95"
+    alerta: "Patents here are applications filed at INPI, not grants, counted by me from the BADEPI microdata. The industry rate is an estimate from the PINTEC sample and covers only mining and manufacturing; a one-point difference between the Northeast and Brazil is not a gap."
+    fonte:
+      - "Sources: INPI, BADEPI v12 (patent microdata, project count); IBGE, PINTEC 2000 to 2017 (tables by Major Regions, rate calculated from the published counts); INPI, IBID (ranking position)."
+
+  - id: trabalho
+    rotulo: Work
+    titulo: "Jobs in information technology"
+    explicacao: "Northeast share of salaried staff at IT and information services companies (CNAE 62 and 63)."
+    lide: "In {emp_ne_ant.ano_primeiro}, information technology and information services companies in the Northeast had {emp_ne_ant.primeiro:0} salaried employees. In {emp_ne_ant.ano_ultimo}, {emp_ne_ant.ultimo:0}. In IBGE's new table, which starts in {emp_ne.ano_primeiro} and does not link up with the old one, the figure went from {emp_ne.primeiro:0} to {emp_ne.ultimo:0} in {emp_ne.ano_ultimo}: {emp_fatia.ultimo:1%} of the sector's jobs in Brazil."
+    graficos:
+      - id: g_inov_emp
+        titulo: "Salaried jobs in IT"
+        subtitulo: "Northeast as % of Brazil, CNAE 62 and 63. The new CEMPRE table, from 2022, does not link up with the old one."
+        descricao: "Northeast share of salaried jobs in information technology"
+        casas: 1
+        sufixo: "%"
+        min0: true
+        linhas:
+          - {rotulo: "Northeast, % of Brazil", rotulo_curto: NE, destaque: true, tipo: fatia, indicador: empregos_ti, territorio: NE}
+      - id: g_inov_emp_ne
+        titulo: "Salaried jobs in IT in the Northeast"
+        subtitulo: "People, CNAE 62 and 63. The two tables do not link up."
+        descricao: "salaried jobs in information technology in the Northeast"
+        casas: 0
+        min0: true
+        linhas:
+          - {rotulo: Northeast, rotulo_curto: NE, destaque: true, tipo: serie, indicador: empregos_ti, territorio: NE}
+    regua:
+      - {rotulo: "Jobs in IT", destaque: emp_fatia}
+    fecho:
+      texto: "IT jobs have grown, but the Northeast has {emp_fatia.ultimo:1%} of them, little more than a third of its population's weight."
+      # "Grown": rise in the new table and in the old one. "A little more than a third": share between 1/3 and 0.4 of the population share.
+      condicao: "emp_ne.ultimo > emp_ne.primeiro e emp_ne_ant.ultimo > emp_ne_ant.primeiro e emp_fatia.ultimo > pop_fatia.ultimo * 0.33 e emp_fatia.ultimo < pop_fatia.ultimo * 0.4"
+    alerta: "This is IBGE's Central Business Register (CEMPRE), not RAIS (the labor ministry's formal-employment records). From 2022 the register covers a much larger universe of companies, and IBGE's tables do not explain the change; that is why the two series are kept separate."
+    fonte:
+      - "Source: IBGE, Central Business Register, SIDRA tables 6450 (2006 to 2021) and 9418 (2022 onward), salaried employed persons, divisions 62 and 63 of CNAE 2.0."
+
+  - id: ecossistema
+    texto: true
+    rotulo: Digital government and parks
+    titulo: "Digital government and technology parks"
+    etiqueta: "Outside the official statistics: an industry-association index and an MCTI survey"
+    blocos:
+      - titulo: "Digital government: Piauí left the bottom of the list"
+        destaques:
+          - {valor: "26th → 1st", rotulo: "Piauí in the ABEP-TIC digital public services index", ano: "2021 → 2025"}
+          - {valor: "2 of 8", rotulo: "states with a Gold Seal that are in the Northeast: Piauí and Pernambuco", ano: "2026"}
+          - {valor: "67.8 and 69.3", rotulo: "points, Northeast and Brazil average, on a scale of 0 to 100", ano: "2026"}
+        paragrafos:
+          - "The index measures what each state government offers in public services online. Piauí was among the last from 2020 to 2023 (22nd, 26th, 25th and 22nd), rose to 3rd in 2024, shared 1st place with Rio Grande do Sul in 2025 and got the top score, 100, in 2026."
+          - "The rest of the region did not move along with it. In 2026, ABEP-TIC (the association of state IT agencies) replaced the ranking with seals: Piauí and Pernambuco got Gold, Ceará got Silver, Bahia got Bronze, and Alagoas, Paraíba, Maranhão, Sergipe and Rio Grande do Norte got no seal. Rio Grande do Norte and Alagoas received the Gold Progress seal, given to those that advanced the most from one year to the next."
+          - "Bahia took the opposite path from Piauí: it was 2nd in 2021, stayed in the top five through 2024 and fell to 16th in 2025."
+        tabela:
+          titulo: "Ranking of each Northeast state in the ABEP-TIC index"
+          colunas: ["State", "2020", "2021", "2022", "2023", "2024", "2025", "2026 (seal)"]
+          linhas:
+            - ["Piauí", "22nd", "26th", "25th", "22nd", "3rd", "1st", "Gold"]
+            - ["Pernambuco", "9th", "11th", "12th", "14th", "11th", "7th", "Gold"]
+            - ["Ceará", "22nd", "17th", "16th", "15th", "21st", "11th", "Silver"]
+            - ["Bahia", "4th", "2nd", "4th", "4th", "5th", "16th", "Bronze"]
+            - ["Maranhão", "20th", "23rd", "24th", "20th", "did not respond", "18th", "no seal"]
+            - ["Paraíba", "8th", "7th", "14th", "13th", "14th", "19th", "no seal"]
+            - ["Sergipe", "12th", "14th", "22nd", "26th", "20th", "21st", "no seal"]
+            - ["Alagoas", "17th", "17th", "23rd", "23rd", "17th", "23rd", "no seal; Gold Progress"]
+            - ["Rio Grande do Norte", "18th", "17th", "21st", "25th", "did not respond", "25th", "no seal; Gold Progress"]
+        fonte: "ABEP-TIC, reports and spreadsheets of the Índice de Oferta de Serviços Públicos Digitais (Index of Digital Public Services Supply), 2020 to 2026 editions. Since 1977, ABEP-TIC has brought together the technology agencies of the state governments themselves, which are the ones being evaluated, and the work is financed by the IDB. The scale changed several times (0 to 100, 0 to 150, up to 179.5 and again 0 to 100) and the number of states that responded varied from 24 to 27, so I compare rank and seal, never points from different years. The 2026 averages are from the same edition and the same scale."
+      - titulo: "Technology parks: the Northeast has 18% of the companies installed"
+        destaques:
+          - {valor: "113", rotulo: "technology park initiatives in Brazil; only 64 are operating", ano: "Jan 2025"}
+          - {valor: "2,706", rotulo: "companies and organizations installed in operating parks", ano: "Jan 2025"}
+          - {valor: "18%", rotulo: "of them are in the Northeast; in the South, 45%, and in the Southeast, 33%", ano: "Jan 2025"}
+        paragrafos:
+          - "The MCTI survey, launched at the Anprotec (the national association of innovation environments) conference on October 13, 2025, counts every initiative that presents itself as a technology park, including those still on paper: of the 113, another 42 are being implemented and 7 are in planning."
+          - "The Northeast, with more than a quarter of the country's population, hosts 18% of the companies and organizations installed in these parks. Pernambuco has 9% of the national total and Rio Grande do Norte, 5%. In January 2025, Maranhão and Piauí had no park in operation."
+          - "To narrow this gap, a 2024 MCTI call with Finep (the federal innovation funding agency) and the FNDCT (the national science and technology fund) put R$ 100 million into parks in states that had few or none, among them Alagoas, Maranhão, Piauí and Sergipe. Adding up the calls, Finep and the FNDCT committed about R$ 670 million to 56 parks."
+          - "The book shows how many parks each state has only in a chart, without the numbers written out, so that count is not included here. And the data is reported by the parks themselves: in 2023, 43 of the 64 in operation answered the survey."
+        fonte: "MCTI, book Evolução, Impacto e Potencial dos Parques Tecnológicos do Brasil (Evolution, Impact and Potential of Brazil's Technology Parks) (2025), preface and sections 2.1 and 2.2, with the MCTI-InovaData-Br database of January 2025; survey by the UFV Management Technologies Center. Data reported by the parks themselves."
+  - id: porto_digital
+    texto: true
+    rotulo: Porto Digital
+    titulo: "Porto Digital up close: 25 years of an innovation district in Recife"
+    etiqueta: "Some of the numbers are Porto Digital's own; some are public data (Novo CAGED and INEP) cut by the Porto Digital Observatory"
+    paragrafos:
+      - "Porto Digital was born in 2000 as a public policy to foster the digital economy in Pernambuco, bring together government, universities and companies, keep talent in the state and revitalize the Bairro do Recife district. There are other innovation environments in the region. This one gets the closer look because, through its own observatory, it publishes numbers that can be checked against public data. Measuring all the others would require the MCTI's list by state, which is not yet accessible."
+    blocos:
+      - titulo: "The size, according to Porto Digital itself"
+        destaques:
+          - {valor: "R$ 7.4 bn", rotulo: "in annual revenue of the ecosystem's companies", ano: "2025"}
+          - {valor: "541", rotulo: "companies on board"}
+          - {valor: "24,000", rotulo: "employees", ano: "2025"}
+          - {valor: "230,000 m²", rotulo: "of historic buildings restored since 2000, across 171 hectares of downtown Recife"}
+        paragrafos:
+          - "These numbers are self-reported by Porto Digital, which does not publish its method. The website lists 541 companies; the Observatory's e-book, from September 2026, says more than 540 in 2025. The district also operates in Caruaru, in the Agreste, with the Armazém da Criatividade, winner of the 2025 Finep Innovation Award in the Innovation Environment category."
+        fonte: "Porto Digital, pages Sobre o Porto Digital (About Porto Digital) and Prêmios e reconhecimentos (Awards and recognition) (portodigital.org); e-book Ecossistema em Estudo (Ecosystem Under Study), by the Porto Digital Observatory (September 2026), p. 2."
+      - titulo: "Formal employment"
+        destaques:
+          - {valor: "14,200", rotulo: "formal technology jobs in Recife", ano: "June 2026"}
+          - {valor: "72%", rotulo: "of them in software development; in the Northeast, 30.9%"}
+          - {valor: "+13.3%", rotulo: "in 12 months; Recife's economy grew 3.8% and Brazil's ICT average, 2.2%", ano: "through June 2026"}
+        paragrafos:
+          - "The public database counts only people with a formal work contract, and it reaches 14,200 technology jobs in all of Recife. That is far fewer than the 24,000 employees Porto Digital reports, and Porto Digital does not say what goes into its count."
+          - "What stands out is the profile. In Recife, 72% of these jobs are in software development and licensing: 10,254 of them, the largest number among Northeast capitals. In the region, development accounts for 30.9% of ICT employment, and the rest is support and consulting."
+          - "And the pace. In the 12 months through June 2026, formal ICT employment in Recife grew 13.3%. Over the same period, Florianópolis had 1.8%, Curitiba 1.3% and Belo Horizonte 1.0%."
+        fonte: "Novo CAGED (Ministry of Labor and Employment), as read by the Porto Digital Observatory, e-book Ecossistema em Estudo (September 2026), p. 4 to 9. It is not the same count as the IT jobs in chapter 4, which come from IBGE's Central Business Register."
+      - titulo: "Training has doubled"
+        destaques:
+          - {valor: "703 → 1,427", rotulo: "graduates per year from higher-education ICT courses in Recife", ano: "2020–2022 average → 2024"}
+          - {valor: "+103%", rotulo: "in Recife; in Brazil, the increase was 26%"}
+          - {valor: "64%", rotulo: "of the city's new professionals come from colleges partnered with Porto Digital"}
+        paragrafos:
+          - "Porto Digital attributes the jump to two programs. Residência Tecnológica (Technology Residency) is a required course at partner colleges in which students work on real company problems. Embarque Digital (Digital Boarding), created with the Recife city government, gives full scholarships in technology courses to people who attended public school, with half the slots reserved for Black and mixed-race (pretos e pardos) students."
+          - "According to the program itself, dropout in Embarque Digital is below 40%, against 60% on the national average, and 70% of students finish the course employed."
+        fonte: "Censo da Educação Superior (Higher Education Census) (INEP), as read by the Porto Digital Observatory, e-book Ecossistema em Estudo, p. 18 and 19. Dropout and employability: Embarque Digital data."
+      - titulo: "Who is being hired"
+        destaques:
+          - {valor: "57%", rotulo: "of ICT hires in Recife were Black, mixed-race, Indigenous and Asian-descendant people", ano: "H1 2026"}
+          - {valor: "28%", rotulo: "gender pay gap in hiring salaries; in Florianópolis, 73%", ano: "H1 2026"}
+          - {valor: "26.8%", rotulo: "of IT hires in Pernambuco were under 25; a year earlier, 24.7%", ano: "H1 2026"}
+        paragrafos:
+          - "In the hubs of the South, the share of Black, mixed-race, Indigenous and Asian-descendant people in new technology jobs does not reach 33%, according to the same study."
+          - "The pay gap is the simple average of the hiring salary in the half-year, without separating job title or experience. It serves to compare cities, not to measure discrimination."
+          - "The data on young people runs against a thesis that has circulated since ChatGPT: that artificial intelligence would end the entry-level job. In Pernambuco, the share of hires under 25 increased."
+        fonte: "Novo CAGED (MTE), hires in the first half of 2026 and of 2025, as read by the Porto Digital Observatory, e-book Ecossistema em Estudo (September 2026), p. 11 to 15."
+    fecho: "Porto Digital shows what public policy delivers when it lasts 25 years. But one neighborhood in Recife is not the Northeast: the region still has less than a tenth of the country's IT jobs, as chapter 4 shows."

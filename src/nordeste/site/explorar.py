@@ -5,10 +5,12 @@ diferentes ficam separadas, nunca emendadas) para os JSON que o site.js le. O Es
 HTML: mapa de calor em faixas de cor (`nn-f0` a `nn-f9`, a mais escura e a melhor), ranking do ultimo ano e tabela.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from nordeste.site.dados import DadosSite, Ponto
-from nordeste.site.formatacao import numero
+from nordeste.site.formatacao import numero, ordinal
+from nordeste.site.idioma import idioma_atual
+from nordeste.site.interface import INDICADORES_ESTADOS_EN, INDICADORES_EXPLORAR_EN, TERRITORIOS_EN, t
 
 # (id na base, nome, etiqueta curta na ponta do grafico), na ordem dos seletores do prototipo
 TERRITORIOS = (
@@ -31,6 +33,26 @@ TERRITORIOS = (
 )
 NOME_DO_TERRITORIO = {id_: nome for id_, nome, _ in TERRITORIOS}
 ETIQUETA_DO_TERRITORIO = {id_: etiqueta for id_, _, etiqueta in TERRITORIOS}
+
+
+def nome_do_territorio(territorio: str) -> str:
+    """O nome no idioma da geracao em curso (os estados ficam com o nome de sempre)."""
+    if idioma_atual() == "en" and territorio in TERRITORIOS_EN:
+        return TERRITORIOS_EN[territorio][0]
+    return NOME_DO_TERRITORIO[territorio]
+
+
+def etiqueta_do_territorio(territorio: str) -> str:
+    if idioma_atual() == "en" and territorio in TERRITORIOS_EN:
+        return TERRITORIOS_EN[territorio][1]
+    return ETIQUETA_DO_TERRITORIO[territorio]
+
+
+def territorios() -> list[tuple[str, str, str]]:
+    """(id, nome, etiqueta) na ordem dos seletores, no idioma da geracao em curso."""
+    return [(id_, nome_do_territorio(id_), etiqueta_do_territorio(id_)) for id_, _, _ in TERRITORIOS]
+
+
 UFS = ("MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE_UF", "BA")  # ordem do mapa de calor
 FAIXAS = 10  # classes nn-f0 a nn-f9
 
@@ -109,6 +131,17 @@ INDICADORES_EXPLORAR = (
     IndicadorExplorar("pop", "populacao", "População", "População", "pessoas", 0),
 )
 POR_CHAVE = {i.chave: i for i in INDICADORES_EXPLORAR}
+
+
+def no_idioma(ind):
+    """O indicador (do Explorar ou do Estados) com o rotulo, o nome e a unidade do idioma da geracao em curso."""
+    if idioma_atual() != "en":
+        return ind
+    if isinstance(ind, IndicadorExplorar):
+        rotulo, nome, unidade = INDICADORES_EXPLORAR_EN[ind.chave]
+        return replace(ind, rotulo=rotulo, nome=nome, unidade=unidade)
+    rotulo, nome = INDICADORES_ESTADOS_EN[ind.chave]
+    return replace(ind, rotulo=rotulo, nome=nome)
 
 
 # --- Explorar ---
@@ -237,6 +270,7 @@ def vista_estados(dados: DadosSite, ind: IndicadorEstados) -> dict:
     Dois pontos do mesmo estado e ano (series diferentes) nao entram na mesma celula: vale o de menor id de serie.
     Sem nenhum ponto, `anos` vem vazio e o modelo mostra o aviso.
     """
+    ind = no_idioma(ind)
     achados = _pontos_dos_estados(dados, ind)
     vista: dict = {
         "chave": ind.chave, "rotulo": ind.rotulo, "nome": ind.nome, "indicador_id": ind.indicador_id,
@@ -252,6 +286,8 @@ def vista_estados(dados: DadosSite, ind: IndicadorEstados) -> dict:
     baixo, alto = min(valores), max(valores)
 
     def texto(valor: float) -> str:
+        if ind.posicoes:  # a posicao num ranking: 3º no país, 3rd in Brazil
+            return f"{ordinal(int(valor))}{t('no_pais')}"
         return f"{numero(valor, ind.casas)}{ind.sufixo}"
 
     vista["anos"] = anos
@@ -260,15 +296,15 @@ def vista_estados(dados: DadosSite, ind: IndicadorEstados) -> dict:
         for ano in anos:
             valor = celulas.get((uf, ano))
             if valor is None:
-                linha.append({"ano": ano, "classe": "nn-vazia", "titulo": f"{NOME_DO_TERRITORIO[uf]}, {ano}: sem dado"})
+                linha.append({"ano": ano, "classe": "nn-vazia", "titulo": f"{nome_do_territorio(uf)}, {ano}: {t('sem_dado')}"})
             else:
                 faixa = _faixa(valor, baixo, alto, ind.maior_melhor)
                 linha.append({
-                    "ano": ano, "classe": f"nn-f{faixa}", "titulo": f"{NOME_DO_TERRITORIO[uf]}, {ano}: {texto(valor)}",
+                    "ano": ano, "classe": f"nn-f{faixa}", "titulo": f"{nome_do_territorio(uf)}, {ano}: {texto(valor)}",
                 })
-        vista["linhas"].append({"uf": _etiqueta_do_estado(uf), "estado": NOME_DO_TERRITORIO[uf], "celulas": linha})
+        vista["linhas"].append({"uf": _etiqueta_do_estado(uf), "estado": nome_do_territorio(uf), "celulas": linha})
         vista["tabela"] += [
-            {"estado": NOME_DO_TERRITORIO[uf], "ano": ano, "valor": texto(celulas[uf, ano])}
+            {"estado": nome_do_territorio(uf), "ano": ano, "valor": texto(celulas[uf, ano])}
             for ano in anos if (uf, ano) in celulas
         ]
 
@@ -285,7 +321,7 @@ def vista_estados(dados: DadosSite, ind: IndicadorEstados) -> dict:
     vista["ano_do_ranking"] = ultimo
     vista["ranking"] = [
         {
-            "posicao": f"{i}º {NOME_DO_TERRITORIO[uf]}", "valor": texto(valor),
+            "posicao": f"{ordinal(i)} {nome_do_territorio(uf)}", "valor": texto(valor),
             "largura": f"{max(2.0, largura(valor)):.1f}",
         }
         for i, (uf, valor) in enumerate(do_ano, start=1)
@@ -300,7 +336,7 @@ def vistas_estados(dados: DadosSite) -> list[dict]:
 def tabela_do_territorio(ind: IndicadorExplorar, lista: list[list], territorio: str) -> list[dict]:
     """Os numeros do territorio escolhido, na ordem do JSON; a serie da fonte vai em cada linha."""
     return [
-        {"ano": ano, "territorio": NOME_DO_TERRITORIO[territorio], "valor": f"{numero(valor, ind.casas)}{ind.sufixo}",
+        {"ano": ano, "territorio": nome_do_territorio(territorio), "valor": f"{numero(valor, ind.casas)}{ind.sufixo}",
          "serie": serie}
         for ano, valor, serie in lista
     ]

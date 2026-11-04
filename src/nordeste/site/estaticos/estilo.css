@@ -550,6 +550,48 @@ body {
   transform: translateX(2px);
 }
 
+/* seletor de idioma: bandeira redonda e sigla, no fim da barra preta e no pé da gaveta; o idioma da página fica
+   marcado (aria-current) */
+.nn-idiomas {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  padding-left: 8px;
+  border-left: 1px solid #2a2a2e;
+}
+
+.nn .nn-idioma {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 7px;
+  border-radius: 9px;
+  color: #a1a1aa;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nn .nn-idioma:hover,
+.nn .nn-idioma[aria-current="true"] {
+  color: var(--nn-branco);
+}
+
+.nn .nn-idioma[aria-current="true"] {
+  background: #1c1c1f;
+}
+
+.nn-bandeira {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
 .nn-menu-movel {
   display: none;
 }
@@ -685,6 +727,28 @@ body {
   .nn .nn-gaveta-itens a {
     color: #a1a1aa;
     font-weight: 500;
+  }
+
+  .nn-idiomas-gaveta {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .nn .nn-gaveta .nn-idioma {
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto;
+    flex: 1;
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .nn .nn-gaveta .nn-idioma[aria-current="true"] {
+    box-shadow: none;
   }
 }
 
@@ -2115,6 +2179,10 @@ html:has(.nn-modal[open]) {
   gap: clamp(8px, 1.6vw, 12px);
 }
 
+.nn-cartao-comum {
+  grid-template-rows: auto auto auto auto auto auto 1fr auto auto; /* + o aviso acima da frase feita */
+}
+
 .nn-cartao::before {
   content: "";
   position: absolute;
@@ -2138,6 +2206,15 @@ html:has(.nn-modal[open]) {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* no card em inglês, o aviso pequeno acima da frase feita: "A common saying in Brazil" */
+.nn .nn-c-comum {
+  margin-bottom: -8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .nn .nn-c-mito {

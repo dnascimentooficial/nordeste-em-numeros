@@ -3,7 +3,7 @@
 {% macro credito(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
 {# o credito curto da imagem de um marco: autor e data (o titulo completo fica em Sobre os dados) #}
 {% macro credito_curto(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
-{% macro epoca(e) %}
+{% macro epoca(e, ui) %}
     <li class="nn-epoca" id="{{ e.id }}">
       <button type="button" class="nn-epoca-abrir" data-epoca="{{ e.id }}">
 {% if e.imagem %}
@@ -12,7 +12,7 @@
         <span class="nn-epoca-periodo">{{ e.periodo }}</span>
         <span class="nn-epoca-nome">{{ e.nome }}</span>
       </button>
-      <ul class="nn-marcos-linha" aria-label="Marcos de {{ e.nome }}">
+      <ul class="nn-marcos-linha" aria-label="{{ ui.marcos_de|replace("{nome}", e.nome) }}">
 {% for m in e.marcos %}
         <li><a class="nn-marco" href="#m{{ m.ano }}" data-epoca="{{ e.id }}" data-marco="{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <span class="nn-marco-titulo">{{ m.titulo }}</span></a></li>
 {% endfor %}
@@ -21,7 +21,7 @@
 {% if e.imagem %}
         <figure class="nn-epoca-figura">
           <img class="nn-epoca-imagem" src="{{ e.imagem.src }}" alt="{{ e.imagem.alt }}" width="{{ e.imagem.largura }}" height="{{ e.imagem.altura }}" loading="lazy">
-          <figcaption class="nn-epoca-credito">Imagem: {{ credito(e.imagem) }}.</figcaption>
+          <figcaption class="nn-epoca-credito">{{ ui.imagem }}: {{ credito(e.imagem) }}.</figcaption>
         </figure>
 {% endif %}
         <p class="nn-epoca-data">{{ e.periodo }}</p>
@@ -33,32 +33,32 @@
 {% endfor %}
         </div>
         <div class="nn-epoca-marcos">
-          <h4>Marcos</h4>
+          <h4>{{ ui.marcos }}</h4>
           <ol>
 {% for m in e.marcos %}
             <li id="m{{ m.ano }}"><span class="nn-marco-ano">{{ m.ano }}</span> <b>{{ m.titulo }}.</b> {{ m.texto }}{% if m.imagem %}
               <figure class="nn-marco-figura">
                 <img class="nn-marco-imagem" src="{{ m.imagem.src }}" alt="{{ m.imagem.alt }}" width="{{ m.imagem.largura }}" height="{{ m.imagem.altura }}" loading="lazy">
-                <figcaption class="nn-marco-credito">Imagem: {{ credito_curto(m.imagem) }}.</figcaption>
+                <figcaption class="nn-marco-credito">{{ ui.imagem }}: {{ credito_curto(m.imagem) }}.</figcaption>
               </figure>
             {% endif %}</li>
 {% endfor %}
           </ol>
         </div>
         <div class="nn-epoca-numeros">
-          <h4>Números</h4>
+          <h4>{{ ui.numeros }}</h4>
           <ul>
 {% for n in e.numeros %}
-            <li><span class="nn-epoca-valor">{{ n.valor }}</span> <span class="nn-epoca-legenda">{{ n.legenda }}</span> <span class="nn-tipo nn-tipo-{{ n.tipo }}" title="{{ n.fonte }}">{{ n.rotulo }}</span> <span class="nn-epoca-fonte-numero">Fonte: {{ n.fonte }}.</span></li>
+            <li><span class="nn-epoca-valor">{{ n.valor }}</span> <span class="nn-epoca-legenda">{{ n.legenda }}</span> <span class="nn-tipo nn-tipo-{{ n.tipo }}" title="{{ n.fonte }}">{{ n.rotulo }}</span> <span class="nn-epoca-fonte-numero">{{ ui.fonte }}: {{ n.fonte }}.</span></li>
 {% endfor %}
           </ul>
         </div>
         <div class="nn-epoca-ficou">
-          <h4>O que ficou disso</h4>
-          <p>{{ e.o_que_ficou }} <span class="nn-tipo nn-tipo-interpretacao" title="Leitura minha, a partir das fontes desta época">{{ e.interpretacao }}</span></p>
+          <h4>{{ ui.o_que_ficou }}</h4>
+          <p>{{ e.o_que_ficou }} <span class="nn-tipo nn-tipo-interpretacao" title="{{ ui.leitura_minha }}">{{ e.interpretacao }}</span></p>
         </div>
         <div class="nn-epoca-fontes">
-          <h4>Fontes</h4>
+          <h4>{{ ui.fontes }}</h4>
           <ul>
 {% for f in e.fontes %}
             <li>{% if f.url %}<a href="{{ f.url }}">{{ f.texto }}</a>{% else %}{{ f.texto }}{% endif %}</li>
@@ -66,12 +66,12 @@
           </ul>
         </div>
 {% if e.anterior or e.proxima %}
-        <nav class="nn-epoca-nav" aria-label="Outras épocas">
+        <nav class="nn-epoca-nav" aria-label="{{ ui.outras_epocas }}">
 {% if e.anterior %}
-          <a class="nn-epoca-anterior" href="#{{ e.anterior }}" data-epoca="{{ e.anterior }}">← época anterior</a>
+          <a class="nn-epoca-anterior" href="#{{ e.anterior }}" data-epoca="{{ e.anterior }}">{{ ui.epoca_anterior }}</a>
 {% endif %}
 {% if e.proxima %}
-          <a class="nn-epoca-proxima" href="#{{ e.proxima }}" data-epoca="{{ e.proxima }}">próxima época →</a>
+          <a class="nn-epoca-proxima" href="#{{ e.proxima }}" data-epoca="{{ e.proxima }}">{{ ui.proxima_epoca }}</a>
 {% endif %}
         </nav>
 {% endif %}

@@ -1,12 +1,15 @@
-{% macro cartao(c, t, data_curta) %}
-<article class="nn-cartao" data-card="{{ c.id }}" aria-label="Card: {{ c.titulo_sem_aspas }}">
+{% macro cartao(c, t, data_curta, ui) %}
+<article class="nn-cartao{% if ui.frase_comum %} nn-cartao-comum{% endif %}" data-card="{{ c.id }}" aria-label="{{ ui.card }}: {{ c.titulo_sem_aspas }}">
   <p class="nn-c-marca">Nordeste em Números · Júlio Diógenes</p>
+{% if ui.frase_comum %}
+  <p class="nn-c-comum">{{ ui.frase_comum }}</p>
+{% endif %}
   <h1 class="nn-c-mito">{{ c.frase_feita }}</h1>
   <p class="nn-c-sera">{{ t.sera }}</p>
-  <p class="nn-c-numero{% if c.longo %} nn-c-longo{% endif %}"><b>{{ c.de }}</b><span class="nn-c-seta" role="img" aria-label="para"> → </span><b>{{ c.para }}</b></p>
+  <p class="nn-c-numero{% if c.longo %} nn-c-longo{% endif %}"><b>{{ c.de }}</b><span class="nn-c-seta" role="img" aria-label="{{ ui.para }}"> → </span><b>{{ c.para }}</b></p>
   <p class="nn-c-frase">{{ c.frase }}</p>
   <div class="nn-c-mini">{{ c.mini|safe }}</div>
   <p class="nn-c-fecho">{{ c.fecho }}</p>
-  <p class="nn-c-fonte">Fonte: {{ c.fonte }} · dados de {{ data_curta }} · dnascimento.com.br</p>
+  <p class="nn-c-fonte">{{ ui.fonte }}: {{ c.fonte }} · {{ ui.dados_de }} {{ data_curta }} · dnascimento.com.br</p>
 </article>
 {% endmacro %}

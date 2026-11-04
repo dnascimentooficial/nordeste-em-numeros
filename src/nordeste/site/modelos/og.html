@@ -1,9 +1,9 @@
 {# Página de apoio que o Chromium fotografa para o PNG de compartilhamento: a imagem OpenGraph (1200x630) de uma
    página ou o card (1080x1350, o macro de _cartao.html a 2x). Nunca é publicada: o gerador a apaga depois de
    renderizar, por isso o <style> aqui não conflita com a CSP do site (Ruling S-D). #}
-{% from "_cartao.html" import cartao %}
+{% from "_cartao.html" import cartao with context %}
 <!doctype html>
-<html lang="pt-BR">
+<html lang="{{ lang }}">
 <head>
 <meta charset="utf-8">
 <title>{{ titulo }}</title>
@@ -35,7 +35,7 @@ html, body { margin: 0; background: #080808; overflow: hidden; }
 <body>
 {% if card %}
 <div class="nn">
-{{ cartao(card, textos.cards, data_curta) }}
+{{ cartao(card, textos.cards, data_curta, ui) }}
 </div>
 {% else %}
 <div class="nn-og">

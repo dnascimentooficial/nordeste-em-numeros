@@ -1,4 +1,4 @@
-{% from "_autor.html" import conteudo %}
+{% from "_autor.html" import conteudo with context %}
 {# "Sobre o autor": o conteúdo já vem no HTML (o site.js só abre o <dialog>). Fica fora do <footer>, que pinta os links de
    branco. Sem JavaScript o gatilho do rodapé é um link para /sobre/#autor e este <dialog> nunca abre. #}
 <dialog class="nn-modal nn-modal-autor" aria-labelledby="nn-autor-titulo-modal">

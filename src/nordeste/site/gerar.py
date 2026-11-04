@@ -6,6 +6,7 @@ texto vem de um marcador preenchido pela base (`conteudo.preencher`); fecho e ca
 cita um destaque que sumiu da base, nao saem e vao para o `RelatorioSite`.
 """
 
+import dataclasses
 import hashlib
 import json
 import re
@@ -26,18 +27,23 @@ from nordeste.site.conteudo import (
 )
 from nordeste.site.dados import DadosSite
 from nordeste.site.explorar import (
-    ETIQUETA_DO_TERRITORIO, FAIXAS, INDICADORES_EXPLORAR, NOME_DO_TERRITORIO, POR_CHAVE, TERRITORIOS, UFS as UFS_DO_MAPA,
-    IndicadorExplorar, dados_explorar, pontos, pontos_do_indicador, referencias, tabela_do_territorio, vistas_estados,
+    FAIXAS, INDICADORES_EXPLORAR, POR_CHAVE, UFS as UFS_DO_MAPA, IndicadorExplorar, dados_explorar,
+    etiqueta_do_territorio, no_idioma, nome_do_territorio, pontos, pontos_do_indicador, referencias,
+    tabela_do_territorio, territorios, vistas_estados,
 )
-from nordeste.site.formatacao import numero
+from nordeste.site.formatacao import numero, ordinal
+from nordeste.site.idioma import (
+    IDIOMAS, LANG, OG_LOCALE, PADRAO, PREFIXO, ROTAS, arquivo_da_rota, em_idioma, fichas_no_idioma, idioma_atual,
+    outra_rota, rota_do_card, traducoes_faltando,
+)
+from nordeste.site.interface import LICENCAS, MESES, MESES_CURTOS_EN, POR_EXTENSO as EXTENSO_POR_IDIOMA
+from nordeste.site.interface import TIPOS as ROTULOS_DOS_TIPOS, t, ui
 from nordeste.site.graficos import ConfigGrafico, Linha, faixas_em_json, grafico_linhas, minigrafico, siglas_dos_governos
 from nordeste.site.historia import (
     PESO_MAXIMO_DA_EPOCA,
     PESO_MAXIMO_DO_CARTAO,
     PESO_MAXIMO_DO_MARCO,
     PROPORCAO,
-    ROTULO_DA_LICENCA,
-    TIPOS,
     Historia,
     ImagemHistorica,
     arquivo_do_cartao,
@@ -54,7 +60,7 @@ URL_DO_AUTOR = "https://dnascimento.com.br"
 LICENCA = "https://creativecommons.org/licenses/by/4.0/"
 PASTA_MODELOS = Path(__file__).parent / "modelos"
 PASTA_ESTATICOS = Path(__file__).parent / "estaticos"  # estilo, script, fontes, foto e .htaccess, copiados na raiz do site
-ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js")
+ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js", "bandeira-br.svg", "bandeira-us.svg")
 ARQUIVOS_ENXUTOS = ("estilo.css", "site.js")  # publicados sem comentarios nem recuo (_enxuto)  # pedidos com ?v=<hash>: CDN e navegador nao servem a versao velha
 
 
@@ -92,7 +98,7 @@ CARD = (1080, 1350)  # PNG de cada card
 FOTO_TAMANHO_MAXIMO = 200_000  # bytes: a foto pesa na primeira tela
 FOTO_EXIGIDA = ("credito", "url")  # `foto` e opcional em textos.yaml; se existir, traz tudo isso (Ruling S-Z)
 FOTO_OPCIONAL = ("rotulo", "descricao")  # texto antes do credito ("Imagem") e o que a imagem e, entre parenteses
-FOTO_ROTULO_PADRAO = "Foto"  # sem `rotulo`: "Foto: <credito>" no rodape e "Foto da abertura: <credito>." em Sobre
+# sem `rotulo`, o rotulo "Foto" (interface.py, chave foto): "Foto: <credito>" no rodape e "Foto da abertura: <credito>." em Sobre
 FOTO_ARQUIVO = "foto-abertura.webp"  # em estaticos/; o estilo.css aponta para este nome (fundo da abertura, Ruling S-U)
 AUTOR_FOTO = "autor.webp"  # em estaticos/, opcional: a foto do circulo do rodape; sem ela o circulo mostra as iniciais
 AUTOR_FOTO_TAMANHO_MAXIMO = 100_000  # bytes: o rodape esta em todas as paginas
@@ -138,9 +144,8 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
         "quem_sou": {"titulo", "texto", "mais"}, "motivacao": {"titulo", "texto"},
     },
 }
-FRASE_DA_DATA = "na data desta publicação"
-MESES = ("janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
-         "novembro", "dezembro")
+# o trecho dos textos que vira a data da base ("em 1º de novembro de 2026"), em cada idioma
+FRASE_DA_DATA = {"pt": ("na data desta publicação", "em {data}"), "en": ("on the date of this publication", "on {data}")}
 
 
 class Pagina(NamedTuple):
@@ -164,10 +169,10 @@ PAGINA_HISTORIA = Pagina("como-chegamos", "como_chegamos.html", "como-chegamos/i
 # teto de peso proprio (testes/navegador); o teto do Inicio nao muda.
 PAGINA_INOVACAO = Pagina("inovacao", "inovacao.html", "inovacao/index.html", "/inovacao/", "Inovação")
 PAGINAS_COM_DATASET = ("index", "dados")
+POR_EXTENSO = EXTENSO_POR_IDIOMA["pt"]  # épocas e frases no menu, até dez (interface.POR_EXTENSO tem os dois idiomas)
 EPOCA_DA_CHAMADA = "1530"  # a epoca cuja imagem (e credito) fundo o bloco do Inicio que leva a Como chegamos
 MARCADORES_DA_CHAMADA = ("ano_inicial", "parcela_inicial", "ano_final", "parcela_final")  # no titulo, entre [colchetes]
 PASTA_IMAGENS_HISTORIA = "/historia/"  # estaticos/historia/ do pacote, copiada na raiz do site so com a pagina
-AVISO_DA_PREVIA = "Prévia: texto provisório"
 # A capa (seção cheia, com a imagem por baixo do menu) de cada página interna: o arquivo em estaticos/historia/, de uma
 # época ou de um marco do historia.yaml (o crédito vem de lá). Sem a página histórica, ou se o historia.yaml não tiver
 # mais essa imagem, a capa usa a foto da abertura; sem ela também, fica preta. None: sempre a foto da abertura. O
@@ -184,7 +189,6 @@ CAPAS = {
 CLASSE_DA_CAPA_DA_FOTO = "nn-capa-abertura"
 # os marcadores dos textos do menu (textos.yaml, menu.cartoes): cada um aparece uma vez no texto do seu cartao
 MARCADORES_DO_MENU = {"como-chegamos": "epocas", "cards": "cards"}
-POR_EXTENSO = ("zero", "uma", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez")  # épocas, frases
 SERA = re.compile(r"\s*Será\?\s*$")  # o "Será?" do fim da frase feita, que o placar e o menu lateral deixam de fora
 NEGRITO = "**"  # na comparacao da faixa de numeros, o trecho entre ** e ** sai em negrito
 
@@ -203,20 +207,34 @@ class RelatorioSite:
     cards_suprimidos: list[str]
     # historia.yaml com `provisoria: true`: a pagina Como chegamos nao sai (so em previa, com incluir_provisoria)
     historia_provisoria: bool = False
+    # textos em ingles que caem no portugues por falta de traducao (`en/textos.yaml: menu.inicio`); nunca para a geracao
+    traducoes_faltando: list[str] = dataclasses.field(default_factory=list)
 
 
 # --- datas e textos ---
 
 def data_por_extenso(aaaa_mm_dd: str) -> str:
-    """`2026-11-01` -> `1º de novembro de 2026`."""
+    """`2026-11-01` -> `1º de novembro de 2026` (em ingles, `November 1, 2026`)."""
     ano, mes, dia = aaaa_mm_dd.split("-")
-    return f"{int(dia)}{'º' if int(dia) == 1 else ''} de {MESES[int(mes) - 1]} de {ano}"
+    if idioma_atual() == "en":
+        return f"{MESES['en'][int(mes) - 1]} {int(dia)}, {ano}"
+    return f"{int(dia)}{'º' if int(dia) == 1 else ''} de {MESES['pt'][int(mes) - 1]} de {ano}"
 
 
 def mes_por_extenso(aaaa_mm: str) -> str:
-    """`2027-02` -> `fevereiro de 2027`."""
+    """`2027-02` -> `fevereiro de 2027` (em ingles, `February 2027`)."""
     ano, mes = aaaa_mm.split("-")
-    return f"{MESES[int(mes) - 1]} de {ano}"
+    if idioma_atual() == "en":
+        return f"{MESES['en'][int(mes) - 1]} {ano}"
+    return f"{MESES['pt'][int(mes) - 1]} de {ano}"
+
+
+def data_curta(aaaa_mm_dd: str) -> str:
+    """A data do rodape do card: `01/11/2026` (em ingles, `Nov. 1, 2026`, sem a ambiguidade de dia e mes)."""
+    ano, mes, dia = aaaa_mm_dd.split("-")
+    if idioma_atual() == "en":
+        return f"{MESES_CURTOS_EN[int(mes) - 1]} {int(dia)}, {ano}"
+    return f"{dia}/{mes}/{ano}"
 
 
 def _textos(obj: object) -> Iterator[str]:
@@ -239,7 +257,8 @@ def _cita_so_o_que_existe(obj: object, destaques: dict[str, Destaque]) -> bool:
 def _resolver(obj: object, destaques: dict[str, Destaque], data: str) -> object:
     """Preenche os marcadores dos textos fixos e a data da publicacao. Item de lista que cita destaque ausente sai."""
     if isinstance(obj, str):
-        return preencher(obj, destaques).replace(FRASE_DA_DATA, f"em {data}")
+        frase, troca = FRASE_DA_DATA[idioma_atual()]
+        return preencher(obj, destaques).replace(frase, troca.format(data=data))
     if isinstance(obj, list):
         return [_resolver(item, destaques, data) for item in obj if _cita_so_o_que_existe(item, destaques)]
     if isinstance(obj, dict):
@@ -415,15 +434,15 @@ def _vista_explorar(dados: DadosSite, ind: IndicadorExplorar, por_territorio: di
     (Brasil, Nordeste) nao aparecem sozinhas, para nao parecerem a serie do territorio.
     """
     vista = {
-        "titulo": f"{ind.nome}: {NOME_DO_TERRITORIO[territorio]} ({ind.unidade})", "grafico": None, "tabela": [],
+        "titulo": f"{ind.nome}: {nome_do_territorio(territorio)} ({ind.unidade})", "grafico": None, "tabela": [],
     }
     if not por_territorio[territorio]:
         return vista
     linhas = [
-        Linha(NOME_DO_TERRITORIO[t], ETIQUETA_DO_TERRITORIO[t], pontos(por_territorio[t]), t == territorio)
-        for t in (*referencias(territorio), territorio)
+        Linha(nome_do_territorio(r), etiqueta_do_territorio(r), pontos(por_territorio[r]), r == territorio)
+        for r in (*referencias(territorio), territorio)
     ]
-    cfg = ConfigGrafico(titulo=f"{ind.nome}, {NOME_DO_TERRITORIO[territorio]}", casas=ind.casas, sufixo=ind.sufixo)
+    cfg = ConfigGrafico(titulo=f"{ind.nome}, {nome_do_territorio(territorio)}", casas=ind.casas, sufixo=ind.sufixo)
     largo, estreito = _desenhar(linhas, cfg, dados.governos)
     if largo:
         vista["grafico"] = {"id": "g-explorar", "largo": largo, "estreito": estreito}
@@ -433,21 +452,26 @@ def _vista_explorar(dados: DadosSite, ind: IndicadorExplorar, por_territorio: di
 
 def vista_explorar_em_html(dados: DadosSite, textos: dict, indicador: str, territorio: str) -> str:
     """O HTML da vista do Explorar de um indicador e territorio: grafico e tabela, ou o aviso de que nao ha dados."""
-    ind = POR_CHAVE[indicador]
+    ind = no_idioma(POR_CHAVE[indicador])
     vista = _vista_explorar(dados, ind, pontos_do_indicador(dados, ind), territorio)
-    return str(_ambiente().get_template("_vista_explorar.html").module.vista(vista, textos["explorar"]))
+    return str(_ambiente().get_template("_vista_explorar.html").module.vista(vista, textos["explorar"], ui()))
 
 
 def _contexto_do_explorar(dados: DadosSite, por_indicador: dict[str, dict[str, list[list]]]) -> dict:
     chave, territorio = EXPLORAR_INICIAL
-    vista = _vista_explorar(dados, POR_CHAVE[chave], por_indicador[chave], territorio)
+    vista = _vista_explorar(dados, no_idioma(POR_CHAVE[chave]), por_indicador[chave], territorio)
     return {
         "explorar": {
-            "indicadores": INDICADORES_EXPLORAR,
-            "territorios": [{"id": id_, "nome": nome, "etiqueta": etiqueta} for id_, nome, etiqueta in TERRITORIOS],
+            "indicadores": [no_idioma(i) for i in INDICADORES_EXPLORAR],
+            "territorios": [{"id": id_, "nome": nome, "etiqueta": etiqueta} for id_, nome, etiqueta in territorios()],
             "inicial": {"indicador": chave, "territorio": territorio},
             "vista": vista,
             "governos": faixas_em_json(dados.governos),
+            # os rotulos que o site.js escreve no redesenho (descricao acessivel, tabela, nome do grafico)
+            "rotulos": json.dumps({
+                "desc": t("grafico_desc"), "parte": t("grafico_parte"), "e": t("e"),
+                "colunas": [t("ano"), t("territorio"), t("valor"), t("serie_da_fonte")],
+            }, ensure_ascii=False, separators=(",", ":")),
         }
     }
 
@@ -501,8 +525,10 @@ def _posicoes(dados: DadosSite, spec: dict) -> dict | None:
     for uf in UFS_DO_MAPA:
         pontos_uf = dados.serie(spec["indicador"], uf)
         if pontos_uf:
-            linhas.append({"estado": NOME_DO_TERRITORIO[uf], "ano_primeiro": pontos_uf[0].ano, "ano_ultimo": pontos_uf[-1].ano,
-                           "primeiro": int(pontos_uf[0].valor), "ultimo": int(pontos_uf[-1].valor)})
+            linhas.append({"estado": nome_do_territorio(uf), "ano_primeiro": pontos_uf[0].ano, "ano_ultimo": pontos_uf[-1].ano,
+                           "primeiro": int(pontos_uf[0].valor), "ultimo": int(pontos_uf[-1].valor),
+                           "primeiro_texto": ordinal(int(pontos_uf[0].valor)),
+                           "ultimo_texto": ordinal(int(pontos_uf[-1].valor))})
     if not linhas:
         return None
     linhas.sort(key=lambda l: (l["ultimo"], l["estado"]))
@@ -587,7 +613,7 @@ def _credito(imagem: ImagemHistorica, peso_maximo: int = PESO_MAXIMO_DA_EPOCA) -
     largura, altura = _medidas_da_imagem(imagem.arquivo, peso_maximo)
     return {
         "src": PASTA_IMAGENS_HISTORIA + imagem.arquivo, "alt": imagem.alt, "titulo": imagem.titulo,
-        "autor": imagem.autor, "data": imagem.data, "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url,
+        "autor": imagem.autor, "data": imagem.data, "licenca": LICENCAS[idioma_atual()][imagem.licenca], "url": imagem.url,
         "largura": largura, "altura": altura,
     }
 
@@ -619,6 +645,11 @@ def _parcela_em_texto(ponto) -> str:
     return f"{numero(ponto.valor, 1)}%"
 
 
+def _fonte_do_censo(fonte: str) -> str:
+    """A fonte de censos.csv ("IBGE, SIDRA, tabela 1286"), com "table" no lugar de "tabela" em ingles."""
+    return fonte.replace("tabela", "table") if idioma_atual() == "en" else fonte
+
+
 def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
     """Os numeros grandes (primeiro e ultimo censo), o grafico dos censos nas duas larguras e a tabela dos valores.
 
@@ -628,11 +659,8 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
     """
     parcelas = parcela_do_nordeste(historia)
     primeiro, ultimo = parcelas[0], parcelas[-1]
-    linhas = [Linha("Nordeste", "Nordeste", parcelas, True)]
-    cfg = ConfigGrafico(
-        titulo=f"Parcela da população brasileira que vivia no Nordeste, por censo, de {primeiro.ano} a {ultimo.ano}",
-        casas=1, sufixo="%", min0=True,
-    )
+    linhas = [Linha(t("nordeste"), t("nordeste"), parcelas, True)]
+    cfg = ConfigGrafico(titulo=t("censos_titulo", inicio=primeiro.ano, fim=ultimo.ano), casas=1, sufixo="%", min0=True)
     eixo = (primeiro.ano, ultimo.ano + 1)
     numeros = [{"valor": _parcela_em_texto(p), "ano": p.ano} for p in dict.fromkeys((primeiro, ultimo))]
     # a queda e o intervalo da etiqueta entre os dois numeros: das parcelas como a pagina as mostra (46,7% - 26,9%)
@@ -649,7 +677,7 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
         },
         "tabela": [
             {"ano": ano, "nordeste": numero(nordeste, 0), "brasil": numero(brasil, 0),
-             "parcela": _parcela_em_texto(p), "fonte": fonte}
+             "parcela": _parcela_em_texto(p), "fonte": _fonte_do_censo(fonte)}
             for (ano, nordeste, brasil, fonte), p in zip(historia.censos, parcelas)
         ],
     }
@@ -658,16 +686,17 @@ def _abertura_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
 def _epocas(historia: Historia) -> list[dict]:
     """Cada epoca pronta para o cartao da linha do tempo e para o artigo do modal, com a anterior e a proxima."""
     epocas = historia.epocas
+    tipos = ROTULOS_DOS_TIPOS[idioma_atual()]
     return [
         {
             "id": e.id, "periodo": f"{e.inicio}–{e.fim}", "nome": e.nome, "resumo": e.resumo,
             "paragrafos": [p.strip() for p in e.texto.split("\n\n") if p.strip()],
             "marcos": _marcos(e),
             "numeros": [
-                {"valor": n.valor, "legenda": n.legenda, "tipo": n.tipo, "rotulo": TIPOS[n.tipo], "fonte": n.fonte}
+                {"valor": n.valor, "legenda": n.legenda, "tipo": n.tipo, "rotulo": tipos[n.tipo], "fonte": n.fonte}
                 for n in e.numeros
             ],
-            "o_que_ficou": e.o_que_ficou, "interpretacao": TIPOS["interpretacao"],
+            "o_que_ficou": e.o_que_ficou, "interpretacao": tipos["interpretacao"],
             "fontes": [{"texto": f["texto"], "url": f.get("url")} for f in e.fontes],
             "imagem": None if e.imagem is None else _imagem_da_epoca(e.imagem),
             "anterior": epocas[i - 1].id if i > 0 else None,
@@ -705,7 +734,7 @@ def _chamada_da_historia(chamada: dict, historia: Historia) -> dict | None:
 def _contexto_da_historia(historia: Historia, governos: pd.DataFrame) -> dict:
     return {
         "historia": {
-            "previa": AVISO_DA_PREVIA if historia.provisoria else None, "abertura": historia.abertura, "fecho": historia.fecho,
+            "previa": t("aviso_previa") if historia.provisoria else None, "abertura": historia.abertura, "fecho": historia.fecho,
             **_abertura_da_historia(historia, governos), "epocas": _epocas(historia),
         }
     }
@@ -719,7 +748,7 @@ def _creditos_da_historia(historia: Historia) -> list[dict]:
         if e.imagem is not None:
             creditos.append({"epoca": e.nome, **_credito(e.imagem)})
         creditos += [
-            {"epoca": f"{e.nome}, marco de {m.ano}", **_credito(m.imagem, PESO_MAXIMO_DO_MARCO)}
+            {"epoca": t("marco_de", nome=e.nome, ano=m.ano), **_credito(m.imagem, PESO_MAXIMO_DO_MARCO)}
             for m in e.marcos if m.imagem is not None
         ]
     return creditos
@@ -754,12 +783,12 @@ def _json_ld(dados: DadosSite, textos: dict, anos: tuple[int, int], arquivos: li
         "@type": "Dataset",
         "name": textos["dataset"]["nome"],
         "description": textos["dataset"]["descricao"],
-        "url": f"{URL_DO_SITE}/dados/",
-        "inLanguage": "pt-BR",
+        "url": URL_DO_SITE + ROTAS[idioma_atual()]["dados"],
+        "inLanguage": LANG[idioma_atual()],
         "creator": {"@type": "Person", "name": "Júlio Diógenes", "url": URL_DO_AUTOR},
         "license": LICENCA,
         "temporalCoverage": f"{anos[0]}/{anos[1]}",
-        "spatialCoverage": "Nordeste, Brasil",
+        "spatialCoverage": t("cobertura"),
         "dateModified": dados.data_base,
         "distribution": [
             {"@type": "DataDownload", "encodingFormat": "text/csv", "name": a["nome"], "contentUrl": a["url"]}
@@ -831,13 +860,35 @@ def _ler_manifesto(pasta: Path | None) -> dict[str, str]:
     return manifesto if isinstance(manifesto, dict) else {}
 
 
-def _gerar_imagens(
-    saida: Path, ambiente: Environment, comum: dict, cards: list[dict], contorno: dict, anterior: Path | None,
-    paginas: tuple[Pagina, ...] = PAGINAS,
-) -> None:
-    """og/<pagina>.png (1200x630) para cada pagina que nao e de card e cards/<id>.png (1080x1350) para cada card.
+def _alvos_das_imagens(
+    saida: Path, ambiente: Environment, comum: dict, cards: list[dict], contorno: dict, paginas: tuple[Pagina, ...],
+) -> list[AlvoImagem]:
+    """As paginas de apoio (modelos/og.html, em `_imagens/`) das imagens do idioma da geracao em curso e o PNG de cada
+    uma: og/<pagina>.png (1200x630) para cada pagina que nao e de card e cards/<id>.png (1080x1350) para cada card, com
+    o prefixo do idioma (en/og/..., en/cards/...) fora do portugues."""
+    apoio = saida / "_imagens"
+    apoio.mkdir(exist_ok=True)
+    idioma = idioma_atual()
+    raiz = saida / PREFIXO[idioma].strip("/") if PREFIXO[idioma] else saida
+    alvos = []
+    for p in paginas:
+        nome = f"og-{idioma}-{p.chave}.html"
+        _escrever(
+            ambiente, apoio, "og.html", nome, titulo=NOME_DO_SITE, card=None, contorno=contorno,
+            og=_texto_og(p.chave, comum["textos"]), **comum,
+        )
+        alvos.append(AlvoImagem(apoio / nome, raiz / "og" / f"{p.chave}.png", *OG))
+    for card in cards:
+        nome = f"card-{idioma}-{card['id']}.html"
+        _escrever(ambiente, apoio, "og.html", nome, titulo=card["frase_feita"], card=card, contorno=None, og=None, **comum)
+        alvos.append(AlvoImagem(apoio / nome, raiz / "cards" / f"{card['id']}.png", *CARD))
+    return alvos
 
-    As paginas de card ja apontam o og:image para o PNG do proprio card. O Chromium fotografa paginas de apoio
+
+def _gerar_imagens(saida: Path, alvos: list[AlvoImagem], anterior: Path | None) -> None:
+    """Renderiza os PNG dos `alvos` (os dos dois idiomas) e apaga as paginas de apoio.
+
+    As paginas de card ja apontam o og:image para o PNG do proprio card. O Chromium fotografa as paginas de apoio
     (modelos/og.html) escritas em `_imagens/`, que somem ao fim, com o estilo e as fontes locais do site.
 
     O PNG de uma imagem so e refeito se a entrada mudou em relacao a `anterior` (o manifesto dela guarda o sha256 da
@@ -845,20 +896,7 @@ def _gerar_imagens(
     mudar so por isso (Ruling S-X). O manifesto desta saida e gravado ao fim.
     """
     apoio = saida / "_imagens"
-    apoio.mkdir()
-    alvos = []
     try:
-        for p in paginas:
-            nome = f"og-{p.chave}.html"
-            _escrever(
-                ambiente, apoio, "og.html", nome, titulo=NOME_DO_SITE, card=None, contorno=contorno,
-                og=_texto_og(p.chave, comum["textos"]), **comum,
-            )
-            alvos.append(AlvoImagem(apoio / nome, saida / "og" / f"{p.chave}.png", *OG))
-        for card in cards:
-            nome = f"card-{card['id']}.html"
-            _escrever(ambiente, apoio, "og.html", nome, titulo=card["frase_feita"], card=card, contorno=None, og=None, **comum)
-            alvos.append(AlvoImagem(apoio / nome, saida / "cards" / f"{card['id']}.png", *CARD))
         recursos = _hash_dos_recursos(saida)
         manifesto = {a.png.relative_to(saida).as_posix(): _entrada_da_imagem(a, recursos) for a in alvos}
         anteriores = _ler_manifesto(anterior)
@@ -876,7 +914,7 @@ def _gerar_imagens(
         texto = json.dumps(manifesto, indent=2, sort_keys=True) + "\n"
         (saida / MANIFESTO_DE_IMAGENS).write_bytes(texto.encode("utf-8"))
     finally:
-        shutil.rmtree(apoio)
+        shutil.rmtree(apoio, ignore_errors=True)
 
 
 def _validar_saida(caminhos: Caminhos, saida: Path, anterior: Path | None = None) -> None:
@@ -1024,7 +1062,7 @@ def _foto(foto: dict | None) -> dict | None:
     quando nao ha (os modelos usam StrictUndefined)."""
     if foto is None:
         return None
-    return {**foto, "rotulo": foto.get("rotulo", FOTO_ROTULO_PADRAO), "descricao": foto.get("descricao")}
+    return {**foto, "rotulo": foto.get("rotulo", t("foto")), "descricao": foto.get("descricao")}
 
 
 def _paragrafos_da_abertura(itens: list, destaques: dict[str, Destaque]) -> tuple[list[str], list[str]]:
@@ -1079,7 +1117,8 @@ def partes_em_negrito(texto: str) -> list[dict]:
 
 def _quantidade(n: int) -> str:
     """Quantidade de coisas no feminino (epocas, frases), por extenso ate dez: `8` -> `oito`, `17` -> `17`."""
-    return POR_EXTENSO[n] if 0 <= n < len(POR_EXTENSO) else str(n)
+    extenso = EXTENSO_POR_IDIOMA[idioma_atual()]
+    return extenso[n] if 0 <= n < len(extenso) else str(n)
 
 
 def _validar_menu(menu: dict) -> None:
@@ -1118,15 +1157,17 @@ def _menu(menu: dict, com_historia: bool, epocas: int, cards: int, com_inovacao:
             texto = texto[:1].upper() + texto[1:]  # "Oito épocas..." quando o marcador abre o texto
         return {"chave": chave, "rota": rota, "titulo": menu["cartoes"][chave]["titulo"], "texto": texto}
 
-    historias = ([cartao("como-chegamos", PAGINA_HISTORIA.rota)] if com_historia else []) + (
-        [cartao("inovacao", PAGINA_INOVACAO.rota)] if com_inovacao else []) + [cartao("cards", "/cards/")]
+    rotas = ROTAS[idioma_atual()]
+    historias = ([cartao("como-chegamos", rotas["como-chegamos"])] if com_historia else []) + (
+        [cartao("inovacao", rotas["inovacao"])] if com_inovacao else []) + [cartao("cards", rotas["cards"])]
     return {
         **{chave: menu[chave] for chave in ("rotulo", "abrir", "inicio", "sobre", "voltar_ao_topo")},
         "com_historia": com_historia,
         "grupos": [
             {"id": "historias", "rotulo": menu["historias"], "itens": historias},
             {"id": "dados", "rotulo": menu["dados"],
-             "itens": [cartao("estados", "/estados/"), cartao("explorar", "/explorar/"), cartao("dados", "/dados/")]},
+             "itens": [cartao("estados", rotas["estados"]), cartao("explorar", rotas["explorar"]),
+                       cartao("dados", rotas["dados"])]},
         ],
         "botao_historia": menu["botao_historia"], "botao_cards": menu["botao_cards"],
     }
@@ -1158,8 +1199,8 @@ def _capas(historia: Historia | None, foto: dict | None) -> dict[str, dict]:
         if imagem is not None:
             capas[chave] = {
                 "classe": classe_da_capa(arquivo),
-                "credito": {"rotulo": "Imagem", "historica": True, "autor": imagem.autor, "data": imagem.data,
-                            "licenca": ROTULO_DA_LICENCA[imagem.licenca], "url": imagem.url},
+                "credito": {"rotulo": t("imagem"), "historica": True, "autor": imagem.autor, "data": imagem.data,
+                            "licenca": LICENCAS[idioma_atual()][imagem.licenca], "url": imagem.url},
             }
         elif foto is not None:
             capas[chave] = {
@@ -1206,10 +1247,19 @@ def _escrever(ambiente: Environment, saida: Path, modelo: str, arquivo: str, **c
 def _pagina(
     chave: str, rota: str, titulo: str, descricao: str, imagem: dict, json_ld: str | None = None, noindex: bool = False,
 ) -> dict:
-    """`imagem`: {"url", "largura", "altura", "alt"} da imagem de compartilhamento (og:image e twitter:image)."""
+    """`imagem`: {"url", "largura", "altura", "alt"} da imagem de compartilhamento (og:image e twitter:image). A pagina
+    leva o idioma em curso e o endereco dela em cada idioma (hreflang, og:locale e o seletor de idioma do menu)."""
+    idioma = idioma_atual()
     return {
         "chave": chave, "rota": rota, "url": URL_DO_SITE + rota, "titulo": titulo, "descricao": descricao,
         "imagem": imagem, "json_ld": json_ld, "noindex": noindex,
+        "idioma": idioma, "lang": LANG[idioma], "og_locale": OG_LOCALE[idioma],
+        "idiomas": [
+            {"idioma": i, "lang": LANG[i], "og_locale": OG_LOCALE[i], "atual": i == idioma,
+             "rota": rota if i == idioma else outra_rota(rota, i),
+             "url": URL_DO_SITE + (rota if i == idioma else outra_rota(rota, i))}
+            for i in IDIOMAS
+        ],
     }
 
 
@@ -1242,26 +1292,23 @@ def _medidas_do_jpeg(dados: bytes, arquivo: Path) -> tuple[int, int]:
     raise ErroConteudo(f"{arquivo.name}: nao achei as medidas do JPEG.")
 
 
-def gerar_site(
-    caminhos: Caminhos, saida: Path, *, imagens: bool = True, anterior: Path | None = None,
-    incluir_provisoria: bool = False,
-) -> RelatorioSite:
-    """Apaga e recria `saida` com as paginas do site e as copias dos CSVs; devolve o que foi suprimido.
+def _paginas_no_idioma(paginas: tuple[Pagina, ...]) -> tuple[Pagina, ...]:
+    """As paginas com a rota e o arquivo do idioma em curso (idioma.ROTAS); no portugues, as mesmas."""
+    rotas = ROTAS[idioma_atual()]
+    return tuple(p._replace(rota=rotas[p.chave], arquivo=arquivo_da_rota(rotas[p.chave])) for p in paginas)
 
-    `anterior` e a saida da geracao anterior (uma pasta de fora de `saida`): os PNG cuja entrada nao mudou sao
-    copiados dela em vez de renderizados de novo.
 
-    A pagina Como chegamos ate aqui sai quando `historia.yaml` existe e nao e provisorio. `incluir_provisoria` (so
-    para previa local; a automacao semanal nunca usa) gera a pagina com o conteudo provisorio, com o aviso de previa
-    e fora dos buscadores (`noindex`).
-    """
-    _validar_saida(caminhos, saida, anterior)
-    dados = DadosSite.carregar(caminhos)
-    conteudo = carregar_conteudo(caminhos.metadados / "site")
-    historia = carregar_historia(caminhos.metadados / "site")
-    com_historia = historia is not None and (not historia.provisoria or incluir_provisoria)
-    inovacao = carregar_inovacao(caminhos.metadados / "site")
-    paginas_do_menu = paginas_do_site(com_historia, inovacao is not None)
+def _preparar(
+    caminhos: Caminhos, dados: DadosSite, historia: Historia | None, com_historia: bool, inovacao: dict | None,
+) -> dict:
+    """Tudo o que as paginas do idioma em curso precisam, validado antes de a saida ser apagada: o conteudo (com a
+    traducao por cima fora do portugues), os textos resolvidos, o contexto comum e o de cada pagina."""
+    pasta = caminhos.metadados / "site"
+    idioma = idioma_atual()
+    if idioma != PADRAO:
+        dados = dataclasses.replace(dados, fichas=fichas_no_idioma(dados.fichas, pasta, idioma))
+    conteudo = carregar_conteudo(pasta, idioma)
+    paginas_do_menu = _paginas_no_idioma(paginas_do_site(com_historia, inovacao is not None))
     _validar_textos(conteudo.textos, paginas_do_menu)
     destaques = calcular_destaques(dados, conteudo)
     data = data_por_extenso(dados.data_base)
@@ -1280,7 +1327,6 @@ def gerar_site(
     for p in perguntas:  # o botao "Baixar o card" so leva a card publicado, nunca a um 404
         if p["card"] in cards_fora:
             p["card"] = None
-    explorar = dados_explorar(dados)
     anos = _anos_da_base(dados)
     arquivos = _arquivos_de_dados(caminhos, textos)
     comum = {
@@ -1290,18 +1336,82 @@ def gerar_site(
         "siglas": siglas_dos_governos(dados.governos),
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR, "estaticos": versoes_dos_estaticos(),
         "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
-        "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
+        "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]}–{anos[1]}" if idioma == "en"
+        else f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
         "perguntas": perguntas, "placar": _placar(perguntas), "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
-        "data_curta": "/".join(reversed(dados.data_base.split("-"))),
+        "data_curta": data_curta(dados.data_base),
         "creditos_historia": _creditos_da_historia(historia) if com_historia else [],
         "chamada_historia": _chamada_da_historia(conteudo.textos["chamada_historia"], historia) if com_historia else None,
+        "idioma": idioma, "lang": LANG[idioma], "ui": ui(), "rotas": ROTAS[idioma],
     }
-    por_pagina = {"estados": _contexto_dos_estados(dados), "explorar": _contexto_do_explorar(dados, explorar)}
+    por_pagina = {"estados": _contexto_dos_estados(dados), "explorar": _contexto_do_explorar(dados, dados_explorar(dados))}
     if com_historia:
         por_pagina[PAGINA_HISTORIA.chave] = _contexto_da_historia(historia, dados.governos.iloc[:0])
     vereditos_suprimidos: list[str] = []
     if inovacao is not None:
         por_pagina[PAGINA_INOVACAO.chave], vereditos_suprimidos = _contexto_da_inovacao(dados, inovacao)
+    return {
+        "dados": dados, "textos": textos, "comum": comum, "por_pagina": por_pagina, "cards": cards, "anos": anos,
+        "arquivos": arquivos, "paginas_do_menu": paginas_do_menu, "cards_fora": cards_fora,
+        "suprimidos": [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos, *vereditos_suprimidos],
+    }
+
+
+def _escrever_paginas(ambiente: Environment, saida: Path, pronto: dict, historia: Historia | None) -> list[str]:
+    """As paginas do menu e as dos cards no idioma em curso; devolve os arquivos escritos."""
+    dados, textos, comum, cards = pronto["dados"], pronto["textos"], pronto["comum"], pronto["cards"]
+    compartilhar = _imagem_de_compartilhar(textos)
+    for p in pronto["paginas_do_menu"]:
+        pagina = _pagina(
+            p.chave, p.rota, textos["paginas"][p.chave]["titulo"], textos["paginas"][p.chave]["descricao"],
+            compartilhar,
+            _json_ld(dados, textos, pronto["anos"], pronto["arquivos"]) if p.chave in PAGINAS_COM_DATASET else None,
+            noindex=p.chave == PAGINA_HISTORIA.chave and historia.provisoria,
+        )
+        _escrever(ambiente, saida, p.modelo, p.arquivo, pagina=pagina, **comum, **pronto["por_pagina"].get(p.chave, {}))
+    arquivos_dos_cards = []
+    for card in cards:
+        rota = rota_do_card(card["id"])
+        pagina = _pagina(
+            "cards", rota, f"{card['frase_feita']} · {NOME_DO_SITE}", card["resumo"],
+            {"url": f"{URL_DO_SITE}{rota.rstrip('/')}.png", "largura": CARD[0], "altura": CARD[1],
+             "alt": card["frase_feita"]},
+        )
+        arquivos_dos_cards.append(arquivo_da_rota(rota))
+        _escrever(ambiente, saida, "card.html", arquivos_dos_cards[-1], pagina=pagina, card=card, **comum)
+    return [p.arquivo for p in pronto["paginas_do_menu"]] + arquivos_dos_cards
+
+
+def gerar_site(
+    caminhos: Caminhos, saida: Path, *, imagens: bool = True, anterior: Path | None = None,
+    incluir_provisoria: bool = False,
+) -> RelatorioSite:
+    """Apaga e recria `saida` com as paginas do site nos dois idiomas (o portugues na raiz, o ingles em /en/) e as
+    copias dos CSVs; devolve o que foi suprimido e as traducoes que faltam.
+
+    Estilo, script, fontes, imagens, os JSON do Explorar e os CSV de Dados sao um so para os dois idiomas: as paginas
+    em ingles apontam para os mesmos arquivos.
+
+    `anterior` e a saida da geracao anterior (uma pasta de fora de `saida`): os PNG cuja entrada nao mudou sao
+    copiados dela em vez de renderizados de novo.
+
+    A pagina Como chegamos ate aqui sai quando `historia.yaml` existe e nao e provisorio. `incluir_provisoria` (so
+    para previa local; a automacao semanal nunca usa) gera a pagina com o conteudo provisorio, com o aviso de previa
+    e fora dos buscadores (`noindex`).
+    """
+    _validar_saida(caminhos, saida, anterior)
+    dados = DadosSite.carregar(caminhos)
+    pasta = caminhos.metadados / "site"
+    prontos, historias = {}, {}
+    historia = carregar_historia(pasta)
+    com_historia = historia is not None and (not historia.provisoria or incluir_provisoria)
+    for idioma in IDIOMAS:
+        with em_idioma(idioma):
+            historias[idioma] = historia if idioma == PADRAO else carregar_historia(pasta, idioma)
+            prontos[idioma] = _preparar(
+                caminhos, dados, historias[idioma], com_historia, carregar_inovacao(pasta, idioma))
+    explorar = dados_explorar(dados)
+    comum = prontos[PADRAO]["comum"]
 
     if saida.exists():
         shutil.rmtree(saida)
@@ -1309,34 +1419,28 @@ def gerar_site(
     (saida / "explorar" / "dados").mkdir(parents=True)
     _copiar_estaticos(saida, com_foto=comum["foto"] is not None, com_historia=com_historia)
     ambiente = _ambiente()
-    compartilhar = _imagem_de_compartilhar(textos)
-    for p in paginas_do_menu:
-        pagina = _pagina(
-            p.chave, p.rota, textos["paginas"][p.chave]["titulo"], textos["paginas"][p.chave]["descricao"],
-            compartilhar,
-            _json_ld(dados, textos, anos, arquivos) if p.chave in PAGINAS_COM_DATASET else None,
-            noindex=p is PAGINA_HISTORIA and historia.provisoria,
-        )
-        _escrever(ambiente, saida, p.modelo, p.arquivo, pagina=pagina, **comum, **por_pagina.get(p.chave, {}))
-    for card in cards:
-        rota = f"/cards/{card['id']}/"
-        pagina = _pagina(
-            "cards", rota, f"{card['frase_feita']} · {NOME_DO_SITE}", card["resumo"],
-            {"url": f"{URL_DO_SITE}/cards/{card['id']}.png", "largura": CARD[0], "altura": CARD[1], "alt": card["frase_feita"]},
-        )
-        _escrever(ambiente, saida, "card.html", f"cards/{card['id']}/index.html", pagina=pagina, card=card, **comum)
+    paginas, alvos = [], []
+    contorno = _contorno(caminhos) if imagens else None
+    for idioma in IDIOMAS:
+        with em_idioma(idioma):
+            pronto = prontos[idioma]
+            paginas += _escrever_paginas(ambiente, saida, pronto, historias[idioma])
+            if imagens:
+                alvos += _alvos_das_imagens(
+                    saida, ambiente, pronto["comum"], pronto["cards"], contorno, pronto["paginas_do_menu"])
     for nome in ARQUIVOS_DE_DADOS:
         shutil.copyfile(caminhos.base / nome, saida / "dados" / nome)
     for chave, por_territorio in explorar.items():
         texto = json.dumps(por_territorio, ensure_ascii=False, separators=(",", ":")) + "\n"
         (saida / "explorar" / "dados" / f"{chave}.json").write_bytes(texto.encode("utf-8"))
 
-    paginas = [p.arquivo for p in paginas_do_menu] + [f"cards/{c['id']}/index.html" for c in cards]
     if imagens:
-        _gerar_imagens(saida, ambiente, comum, cards, _contorno(caminhos), anterior, paginas_do_menu)
+        _gerar_imagens(saida, alvos, anterior)
+    pt = prontos[PADRAO]
     return RelatorioSite(
-        paginas, [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos, *vereditos_suprimidos], cards_fora,
+        paginas, pt["suprimidos"], pt["cards_fora"],
         historia_provisoria=historia is not None and historia.provisoria,
+        traducoes_faltando=traducoes_faltando(pasta),
     )
 
 

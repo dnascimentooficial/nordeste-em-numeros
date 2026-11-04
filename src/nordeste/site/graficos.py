@@ -17,6 +17,7 @@ import pandas as pd
 
 from nordeste.site.dados import Ponto
 from nordeste.site.formatacao import numero
+from nordeste.site.interface import t
 
 ANO_INICIAL = 2000
 ANO_FINAL = 2027  # fim do eixo (exclusivo): 2026 e o ultimo ano desenhado
@@ -225,11 +226,11 @@ def descricao_acessivel(
     partes = []
     for l in _visiveis(linhas, eixo):
         primeiro, ultimo = l.pontos[0], l.pontos[-1]
-        partes.append(
-            f"{l.rotulo}: {numero(primeiro.valor, cfg.casas)}{cfg.sufixo} em {primeiro.ano} "
-            f"e {numero(ultimo.valor, cfg.casas)}{cfg.sufixo} em {ultimo.ano}"
-        )
-    return f"Gráfico de linhas, {cfg.titulo}. {'; '.join(partes)}. A tabela com todos os valores está logo abaixo."
+        partes.append(t(
+            "grafico_parte", rotulo=l.rotulo, primeiro=f"{numero(primeiro.valor, cfg.casas)}{cfg.sufixo}",
+            ano_primeiro=primeiro.ano, ultimo=f"{numero(ultimo.valor, cfg.casas)}{cfg.sufixo}", ano_ultimo=ultimo.ano,
+        ))
+    return t("grafico_desc", titulo=cfg.titulo, partes="; ".join(partes))
 
 
 def _enxuto(valor: float) -> float:

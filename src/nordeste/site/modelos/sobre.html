@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_epoca.html" import credito %}
-{% from "_autor.html" import conteudo as conteudo_do_autor %}
-{% from "_componentes.html" import capa %}
+{% from "_epoca.html" import credito with context %}
+{% from "_autor.html" import conteudo as conteudo_do_autor with context %}
+{% from "_componentes.html" import capa with context %}
 {% block conteudo %}
-{{ capa(capas.sobre, "Sobre os dados") }}
+{{ capa(capas.sobre, ui.sobre_titulo) }}
 <section class="nn-pagina" id="sobre" aria-labelledby="titulo-principal">
 
   <article class="nn-card" id="sobre-o-que">
@@ -13,7 +13,7 @@
     <p>{{ paragrafo }}</p>
 {% endfor %}
 {% if foto %}
-    <p class="nn-muted nn-credito-sobre">{{ foto.rotulo }} da abertura: <a href="{{ foto.url }}">{{ foto.credito }}</a>{% if foto.descricao %} ({{ foto.descricao }}){% endif %}.</p>
+    <p class="nn-muted nn-credito-sobre">{{ foto.rotulo }} {{ ui.da_abertura }}: <a href="{{ foto.url }}">{{ foto.credito }}</a>{% if foto.descricao %} ({{ foto.descricao }}){% endif %}.</p>
 {% endif %}
     <h3>{{ textos.como_ler.titulo }}</h3>
     <ul class="nn-lista">
@@ -37,7 +37,7 @@
     <p>{{ textos.fontes.intro }}</p>
     <div class="nn-tabela nn-tabela-alta">
       <table>
-        <thead><tr><th scope="col">Indicador</th><th scope="col">Órgão</th><th scope="col">Fonte</th><th scope="col">Tabela ou arquivo usado</th></tr></thead>
+        <thead><tr><th scope="col">{{ ui.indicador }}</th><th scope="col">{{ ui.orgao }}</th><th scope="col">{{ ui.fonte }}</th><th scope="col">{{ ui.tabela_usada }}</th></tr></thead>
         <tbody>
 {% for f in fontes %}
 {% for s in f.series %}
@@ -51,8 +51,8 @@
 
 {% if creditos_historia %}
   <article class="nn-card" id="sobre-imagens">
-    <h2>Imagens da página Como chegamos até aqui</h2>
-    <p>As imagens das épocas e dos marcos da <a href="/como-chegamos/">linha do tempo</a>, com autor, título, data e licença.</p>
+    <h2>{{ ui.imagens_historia_titulo }}</h2>
+    <p>{{ ui.imagens_historia_antes }} <a href="{{ rotas['como-chegamos'] }}">{{ ui.imagens_historia_link }}</a>{{ ui.imagens_historia_depois }}</p>
     <ul class="nn-lista">
 {% for c in creditos_historia %}
       <li class="nn-credito-imagem"><b>{{ c.epoca }}:</b> {{ credito(c) }}.</li>
@@ -62,8 +62,8 @@
 
 {% endif %}
   <article class="nn-card" id="sobre-compartilhar">
-    <h2>Imagem de compartilhamento</h2>
-    <p>{{ textos.compartilhamento.credito }} É a imagem que aparece quando um link do site é enviado no WhatsApp ou nas redes. As fotos do mural não são documentos de arquivo.{% if creditos_historia %} As imagens históricas com autor, data e fonte estão na <a href="/como-chegamos/">linha do tempo</a>.{% endif %}</p>
+    <h2>{{ ui.compartilhar_titulo }}</h2>
+    <p>{{ textos.compartilhamento.credito }} {{ ui.compartilhar_texto }}{% if creditos_historia %} {{ ui.compartilhar_historicas }} <a href="{{ rotas['como-chegamos'] }}">{{ ui.imagens_historia_link }}</a>.{% endif %}</p>
   </article>
 
   <article class="nn-card" id="sobre-formulas">
@@ -81,7 +81,7 @@
 
   <article class="nn-card" id="sobre-arquivos">
     <h2>{{ textos.arquivos.titulo }}</h2>
-    <p>{{ textos.arquivos.intro }} <a href="/dados/">Ir para Dados</a>.</p>
+    <p>{{ textos.arquivos.intro }} <a href="{{ rotas.dados }}">{{ ui.ir_para_dados }}</a>.</p>
   </article>
 
   <article class="nn-card nn-card-autor" id="autor" aria-labelledby="autor-titulo">

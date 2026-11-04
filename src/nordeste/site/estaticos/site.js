@@ -21,7 +21,10 @@
   const ESTREITO = { largura: 360, altura: 240 };
   const SVG = 'http://www.w3.org/2000/svg';
 
-  /* --- números no padrão brasileiro, arredondados como no Python --------------------------------------------- */
+  /* --- números no padrão do idioma da página, arredondados como no Python ------------------------------------ */
+
+  /* O idioma vem do <html lang>: "en" usa 1,234.5 (formatacao.numero com idioma "en"); o resto, 1.234,5. */
+  const IDIOMA = typeof document !== 'undefined' && /^en\b/i.test(document.documentElement.lang) ? 'en' : 'pt';
 
   /* Dígitos de |valor| com `casas` decimais. Como o round do Python: pelo valor exato do double, e o empate exato
      vai para o par (toFixed sozinho manda o empate para cima). */
@@ -39,12 +42,25 @@
     return fixo;
   }
 
-  /* 1234.5, 1 -> "1.234,5"; nunca "-0,0" (formatacao.numero). */
-  function numero(valor, casas) {
+  /* 1234.5, 1 -> "1.234,5" (em inglês, "1,234.5"); nunca "-0,0" (formatacao.numero). */
+  function numero(valor, casas, idioma) {
+    const [milhar, decimal] = (idioma || IDIOMA) === 'en' ? [',', '.'] : ['.', ','];
     const fixo = arredondar(valor, casas);
     const [inteiro, decimais] = fixo.split('.');
     const negativo = valor < 0 && /[1-9]/.test(fixo);
-    return (negativo ? '-' : '') + inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (decimais ? ',' + decimais : '');
+    return (negativo ? '-' : '') + inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, milhar) + (decimais ? decimal + decimais : '');
+  }
+
+  /* Os rótulos que o redesenho do Explorar escreve, do data-rotulos do cartão (interface.py); sem ele, os do português. */
+  let rotulos = {
+    desc: 'Gráfico de linhas, {titulo}. {partes}. A tabela com todos os valores está logo abaixo.',
+    parte: '{rotulo}: {primeiro} em {ano_primeiro} e {ultimo} em {ano_ultimo}',
+    e: 'e',
+    colunas: ['Ano', 'Território', 'Valor', 'Série da fonte'],
+  };
+
+  function preencherModelo(modelo, valores) {
+    return modelo.replace(/\{(\w+)\}/g, (inteiro, nome) => (nome in valores ? String(valores[nome]) : inteiro));
   }
 
   /* Coordenada com no máximo uma casa, sem ".0" e sem "-0" (graficos._c). */
@@ -148,10 +164,12 @@
     const partes = linhas.map((l) => {
       const primeiro = l.pontos[0];
       const ultimo = l.pontos[l.pontos.length - 1];
-      return `${l.rotulo}: ${numero(primeiro[1], cfg.casas)}${cfg.sufixo} em ${primeiro[0]} ` +
-        `e ${numero(ultimo[1], cfg.casas)}${cfg.sufixo} em ${ultimo[0]}`;
+      return preencherModelo(rotulos.parte, {
+        rotulo: l.rotulo, primeiro: numero(primeiro[1], cfg.casas) + cfg.sufixo, ano_primeiro: primeiro[0],
+        ultimo: numero(ultimo[1], cfg.casas) + cfg.sufixo, ano_ultimo: ultimo[0],
+      });
     });
-    return `Gráfico de linhas, ${cfg.titulo}. ${partes.join('; ')}. A tabela com todos os valores está logo abaixo.`;
+    return preencherModelo(rotulos.desc, { titulo: cfg.titulo, partes: partes.join('; ') });
   }
 
   let contadorDeIds = 0;
@@ -527,6 +545,7 @@
     const vista = document.getElementById('explorar-vista');
     const titulo = document.getElementById('explorar-titulo');
     const faixas = JSON.parse(cartao.getAttribute('data-governos'));
+    if (cartao.hasAttribute('data-rotulos')) rotulos = Object.assign(rotulos, JSON.parse(cartao.getAttribute('data-rotulos')));
     const nomes = {};
     const etiquetas = {};
     [...selTerritorio.options].forEach((o) => {
@@ -604,7 +623,7 @@
       const tab = document.createElement('table');
       const cabeca = document.createElement('thead');
       const linhaCabeca = document.createElement('tr');
-      [['Ano', ''], ['Território', ''], ['Valor', 'nn-num'], ['Série da fonte', '']].forEach(([texto, classe]) => {
+      rotulos.colunas.map((texto, i) => [texto, i === 2 ? 'nn-num' : '']).forEach(([texto, classe]) => {
         const th = document.createElement('th');
         th.scope = 'col';
         th.textContent = texto;
@@ -651,7 +670,7 @@
         a1: estado.ate ? Number(estado.ate) + 1 : ANO_FINAL,
         ampliar: estado.ampliar,
       };
-      const nomeDoGrafico = `${cfg.nome}, ${nomes[estado.territorio]}${comparado ? ` e ${nomes[comparado]}` : ''}`;
+      const nomeDoGrafico = `${cfg.nome}, ${nomes[estado.territorio]}${comparado ? ` ${rotulos.e} ${nomes[comparado]}` : ''}`;
       const config = { titulo: nomeDoGrafico, casas: cfg.casas, sufixo: cfg.sufixo };
       const noPeriodo = visiveis([principal], periodo.a0, periodo.a1).length;
       const largo = noPeriodo ? grafico(linhas, config, faixas, LARGO, periodo) : null;
@@ -1077,8 +1096,8 @@
       });
       return botao;
     };
-    const anterior = seta('nn-faixa-anterior', 'Épocas anteriores', '‹', -1);
-    const proxima = seta('nn-faixa-proxima', 'Próximas épocas', '›', 1);
+    const anterior = seta('nn-faixa-anterior', faixa.getAttribute('data-anteriores') || 'Épocas anteriores', '‹', -1);
+    const proxima = seta('nn-faixa-proxima', faixa.getAttribute('data-proximas') || 'Próximas épocas', '›', 1);
     faixa.before(moldura);
     moldura.append(anterior, faixa, proxima);
     const marcarPontas = () => {
@@ -1255,6 +1274,9 @@
   /* Números da abertura (texto do hero e faixa de números, com as comparações) contando até o valor que já está
      escrito no HTML. */
   const TEXTOS_COM_NUMEROS = '.nn-hero-intro, .nn-numero-comparacao, .nn-numero-valor';
+  /* número com decimais no padrão do idioma: 38,8% e 1.234,5 no português; 38.8% e 1,234.5 no inglês */
+  const NUMERO_COM_DECIMAIS = IDIOMA === 'en' ? /(\d{1,3}(?:,\d{3})*\.\d+%?)/ : /(\d{1,3}(?:\.\d{3})*,\d+%?)/;
+  const [MILHAR, DECIMAL] = IDIOMA === 'en' ? [',', '.'] : ['.', ','];
 
   function contarNumeros() {
     const alvos = [];
@@ -1263,7 +1285,7 @@
       const textos = [];
       while (caminhante.nextNode()) textos.push(caminhante.currentNode);
       textos.forEach((texto) => {
-        const partes = texto.data.split(/(\d{1,3}(?:\.\d{3})*,\d+%?)/);
+        const partes = texto.data.split(NUMERO_COM_DECIMAIS);
         if (partes.length < 2) return;
         const pedaco = document.createDocumentFragment();
         partes.forEach((parte, i) => {
@@ -1286,8 +1308,8 @@
       const final = span.textContent;
       const sufixo = final.endsWith('%') ? '%' : '';
       const corpo = final.slice(0, final.length - sufixo.length);
-      const casas = corpo.split(',')[1].length;
-      const valor = Number(corpo.replace(/\./g, '').replace(',', '.'));
+      const casas = corpo.split(DECIMAL)[1].length;
+      const valor = Number(corpo.split(MILHAR).join('').replace(DECIMAL, '.'));
       const comeco = performance.now();
       const passo = (agora) => {
         const t = Math.min(1, (agora - comeco) / duracao);

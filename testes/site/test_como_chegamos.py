@@ -394,7 +394,7 @@ def test_so_a_pagina_de_historia_pre_carrega_a_serifada(gerado):
     assert previas == [{"rel": "preload", "href": "/fontes/eb-garamond/EBGaramond.woff2", "as": "font",
                         "type": "font/woff2", "crossorigin": None}]
     for pagina in relatorio.paginas:
-        if pagina != PAGINA:
+        if pagina not in (PAGINA, "en/how-we-got-here/index.html"):  # a mesma pagina em ingles tambem a pre-carrega
             assert "EBGaramond" not in _ler(saida, pagina), pagina
 
 

@@ -105,7 +105,7 @@ def test_cabecalho_tem_o_menu_inteiro_com_uma_pagina_atual_e_sem_o_link_solto(ge
     grupo_da_rota = {"/como-chegamos/": "Histórias", "/inovacao/": "Histórias", "/cards/": "Histórias", "/estados/": "Dados",
                      "/explorar/": "Dados", "/dados/": "Dados"}
     for trecho in (trecho_menu, trecho_gaveta):
-        itens = Arvore(trecho).achar("a")
+        itens = [a for a in Arvore(trecho).achar("a") if "nn-idioma" not in a["attrs"].get("class", "").split()]
         assert [e["attrs"]["href"] for e in itens] == esperadas
         assert [e["attrs"]["href"] for e in itens if e["attrs"].get("aria-current") == "page"] == [rota]
         grupos = Arvore(trecho).achar("details")

@@ -1,0 +1,381 @@
+# Content for the "How we got here" page (spec docs/specs/2026-11-02-como-chegamos-design.md).
+# Text in the author's voice, written from the approved dossier (docs/historia/dossie.md). Each number has a type and a source;
+# those marked [C] in the dossier were left out. The population share is not typed in: it comes from historia/censos.csv.
+# Milestone titles and number sources have no final period: the template adds it.
+# Paragraphs of each era's text are separated by a blank line.
+# Text approved by the user and cross-checked (cross-check in Task 7): the page goes live.
+provisoria: false
+
+abertura:
+  titulo: How we got here
+  subtitulo: "Northeast Brazil was once the economic center of the country. In eight eras, this page tells how the region fell behind and who decided what."
+  legenda: "Share of Brazil's population living in the Northeast, by census. Source: IBGE (the national statistics office), SIDRA, tables 1286 (1872 to 2010) and 4709 (2022)."
+  nota_estados: "Today's regional division did not exist in 1872. The series uses the states that now make up the Northeast, from Maranhão to Bahia. There was no census in 1910 or 1930, and the 2022 point comes from a different IBGE table, the one for the 2022 Census."
+  texto: "I chose population because it is the one measure we can calculate from the first census, in 1872, to the latest. The Northeast gained people in every census. What shrank was its weight in the country, and the eras below explain why."
+
+epocas:
+  - id: "1530"
+    inicio: 1530
+    fim: 1654
+    nome: The sugar colony
+    resumo: "The Crown made sugar the colony's business, and the coast of Pernambuco and Bahia was where it happened."
+    texto: |-
+      I start with sugar because it is what made the Northeast the center of the colony. The Portuguese Crown divided the coast into captaincies and, in 1549, placed the seat of the colonial government in Salvador. Sugar mills (engenhos) spread across Pernambuco and Bahia in the second half of the 16th century. In 1570 the chronicler Gandavo counted 60 mills in Brazil, two-thirds of them in those two captaincies. A little more than ten years later, there were 120.
+
+      The people who made that money were enslaved Africans, brought by force to plant, cut and grind cane. The profit stayed with a few. In the region, it went to the mill owners (senhores de engenho), who owned the land and the people. Outside the region, it went to those who carried the sugar to Europe, a trade in which the Dutch had weight. The model of settlement was decided in Lisbon. Concentrated land and slave labor were sustained by those who ruled here.
+
+      In 1630 the Dutch West India Company took Olinda and Recife. The war lasted until 1654 and destroyed mills. By Roberto Simonsen's figures, sugar exports from the occupied captaincies fell by half after 1630. The Dutch were driven out by forces from the region itself. When they left, they took with them what they had learned here, and that weighed on the next era.
+    marcos:
+      - {ano: 1549, titulo: "Salvador becomes the seat of the colonial government", texto: "The Crown sets up the colony's government in Bahia."}
+      - {ano: 1570, titulo: "Gandavo counts 60 sugar mills", texto: "Two-thirds of them are in Pernambuco and Bahia."}
+      - {ano: 1630, titulo: "The Dutch take Olinda and Recife", texto: "The Dutch West India Company occupies Pernambuco until 1654.",
+         imagem: {arquivo: "marco-1630.webp", titulo: "Conquest of Olinda in 1630, engraving from 1651–1652", autor: "Anonymous engraver, Rijksmuseum", data: "1651–1652", licenca: "dominio-publico", alt: "Black-and-white engraving of the town of Olinda on top of a hill, with its church, seen from the sea, and Dutch ships attacking the port.", url: "https://commons.wikimedia.org/wiki/File:Verovering_van_Olinda_in_Brazili%C3%AB_door_generaal_Hendrick_C._Loncq,_1630,_RP-P-OB-79.394.jpg"}}
+    numeros:
+      - valor: "from 60 to 120"
+        legenda: "Sugar mills in Brazil, counted in 1570 and between 1583 and 1585."
+        tipo: historiador
+        fonte: "Stuart B. Schwartz, table 1, with the counts by Gandavo (1570) and Fernão Cardim (1583 to 1585)"
+      - valor: "from 60,000 to 30,000 crates"
+        legenda: "Annual sugar exports from the captaincies occupied by the Dutch, before and after 1630."
+        tipo: historiador
+        fonte: "Roberto Simonsen, História Econômica do Brasil (1500/1820) (Economic History of Brazil), 6th edition"
+    o_que_ficou: "The Northeast was the center of the colony, but the wealth stayed with a few owners of land and people. That pattern of concentrated land lasted through the following centuries."
+    fontes:
+      - texto: "Stuart B. Schwartz, chapter on colonial Brazil from 1580 to 1750, table 1 (copy hosted by UFPR)"
+        url: https://docs.ufpr.br/~lgeraldo/textosbrasila/schwartzobrasilcolonial.pdf
+      - texto: "Roberto Simonsen, História Econômica do Brasil (1500/1820), 6th edition"
+        url: https://portal2.fazenda.rj.gov.br/wp-content/uploads/2022/09/historia-economica-do-brasil-1500-1820.pdf
+      - texto: "Celso Furtado, Formação Econômica do Brasil (1959) (The Economic Formation of Brazil), in the review by Letícia Inácio (UFRRJ)"
+        url: https://cursos.ufrrj.br/grad/cienciaseconomicas/files/2021/01/Resenha-Formação-Econômica-do-Brasil-Letícia-Inácio-.pdf
+    imagem:
+      arquivo: "1530.webp"
+      titulo: "The sugar factory and plantation of the Engenho Real"
+      autor: "Frans Post"
+      data: "1660"
+      licenca: "dominio-publico"
+      alt: "Painting of a sugar mill in Pernambuco: the mill house with arches and a tile roof, enslaved people working in the yard, the plantation house and chapel on the hilltop, and the river floodplain in the background."
+      url: "https://commons.wikimedia.org/wiki/File:Frans_Jansz._Post_-_Een_suikerfabriek_-_2116_(OK)_-_Museum_Boijmans_Van_Beuningen.jpg"
+
+  - id: "1654"
+    inicio: 1654
+    fim: 1808
+    nome: Competition, gold and the capital that moves
+    resumo: "Sugar gets a competitor in the Caribbean, gold from Minas pulls the colony toward the Center-South, and the capital leaves Salvador."
+    texto: |-
+      After 1654, Northeast sugar had a competitor. The Dutch took technology and money to the Caribbean. Celso Furtado records that, less than ten years after the expulsion, a sugar economy of considerable size was already running there. The Northeast kept producing sugar, but now it shared the market with newer production.
+
+      Historians disagree about how bad the damage was. Some speak of a sugar crisis, and others see a recovery lasting into the first decades of the 18th century. I will not pick a side. What nobody disputes is that the colony's center of gravity moved.
+
+      Gold mining began in Minas Gerais at the end of the 17th century. Gold drew people, enslaved workers and the attention of the Crown, and it made Rio de Janeiro the port of the new wealth. In 1763 the capital moved from Salvador to Rio. Among other things, the move served to watch the mines closely and curb smuggling. It was a decision made in Lisbon, with gold in mind.
+
+      In the region, the way of producing hardly changed. The mill owners kept land concentrated and kept slave labor, the same arrangement as before, now at a more contested price. The era ends in 1808, when the Portuguese court arrives in Rio and the political center moves to the Southeast for good.
+    marcos:
+      - {ano: 1654, titulo: "The Dutch leave Recife", texto: "The surrender, in January, ends the occupation. Caribbean sugar enters the competition soon after."}
+      - {ano: 1661, titulo: "Peace of The Hague", texto: "Portugal pays an indemnity to the Netherlands, which gives up on the Northeast."}
+      - {ano: 1763, titulo: "The capital moves from Salvador to Rio", texto: "Rio, the port for Minas gold, becomes the seat of the colonial government.",
+         imagem: {arquivo: "marco-1763.webp", titulo: "Entrance to Rio de Janeiro seen from the anchorage, 18th-century watercolor", autor: "George Raper (attributed), National Library of Australia", data: "18th century", licenca: "dominio-publico", alt: "Watercolor of the entrance to Guanabara Bay, with Sugarloaf Mountain on the left, a fortress on the right and boats on the water.", url: "https://commons.wikimedia.org/wiki/File:Brazil_18thc_GuanabaraBay.jpg"}}
+    numeros:
+      - valor: "about 877 metric tons"
+        legenda: "Gold produced in Brazil in the 18th century, in the most widely cited estimate."
+        tipo: historiador
+        fonte: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português (Brazilian Gold and Anglo-Portuguese Trade), 2nd edition, 1979"
+    o_que_ficou: "The center of decision-making went to the Southeast in 1763 and never came back. From then on, much of what was decided about the Northeast was decided far from it."
+    fontes:
+      - texto: "Celso Furtado, Formação Econômica do Brasil (1959), in the review by Letícia Inácio (UFRRJ)"
+        url: https://cursos.ufrrj.br/grad/cienciaseconomicas/files/2021/01/Resenha-Formação-Econômica-do-Brasil-Letícia-Inácio-.pdf
+      - texto: "Virgílio Noya Pinto, O ouro brasileiro e o comércio anglo-português, 2nd edition, 1979 (estimate cited in an academic article)"
+        url: https://dialnet.unirioja.es/descarga/articulo/7186230.pdf
+      - texto: "Maria Fernanda Bicalho, O Rio de Janeiro no século XVIII: a transferência da capital e a construção do território centro-sul da América portuguesa (Rio de Janeiro in the 18th century: the transfer of the capital and the building of the center-south territory of Portuguese America), journal Urbana (Unicamp)"
+        url: https://periodicos.sbu.unicamp.br/ojs/index.php/urbana/article/download/8635108/2923/4361
+      - texto: "Debate on the sugar crisis in the 17th century, journal Clio (UFPE)"
+        url: https://periodicos.ufpe.br/revistas/index.php/revistaclio/article/download/24458/19774/48886
+    imagem:
+      arquivo: "1654.webp"
+      titulo: "Lavage du minerai d'or, près de la montagne Itacolumi"
+      autor: "Johann Moritz Rugendas"
+      data: "c. 1835"
+      licenca: "dominio-publico"
+      alt: "Color lithograph of enslaved men washing gold gravel in wooden channels at the foot of cliffs and waterfalls in Minas Gerais, watched by an overseer in a hat."
+      url: "https://commons.wikimedia.org/wiki/File:Lavage_du_Minerai_d%E2%80%99_Or,_Pres_de_la_Montagne_Itacolumi,_da_Cole%C3%A7%C3%A3o_Brasiliana_Iconogr%C3%A1fica.jpg"
+
+  - id: "1808"
+    inicio: 1808
+    fim: 1889
+    nome: Empire and revolts
+    resumo: "The court settles in Rio, Pernambuco rebels, coffee takes sugar's place and the Northeast sells people to the South."
+    texto: |-
+      With the court in Rio, the northern provinces began paying taxes that supported the new capital and the war in the South. This came on top of the drought of 1816 and poor prices for sugar and cotton. In 1817 Pernambuco rebelled. The base of the revolt was an alliance of sugar and cotton producers with Recife merchants. In 1824 came the Confederation of the Equator. The central government put down both.
+
+      Over the century, coffee from the Paraíba Valley, and later from São Paulo, took sugar's place in exports. When the Atlantic slave trade ended in 1850, the price of an enslaved person rose on the coffee plantations. Owners in the Northeast sold people there. Robert Slenes estimates that at least 200,000 people were taken to the Southeast through this internal trade, between the 1850s and the 1880s. The sale was the decision of those who owned people here. The demand came from there.
+
+      The Great Drought of 1877 to 1879 killed tens of thousands of people in Ceará alone. Rodolpho Theóphilo counted 27,378 dead in Fortaleza in a little over two months. For the whole region, the estimates diverge so much that I prefer not to use any. Slavery ended only in 1888, one year before the end of the Empire, and the Northeast reached the Republic with less weight in the country's economy than it had at the start of the century.
+    marcos:
+      - {ano: 1817, titulo: "Pernambuco Revolution", texto: "Taxes for the court, the drought of 1816 and bad prices push Pernambuco to revolt."}
+      - {ano: 1850, titulo: "End of the Atlantic slave trade", texto: "The sale of enslaved people from the Northeast to the coffee plantations begins."}
+      - {ano: 1877, titulo: "Great Drought", texto: "The drought lasts until 1879 and kills tens of thousands of people in Ceará."}
+    numeros:
+      - valor: "at least 200,000"
+        legenda: "Enslaved people taken to the Southeast through the internal slave trade, from the 1850s to the 1880s."
+        tipo: historiador
+        fonte: "Robert Slenes, doctoral dissertation (Stanford, 1976), cited in the journal Resgate (Unicamp)"
+      - valor: "tens of thousands"
+        legenda: "Deaths in the Great Drought of 1877 to 1879, in Ceará alone, as a floor. In Fortaleza alone, there were 27,378 in a little over two months, by Rodolpho Theóphilo's count."
+        tipo: historiador
+        fonte: "María Verónica Secreto, A seca de 1877-1879 no Império do Brasil (The drought of 1877-1879 in the Empire of Brazil), História, Ciências, Saúde – Manguinhos, vol. 27, no. 1, 2020, p. 36, citing Rodolpho Theóphilo"
+    o_que_ficou: "Under the Empire, the Northeast lost exports to coffee and lost people, sold to the South. The drought of 1877 fixed the region's image as a place of disaster, and that image still weighs on it."
+    fontes:
+      - texto: "Robert Slenes, doctoral dissertation (Stanford, 1976), cited in the journal Resgate (Unicamp)"
+        url: https://periodicos.sbu.unicamp.br/ojs/index.php/resgate/article/download/8645794/13094/18520
+      - texto: "Robert Slenes, 2004 article on the slave market in the North and Northeast"
+        url: https://www.redalyc.org/journal/770/77070146007/77070146007.pdf
+      - texto: "Article on the social base of the 1817 revolt, journal Almanack (USP)"
+        url: https://periodicos.usp.br/alb/article/download/11605/13374/14480
+      - texto: "María Verónica Secreto, A seca de 1877-1879 no Império do Brasil, História, Ciências, Saúde – Manguinhos, vol. 27, no. 1, 2020"
+        url: https://www.scielo.br/j/hcsm/a/ynZxC9TkBJS5GdCnjKXmGKd/
+    imagem:
+      arquivo: "1808.webp"
+      titulo: "Blessing of the flags of the 1817 Revolution"
+      autor: "Antônio Parreiras"
+      data: "n.d."
+      licenca: "dominio-publico"
+      alt: "Painting of a priest in a red cape blessing the flags of the 1817 rebels in front of a church, surrounded by men in frock coats, priests and soldiers lined up."
+      url: "https://commons.wikimedia.org/wiki/File:B%C3%AAn%C3%A7%C3%A3o_das_bandeiras_da_Revolu%C3%A7%C3%A3o_de_1817.jpg"
+
+  - id: "1889"
+    inicio: 1889
+    fim: 1930
+    nome: "First Republic: café com leite politics, drought and Canudos"
+    resumo: "Federal power stays with São Paulo and Minas, industry is born in the Southeast and drought gets a federal agency."
+    texto: |-
+      Under the Republic, the federal government stayed in the hands of São Paulo and Minas Gerais, and economic policy revolved around coffee. This arrangement is known as "café com leite" (coffee with milk) politics. Industry was born near the coffee. By Wilson Cano's figures, São Paulo's share of the country's industrial output rose from about one-sixth in 1907 to more than one-third in 1929. The Northeast went the other way. According to the same author, the region accounted for about 17% of the country's industrial output in 1907, and by 1939 that had fallen to about 10%.
+
+      In the backlands of Bahia, the settlement of Canudos was destroyed by the Army in 1897, in the fourth expedition sent against it. The death tolls in circulation have no academic origin that I was able to verify, so I give no number here.
+
+      Drought became a federal matter in 1909, with the Inspectorate of Works Against Drought, which would later become the DNOCS (National Department of Works Against Drought). The agency was run from Rio and built reservoirs and roads. Many reservoirs ended up inside large estates. In the backlands, the ones in charge were the coronéis, local bosses who controlled the vote and the land and now came to control the water too (the system known as coronelismo). Decades later, the report of the GTDN, a federal working group on Northeast development, would criticize this arrangement.
+
+      From the outside, the era had a federal government turned toward coffee. From the inside, it had local rule that took hold of the water from public works.
+    marcos:
+      - {ano: 1897, titulo: "Canudos is destroyed", texto: "The Army's fourth expedition ends the war in October.",
+         imagem: {arquivo: "marco-1897.webp", titulo: "Ruins of the Bom Jesus church in Canudos", autor: "Flávio de Barros", data: "1897", licenca: "dominio-publico", alt: "Sepia photograph of the destroyed stone walls of the Canudos church, with burned timber and rubble, after the war ended.", url: "https://commons.wikimedia.org/wiki/File:Ruins_church_in_canudos_1897.jpg"}}
+      - {ano: 1909, titulo: "The Inspectorate of Works Against Drought is born", texto: "Decree 7,619 creates the first federal agency against drought."}
+      - {ano: 1919, titulo: "The inspectorate becomes federal in name", texto: "Decree 13,687 creates the Federal Inspectorate of Works Against Drought."}
+    numeros:
+      - valor: "from 15.9% to 37.5%"
+        legenda: "São Paulo's share of Brazil's industrial output, from 1907 to 1929."
+        tipo: historiador
+        fonte: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970 (Regional Imbalances and Industrial Concentration in Brazil, 1930-1970), p. 199"
+      - valor: "from about 17% to about 10%"
+        legenda: "The Northeast's share of Brazil's industrial output, from 1907 to 1939."
+        tipo: historiador
+        fonte: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970, p. 56"
+    o_que_ficou: "Drought became federal policy in 1909, but public works reached first the places that already had power. And the country's industry grew far from the Northeast."
+    fontes:
+      - texto: "Wilson Cano, Desequilíbrios regionais e concentração industrial no Brasil 1930-1970 (Ipea repository)"
+        url: https://repositorio.ipea.gov.br/bitstream/11058/14495/1/Desequilibrios_regionais_concentra%c3%a7%c3%a3o_industrial.pdf
+      - texto: "Article on anti-drought works from 1909 to 1945, journal Risco (USP)"
+        url: https://revistas.usp.br/risco/article/view/203768
+      - texto: "DNOCS, Carta de Serviços ao Cidadão (Citizen Service Charter, history of the agency)"
+        url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
+      - texto: "Asas da graúna: Nordeste, Nordestes (Wings of the graúna: Northeast, Northeasts), Fundação Perseu Abramo (on the GTDN's critique of the reservoirs)"
+        url: https://fpabramo.org.br/asas-da-grauna-nordeste-nordestes/
+    imagem:
+      arquivo: "1889.webp"
+      titulo: "400 captured jagunços"
+      autor: "Flávio de Barros"
+      data: "1897"
+      licenca: "dominio-publico"
+      alt: "Photograph of hundreds of women, children and men from Canudos sitting on the ground after the surrender, with Army soldiers standing in the background."
+      url: "https://commons.wikimedia.org/wiki/File:Canudos_rebels.jpg"
+
+  - id: "1930"
+    inicio: 1930
+    fim: 1950
+    nome: Vargas and the great migration
+    resumo: "The federal government centralizes, industry grows in the Center-South and Northeasterners begin leaving for São Paulo and Rio."
+    texto: |-
+      After 1930 the federal government began to decide more, and industry accelerated in the Center-South. For the Northeast, what was new was drought entering the Constitution. The 1934 Constitution ordered the federal government to spend at least 4% of its tax revenue not earmarked for other uses on defense against drought.
+
+      The drought of 1932 showed the other side. Governments set up concentration camps to keep drought migrants (retirantes) away from the capitals, and the newspaper Correio da Manhã reported on the camps that year. Drought was treated as a public-order problem, and the drought migrant as a threat.
+
+      It was in this period that Northeasterners began leaving for São Paulo and Rio, a flow that grew in the following decades. Drought pushed them out, and so did concentrated land. Farm work was precarious, and emergency work crews and water were under the control of local elites. I looked for a reliable number for how many left in those years and did not find one. So I give none.
+
+      In 1945 the federal government created Chesf, the São Francisco hydroelectric company, to generate power at the Paulo Afonso falls, and the anti-drought inspectorate became the DNOCS. Power and water now had a federal company and a federal department. The land stayed with the same owners.
+    marcos:
+      - {ano: 1932, titulo: "Drought and concentration camps", texto: "Governments hold drought migrants in camps, far from the capitals.",
+         imagem: {arquivo: "marco-1932.webp", titulo: "Pirambu camp, in Fortaleza", autor: "José Bonifácio Paranhos da Costa", data: "1932", licenca: "dominio-publico", alt: "Photograph of long zinc-roofed sheds on sandy ground, with drought migrants sitting on the ground and men drawing water from a hand pump in the foreground.", url: "https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/"}}
+      - {ano: 1934, titulo: "Drought enters the Constitution", texto: "Article 177 sets aside part of federal revenue for defense against drought.",
+         imagem: {arquivo: "marco-1934.webp", titulo: "Cover of the 1934 Constitution", autor: "National Constituent Assembly, Imprensa Nacional (the national press)", data: "1934", licenca: "dominio-publico", alt: "Red cover of the Constitution of the Republic of the United States of Brazil, printed in 1934.", url: "https://commons.wikimedia.org/wiki/File:Capa_da_Constitui%C3%A7%C3%A3o_de_1934.jpg"}}
+      - {ano: 1945, titulo: "Chesf and DNOCS are born", texto: "In October, a decree-law creates Chesf. In December, the anti-drought inspectorate becomes the DNOCS."}
+    numeros:
+      - valor: "4%"
+        legenda: "Minimum federal spending on defense against drought, as a share of its tax revenue not earmarked for other uses, set by the 1934 Constitution."
+        tipo: oficial
+        fonte: "1934 Constitution, art. 177"
+    o_que_ficou: "This was when leaving became a destiny for generations of Northeasterners, and the Southeast grew also on that labor."
+    fontes:
+      - texto: "1934 Constitution, art. 177 (Planalto, the presidency's legal portal)"
+        url: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao34.htm
+      - texto: "Denis de Mendonça Bernardes, Notas sobre a formação social do Nordeste (Notes on the social formation of the Northeast), Lua Nova, no. 71, 2007, p. 67 (transcribes art. 177)"
+        url: https://www.scielo.br/j/ln/a/sqrVzP6vcvNqvzr4frCnKnC/
+      - texto: "Decree-Law 8,031, of October 3, 1945, which creates Chesf (Planalto)"
+        url: https://planalto.gov.br/ccivil_03/Decreto-Lei/Del8031.htm
+      - texto: "Article on the 1932 concentration camps, Annals of the ANPUH National Symposium, 2019"
+        url: https://anpuh.org.br/uploads/anais-simposios/pdf/2019-01/1548874926_f8b61f43959074f84c38312d02d3702b.pdf
+      - texto: "DNOCS, Carta de Serviços ao Cidadão (Citizen Service Charter, history of the agency)"
+        url: https://www.gov.br/dnocs/pt-br/acesso-a-informacao/acoes-e-programas/copy_of_carta-de-servicos-ao-cidadao/cartadeservicos-red.pdf
+    imagem:
+      arquivo: "1930.webp"
+      titulo: "Patu camp"
+      autor: "José Bonifácio Paranhos da Costa"
+      data: "1932"
+      licenca: "dominio-publico"
+      alt: "Photograph of a crowd of drought migrants, men, women and children in light clothing, gathered beside a railway line at the Patu concentration camp, in Senador Pompeu, Ceará, with a covered wagon on the right."
+      url: "https://conteudo.ebc.com.br/portal/projetos/2018/especiais-agua/campos-de-concentracao/"
+
+  - id: "1950"
+    inicio: 1950
+    fim: 1964
+    nome: BNB, GTDN and Sudene
+    resumo: "For the first time, the Northeast's backwardness is treated as an economic problem, with a bank, a diagnosis and a development agency."
+    texto: |-
+      The droughts of 1951 to 1952 and of 1958 showed the limits of reservoirs. In 1952 a law created the Banco do Nordeste (the Northeast's regional development bank), headquartered in Fortaleza. In 1955 Chesf inaugurated the first Paulo Afonso power plant.
+
+      In 1959 came the report of the Working Group for the Development of the Northeast, the GTDN, coordinated by Celso Furtado. The diagnosis was blunt. Income per person in the Northeast was less than a third of that in the Center-South. The report pointed to the "relative scarcity of the land factor and lower capital accumulation" and concluded that the cause of the backwardness lay "in the relative poverty of its physical base." The proposal was to industrialize the region.
+
+      The report also looked inward. The reservoir policy had served large estates. In the same year, Antônio Callado's reporting in the Correio da Manhã gave a name to the network of landowners and politicians who lived off anti-drought works: the "indústria da seca," the drought industry. The name stuck.
+
+      In December 1959 a law established Sudene, the Northeast development agency. In the early 1960s came income tax rebates for those who invested in Northeast projects, a system that became known as 34/18, after the article numbers of the two laws.
+
+      The federal government decided: the bank, the agency and the incentives. But the diagnosis that justified all of it said that part of the problem lay in the region itself.
+    marcos:
+      - {ano: 1952, titulo: "The Banco do Nordeste is born", texto: "Law 1,649, of July, creates the bank, headquartered in Fortaleza."}
+      - {ano: 1955, titulo: "Paulo Afonso starts generating power", texto: "Chesf inaugurates the first plant at the São Francisco River falls."}
+      - {ano: 1959, titulo: "GTDN and Sudene", texto: "The report coordinated by Furtado comes out, and in December Law 3,692 establishes Sudene.",
+         imagem: {arquivo: "marco-1959.webp", titulo: "Celso Furtado, photo from 1962", autor: "Unknown author, Correio da Manhã collection, Arquivo Nacional (National Archives)", data: "1962", licenca: "dominio-publico", alt: "Black-and-white photograph of Celso Furtado, in a suit and tie, sitting at a table and looking to the side.", url: "https://commons.wikimedia.org/wiki/File:Celso_Furtado.tif"}}
+      - {ano: 1961, titulo: "34/18 begins", texto: "Law 3,995 creates the income tax rebate for investing in the Northeast. Law 4,239, of 1963, expands it."}
+    numeros:
+      - valor: "less than a third"
+        legenda: "Income per person in the Northeast relative to the Center-South, in the GTDN's diagnosis."
+        tipo: oficial
+        fonte: "GTDN, Uma política de desenvolvimento econômico para o Nordeste (An economic development policy for the Northeast), 1959"
+    o_que_ficou: "For the first time, the Northeast's backwardness was treated as an economic problem with a known cause, not as a punishment from the climate. The BNB and Sudene exist today because of that turn."
+    fontes:
+      - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, 1959 (record in the BNDES Library)"
+        url: https://web.bndes.gov.br/bib/jspui/handle/1408/17760
+      - texto: "GTDN, Uma política de desenvolvimento econômico para o Nordeste, reissued in Revista Econômica do Nordeste, vol. 28, no. 4, 1997, p. 391"
+        url: https://www.bnb.gov.br/revista/ren/article/view/2095
+      - texto: "Excerpts from the GTDN report, Revista Brasileira de Geografia (IBGE)"
+        url: https://rbg.ibge.gov.br/index.php/rbg/article/view/2493/1872
+      - texto: "Law 1,649, of July 19, 1952, which creates the Banco do Nordeste (Planalto)"
+        url: https://planalto.gov.br/ccivil_03/leis/1950-1969/l1649.htm
+      - texto: "Law 3,692, of December 15, 1959, which establishes Sudene (Chamber of Deputies)"
+        url: https://www2.camara.leg.br/legin/fed/lei/1950-1959/lei-3692-15-dezembro-1959-354371-norma-pl.html
+      - texto: "Antônio Callado, Os industriais da sêca e os Galileus de Pernambuco (The drought industrialists and the Galileus of Pernambuco) (1960), in an article in Revista Brasileira de Estudos Urbanos e Regionais"
+        url: https://rbeur.anpur.org.br/rbeur/article/download/7827/5724/31270
+      - texto: "Ipea, Considerações sobre o sistema de incentivos fiscais para o desenvolvimento do Nordeste (Considerations on the tax incentive system for Northeast development)"
+        url: https://repositorio.ipea.gov.br/bitstream/11058/14213/1/Consideracoes_sistema_de_incentivos_fiscais_desenvolvimento_nordeste.pdf
+    imagem:
+      arquivo: "1950.webp"
+      titulo: "Juscelino Kubitschek, João Goulart, Celso Furtado and Parsifal Barroso"
+      autor: "Unknown author, Correio da Manhã collection, Arquivo Nacional"
+      data: "1960"
+      licenca: "dominio-publico"
+      alt: "Photograph of a group of men in suits walking during an official visit, surrounded by soldiers and local people."
+      url: "https://commons.wikimedia.org/wiki/File:Juscelino_Kubitschek,_Jo%C3%A3o_Goulart,_Celso_Furtado_e_Parsifal_Barroso_(1960).tif"
+
+  - id: "1964"
+    inicio: 1964
+    fim: 1985
+    nome: "Military dictatorship: big projects and a hollowed-out Sudene"
+    resumo: "Furtado is stripped of his rights, Sudene loses its planning role and part of the tax incentives goes to the Amazon."
+    texto: |-
+      In April 1964 Celso Furtado had his political rights suspended under Institutional Act No. 1 and left Sudene. The agency continued to exist, but lost its role of planning the region. Decisions began to come from Brasília.
+
+      In 1970 a decree-law created the National Integration Program and sent 30% of the tax incentives to it. The program's first stage was to open the Transamazônica and Cuiabá-Santarém highways. In practice, part of the income tax rebate that used to go to Northeast projects began paying for roads in the Amazon. How much this actually took from the Northeast, I could not measure. The rule, however, is in the text of the decree-law. In 1974 the region's incentives were gathered into a fund, Finor.
+
+      Factories and big projects came, and the per capita income gap with the rest of the country stayed large. Measuring that gap in the 1960s and 1970s is hard: estimates vary so much by source that a single number would mislead.
+
+      The harshest critique of this model came from an insider. Francisco de Oliveira, who worked at Sudene from 1959 to 1964, published Elegia para uma re(li)gião (Elegy for a Re(li)gion) in 1977, a book against the path Sudene took, especially after the coup.
+    marcos:
+      - {ano: 1964, titulo: "Furtado loses his political rights", texto: "In April, under Institutional Act No. 1, he leaves Sudene."}
+      - {ano: 1970, titulo: "National Integration Program", texto: "Decree-Law 1,106 sends 30% of the tax incentives to the program that starts with the Transamazônica.",
+         imagem: {arquivo: "marco-1970.webp", titulo: "Pau do Presidente, marker of the start of the Transamazônica in Altamira (PA), photo from 1972", autor: "Unknown author, Agência Nacional collection, Arquivo Nacional", data: "1972", licenca: "dominio-publico", alt: "Black-and-white aerial photograph of the two-column monument marking the start of the Transamazônica highway, on a dirt square beside the road.", url: "https://commons.wikimedia.org/wiki/File:Monumento_que_marca_o_in%C3%ADcio_da_constru%C3%A7%C3%A3o_da_Rodovia_Transamaz%C3%B4nica,_conhecido_como_%E2%80%9CPau_do_Presidente%E2%80%9D,_Altamira_(PA).jpg"}}
+      - {ano: 1974, titulo: "Finor is born", texto: "Decree-Law 1,376 gathers the Northeast's incentives into one fund."}
+    numeros:
+      - valor: "30%"
+        legenda: "Share of the tax incentives that the 1970 decree-law sent to the National Integration Program."
+        tipo: oficial
+        fonte: "Decree-Law 1,106, of June 16, 1970, art. 5"
+    o_que_ficou: "The region gained factories and big projects, but lost the place where its own development was thought out. The income gap with the rest of the country went through the military dictatorship without closing."
+    fontes:
+      - texto: "Decree-Law 1,106, of June 16, 1970, which creates the National Integration Program (Planalto)"
+        url: https://www.planalto.gov.br/ccivil_03/decreto-lei/1965-1988/del1106.htm
+      - texto: "Informações Fipe, no. 512 (on the removal of Celso Furtado's political rights)"
+        url: https://downloads.fipe.org.br/publicacoes/bif/bif512-82-84.pdf
+      - texto: "Flávio Mendes, on Elegia para uma re(li)gião, by Francisco de Oliveira, Caderno CRH (2018)"
+        url: https://www.redalyc.org/journal/3476/347659220009/347659220009.pdf
+    imagem:
+      arquivo: "1964.webp"
+      titulo: "Construction of the Paulo Afonso III power plant, Bahia"
+      autor: "Unknown author, Correio da Manhã collection, Arquivo Nacional"
+      data: "1966"
+      licenca: "dominio-publico"
+      alt: "Aerial photograph of the Paulo Afonso III plant under construction on the São Francisco River: the reservoir on the left, the concrete dam, the powerhouse and the substation, with machinery and a construction site in the foreground."
+      url: "https://commons.wikimedia.org/wiki/File:Constru%C3%A7%C3%A3o_da_Usina_de_Paulo_Afonso_III,_Bahia.tif"
+
+  - id: "1985"
+    inicio: 1985
+    fim: 2026
+    nome: From redemocratization to today
+    resumo: "The Constitution creates regional funds, Sudene is abolished and returns, and the region produces a smaller share of GDP than its share of the population."
+    texto: |-
+      The 1988 Constitution set aside 3% of what the federal government collects in income tax and IPI (the federal tax on manufactured goods) to finance the productive sector of the North, Northeast and Center-West. A 1989 law regulated the funds. The Northeast's fund, the FNE, is run by the Banco do Nordeste, and half of the money goes to the semiarid region. It is a fixed share of revenue, written into the Constitution.
+
+      In 2001 Sudene was abolished and replaced by an agency, Adene. In 2007 a complementary law recreated Sudene. The institution born from the 1959 diagnosis disappeared and came back within six years.
+
+      In 2022, according to IBGE's Regional Accounts, the Northeast produced 13.8% of the country's GDP. IBGE warns that this series will still be revised, with a different reference year. The share of the population that lives here, at the top of this page, is almost double that. Put another way: the Northeast's GDP per capita is close to half of Brazil's.
+
+      The money from the funds and the incentives comes from a federal decision. But it does not apply itself. It passes through state governments, banks and companies in the region itself, which decide where it ends up. I do not put the results of this era on any government's account.
+    marcos:
+      - {ano: 1988, titulo: "Constitution creates the regional funds", texto: "Article 159 sets aside 3% of income tax and IPI to finance the North, Northeast and Center-West."}
+      - {ano: 1989, titulo: "Law 7,827 regulates the FNE", texto: "Half of the Northeast fund goes to the semiarid region."}
+      - {ano: 2001, titulo: "Sudene abolished", texto: "A provisional measure replaces the agency with Adene."}
+      - {ano: 2007, titulo: "Sudene recreated", texto: "Complementary Law 125, of January 3, recreates the agency."}
+    numeros:
+      - valor: "3%"
+        legenda: "Share of federal income tax and IPI revenue that the 1988 Constitution set aside to finance the productive sector of the North, Northeast and Center-West."
+        tipo: oficial
+        fonte: "1988 Constitution, art. 159, item I, subitem c"
+      - valor: "13.8%"
+        legenda: "The Northeast's share of Brazil's GDP in 2022."
+        tipo: oficial
+        fonte: "IBGE, Regional Accounts 2022 (SIDRA, table 5938)"
+    o_que_ficou: "The gap that began to form when the economic center left the Northeast is still in today's numbers. More than one in four Brazilians lives here, and the region produces less than one-seventh of what the country produces."
+    fontes:
+      - texto: "Sudene, technical note on the FNE and art. 159, I, c, of the 1988 Constitution"
+        url: https://www.gov.br/sudene/pt-br/acesso-a-informacao/institucional/conselho-deliberativo/arquivos/1-sei_sudene-0513046-nota-tecnica-272-2023.pdf
+      - texto: "Law 7,827, of September 27, 1989, which regulates the constitutional funds"
+        url: https://www.gov.br/mdr/pt-br/assuntos/fundos-regionais-e-incentivos-fiscais/fundos-constitucionais-de-financiamento-fno-fne-e-fco/L7827.pdf
+      - texto: "Provisional Measure 2,146-1, of May 4, 2001, which abolishes Sudene (Chamber of Deputies)"
+        url: https://www2.camara.leg.br/legin/fed/medpro/2001/medidaprovisoria-2146-1-4-maio-2001-348819-norma-pe.html
+      - texto: "Complementary Law 125, of January 3, 2007, which recreates Sudene (Chamber of Deputies)"
+        url: https://www2.camara.leg.br/legin/fed/leicom/2007/leicomplementar-125-3-janeiro-2007-548989-publicacaooriginal-64228-pl.html
+      - texto: "IBGE, Regional Accounts 2022, SIDRA, table 5938 (share of Brazil's GDP)"
+        url: https://apisidra.ibge.gov.br/values/t/5938/n1/all/n2/2/v/496/p/2022
+      - texto: "IBGE, Agência de Notícias (news agency), In 2022, GDP grows in 24 states"
+        url: https://agenciadenoticias.ibge.gov.br/pt/agencia-noticias/41893-em-2022-pib-cresce-em-24-unidades-da-federacao.html
+    imagem:
+      arquivo: "1985.webp"
+      titulo: "Pau de arara (open-bed truck carrying passengers) in Caraúbas do Piauí"
+      autor: "Valter Campanato/Agência Brasil"
+      data: "2006"
+      licenca: "cc-by"
+      alt: "Color photograph of a brown Ford pickup on a dirt road in the dry caatinga, with children and adults standing in the bed under an orange tarp."
+      url: "https://commons.wikimedia.org/wiki/File:Caraubasdopiaui10122006-2.jpg"
+
+fecho:
+  titulo: And from 2000 on?
+  texto: "The history on this page arrives roughly where the site's other numbers begin. From 2000 on, the cards show what happened to poverty, income, schooling and work in the Northeast, always alongside Brazil."
+  links:
+    - {texto: Home, url: ../}
+    - {texto: Cards, url: ../cards/}

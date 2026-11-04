@@ -73,8 +73,12 @@ def svgs_da_pagina(arvore: Arvore) -> list[dict]:
 
 
 def imagens_da_pagina(arvore: Arvore) -> list[dict]:
-    """Os <img> da pagina menos os da autoria (a foto e a marca do rodape, a marca do modal), que estao em todas."""
-    return [i for i in arvore.achar("img") if not i["attrs"].get("src", "").startswith(("/autor.webp", "/marca-autor"))]
+    """Os <img> da pagina menos os da autoria (a foto e a marca do rodape, a marca do modal) e as bandeiras do seletor
+    de idioma, que estao em todas."""
+    return [
+        i for i in arvore.achar("img")
+        if not i["attrs"].get("src", "").startswith(("/autor.webp", "/marca-autor", "/bandeira-"))
+    ]
 
 
 def copiar_base(destino: Path) -> Path:

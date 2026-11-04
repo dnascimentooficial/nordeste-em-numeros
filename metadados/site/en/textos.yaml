@@ -1,0 +1,262 @@
+foto:
+  rotulo: "Image"
+  credito: "Júlio Diógenes"
+  url: "https://dnascimento.com.br"
+  descricao: "composite of the beaches, forests and sertão (semiarid backcountry) of the Northeast"
+
+abertura:
+  eyebrow: "Nordeste em Números"
+  titulo:
+    - "Is the Northeast"
+    - "still the same?"
+  destaque: "It has changed. And there is still a long way to go."
+  intro:
+    - id: abertura_inicio
+      texto: "Every now and then I hear that Brazil's Northeast is the same as ever. That nothing has changed. So I checked the official numbers, from 2000 to today."
+
+faixa:
+  rotulo: "The opening in numbers"
+  id: abertura_numeros
+  numeros:
+    - valor: "{pib_pc_razao.ultimo:1%}"
+      rotulo: "of the rest of the country's wealth per person is what the Northeast has"
+      ano: "{pib_pc_razao.ano_ultimo}"
+      comparacao: "it was **{pib_pc_razao.primeiro:1%}** in {pib_pc_razao.ano_primeiro}"
+    - valor: "{pob_ne.ultimo:1%}"
+      rotulo: "of the Northeast's population lives in poverty"
+      ano: "{pob_ne.ano_ultimo}"
+      comparacao: "it was **{pob_ne.primeiro:1%}** in {pob_ne.ano_primeiro} · in Brazil, today, **{pob_br.ultimo:1%}**"
+  condicao: "pob_ne.ultimo < pob_ne.primeiro e pob_ne.ultimo > pob_br.ultimo"
+  nota: "Everything here comes from IBGE (the national statistics office), INEP (the national education research agency), Ipea (the federal applied economic research institute) and Atlas Brasil (the Atlas of Human Development in Brazil). I estimate nothing myself. The gray bands in the charts show who governed the country in each period, only to place the dates in time. No number here says that a government caused a result."
+
+placar:
+  eyebrow: "The six questions"
+  titulo: "What the numbers say"
+  sem_veredito: "See the answer"
+
+perguntas_rotulos:
+  mais_um_grafico: "Show 1 more chart"
+  mais_graficos: "Show [n] more charts"
+  fonte_metodo: "Source and method"
+  legenda_siglas: "Abbreviations for presidential terms in the charts:"
+  indice: "The six questions"
+
+saidas:
+  rotulo: "Keep going"
+  card: "Download the card for this answer"
+  estados: "See the states"
+  explorar: "Explore the data"
+
+menu:
+  rotulo: "Site pages"
+  abrir: "Open the menu"
+  inicio: "Home"
+  historias: "Stories"
+  dados: "Data"
+  sobre: "About the data"
+  voltar_ao_topo: "Back to top"
+  cartoes:
+    como-chegamos:
+      titulo: "How we got here"
+      texto: "From sugar to today, in [epocas] eras, with the source of every number."
+    inovacao:
+      titulo: "Innovation"
+      texto: "Internet, PhDs, patents and IT jobs: what has grown and what has not yet kept pace with the size of the region."
+    cards:
+      titulo: "Cards to share"
+      texto: "[cards] common sayings about the Northeast, checked against the official data."
+    estados:
+      titulo: "States"
+      texto: "The nine states year by year, on a heat map and in a ranking."
+    explorar:
+      titulo: "Explore"
+      texto: "Pick an indicator and a territory, and compare two side by side."
+    dados:
+      titulo: "Data to download"
+      texto: "The full database in CSV, with the code to verify each file."
+  botao_historia:
+    antes: "See the"
+    texto: "timeline"
+  botao_cards:
+    texto: "Download a card"
+
+compartilhamento:
+  alt: "Illustration of a mural with old and current photos of the Northeast linked by red strings and, at the center, a note: Northeast, why did it develop less than the rest of Brazil?"
+  credito: "Illustration by Júlio Diógenes, made with artificial intelligence."
+
+chamada_historia:
+  eyebrow: "How we got here"
+  titulo: "In [ano_inicial], [parcela_inicial] of Brazilians lived in the Northeast. In [ano_final], [parcela_final]."
+  texto: "How the region got here, from sugar to today, in eight eras, with the source of every number."
+  botao: "See the timeline →"
+  credito: "Image"
+
+ampliar:
+  botao: "Enlarge"
+  rotulo: "Enlarge the chart"
+  fechar: "Close"
+  gire: "Rotate your phone for a better view"
+  quebra: "Series break in"
+
+por_que:
+  titulo: "Why I built this dashboard"
+  paragrafos:
+    - "Because I got tired of hearing that the Northeast is the same as ever, said with total certainty and not a single number in hand. I gathered the official data from 2000 to today, compared the Northeast with Brazil and with the rest of the country, and left everything open for anyone who wants to check."
+    - "This is not cheerleading. Where things improved, I show it. Where the gap is still wide, I show that too."
+
+como_ler:
+  titulo: "How to read it"
+  itens:
+    - "The gray bands show who governed the country. They place the dates in time. They do not give credit or blame to anyone."
+    - "When a survey changes (PNAD to PNAD Contínua, for example), the chart line breaks. Different surveys are not spliced together."
+    - "A year with no data is left blank. I do not invent a point to connect the line."
+
+o_que_falta:
+  titulo: "What is still missing, and why"
+  itens:
+    - "2024 GDP: IBGE had not yet released the 2024 Regional Accounts (Contas Regionais) on the date of this publication."
+    - "2007 GDP per capita: there is no published value to check the calculation against."
+    - "Income and poverty before 2012: the old PNAD series has not been incorporated yet."
+    - "Enrollments in 2003 and 2004: they exist, but INEP only published them as PDFs. In 2026."
+    - "HDI-M (municipal human development index) for the Northeast in 2000 and 2010: not published for the region."
+    - "Poverty line: confirmed by Ipeadata metadata, not by an IBGE publication."
+
+autor:
+  nome: "Júlio Diógenes"
+  titulo: "About the author"
+  fechar: "Close"
+  link: "dnascimento.com.br"
+  quem_sou:
+    titulo: "Who I am"
+    texto: "Executive director of the Laboratório Urbano Vivo de Vitória (LUV), the Vitória Living Urban Lab. For more than 17 years, I have helped professionals, companies and governments turn complex problems into executable decisions, using strategy, innovation, artificial intelligence and public policy."
+    mais: "More about my work at dnascimento.com.br"
+  motivacao:
+    titulo: "Why I did this study"
+    texto: "I did this study out of anger, and also out of pride. Anger at a discourse that keeps repeating that the Northeast is the same as ever, erases the region's history and ignores what states and municipalities did and failed to do. Pride in a region that has changed more than people say, even if a long road remains. So I checked the official data, from 2000 to today, and the history, from the colonial era to now. Nobody gets a free pass here: municipalities, states and the federal government share the bill. Every number has its source and calculation in plain view, for anyone who wants to rebut it or understand it."
+  formacao_titulo: "Education"
+  formacao:
+    - "Specialization in Infrastructure Law, Governance and Regulation (Direito da Infraestrutura, Governança e Regulação), PUC Minas (in progress, 2026–2027)"
+    - "Bachelor's degree in Computer Engineering, Uniamérica (2022–2026)"
+    - "Specialization in Data Analysis, EBAC – Escola Britânica de Artes Criativas e Tecnologia (British School of Creative Arts and Technology) (2022)"
+    - "Design, with an emphasis on Brand Management, Universidade Potiguar (2009–2012)"
+  formacao_vazia: "Full education and career history at dnascimento.com.br"
+
+paginas:
+  index:
+    titulo: "Is the Northeast still the same? · Nordeste em Números"
+    descricao: "I checked the official numbers from IBGE, INEP, Ipea and Atlas Brasil to see whether Brazil's Northeast is still the same. Each answer comes with the chart and the source, so you can check it yourself."
+  como-chegamos:
+    titulo: "How we got here · Nordeste em Números"
+    descricao: "In eight eras, I tell how the Northeast went from the colony's economic center to the region that fell behind, from sugar to today, with the source of every number."
+  sobre:
+    titulo: "About the data · Nordeste em Números"
+    descricao: "Why I built this site, how to read the charts, every source, the formulas I use and what is still missing from the database."
+  inovacao:
+    titulo: "Innovation · Nordeste em Números"
+    descricao: "Household internet access, PhDs, graduate education, state spending on science, patents, innovative industry and IT jobs in the Northeast, with official data from CAPES, INPI, IBGE, MCTI and Cetic.br."
+  estados:
+    titulo: "The states of the Northeast · Nordeste em Números"
+    descricao: "Year-by-year heat map and ranking of the Northeast's states on indicators of economy, work, poverty, education, human development and innovation, with official data from IBGE, INEP, Atlas Brasil and INPI."
+  explorar:
+    titulo: "Explore the data · Nordeste em Números"
+    descricao: "Pick an indicator and a territory, compare two side by side and check every year published by the official sources."
+  cards:
+    titulo: "Cards to share · Nordeste em Números"
+    descricao: "Common sayings about the Northeast checked against official numbers, in ready-made cards to download and share."
+  dados:
+    titulo: "Data to download · Nordeste em Números"
+    descricao: "The CSV files of the Northeast historical database, with each file's publication date and sha256 hash, to verify integrity."
+
+dataset:
+  nome: "Nordeste em Números: historical database of Northeast indicators"
+  descricao: "Official indicators for the Northeast, the Northeastern states, Brazil and Brazil outside the Northeast, covering economy, education, work, income, poverty, human development and innovation, from IBGE, INEP, Ipea, Atlas Brasil, INPI and Cetic.br. Compiled by Júlio Diógenes."
+
+fontes:
+  titulo: "All data sources"
+  intro: "One row per series. When the source switches surveys in the middle of the period, the indicator has more than one series, and they are never spliced together. The links go to each source's official page."
+
+formulas:
+  titulo: "Formulas I use"
+  intro: "Most numbers are published ready-made by the source. I only do the calculations below, all of them declared and checked."
+  blocos:
+    - titulo: "GDP per capita"
+      itens:
+        - "GDP per capita = GDP at current prices (in thousands of reais) ÷ resident population, multiplied by 1,000 to get reais."
+        - "Each year's population is the one IBGE uses in the GDP per capita it publishes: the annual estimate, the 2010 Census in 2010 and the 2022 Census in 2022 and 2023."
+        - "IBGE does not publish GDP per capita by region and state in a machine-readable format. I checked the calculation against the values it releases, and the result of that check is in the project's verification dictionary."
+    - titulo: "Brazil outside the Northeast"
+      itens:
+        - "Counts (population, GDP, enrollments, unemployed people, employed people, informal workers, labor force, total household income): Brazil − Northeast."
+        - "GDP per capita: (Brazil's GDP − Northeast's GDP) ÷ (Brazil's population − Northeast's population), multiplied by 1,000. It is the ratio of the differences, not the average of the states."
+        - "Unemployment rate: (unemployed in Brazil − in the Northeast) ÷ (labor force in Brazil − in the Northeast), as a percentage."
+        - "Informality rate: (informal workers in Brazil − in the Northeast) ÷ (employed people in Brazil − in the Northeast), as a percentage."
+        - "Household income per person: (total household income in Brazil − in the Northeast) ÷ (PNAD Contínua population of Brazil − of the Northeast), multiplied by 1,000."
+        - "When no published count exists to redo the calculation (poverty, Gini, IDEB, HDI-M, school dropout, earnings from work, GDP volume, internet access), the comparison is with Brazil as a whole."
+        - "IBID: the reference is the national average published by INPI, which weights the states by GDP per capita. I do not calculate Brazil outside the Northeast."
+    - titulo: "Comparison between territories"
+      itens:
+        - "Ratio = value for the Northeast (or the state) ÷ value for the reference, as a percentage. 100% means parity; 50%, half."
+        - "In the site's sentences, the change over the period is the value for the last year with data minus the value for the first year with data, in percentage points."
+    - titulo: "Values in reais"
+      itens:
+        - "Household income per person and earnings from work: constant reais, using IBGE's PNAD Contínua deflator, at average prices of the last year in the series."
+        - "GDP and GDP per capita: current values for each year. Comparisons use the ratio between territories in the same year, which needs no deflator."
+        - "GDP volume: chained index published by IBGE (first year = 100), with no calculation of mine."
+    - titulo: "What I do not do"
+      itens:
+        - "I do not interpolate years with no data, project future years or estimate missing values."
+        - "I do not splice different surveys together (PNAD and PNAD Contínua, Census and estimates)."
+        - "I do not average rates across states: aggregates always come from the counts."
+
+arquivos:
+  titulo: "The files behind the numbers"
+  intro: "The site reads only the published database, exactly as it appears in the files on the Data page, with the date and sha256 of each one."
+
+dados:
+  titulo: "Data to download"
+  intro: "These are the files the site reads, exactly as published. You can download, check and use them, crediting me and the official source of each series. The underlying data are public: IBGE, INEP, Ipea, Atlas Brasil, INPI and Cetic.br."
+  conferir: "To verify, compute the sha256 of the downloaded file and compare it with the code next to it. If it differs, the file is not the published one."
+  arquivos:
+    base_nordeste.csv: "One row per indicator, territory and year."
+    derivados.csv: "Ratios and other comparison metrics between territories."
+
+estados:
+  titulo: "The states of the Northeast"
+  intro: "Pick an indicator to see the states year by year and the ranking for the last year with data. The values come from the same database as the rest of the site, and a year with no data is left blank."
+  titulo_mapa: "The states, year by year"
+  titulo_ranking: "Ranking in the latest available year"
+  escala_pior: "worse"
+  escala_melhor: "better"
+  nota_do_mapa: "The darker the cell, the better the situation on that indicator. Hatched cell: year with no data. Values appear on hover and in the table below."
+  rolagem: "Drag the map sideways to see all the years."
+  tabela: "See all the numbers for the states"
+  fonte: "Sources: IBGE (Regional Accounts, PNAD Contínua), INEP (IDEB, School Flow Indicators), Atlas Brasil (HDI-M) and INPI (IBID). I calculate the ratios with Brazil outside the Northeast from the published counts."
+  sem_dados: "This indicator has no data for the states."
+  notas:
+    ibid: "For IBID (INPI's Brazil Innovation and Development Index), the map and the ranking show each state's position among the 27 federative units (26 states and the Federal District), and lower is better. INPI rescales the index every year, and it warns that a state's score cannot be compared across years. Position can be compared. The index score is in Explore."
+
+explorar:
+  titulo: "Explore the data"
+  intro: "Pick an indicator and a territory to see the full series, or compare two side by side. Each line shows only what the source published."
+  nota: "The strong line is the chosen territory. The light ones are references: Brazil and, for states and other regions, the Northeast. The line breaks when the survey changes or a year is missing, because different surveys are not spliced together."
+  tabela: "See the numbers for the chosen territory"
+  fonte: "Values as published by the source, with no interpolation. The sources and methods for each indicator are in About the data."
+  sem_dados: "This indicator has no data for this territory."
+  sem_periodo: "There is no data for this territory in the chosen period."
+  erro: "I could not load the data for this indicator. Try again in a moment."
+  zoom:
+    grupo: "Chart settings"
+    de: "From"
+    ate: "To"
+    inicio: "start"
+    fim: "end"
+    ampliar: "Zoom in on the variation"
+    todo: "See the whole period"
+    ajuda: "To see just one period, drag your mouse or finger across the chart, or choose the years. With a period chosen, \"Zoom in on the variation\" fits the vertical scale to its data; without it, the scale stays that of the full period, so the change does not look bigger than it is."
+
+cards:
+  titulo: "Cards to share"
+  intro: "These are common sayings we hear about the Northeast. Open one, download the card image (vertical format, good for WhatsApp and Instagram) and send it to whoever needs to see it. The numbers come from the same database as the site, with the source in the card's footer. Some cards confirm part of the saying, and the card says so."
+  sera: "What the data say"
+  baixar: "Download image (PNG)"
+  voltar: "See all cards"

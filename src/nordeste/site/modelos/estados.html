@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_componentes.html" import atualizacoes, capa %}
+{% from "_componentes.html" import atualizacoes, capa with context %}
 {% block conteudo %}
 {% set t = textos.estados %}
 {{ capa(capas.estados, t.titulo, t.intro) }}
 <section class="nn-pagina" id="estados" aria-labelledby="titulo-principal">
   <div class="nn-controles">
-    <label for="sel-estado-ind">Indicador
+    <label for="sel-estado-ind">{{ ui.indicador }}
       <select id="sel-estado-ind" class="nn-sel-estado">
 {% for v in estados %}
         <option value="{{ v.chave }}"{% if loop.first %} selected{% endif %}>{{ v.rotulo }}</option>
@@ -18,7 +18,7 @@
 
   <div class="nn-vista" id="estados-{{ v.chave }}" data-vista="{{ v.chave }}"{% if not loop.first %} hidden{% endif %}>
     <article class="nn-card">
-      <p class="nn-eyebrow">Estados</p>
+      <p class="nn-eyebrow">{{ ui.eyebrow_estados }}</p>
       <h2>{{ t.titulo_mapa }}: {{ v.nome }}</h2>
 {% if v.anos %}
 {% if "notas" in t and v.chave in t.notas %}
@@ -43,9 +43,9 @@
     </article>
 {% if v.anos %}
     <article class="nn-card">
-      <p class="nn-eyebrow">Estados</p>
+      <p class="nn-eyebrow">{{ ui.eyebrow_estados }}</p>
       <h2>{{ t.titulo_ranking }}: {{ v.ano_do_ranking }}</h2>
-      <div class="nn-ranking" role="list" aria-label="Ranking dos estados do Nordeste">
+      <div class="nn-ranking" role="list" aria-label="{{ ui.ranking_rotulo }}">
 {% for r in v.ranking %}
         <div class="nn-rk" role="listitem"><span>{{ r.posicao }}</span><svg class="nn-rk-barra" aria-hidden="true" focusable="false" width="100%" height="100%"><rect class="nn-rk-fill" width="{{ r.largura }}%" height="100%"/></svg><span class="nn-rk-val">{{ r.valor }}</span></div>
 {% endfor %}
@@ -54,7 +54,7 @@
         <summary>{{ t.tabela }}</summary>
         <div class="nn-tabela">
           <table>
-            <thead><tr><th scope="col">Estado</th><th scope="col">Ano</th><th scope="col" class="nn-num">Valor</th></tr></thead>
+            <thead><tr><th scope="col">{{ ui.estado }}</th><th scope="col">{{ ui.ano }}</th><th scope="col" class="nn-num">{{ ui.valor }}</th></tr></thead>
             <tbody>
 {% for r in v.tabela %}
               <tr><td>{{ r.estado }}</td><td>{{ r.ano }}</td><td class="nn-num">{{ r.valor }}</td></tr>

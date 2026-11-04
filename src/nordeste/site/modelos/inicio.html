@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_componentes.html" import atualizacoes, legenda %}
-{% from "_modal_grafico.html" import ampliado, dialogo %}
-{% from "_epoca.html" import credito %}
-{% from "_grafico.html" import grafico %}
+{% from "_componentes.html" import atualizacoes, legenda with context %}
+{% from "_modal_grafico.html" import ampliado, dialogo with context %}
+{% from "_epoca.html" import credito with context %}
+{% from "_grafico.html" import grafico with context %}
 {% block conteudo %}
 {% set abertura = textos.abertura %}
 <section class="nn-hero{% if foto %} nn-hero-com-foto{% endif %}" id="topo" aria-labelledby="titulo-principal">
@@ -41,7 +41,7 @@
 
 {% set r = textos.perguntas_rotulos %}
 {% set s = textos.saidas %}
-<section class="nn-pagina nn-editorial" id="resumo" aria-label="As perguntas">
+<section class="nn-pagina nn-editorial" id="resumo" aria-label="{{ ui.as_perguntas }}">
   <nav class="nn-indice" aria-label="{{ r.indice }}">
     <p class="nn-indice-titulo" aria-hidden="true">{{ r.indice }}</p>
     <ol>
@@ -58,7 +58,7 @@
       <p class="nn-eyebrow"><span class="nn-capitulo-num">{{ "%02d"|format(loop.index) }}</span> / {{ p.rotulo }}</p>
       <h2>{{ p.frase_feita }}</h2>
 {% if p.fecho %}
-      <p class="nn-fecho"><b>No frigir dos ovos:</b> {{ p.fecho }}</p>
+      <p class="nn-fecho"><b>{{ ui.frigir }}</b> {{ p.fecho }}</p>
 {% endif %}
       <div class="nn-pergunta-corpo">
 {% if p.graficos %}
@@ -85,10 +85,10 @@
 {% if p.tabela %}
 {% set varios = p.graficos|length > 1 %}
       <details>
-        <summary>Ver os números {{ "destes gráficos" if varios else "deste gráfico" }}</summary>
-        <div class="nn-tabela" tabindex="0" role="region" aria-label="Números de {{ p.rotulo }}">
+        <summary>{{ ui.ver_numeros_varios if varios else ui.ver_numeros_um }}</summary>
+        <div class="nn-tabela" tabindex="0" role="region" aria-label="{{ ui.numeros_de|replace("{rotulo}", p.rotulo) }}">
           <table>
-            <thead><tr>{% if varios %}<th scope="col">Gráfico</th>{% endif %}<th scope="col">Ano</th><th scope="col">Série</th><th scope="col" class="nn-num">Valor</th></tr></thead>
+            <thead><tr>{% if varios %}<th scope="col">{{ ui.grafico }}</th>{% endif %}<th scope="col">{{ ui.ano }}</th><th scope="col">{{ ui.serie }}</th><th scope="col" class="nn-num">{{ ui.valor }}</th></tr></thead>
             <tbody>
 {% for linha in p.tabela %}
               <tr>{% if varios %}<td>{{ linha.grafico }}</td>{% endif %}<td>{{ linha.ano }}</td><td>{{ linha.serie }}</td><td class="nn-num">{{ linha.valor }}</td></tr>
@@ -113,10 +113,10 @@
       </details>
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ p.rotulo }}">
 {% if p.card %}
-        <a class="nn-saida-card" href="/cards/{{ p.card }}/">{{ s.card }}</a>
+        <a class="nn-saida-card" href="{{ rotas.cards }}{{ p.card }}/">{{ s.card }}</a>
 {% endif %}
-        <a href="/estados/">{{ s.estados }}</a>
-        <a href="/explorar/">{{ s.explorar }}</a>
+        <a href="{{ rotas.estados }}">{{ s.estados }}</a>
+        <a href="{{ rotas.explorar }}">{{ s.explorar }}</a>
       </nav>
     </article>
 {% endfor %}
@@ -131,7 +131,7 @@
     <h2 id="titulo-chamada-historia">{{ c.titulo }}</h2>
     <p class="nn-chamada-descricao">{{ c.texto }}</p>
   </div>
-  <a class="nn-chamada-botao" href="/como-chegamos/">{{ c.botao }}</a>
+  <a class="nn-chamada-botao" href="{{ rotas['como-chegamos'] }}">{{ c.botao }}</a>
   <p class="nn-chamada-credito">{{ c.credito }}: {{ credito(c.imagem) }}.</p>
 </section>
 {% endif %}

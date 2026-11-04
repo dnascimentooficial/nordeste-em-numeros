@@ -1,0 +1,249 @@
+# English for the indicator fields the site shows (About the data and the "Updated on" lines): nome, orgao and, per
+# series id, fonte and base_origem. Anything missing here stays in Portuguese. Keyed by the ids in metadados/indicadores.
+abandono_em:
+  nome: "High school dropout rate"
+  series:
+    indicadores_inep:
+      fonte: "INEP, Indicadores Educacionais (education indicators), school performance rates (2007 to 2025)"
+      base_origem: "School performance rate spreadsheets (Brazil, regions and states) for each year, one zip per year at download.inep.gov.br"
+desocupacao:
+  nome: "Unemployment rate"
+  series:
+    pnad:
+      fonte: "Ipea, unemployment rate (IBGE/PNAD), Ipeadata series Dese_Pnad"
+      base_origem: "Ipeadata, series Dese_Pnad (inactive), Brazil, regions and states"
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (continuous household survey)"
+      base_origem: "SIDRA, table 4562, variable 4099"
+desocupados:
+  nome: "Unemployed people"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (employment status, by sex)"
+      base_origem: "SIDRA, table 10364, variable 4092, both sexes"
+doutores_titulados:
+  nome: "PhD graduates"
+  series:
+    nota_3_ou_mais:
+      fonte: "CAPES, GeoCAPES, distribution of graduate students in Brazil (programs rated 3 or higher)"
+      base_origem: "GeoCAPES API, indicator 3, doctoral graduates by program state, base years 1998 to 2016"
+    sem_filtro_de_nota:
+      fonte: "CAPES, GeoCAPES, distribution of graduate students in Brazil (no rating filter)"
+      base_origem: "GeoCAPES API, indicator 3, doctoral graduates by program state, base years 2017 to 2024"
+empregos_ti:
+  nome: "Salaried jobs in information technology"
+  series:
+    cempre_6450:
+      fonte: "IBGE, Central Register of Enterprises (CEMPRE), SIDRA table 6450"
+      base_origem: "SIDRA, table 6450, variable 708 (salaried employees), classification c12762, CNAE 2.0 divisions 62 and 63"
+    cempre_9418:
+      fonte: "IBGE, Central Register of Enterprises (CEMPRE), SIDRA table 9418"
+      base_origem: "SIDRA, table 9418, variable 708 (salaried employees), classification c12762, CNAE 2.0 divisions 62 and 63"
+extrema_pobreza:
+  nome: "Extreme poverty"
+  series:
+    pnadc:
+      fonte: "IBGE, PNAD Contínua (SDG indicator 1.1.1)"
+      base_origem: "SIDRA, table 5817, variable 9617"
+forca_trabalho:
+  nome: "People in the labor force"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (employment status, by sex)"
+      base_origem: "SIDRA, table 10364, variable 4088, both sexes"
+gasto_estadual_cti:
+  nome: "State government spending on S&T and R&D"
+  series:
+    mcti_legado:
+      fonte: "MCTI, national ST&I indicators, tables 2.3.3 and 2.3.5 (state government spending), legacy site"
+      base_origem: "tab_2_3_3_E.csv (S&T by region and state) and tab_2_3_5_E.csv (R&D by performer, by region and state), in millions of current R$"
+gini:
+  nome: "Gini index of household income per capita"
+  series:
+    pnad:
+      fonte: "Ipea, Gini index (PNAD/IBGE), Ipeadata series PGINI"
+      base_origem: "Ipeadata, series PGINI (inactive), Brazil, regions and states"
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (income from all sources)"
+      base_origem: "SIDRA, table 7435, variable 10681"
+ibid:
+  nome: "Brazil Innovation and Development Index (IBID)"
+  series:
+    serie_historica:
+      fonte: "INPI, Índice Brasil de Inovação e Desenvolvimento (historical series 2014-2025)"
+      base_origem: "ibid-serie-historica.xlsx, sheets IBID 2014 to IBID 2025 (overall index and subindices by state, region and national average), checked against the IBID_série hist sheet (ranking position)"
+ibid_posicao:
+  nome: "Rank in the IBID ranking"
+  series:
+    serie_historica:
+      fonte: "INPI, Índice Brasil de Inovação e Desenvolvimento (historical series 2014-2025), ranking position"
+      base_origem: "ibid-serie-historica.xlsx, sheet IBID_série hist (each state's position in the overall index ranking), checked against sheets IBID 2014 to IBID 2025"
+ideb:
+  nome: "Basic Education Development Index (IDEB)"
+  series:
+    ideb:
+      fonte: "INEP, Índice de Desenvolvimento da Educação Básica (results from 2005 to 2025)"
+      base_origem: "IDEB 2025 release spreadsheets: divulgacao_regioes_ufs_ideb_2025.zip (regions and states) and divulgacao_brasil_ideb_2025.zip (Brazil), three sheets each (early primary, late primary and high school)"
+idhm:
+  nome: "Municipal Human Development Index (HDI-M) and components"
+  orgao: "UNDP/Ipea/FJP (Atlas of Human Development in Brazil)"
+  series:
+    censo:
+      fonte: "UNDP/Ipea/FJP, Atlas of Human Development in Brazil (population censuses), via Ipeadata"
+      base_origem: "Ipeadata, series IDHM, IDHMRE, IDHMED and IDHMLO (Brazil and states; 2000-2010 window)"
+    pnadc:
+      fonte: "UNDP/Ipea/FJP, Radar IDHM (PNAD Contínua), via Ipeadata"
+      base_origem: "Ipeadata, series IDHM, IDHMRE, IDHMED and IDHMLO (Brazil, regions and states; 2012-2024 window)"
+informais:
+  nome: "People in informal work"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (informality status)"
+      base_origem: "SIDRA, table 4680, variable 4090, category Informal"
+informalidade:
+  nome: "Informality rate"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (continuous household survey)"
+      base_origem: "SIDRA, table 4708, variable 12466"
+inovacao_industria:
+  nome: "Industrial firms that innovated"
+  series:
+    cnae1:
+      fonte: "IBGE, Innovation Survey (PINTEC) 2000, 2003 and 2005, tables by major region; rate calculated by the project"
+      base_origem: "Table 1 (2000) and Table 2.2 (2003 and 2005) of the Grandes_Regioes.zip files"
+    cnae2:
+      fonte: "IBGE, Innovation Survey (PINTEC) 2008, 2011, 2014 and 2017, tables by major region; rate calculated by the project"
+      base_origem: "Table 2.2 of the 2008 (CNAE 2.0), 2011, 2014 and 2017 editions"
+internet_domicilios:
+  nome: "Households with internet access"
+  series:
+    urbano_computador:
+      fonte: "Cetic.br, TIC Domicílios (ICT Households survey), table A4 (urban area, access by computer)"
+      base_origem: "Table A4 pages for 2006 and 2007 on the Cetic.br site (\"Sim\" column, total and regions)"
+    computador:
+      fonte: "Cetic.br, TIC Domicílios (ICT Households survey), table A4 (access by computer)"
+      base_origem: "Table A4 pages for 2008 to 2013 on the Cetic.br site (\"Sim\" column, total and regions)"
+    sem_restricao:
+      fonte: "Cetic.br, TIC Domicílios (ICT Households survey), table A4"
+      base_origem: "Table A4 pages for 2014 to 2025 on the Cetic.br site (\"Sim\" column, total and regions)"
+massa_renda_dom_pc:
+  nome: "Total household income per capita"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (income from all sources)"
+      base_origem: "SIDRA, table 7427, variable 10495"
+matriculas_basica:
+  nome: "Basic education enrollments, by stage and school network"
+  series:
+    censo_escolar_2000_2002:
+      fonte: "INEP, School Census, statistical summaries for 2000, 2001 and 2002"
+      base_origem: "School Census statistical summaries for 2000, 2001 and 2002 (one .xls per year, tables 1.1, 1.5, 1.13 and 1.36 by sheet numbering)"
+    censo_escolar_pre2007:
+      fonte: "INEP, School Census, results for 2005 and 2006"
+      base_origem: "School Census results for 2005 and 2006 (one .xls per year, tables 1.1, 1.6, 1.12, 1.18 and 1.43)"
+    educacenso:
+      fonte: "INEP, School Census, basic education statistical summaries from 2007 to 2025"
+      base_origem: "Basic education statistical summaries from 2007 to 2025 (one zip per year, with the summary spreadsheet by municipality; tables 1.1, 1.5 and 1.14, and 1.1, 1.8 and 1.20 in 2025)"
+ocupados:
+  nome: "Employed people"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (informality status)"
+      base_origem: "SIDRA, table 4680, variable 4090, category Total"
+patentes_residentes:
+  nome: "Patent applications by residents"
+  series:
+    badepi_v12:
+      fonte: "INPI, Intellectual Property Statistics Database (BADEPI) v12, patent microdata; count by the project"
+      base_origem: "badepiv12_ptn.zip (\"Patentes\" link on the BADEPI page), members badepiv12_ptn_deposito.csv and badepiv12_ptn_depositante.csv"
+pib_nominal:
+  nome: "GDP at current prices"
+  series:
+    scr_ref2010:
+      fonte: "IBGE, Regional Accounts System (2010 reference)"
+      base_origem: "SIDRA, Regional Accounts of Brazil"
+pib_participacao:
+  nome: "Share of national GDP"
+  series:
+    scr_ref2010:
+      fonte: "IBGE, Regional Accounts System (2010 reference)"
+      base_origem: "SIDRA, table 5938 (Regional Accounts of Brazil), variable 496"
+pib_per_capita:
+  nome: "GDP per capita"
+  series:
+    scr_ref2010:
+      fonte: "Calculated by the project from IBGE data: GDP at current prices (Regional Accounts, SIDRA 5938) ÷ resident population (estimates SIDRA 6579; censuses SIDRA 202 and 4709) × 1000"
+      base_origem: "SIDRA 5938 (variable 37) and SIDRA 6579 (variable 9324), 202 and 4709 (variable 93), already collected for pib_nominal and populacao"
+pib_volume:
+  nome: "Real GDP (volume index)"
+  series:
+    scr_ref2010:
+      fonte: "IBGE, Regional Accounts System (2010 reference)"
+      base_origem: "Special tables of the 2002-2023 Regional Accounts, Table 3 (file tab03.xls)"
+pintec_empresas:
+  nome: "Industrial firms, total and those that implemented innovation (PINTEC)"
+  series:
+    cnae1:
+      fonte: "IBGE, Innovation Survey (PINTEC) 2000, 2003 and 2005, tables by major region"
+      base_origem: "Table 1 (2000) and Table 2.2 (2003 and 2005) of the Grandes_Regioes.zip files"
+    cnae2:
+      fonte: "IBGE, Innovation Survey (PINTEC) 2008, 2011, 2014 and 2017, tables by major region"
+      base_origem: "Table 2.2 of the 2008 (CNAE 2.0), 2011, 2014 and 2017 editions"
+pobreza:
+  nome: "Poverty"
+  series:
+    pnadc:
+      fonte: "IBGE, PNAD Contínua (SDG indicator 1.2.1)"
+      base_origem: "SIDRA, table 5877, variable 9948"
+populacao:
+  nome: "Resident population"
+  series:
+    estimativa_pre_censo2022:
+      fonte: "IBGE, population estimates"
+      base_origem: "SIDRA, table 6579, variable 9324"
+    estimativa_pos_censo2022:
+      fonte: "IBGE, population estimates"
+      base_origem: "SIDRA, table 6579, variable 9324"
+    censo_2000_2010:
+      fonte: "IBGE, 2000 and 2010 population censuses"
+      base_origem: "SIDRA, table 202, variable 93"
+    censo_2022:
+      fonte: "IBGE, 2022 population census"
+      base_origem: "SIDRA, table 4709, variable 93"
+populacao_pnadc:
+  nome: "Resident population in PNAD Contínua"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (income from all sources)"
+      base_origem: "SIDRA, table 7436, variable 606"
+programas_pos:
+  nome: "Graduate programs"
+  series:
+    nota_3_ou_mais:
+      fonte: "CAPES, GeoCAPES, distribution of graduate programs in Brazil (programs rated 3 or higher)"
+      base_origem: "GeoCAPES API, indicator 4, count by program state, base years 1998 to 2016"
+    sem_filtro_de_nota:
+      fonte: "CAPES, GeoCAPES, distribution of graduate programs in Brazil (no rating filter)"
+      base_origem: "GeoCAPES API, indicator 4, count by program state, base years 2017 to 2024"
+renda_dom_pc:
+  nome: "Household income per capita"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (income from all sources)"
+      base_origem: "SIDRA, table 7533, variable 10816"
+rendimento_trabalho:
+  nome: "Average real earnings from work"
+  series:
+    pnadc:
+      fonte: "IBGE, annual PNAD Contínua (continuous household survey)"
+      base_origem: "SIDRA, table 4566, variable 5935"
+superior:
+  nome: "Higher education, undergraduate enrollments and institutions"
+  series:
+    censup_pre2009:
+      fonte: "INEP, Higher Education Census, statistical summaries from 2001 to 2008"
+      base_origem: "Higher education statistical summaries from 2001 to 2008 (one .xls per year, tables 1.1 and 5.1)"
+    censup:
+      fonte: "INEP, Higher Education Census, statistical summary (by municipality) from 2009 to 2024"
+      base_origem: "Higher education statistical summaries from 2009 to 2024 (one zip per year, with the summary spreadsheet by municipality; tables 1.1 and 5.1)"

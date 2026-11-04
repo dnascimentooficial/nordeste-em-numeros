@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_epoca.html" import epoca %}
-{% from "_componentes.html" import capa %}
+{% from "_epoca.html" import epoca with context %}
+{% from "_componentes.html" import capa with context %}
 {% block atributos_main %} class="nn-historia"{% endblock %}
 {# a serifada dos titulos so existe nesta pagina: o estilo.css declara a fonte, e so aqui ela e pedida (spec, secao 7) #}
 {# o nn-js.js liga a classe nn-js antes do primeiro desenho (o site.js e defer): sem ela a lista inteira dos artigos aparece
@@ -14,20 +14,20 @@
 {% set h = historia %}
 {{ capa(capas["como-chegamos"], h.abertura.titulo, h.abertura.subtitulo, "nn-hist-titulo", "nn-hist-subtitulo") }}
 {% if h.previa %}
-<p class="nn-hist-previa" role="note"><strong>{{ h.previa }}.</strong> Só publico esta página depois da revisão do texto.</p>
+<p class="nn-hist-previa" role="note"><strong>{{ h.previa }}.</strong> {{ ui.previa_texto }}</p>
 {% endif %}
 {# a abertura em duas colunas: a conta dos censos (o primeiro e o último, com a variação entre eles) e o texto à
    esquerda, o gráfico à direita; embaixo, os números de cada censo #}
 <section class="nn-hist-abertura nn-hist-bloco" aria-labelledby="titulo-abertura">
   <div class="nn-hist-grade">
     <div class="nn-hist-resumo">
-      <p class="nn-hist-eyebrow" id="titulo-abertura">A conta dos censos</p>
+      <p class="nn-hist-eyebrow" id="titulo-abertura">{{ ui.conta_dos_censos }}</p>
       <div class="nn-hist-numero">
 {% for n in h.numeros %}
 {% if not loop.first and h.variacao %}
-        <p class="nn-hist-variacao"><span class="nn-hist-fio" aria-hidden="true"></span><span class="nn-hist-etiqueta">{{ h.variacao.pontos }} pontos em {{ h.variacao.anos }} anos</span></p>
+        <p class="nn-hist-variacao"><span class="nn-hist-fio" aria-hidden="true"></span><span class="nn-hist-etiqueta">{{ ui.pontos_em_anos|replace("{pontos}", h.variacao.pontos)|replace("{anos}", h.variacao.anos|string) }}</span></p>
 {% endif %}
-        <p class="nn-hist-parcela"><span class="nn-hist-ano">{{ n.ano }}</span> <strong class="nn-hist-valor">{{ n.valor }}</strong> <span class="nn-hist-rotulo">{% if loop.first %}dos brasileiros viviam no Nordeste{% else %}no Censo de {{ n.ano }}{% endif %}</span></p>
+        <p class="nn-hist-parcela"><span class="nn-hist-ano">{{ n.ano }}</span> <strong class="nn-hist-valor">{{ n.valor }}</strong> <span class="nn-hist-rotulo">{% if loop.first %}{{ ui.viviam_no_ne }}{% else %}{{ ui.no_censo_de|replace("{ano}", n.ano|string) }}{% endif %}</span></p>
 {% endfor %}
       </div>
       <p class="nn-hist-texto">{{ h.abertura.texto }}</p>
@@ -42,10 +42,10 @@
   </div>
   <div class="nn-hist-pe">
     <details>
-      <summary>Ver os números dos censos</summary>
+      <summary>{{ ui.ver_censos }}</summary>
       <div class="nn-tabela">
         <table>
-          <thead><tr><th scope="col">Censo</th><th scope="col" class="nn-num">Nordeste</th><th scope="col" class="nn-num">Brasil</th><th scope="col" class="nn-num">Parcela do Nordeste</th><th scope="col">Fonte</th></tr></thead>
+          <thead><tr><th scope="col">{{ ui.censo }}</th><th scope="col" class="nn-num">{{ ui.nordeste }}</th><th scope="col" class="nn-num">{{ ui.brasil }}</th><th scope="col" class="nn-num">{{ ui.parcela_ne }}</th><th scope="col">{{ ui.fonte }}</th></tr></thead>
           <tbody>
 {% for linha in h.tabela %}
             <tr><td>{{ linha.ano }}</td><td class="nn-num">{{ linha.nordeste }}</td><td class="nn-num">{{ linha.brasil }}</td><td class="nn-num">{{ linha.parcela }}</td><td>{{ linha.fonte }}</td></tr>
@@ -58,10 +58,10 @@
 </section>
 
 <section class="nn-hist-linha" aria-labelledby="titulo-linha">
-  <h2 class="nn-hist-secao" id="titulo-linha">Linha do tempo</h2>
-  <ol class="nn-linha-tempo">
+  <h2 class="nn-hist-secao" id="titulo-linha">{{ ui.linha_do_tempo }}</h2>
+  <ol class="nn-linha-tempo" data-anteriores="{{ ui.epocas_anteriores }}" data-proximas="{{ ui.proximas_epocas }}">
 {% for e in h.epocas %}
-{{ epoca(e) }}{% endfor %}
+{{ epoca(e, ui) }}{% endfor %}
   </ol>
 </section>
 

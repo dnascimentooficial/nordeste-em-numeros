@@ -16,6 +16,7 @@ import yaml
 
 from nordeste.site.conteudo import ErroConteudo
 from nordeste.site.dados import Ponto
+from nordeste.site.idioma import PADRAO, ErroTraducao, traduzir
 
 TIPOS = {"oficial": "dado oficial", "historiador": "estimativa de historiador", "interpretacao": "interpretação"}
 LICENCAS = ("dominio-publico", "ilustracao-do-autor", "cc-by")
@@ -323,7 +324,7 @@ def _ler_censos(pasta: Path) -> tuple[tuple[int, int, int, str], ...]:
 
 # --- carga ---
 
-def carregar_historia(pasta: Path) -> Historia | None:
+def carregar_historia(pasta: Path, idioma: str = PADRAO) -> Historia | None:
     """Le e valida `historia.yaml` e `historia/censos.csv` de `pasta` (metadados/site); None sem `historia.yaml`."""
     caminho = pasta / "historia.yaml"
     if not caminho.exists():
@@ -332,6 +333,10 @@ def carregar_historia(pasta: Path) -> Historia | None:
         bruto = yaml.safe_load(caminho.read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError) as erro:
         raise ErroConteudo(f"{caminho}: nao foi possivel ler historia.yaml ({erro}).") from erro
+    try:
+        bruto = traduzir(bruto, pasta, "historia", idioma)
+    except ErroTraducao as erro:
+        raise ErroConteudo(str(erro)) from erro
     _mapa(bruto, "historia.yaml", ("provisoria", "abertura", "epocas", "fecho"))
     provisoria = bruto["provisoria"]
     if not isinstance(provisoria, bool):

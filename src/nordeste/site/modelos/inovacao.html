@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
-{% from "_componentes.html" import atualizacoes, capa, legenda %}
-{% from "_modal_grafico.html" import ampliado, dialogo %}
-{% from "_grafico.html" import grafico %}
+{% from "_componentes.html" import atualizacoes, capa, legenda with context %}
+{% from "_modal_grafico.html" import ampliado, dialogo with context %}
+{% from "_grafico.html" import grafico with context %}
 {% block conteudo %}
 {% set i = inovacao %}
 {% set pl = i.placar %}
@@ -20,7 +20,7 @@
 
 {% set r = textos.perguntas_rotulos %}
 {% set s = textos.saidas %}
-<section class="nn-pagina nn-editorial" id="resumo" aria-label="Os capítulos">
+<section class="nn-pagina nn-editorial" id="resumo" aria-label="{{ ui.os_capitulos }}">
   <nav class="nn-indice" aria-label="{{ pl.indice }}">
     <p class="nn-indice-titulo" aria-hidden="true">{{ pl.indice }}</p>
     <ol>
@@ -67,7 +67,7 @@
           </table>
         </div>
 {% endif %}
-        <p class="nn-bloco-fonte"><b>Fonte:</b> {{ b.fonte }}</p>
+        <p class="nn-bloco-fonte"><b>{{ ui.fonte }}:</b> {{ b.fonte }}</p>
       </section>
 {% endfor %}
 {% if c.fecho %}
@@ -114,10 +114,10 @@
         <p class="nn-muted">{{ po.nota }}</p>
         <div class="nn-tabela">
           <table>
-            <thead><tr><th scope="col">Estado</th><th scope="col" class="nn-num">{{ po.ano_primeiro }}</th><th scope="col" class="nn-num">{{ po.ano_ultimo }}</th></tr></thead>
+            <thead><tr><th scope="col">{{ ui.estado }}</th><th scope="col" class="nn-num">{{ po.ano_primeiro }}</th><th scope="col" class="nn-num">{{ po.ano_ultimo }}</th></tr></thead>
             <tbody>
 {% for l in po.linhas %}
-              <tr><td>{{ l.estado }}</td><td class="nn-num">{{ l.primeiro }}º</td><td class="nn-num">{{ l.ultimo }}º</td></tr>
+              <tr><td>{{ l.estado }}</td><td class="nn-num">{{ l.primeiro_texto }}</td><td class="nn-num">{{ l.ultimo_texto }}</td></tr>
 {% endfor %}
             </tbody>
           </table>
@@ -138,11 +138,11 @@
 {% if c.tabela %}
 {% set varios = c.graficos|length > 1 %}
       <details>
-        <summary>Ver os números {{ "destes gráficos" if varios else "deste gráfico" }}</summary>
+        <summary>{{ ui.ver_numeros_varios if varios else ui.ver_numeros_um }}</summary>
         {# tabindex: a tabela rola dentro da caixa, e quem usa teclado tem de conseguir rolar (axe, scrollable-region-focusable) #}
-        <div class="nn-tabela" tabindex="0" role="region" aria-label="Números do capítulo {{ c.rotulo }}">
+        <div class="nn-tabela" tabindex="0" role="region" aria-label="{{ ui.numeros_do_capitulo|replace("{rotulo}", c.rotulo) }}">
           <table>
-            <thead><tr>{% if varios %}<th scope="col">Gráfico</th>{% endif %}<th scope="col">Ano</th><th scope="col">Série</th><th scope="col" class="nn-num">Valor</th></tr></thead>
+            <thead><tr>{% if varios %}<th scope="col">{{ ui.grafico }}</th>{% endif %}<th scope="col">{{ ui.ano }}</th><th scope="col">{{ ui.serie }}</th><th scope="col" class="nn-num">{{ ui.valor }}</th></tr></thead>
             <tbody>
 {% for linha in c.tabela %}
               <tr>{% if varios %}<td>{{ linha.grafico }}</td>{% endif %}<td>{{ linha.ano }}</td><td>{{ linha.serie }}</td><td class="nn-num">{{ linha.valor }}</td></tr>
@@ -170,12 +170,12 @@
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ c.rotulo }}">
 {# Estados e Explorar so tem o IBID e a internet: os outros capitulos levam so a base para baixar #}
 {% if c.id == "inovacao" %}
-        <a href="/estados/">{{ s.estados }}</a>
+        <a href="{{ rotas.estados }}">{{ s.estados }}</a>
 {% endif %}
 {% if c.id in ("conectividade", "inovacao") %}
-        <a href="/explorar/">{{ s.explorar }}</a>
+        <a href="{{ rotas.explorar }}">{{ s.explorar }}</a>
 {% endif %}
-        <a href="/dados/">Baixar os dados</a>
+        <a href="{{ rotas.dados }}">{{ ui.baixar_dados }}</a>
       </nav>
 {% endif %}
     </article>
