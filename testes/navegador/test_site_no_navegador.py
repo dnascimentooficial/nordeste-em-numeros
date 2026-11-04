@@ -445,6 +445,7 @@ def test_historia_so_pede_a_serifada_nesta_pagina(abrir, rotas):
                 familia = pagina.locator("h1.nn-hist-titulo").evaluate("e => getComputedStyle(e).fontFamily")
                 assert familia.startswith('"EB Garamond"'), familia
     assert len(pediram.pop(HISTORIA)) == 1  # uma vez so: o preload e o uso pedem o mesmo arquivo (crossorigin)
+    assert len(pediram.pop("/en/how-we-got-here/")) == 1  # a mesma pagina em ingles
     assert {r: p for r, p in pediram.items() if p} == {}
 
 

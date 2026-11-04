@@ -250,10 +250,16 @@ _TEXTOS = """(seletores) => {
   for (const el of document.querySelectorAll(seletores)) {
     const menu = el.closest('.nn-menu');
     const corte = menu ? menu.getBoundingClientRect() : null;
-    const intervalo = document.createRange();
-    intervalo.selectNodeContents(el);
-    const caixas = [...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0)
-      .map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height }));
+    // so os nos de texto: a bandeira do seletor de idioma (<img>) e o nome so para leitor de tela nao sao texto pintado
+    const caixas = [];
+    const andar = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while (andar.nextNode()) {
+      if (andar.currentNode.parentElement.closest('.nn-so-leitor')) continue;
+      const intervalo = document.createRange();
+      intervalo.selectNodeContents(andar.currentNode);
+      caixas.push(...[...intervalo.getClientRects()].filter((c) => c.width > 0 && c.height > 0)
+        .map((c) => ({ x: c.left + scrollX, y: c.top + scrollY, w: c.width, h: c.height })));
+    }
     if (!el.checkVisibility()) continue;  // dentro de um <details> fechado (o texto nao esta na tela)
     if (!caixas.length) continue;
     if (caixas.length) saida.push({ nome: `${el.tagName.toLowerCase()}.${el.className}`, cor: getComputedStyle(el).color, caixas });
