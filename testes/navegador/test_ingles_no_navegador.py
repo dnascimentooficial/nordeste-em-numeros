@@ -9,7 +9,7 @@ import re
 
 import pytest
 
-from test_site_no_navegador import LIMITE_DA_INICIAL, _estouro
+from test_site_no_navegador import LIMITE_DA_INICIAL, _estouro, _recursos_do_site
 
 pytestmark = pytest.mark.navegador
 NUMERO_EN = re.compile(r"\d{1,3}(,\d{3})*(\.\d+)?%?")
@@ -22,7 +22,7 @@ def test_peso_da_inicial_em_ingles(abrir):
             """() => [performance.getEntriesByType('navigation')[0], ...performance.getEntriesByType('resource')]
                  .map((r) => ({ nome: r.name, bytes: r.transferSize }))"""
         )
-    sem_a_foto = [r for r in recursos if "foto-abertura" not in r["nome"]]
+    sem_a_foto = [r for r in _recursos_do_site(recursos) if "foto-abertura" not in r["nome"]]
     assert len(sem_a_foto) >= 5 and all(r["bytes"] > 0 for r in sem_a_foto), sem_a_foto
     assert sum(r["bytes"] for r in sem_a_foto) <= LIMITE_DA_INICIAL, sorted(sem_a_foto, key=lambda r: -r["bytes"])[:3]
 

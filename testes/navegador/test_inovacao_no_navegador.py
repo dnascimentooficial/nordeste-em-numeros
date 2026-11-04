@@ -8,7 +8,7 @@ import re
 
 import pytest
 
-from test_site_no_navegador import CELULAR, DESKTOP, _estouro, _violacoes_do_axe
+from test_site_no_navegador import CELULAR, DESKTOP, _estouro, _recursos_do_site, _violacoes_do_axe
 
 pytestmark = pytest.mark.navegador
 ROTA = "/inovacao/"
@@ -23,6 +23,7 @@ def test_inovacao_peso_da_primeira_carga(abrir):
         recursos = pagina.evaluate(
             """() => [performance.getEntriesByType('navigation')[0], ...performance.getEntriesByType('resource')]
                  .map((r) => ({ nome: r.name, bytes: r.transferSize }))""")
+    recursos = _recursos_do_site(recursos)  # sem o script da medicao (barrado) e sem o favicon
     assert len(recursos) >= 5 and all(r["bytes"] > 0 for r in recursos), recursos
     assert any("marco-1959" in r["nome"] for r in recursos)  # a imagem da capa conta no teto
     assert sum(r["bytes"] for r in recursos) <= LIMITE_DA_INOVACAO, sorted(recursos, key=lambda r: -r["bytes"])[:3]

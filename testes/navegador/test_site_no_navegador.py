@@ -28,6 +28,14 @@ AXE = (Path(__file__).parent / "axe.min.js").read_text(encoding="utf-8")
 GRAVES = ("serious", "critical")
 CELULAR, DESKTOP = 390, 1280
 LIMITE_DA_INICIAL = 500_000  # bytes, sem a foto da abertura
+UMAMI = "https://cloud.umami.is/"  # o script da medicao: barrado nos testes (conftest) e fora dos tetos de peso
+
+
+def _recursos_do_site(recursos: list[dict]) -> list[dict]:
+    """O que o site serve, para os tetos de peso: sem o script da medicao (barrado nos testes; uns 2 a 3 KB comprimido
+    em producao, pedido depois do site.js) e sem o /favicon.ico (o site nao tem icone; o Chromium o pede sozinho e o
+    pedido, um 404 sem corpo, pode entrar no Resource Timing com 0 byte)."""
+    return [r for r in recursos if not r["nome"].startswith(UMAMI) and not r["nome"].split("?")[0].endswith("/favicon.ico")]
 
 
 def _violacoes_do_axe(pagina) -> list[str]:
@@ -186,7 +194,7 @@ def test_peso_da_inicial(abrir):
             """() => [performance.getEntriesByType('navigation')[0], ...performance.getEntriesByType('resource')]
                  .map((r) => ({ nome: r.name, bytes: r.transferSize }))"""
         )
-    sem_a_foto = [r for r in recursos if "foto-abertura" not in r["nome"]]
+    sem_a_foto = [r for r in _recursos_do_site(recursos) if "foto-abertura" not in r["nome"]]
     assert len(sem_a_foto) >= 5  # o HTML, o estilo, o script e as duas fontes
     assert all(r["bytes"] > 0 for r in sem_a_foto), sem_a_foto
     assert sum(r["bytes"] for r in sem_a_foto) <= LIMITE_DA_INICIAL, sorted(sem_a_foto, key=lambda r: -r["bytes"])[:3]
@@ -832,7 +840,8 @@ def _pagina_a_parte(navegador, endereco, rota, script=None, largura=DESKTOP, lat
         erros: list[str] = []
         pagina.on("request", lambda r: pedidos.append(r.url))
         pagina.on("pageerror", lambda e: erros.append(f"pageerror: {e}"))
-        pagina.on("console", lambda m: erros.append(f"console: {m.text}") if m.type == "error" and "favicon" not in m.location.get("url", "") else None)
+        # o pedido do script da medicao, barrado em todo contexto (conftest, UMAMI), e o unico erro de console tolerado
+        pagina.on("console", lambda m: erros.append(f"console: {m.text}") if m.type == "error" and "favicon" not in m.location.get("url", "") and not m.location.get("url", "").startswith(UMAMI) else None)
         if latencia:  # rede devagar: o HTML e o estilo chegam depois, que e quando a corrida do primeiro desenho aparece
             sessao = contexto.new_cdp_session(pagina)
             sessao.send("Network.enable")
@@ -1019,6 +1028,7 @@ def test_historia_peso_abaixo_de_1mb(abrir):
                  .map((r) => ({ nome: r.name, bytes: r.transferSize }))"""
         )
         assert not _estado(pagina)["aberto"]
+    recursos = _recursos_do_site(recursos)
     assert len(recursos) >= 4 and all(r["bytes"] > 0 for r in recursos), recursos
     assert sum(r["bytes"] for r in recursos) <= LIMITE_DA_HISTORIA, sorted(recursos, key=lambda r: -r["bytes"])[:3]
 

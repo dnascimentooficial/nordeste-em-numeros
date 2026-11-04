@@ -18,6 +18,7 @@ from auxiliares import RAIZ
 
 pytestmark = pytest.mark.navegador
 CHROMIUM_DO_AMBIENTE = Path("/opt/pw-browsers/chromium")
+UMAMI = "https://cloud.umami.is/"
 
 
 class _Silencioso(SimpleHTTPRequestHandler):
@@ -57,13 +58,16 @@ def primeira_frase() -> str:
 
 def _abrir(navegador, endereco, largura=1280, altura=800, **opcoes):
     contexto = navegador.new_context(viewport={"width": largura, "height": altura}, **opcoes)
+    # o script da medicao (o unico pedido para fora) fica barrado, com ou sem rede; o erro de console dele e tolerado
+    contexto.route(f"{UMAMI}**", lambda rota: rota.abort())
     pagina = contexto.new_page()
     erros: list[str] = []
     pagina.on("pageerror", lambda e: erros.append(str(e)))
     pagina.on(
         "response", lambda r: erros.append(f"{r.status} {r.url}") if r.status >= 400 and "favicon" not in r.url else None
     )
-    pagina.on("console", lambda m: erros.append(m.text) if m.type == "error" and "404" not in m.text else None)
+    pagina.on("console", lambda m: erros.append(m.text) if m.type == "error" and "404" not in m.text
+              and not m.location.get("url", "").startswith(UMAMI) else None)
     pagina.goto(endereco + "/", wait_until="networkidle")
     pagina.erros = erros
     return contexto, pagina

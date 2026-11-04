@@ -19,6 +19,14 @@ from nordeste.site.gerar import gerar_site
 
 RAIZ = Path(__file__).resolve().parents[2]
 CHROMIUM_DO_AMBIENTE = Path("/opt/pw-browsers/chromium")
+# O script da medicao de audiencia (gerar.MEDICAO) e o unico pedido para fora do site. Os testes rodam sem rede: todo
+# contexto do Chromium barra esse pedido (route.abort), o que da o mesmo resultado com ou sem internet (na CI ha rede, e
+# o script carregaria). O erro de console do pedido barrado e o unico tolerado.
+UMAMI = "https://cloud.umami.is/"
+
+
+def e_do_umami(url: str) -> bool:
+    return url.startswith(UMAMI)
 
 
 class _Servidor(SimpleHTTPRequestHandler):
@@ -91,6 +99,14 @@ def navegador():
         os.environ["PLAYWRIGHT_CHROMIUM"] = str(CHROMIUM_DO_AMBIENTE)
     with playwright.sync_playwright() as p:
         aberto = p.chromium.launch(executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM") or None)
+        novo_contexto = aberto.new_context
+
+        def contexto_sem_umami(**opcoes):
+            contexto = novo_contexto(**opcoes)
+            contexto.route(f"{UMAMI}**", lambda rota: rota.abort())
+            return contexto
+
+        aberto.new_context = contexto_sem_umami
         yield aberto
         aberto.close()
 
@@ -119,7 +135,8 @@ def abrir(navegador, endereco):
             pagina.on("response", lambda r: erros.append(f"{r.status} {r.url}") if r.status >= 400 and not _e_favicon(r.url) else None)
             # o erro de console de um 404 tambem conta (o handler acima so ve a resposta, este ve o que o usuario ve).
             # A unica excecao e o /favicon.ico: o site nao tem icone e o Chromium o pede sozinho (nao e recurso da pagina).
-            pagina.on("console", lambda m: erros.append(f"console: {m.text} ({m.location.get('url', '')})") if m.type == "error" and not _e_favicon(m.location.get("url", "")) else None)
+            # O pedido barrado do script do Umami (ver UMAMI) tambem: e o unico pedido para fora, e o site funciona sem ele.
+            pagina.on("console", lambda m: erros.append(f"console: {m.text} ({m.location.get('url', '')})") if m.type == "error" and not _e_favicon(m.location.get("url", "")) and not e_do_umami(m.location.get("url", "")) else None)
             pagina.goto(endereco + rota, wait_until="networkidle")
             pagina.erros = erros
             yield pagina
