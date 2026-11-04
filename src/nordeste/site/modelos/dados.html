@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
 {% from "_componentes.html" import capa with context %}
+{# data-umami-event: a medicao conta cada download (csv-download); o target="_blank" e o mesmo de card.html #}
 {% block conteudo %}
 {{ capa(capas.dados, textos.dados.titulo) }}
 <section class="nn-pagina" id="dados" aria-labelledby="titulo-principal">
@@ -9,7 +10,7 @@
     <p class="nn-muted">{{ ui.publicados_em }} {{ data_base }}. {{ textos.dados.conferir }}</p>
     <ul class="nn-lista nn-arquivos">
 {% for a in arquivos %}
-      <li><a class="nn-baixar" href="{{ a.rota }}" download>{{ a.nome }}</a>: {{ a.descricao }} <span class="nn-tamanho">{{ a.tamanho }}.</span> sha256 <code class="nn-sha-arquivo">{{ a.sha256 }}</code></li>
+      <li><a class="nn-baixar" href="{{ a.rota }}" download target="_blank" data-umami-event="csv-download" data-umami-event-file="{{ a.nome }}">{{ a.nome }}</a>: {{ a.descricao }} <span class="nn-tamanho">{{ a.tamanho }}.</span> sha256 <code class="nn-sha-arquivo">{{ a.sha256 }}</code></li>
 {% endfor %}
     </ul>
   </article>

@@ -113,10 +113,10 @@
       </details>
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ p.rotulo }}">
 {% if p.card %}
-        <a class="nn-saida-card" href="{{ rotas.cards }}{{ p.card }}/">{{ s.card }}</a>
+        <a class="nn-saida-card" href="{{ rotas.cards }}{{ p.card }}/" data-umami-event="cta-click" data-umami-event-target="card" data-umami-event-place="{{ p.id }}">{{ s.card }}</a>
 {% endif %}
-        <a href="{{ rotas.estados }}">{{ s.estados }}</a>
-        <a href="{{ rotas.explorar }}">{{ s.explorar }}</a>
+        <a href="{{ rotas.estados }}" data-umami-event="cta-click" data-umami-event-target="estados" data-umami-event-place="{{ p.id }}">{{ s.estados }}</a>
+        <a href="{{ rotas.explorar }}" data-umami-event="cta-click" data-umami-event-target="explorar" data-umami-event-place="{{ p.id }}">{{ s.explorar }}</a>
       </nav>
     </article>
 {% endfor %}
@@ -131,7 +131,7 @@
     <h2 id="titulo-chamada-historia">{{ c.titulo }}</h2>
     <p class="nn-chamada-descricao">{{ c.texto }}</p>
   </div>
-  <a class="nn-chamada-botao" href="{{ rotas['como-chegamos'] }}">{{ c.botao }}</a>
+  <a class="nn-chamada-botao" href="{{ rotas['como-chegamos'] }}" data-umami-event="cta-click" data-umami-event-target="como-chegamos" data-umami-event-place="home">{{ c.botao }}</a>
   <p class="nn-chamada-credito">{{ c.credito }}: {{ credito(c.imagem) }}.</p>
 </section>
 {% endif %}

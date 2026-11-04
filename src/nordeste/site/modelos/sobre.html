@@ -13,7 +13,7 @@
     <p>{{ paragrafo }}</p>
 {% endfor %}
 {% if foto %}
-    <p class="nn-muted nn-credito-sobre">{{ foto.rotulo }} {{ ui.da_abertura }}: <a href="{{ foto.url }}">{{ foto.credito }}</a>{% if foto.descricao %} ({{ foto.descricao }}){% endif %}.</p>
+    <p class="nn-muted nn-credito-sobre">{{ foto.rotulo }} {{ ui.da_abertura }}: <a href="{{ foto.url }}" data-umami-event="source-click" data-umami-event-host="{{ foto.url|host }}">{{ foto.credito }}</a>{% if foto.descricao %} ({{ foto.descricao }}){% endif %}.</p>
 {% endif %}
     <h3>{{ textos.como_ler.titulo }}</h3>
     <ul class="nn-lista">
@@ -41,7 +41,7 @@
         <tbody>
 {% for f in fontes %}
 {% for s in f.series %}
-          <tr>{% if loop.first %}<td rowspan="{{ f.series|length }}">{{ f.nome }}</td><td rowspan="{{ f.series|length }}">{{ f.orgao }}</td>{% endif %}<td><a href="{{ s.url }}">{{ s.fonte }}</a></td><td>{{ s.base_origem }}</td></tr>
+          <tr>{% if loop.first %}<td rowspan="{{ f.series|length }}">{{ f.nome }}</td><td rowspan="{{ f.series|length }}">{{ f.orgao }}</td>{% endif %}<td><a href="{{ s.url }}" data-umami-event="source-click" data-umami-event-host="{{ s.url|host }}">{{ s.fonte }}</a></td><td>{{ s.base_origem }}</td></tr>
 {% endfor %}
 {% endfor %}
         </tbody>

@@ -170,12 +170,12 @@
       <nav class="nn-saidas" aria-label="{{ s.rotulo }}: {{ c.rotulo }}">
 {# Estados e Explorar so tem o IBID e a internet: os outros capitulos levam so a base para baixar #}
 {% if c.id == "inovacao" %}
-        <a href="{{ rotas.estados }}">{{ s.estados }}</a>
+        <a href="{{ rotas.estados }}" data-umami-event="cta-click" data-umami-event-target="estados" data-umami-event-place="{{ c.id }}">{{ s.estados }}</a>
 {% endif %}
 {% if c.id in ("conectividade", "inovacao") %}
-        <a href="{{ rotas.explorar }}">{{ s.explorar }}</a>
+        <a href="{{ rotas.explorar }}" data-umami-event="cta-click" data-umami-event-target="explorar" data-umami-event-place="{{ c.id }}">{{ s.explorar }}</a>
 {% endif %}
-        <a href="{{ rotas.dados }}">{{ ui.baixar_dados }}</a>
+        <a href="{{ rotas.dados }}" data-umami-event="cta-click" data-umami-event-target="dados" data-umami-event-place="{{ c.id }}">{{ ui.baixar_dados }}</a>
       </nav>
 {% endif %}
     </article>

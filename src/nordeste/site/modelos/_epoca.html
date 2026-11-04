@@ -1,6 +1,6 @@
 {# Uma época da linha do tempo: o cartão (o botão que o site.js liga ao modal), os marcos na linha e o artigo com
    todo o conteúdo do modal (spec, seção 5). Sem JavaScript, o artigo fica visível logo abaixo do cartão. #}
-{% macro credito(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
+{% macro credito(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}" data-umami-event="source-click" data-umami-event-host="{{ imagem.url|host }}">{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, <cite>{{ imagem.titulo }}</cite>, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
 {# o credito curto da imagem de um marco: autor e data (o titulo completo fica em Sobre os dados) #}
 {% macro credito_curto(imagem) %}{% if imagem.url %}<a href="{{ imagem.url }}">{{ imagem.autor }}, {{ imagem.data }}</a>{% else %}{{ imagem.autor }}, {{ imagem.data }}{% endif %} ({{ imagem.licenca }}){% endmacro %}
 {% macro epoca(e, ui) %}
@@ -61,7 +61,7 @@
           <h4>{{ ui.fontes }}</h4>
           <ul>
 {% for f in e.fontes %}
-            <li>{% if f.url %}<a href="{{ f.url }}">{{ f.texto }}</a>{% else %}{{ f.texto }}{% endif %}</li>
+            <li>{% if f.url %}<a href="{{ f.url }}" data-umami-event="source-click" data-umami-event-host="{{ f.url|host }}">{{ f.texto }}</a>{% else %}{{ f.texto }}{% endif %}</li>
 {% endfor %}
           </ul>
         </div>

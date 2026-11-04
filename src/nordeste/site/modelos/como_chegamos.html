@@ -70,7 +70,7 @@
   <p>{{ h.fecho.texto }}</p>
   <ul class="nn-hist-fecho-links">
 {% for link in h.fecho.links %}
-    <li><a href="{{ link.url }}">{{ link.texto }}</a></li>
+    <li><a href="{{ link.url }}" data-umami-event="cta-click" data-umami-event-target="{{ link.url.strip('./') or 'index' }}" data-umami-event-place="fecho">{{ link.texto }}</a></li>
 {% endfor %}
   </ul>
 </section>

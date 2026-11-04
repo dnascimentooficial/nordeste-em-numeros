@@ -3,7 +3,10 @@
 {% block conteudo %}
 <section class="nn-pagina" id="card" aria-label="{{ card.rotulo }}">
 {{ cartao(card, textos.cards, data_curta, ui) }}
-  <p><a class="nn-baixar" href="{{ rotas.cards }}{{ card.id }}.png" download>{{ textos.cards.baixar }}</a></p>
+{# a medicao conta o download (card-download). O target="_blank" fica: num link com data-umami-event o script do Umami
+   cancela o clique e navega para o href depois de enviar o evento, o que abriria o PNG em vez de baixa-lo; com
+   _blank ele deixa o clique seguir, e o atributo download (mesmo dominio) baixa sem abrir aba #}
+  <p><a class="nn-baixar" href="{{ rotas.cards }}{{ card.id }}.png" download target="_blank" data-umami-event="card-download" data-umami-event-card="{{ card.id }}" data-umami-event-lang="{{ pagina.idioma }}">{{ textos.cards.baixar }}</a></p>
   <p><a href="{{ rotas.cards }}">{{ textos.cards.voltar }}</a></p>
 </section>
 {% endblock %}
