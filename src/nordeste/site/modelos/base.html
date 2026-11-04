@@ -7,9 +7,12 @@
 {% block cabeca_antes %}{% endblock %}
 <link rel="stylesheet" href="{{ estaticos['estilo.css'] }}">
 <script src="{{ estaticos['site.js'] }}" defer></script>
+{# a medicao de audiencia (gerar.MEDICAO), depois do site.js: o site nao espera por ela e funciona sem ela (bloqueada,
+   fora do ar ou com "Do Not Track") #}
+<script defer src="{{ medicao.script }}" data-website-id="{{ medicao.site }}" data-domains="{{ medicao.dominio }}" data-do-not-track="true" data-exclude-search="true"></script>
 {% block cabeca %}{% endblock %}
 </head>
-<body>
+<body data-pagina="{{ pagina.chave }}">
 <a class="nn-pular" href="#conteudo">{{ ui.pular }}</a>
 <div class="nn">
 {% include "_cabecalho.html" %}

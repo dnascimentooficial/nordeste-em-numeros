@@ -14,7 +14,7 @@ from nordeste.caminhos import Caminhos
 from nordeste.cli import main
 from nordeste.site import gerar
 from nordeste.site.conteudo import ErroConteudo
-from nordeste.site.gerar import RelatorioSite, gerar_site
+from nordeste.site.gerar import MEDICAO, RelatorioSite, gerar_site
 from nordeste.site.historia import TIPOS
 
 from auxiliares import Arvore, copiar_base, dialogos_da_pagina, imagens_da_pagina
@@ -377,9 +377,10 @@ def test_pagina_sem_style_script_inline_nem_recurso_externo(gerado):
         assert not [a for a in e["attrs"] if a.startswith("on")], e["tag"]
         if e["tag"] in ("img", "script", "link") and (e["attrs"].get("src") or e["attrs"].get("href")):
             url = e["attrs"].get("src") or e["attrs"]["href"]
-            assert url.startswith("/") or url.startswith(SITE), url
+            assert url.startswith("/") or url.startswith(SITE) or url == MEDICAO["script"], url
     for script in arvore.achar("script"):
-        assert script["attrs"].get("src", "").partition("?")[0] in ("/nn-js.js", "/site.js") and not Arvore.texto(script)
+        assert script["attrs"].get("src", "").partition("?")[0] in ("/nn-js.js", "/site.js", MEDICAO["script"])
+        assert not Arvore.texto(script)
     visivel = arvore.texto_visivel()
     assert not re.search(r"\b(nan|none|undefined|null)\b", visivel, flags=re.IGNORECASE)
     assert "{" not in visivel and "Prévia" not in visivel

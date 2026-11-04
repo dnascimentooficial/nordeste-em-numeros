@@ -25,7 +25,9 @@ HTACCESS = [
     "RewriteCond %{HTTPS} off",
     "RewriteRule ^(.*)$ https://nordeste.dnascimento.com.br/$1 [R=301,L]",
     "Header always set Content-Security-Policy \"default-src 'self'; img-src 'self' data:; style-src 'self'; "
-    "script-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'\"",
+    "script-src 'self' https://cloud.umami.is; "
+    "connect-src 'self' https://cloud.umami.is https://*.umami.is https://*.umami.dev; "
+    "font-src 'self'; frame-ancestors 'none'; base-uri 'self'\"",
     'Header always set X-Content-Type-Options "nosniff"',
     'Header always set Referrer-Policy "strict-origin-when-cross-origin"',
     'Header always set X-Frame-Options "DENY"',
@@ -43,6 +45,8 @@ CORES = ("#ea2e00", "#c42600", "#080808", "#f5f4ef", "#ffffff")
 # elementos que carregam um recurso pela URL; <a> e so link (as fontes oficiais sao links e podem ser externos)
 CARREGAM = {"link": "href", "script": "src", "img": "src", "source": "src", "iframe": "src", "video": "src",
             "audio": "src", "embed": "src", "object": "data", "image": "href", "use": "href"}
+# o unico recurso de fora: o script da medicao de audiencia (gerar.MEDICAO), que a CSP libera pelo nome
+SCRIPT_DA_MEDICAO = "https://cloud.umami.is/script.js"
 NAMESPACE_SVG = "http://www.w3.org/2000/svg"  # nome, nao recurso: o site.js cria elementos SVG com ele
 MOVIMENTO = re.compile(r"^(animation|transition)(-[a-z-]+)?$|^view-transition-name$|^scroll-behavior$")
 SEM_REDUCAO = "@media (prefers-reduced-motion: no-preference)"
@@ -115,6 +119,8 @@ def test_nenhum_recurso_externo(saida):
                     continue
                 urls = [v.split()[0] for v in valor.split(",") if v.strip()] if nome == "srcset" else [valor]
                 for url in urls:
+                    if elemento["tag"] == "script" and url == SCRIPT_DA_MEDICAO:
+                        continue
                     assert _proprio(url), (pagina.name, elemento["tag"], url)
         for estilo in arvore.achar("link", rel="stylesheet"):
             assert estilo["attrs"]["href"].startswith("/"), pagina
@@ -141,7 +147,8 @@ def test_sem_style_ou_script_inline(saida):
         for script in arvore.achar("script"):
             if script["attrs"].get("type") == "application/ld+json":  # dado, nao e executado (Ruling S-D)
                 continue
-            assert script["attrs"].get("src", "").startswith("/") and not Arvore.texto(script), pagina
+            src = script["attrs"].get("src", "")
+            assert (src.startswith("/") or src == SCRIPT_DA_MEDICAO) and not Arvore.texto(script), pagina
     js = (saida / "site.js").read_text(encoding="utf-8")
     # o CSSOM (`elemento.style.propriedade = ...`, o anel do voltar ao topo) a CSP deixa; o atributo style, nao
     sem_cssom = re.sub(r"\.style\.[a-zA-Z]+ = ", "", js)
@@ -156,7 +163,7 @@ def test_paginas_usam_os_estaticos_gerados(saida):
     for pagina in _arquivos(saida, ".html"):
         arvore = Arvore(pagina.read_text(encoding="utf-8"))
         locais = [e["attrs"]["href"] for e in arvore.achar("link", rel="stylesheet")]
-        locais += [e["attrs"]["src"] for e in arvore.achar("script") if "src" in e["attrs"]]
+        locais += [e["attrs"]["src"] for e in arvore.achar("script") if e["attrs"].get("src", SCRIPT_DA_MEDICAO) != SCRIPT_DA_MEDICAO]
         for local in locais:  # cada estatico vem com ?v= e os 8 primeiros do sha256 do arquivo publicado
             caminho, _, versao = local.partition("?v=")
             assert versao == hashlib.sha256((saida / caminho.lstrip("/")).read_bytes()).hexdigest()[:8], local

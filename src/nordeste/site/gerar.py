@@ -16,6 +16,7 @@ from collections.abc import Iterator
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import NamedTuple
+from urllib.parse import urlsplit
 
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -58,6 +59,15 @@ NOME_DO_SITE = "Nordeste em Números"
 URL_DO_SITE = "https://nordeste.dnascimento.com.br"
 URL_DO_AUTOR = "https://dnascimento.com.br"
 LICENCA = "https://creativecommons.org/licenses/by/4.0/"
+# A medicao de audiencia (Umami Cloud, codigo aberto): sem cookie, sem gravacao de sessao, sem dado pessoal. O script
+# conta so no dominio publicado (data-domains: previa e localhost ficam de fora), respeita o "Do Not Track" e descarta a
+# busca do endereco (?indicador=...). O id do site e publico. A CSP do .htaccess libera so este script e o envio para
+# o Umami (script-src e connect-src); os textos de Sobre ("O que eu meco neste site") explicam o que e contado.
+MEDICAO = {
+    "script": "https://cloud.umami.is/script.js",
+    "site": "4cd60c19-92f7-4c3d-a590-1a8c86a93120",
+    "dominio": URL_DO_SITE.removeprefix("https://"),
+}
 PASTA_MODELOS = Path(__file__).parent / "modelos"
 PASTA_ESTATICOS = Path(__file__).parent / "estaticos"  # estilo, script, fontes, foto e .htaccess, copiados na raiz do site
 ARQUIVOS_VERSIONADOS = ("estilo.css", "site.js", "nn-js.js", "bandeira-br.svg", "bandeira-us.svg")
@@ -810,10 +820,17 @@ def _fontes(dados: DadosSite) -> list[dict]:
 
 
 def _ambiente() -> Environment:
-    return Environment(
+    ambiente = Environment(
         loader=FileSystemLoader(PASTA_MODELOS), autoescape=True, undefined=StrictUndefined,
         trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True,
     )
+    ambiente.filters["host"] = host_do_link
+    return ambiente
+
+
+def host_do_link(url: str) -> str:
+    """O dominio de um link externo, sem o www (`sidra.ibge.gov.br`): o rotulo curto do evento source-click da medicao."""
+    return (urlsplit(url).hostname or url).removeprefix("www.")
 
 
 def _contorno(caminhos: Caminhos) -> dict:
@@ -1335,6 +1352,7 @@ def _preparar(
         "capas": _capas(historia if com_historia else None, _foto(textos.get("foto"))),
         "siglas": siglas_dos_governos(dados.governos),
         "data_base": data, "sha256_base": dados.sha256_base, "licenca": LICENCA, "autor_url": URL_DO_AUTOR, "estaticos": versoes_dos_estaticos(),
+        "medicao": MEDICAO,
         "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]}–{anos[1]}" if idioma == "en"
         else f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
