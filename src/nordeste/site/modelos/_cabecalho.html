@@ -43,7 +43,7 @@
     </div>
     <div class="nn-topo-direita">
 {% if m.com_historia and atual != "como-chegamos" %}
-      <a class="nn-topo-botao" href="{{ rotas['como-chegamos'] }}"><span class="nn-topo-botao-longo">{{ m.botao_historia.antes }}</span> {{ m.botao_historia.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
+      <a class="nn-topo-botao" href="{{ rotas['como-chegamos'] }}"><span><span class="nn-topo-botao-longo">{{ m.botao_historia.antes }} </span>{{ m.botao_historia.texto }}</span> <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
 {% else %}
       <a class="nn-topo-botao" href="{{ rotas.cards }}">{{ m.botao_cards.texto }} <span class="nn-topo-botao-seta" aria-hidden="true">→</span></a>
 {% endif %}
