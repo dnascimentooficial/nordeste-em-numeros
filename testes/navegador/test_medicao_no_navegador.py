@@ -56,6 +56,7 @@ def test_sem_o_umami_nada_quebra(abrir, endereco, rota):
         botao = pagina.locator("button.nn-ampliar:visible").first
         if botao.count():
             botao.click()
+            pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)').open")
             pagina.keyboard.press("Escape")
         if pagina.locator("#sel-expl-ind").count():
             pagina.select_option("#sel-expl-ind", index=1)

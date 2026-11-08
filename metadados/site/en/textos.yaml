@@ -42,16 +42,16 @@ mapa_renda:
   legenda_hoje: "R$ per person, per month, in {renda_topo6.ano_ultimo}"
   legenda_ne: "Northeast"
   dica: "Hover, tap or use the keyboard on a state to see its name and value."
-  leitura: "[nome]: [variacao] from [ano0] to [ano1], from R$ [v0] to R$ [v1] per person, per month"
+  leitura: "[nome]: [variacao] from [ano0] to [ano1], from R$ [v0] to R$ [v1] per person, per month"
   ranking:
     cresceu: {mais: "Grew the most", menos: "Grew the least"}
     hoje: {mais: "Highest income", menos: "Lowest income"}
-  marca_ne: "Northeast"
+  marca_ne: "NE"
   veredito:
     - id: mapa_renda_distancia_aumentou
-      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
     - id: mapa_renda_distancia_diminuiu
-      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
   complemento:
     texto: "In proportion, the Northeast caught up: the region's income per person went from {renda_prop_se.primeiro:0%} to {renda_prop_se.ultimo:0%} of the Southeast's. The Northeast grew {renda_cresc_ne.ultimo:1%}; Brazil, {renda_cresc_br.ultimo:1%}."
   tabela:
@@ -254,7 +254,7 @@ medicao:
   titulo: "What I measure on this site"
   paragrafos:
     - "I use Umami, an open-source audience measurement tool, to learn how the site is read. It sets no cookies, records no sessions and collects no personal data, and I do not store anyone's IP address."
-    - "What it counts: pages visited, time on each page, country and device type, the site a visitor came from, and clicks on site features (cards downloaded, spreadsheets downloaded, charts enlarged, sections read). I use these numbers only to decide what to improve here."
+    - "What it counts: pages visited, time on each page, country and device type, the site a visitor came from, and clicks on site features (cards downloaded, spreadsheets downloaded, charts enlarged, map tabs and states, sections read). I use these numbers only to decide what to improve here."
     - "Browsers with “Do Not Track” turned on are not counted. To opt out, set the localStorage key umami.disabled to 1. It works per browser, on that device only."
 
 dados:

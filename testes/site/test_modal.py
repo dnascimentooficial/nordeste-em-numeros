@@ -73,6 +73,12 @@ def _abrir(navegador, endereco, largura=1280, altura=800, **opcoes):
     return contexto, pagina
 
 
+def _aberto(pagina) -> bool:
+    """Espera o modal abrir: os templates dos graficos vem de /ampliados/pt-index.json, pedido no primeiro clique."""
+    pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-autor)').open", timeout=5000)
+    return True
+
+
 def _botao(pagina, indice=0):
     return pagina.locator("button.nn-ampliar").nth(indice)
 
@@ -84,7 +90,7 @@ def test_abre_pelo_botao_com_o_grafico_grande_e_o_titulo(navegador, endereco, pr
         botao = _botao(pagina)
         assert botao.is_visible() and botao.get_attribute("hidden") is None  # o JS tirou o hidden
         botao.click()
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         assert pagina.locator("dialog svg[viewBox='0 0 1100 520']").count() == 1
         assert pagina.locator("dialog h2.nn-modal-titulo").inner_text().strip() == primeira_frase
         rotulado = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").get_attribute("aria-labelledby")
@@ -108,7 +114,7 @@ def test_esc_fecha_e_o_foco_volta_ao_botao_que_abriu(navegador, endereco):
         botao = _botao(pagina, indice)
         botao.focus()
         botao.press("Enter")  # pelo teclado
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         assert pagina.evaluate("document.activeElement.closest('dialog') !== null")  # o foco entrou no modal
         pagina.keyboard.press("Escape")
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
@@ -128,13 +134,14 @@ def test_fecha_pelo_x_e_por_clique_fora_e_reabre_em_outro_grafico(navegador, end
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         assert pagina.evaluate("document.querySelectorAll('button.nn-ampliar')[1] === document.activeElement")
         _botao(pagina, 0).click()
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         pagina.mouse.click(4, 4)  # fora da caixa: no fundo escurecido
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is False
         _botao(pagina, 3).click()
+        assert _aberto(pagina)
         assert pagina.locator("dialog svg").count() == 1  # nunca dois graficos no modal
         pagina.locator("dialog .nn-modal-corpo").click(position={"x": 5, "y": 5})  # dentro da caixa: nao fecha
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
     finally:
         contexto.close()
 
@@ -147,7 +154,7 @@ def test_o_proprio_grafico_tambem_abre_o_modal_com_o_mouse(navegador, endereco):
         assert pagina.locator("#resumo .nn-graf").first.evaluate("e => getComputedStyle(e).cursor") == "zoom-in"
         caixa = grafico.bounding_box()
         pagina.mouse.click(caixa["x"] + caixa["width"] / 2, caixa["y"] + caixa["height"] / 2)
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         assert pagina.locator("dialog svg[viewBox='0 0 1100 520']").count() == 1
     finally:
         contexto.close()
@@ -157,6 +164,7 @@ def test_a_dica_de_valor_funciona_no_grafico_grande(navegador, endereco):
     contexto, pagina = _abrir(navegador, endereco)
     try:
         _botao(pagina).click()
+        assert _aberto(pagina)
         ponto = pagina.locator("dialog svg g.nn-linha-ne circle").nth(3).bounding_box()
         pagina.mouse.move(ponto["x"] + ponto["width"] / 2, ponto["y"] + ponto["height"] / 2)
         assert pagina.locator("dialog svg .nn-dica").count() == 1
@@ -177,7 +185,7 @@ def test_no_celular_o_modal_ocupa_a_tela_e_nao_estoura(navegador, endereco):
         botao = _botao(pagina)
         botao.scroll_into_view_if_needed()
         botao.tap()
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         caixa_modal = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").bounding_box()
         assert (caixa_modal["x"], caixa_modal["y"], caixa_modal["width"], caixa_modal["height"]) == (0, 0, 390, 844)
         assert pagina.locator("dialog p.nn-modal-gire").is_visible()  # retrato: pede para girar
@@ -196,7 +204,7 @@ def test_em_paisagem_no_celular_o_aviso_de_girar_some(navegador, endereco):
         botao = _botao(pagina)
         botao.scroll_into_view_if_needed()
         botao.tap()
-        assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open") is True
+        assert _aberto(pagina)
         assert not pagina.locator("dialog p.nn-modal-gire").is_visible()
         caixa_modal = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").bounding_box()
         assert (caixa_modal["width"], caixa_modal["height"]) == (844, 390)  # tela cheia tambem em paisagem

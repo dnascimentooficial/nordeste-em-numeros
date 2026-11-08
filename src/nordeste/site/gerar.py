@@ -225,7 +225,8 @@ def paginas_do_site(com_historia: bool, com_inovacao: bool = False) -> tuple[Pag
 @dataclass
 class RelatorioSite:
     paginas: list[str]
-    # ids das perguntas que ficaram sem fecho ou sairam inteiras e da faixa de numeros da abertura, se saiu (abertura_numeros)
+    # ids das perguntas que ficaram sem fecho ou sairam inteiras, da faixa de numeros da abertura, se saiu (abertura_numeros),
+    # e do mapa do Inicio (mapa_renda inteiro, mapa_renda_veredito, mapa_renda_proporcao)
     fechos_suprimidos: list[str]
     cards_suprimidos: list[str]
     # historia.yaml com `provisoria: true`: a pagina Como chegamos nao sai (so em previa, com incluir_provisoria)

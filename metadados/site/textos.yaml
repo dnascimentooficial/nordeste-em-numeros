@@ -64,20 +64,20 @@ mapa_renda:
   legenda_hoje: "R$ por pessoa, por mês, em {renda_topo6.ano_ultimo}"
   legenda_ne: "Nordeste"
   dica: "Passe o mouse, toque ou navegue pelo teclado num estado para ver o nome e o valor."
-  leitura: "[nome]: [variacao] de [ano0] a [ano1], de R$ [v0] para R$ [v1] por pessoa, por mês"
+  leitura: "[nome]: [variacao] de [ano0] a [ano1], de R$ [v0] para R$ [v1] por pessoa, por mês"
   ranking:
     cresceu: {mais: "Cresceram mais", menos: "Cresceram menos"}
     hoje: {mais: "Renda mais alta", menos: "Renda mais baixa"}
-  marca_ne: "Nordeste"
+  marca_ne: "NE"
   veredito:
     # "Cresceu mais onde era menor": o Nordeste começou abaixo do Brasil e cresceu mais que ele, e a maioria (4 ou
     # mais) dos seis estados que mais cresceram é do Nordeste. "Aumentou" e "diminuiu": a diferença Sudeste − Nordeste
     # em reais, do primeiro ao último ano.
     - id: mapa_renda_distancia_aumentou
-      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. Mas, em reais, a distância para o Sudeste aumentou: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. Mas, em reais, a distância para o Sudeste aumentou: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo > renda_gap_se.primeiro"
     - id: mapa_renda_distancia_diminuiu
-      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. E, em reais, a distância para o Sudeste também diminuiu: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. E, em reais, a distância para o Sudeste também diminuiu: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo < renda_gap_se.primeiro"
   complemento:
     id: mapa_renda_proporcao
@@ -307,7 +307,7 @@ medicao:
   titulo: "O que eu meço neste site"
   paragrafos:
     - "Uso o Umami, um medidor de audiência de código aberto, para saber como o site é lido. Ele não usa cookies, não grava sessões e não coleta dados pessoais, e eu não guardo o endereço IP de ninguém."
-    - "O que ele conta: as páginas visitadas, o tempo em cada uma, o país e o tipo de aparelho, o site de onde a pessoa veio e os cliques nos recursos do site (cards baixados, planilhas baixadas, gráficos ampliados, seções lidas). Uso esses números só para decidir o que melhorar aqui."
+    - "O que ele conta: as páginas visitadas, o tempo em cada uma, o país e o tipo de aparelho, o site de onde a pessoa veio e os cliques nos recursos do site (cards baixados, planilhas baixadas, gráficos ampliados, abas e estados do mapa, seções lidas). Uso esses números só para decidir o que melhorar aqui."
     - "Navegadores com o “Do Not Track” ligado não são contados. Para ficar de fora, grave no localStorage a chave umami.disabled com o valor 1. Vale só para aquele navegador, naquele aparelho."
 
 dados:

@@ -20,7 +20,7 @@ FONTES_DO_UMAMI = {
     "connect-src": ["'self'", "https://cloud.umami.is", "https://*.umami.is", "https://*.umami.dev"],
 }
 EVENTO = re.compile(r"^[a-z]+(-[a-z]+)*$")  # nome do evento em ingles, kebab-case
-EVENTOS_DO_SITE_JS = ("explore-select", "states-select", "era-open", "scroll-depth", "chart-enlarge")
+EVENTOS_DO_SITE_JS = ("explore-select", "states-select", "era-open", "scroll-depth", "chart-enlarge", "map-tab", "map-tile")
 
 
 @pytest.fixture(scope="module")

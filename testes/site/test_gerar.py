@@ -488,15 +488,16 @@ def test_cada_grafico_do_inicio_tem_botao_e_template_ampliado(gerado, dados, con
     graficos = [(p, g) for p in conteudo.perguntas for g in p["graficos"]]
     textos = conteudo.textos["ampliar"]
     botoes = arvore.achar("button", classe="nn-ampliar")
-    modelos = arvore.achar("template", classe="nn-ampliado")
+    assert not arvore.achar("template", classe="nn-ampliado")  # os templates ficam fora do HTML da pagina
+    modelos = _ampliados(saida, arvore)
     assert len(botoes) == len(modelos) == len(graficos) > 6
     for botao in botoes:
         assert Arvore.texto(botao) == textos["botao"] == "Ampliar"
         assert botao["attrs"]["aria-haspopup"] == "dialog" and botao["attrs"]["type"] == "button"
         assert "hidden" in botao["attrs"]  # sem JavaScript o botao nao aparece; o site.js o mostra
         assert botao["attrs"]["aria-label"].startswith(textos["rotulo"])
-    assert [b["attrs"]["data-ampliado"] for b in botoes] == [m["attrs"]["id"] for m in modelos]
-    corpos = re.findall(r'<template class="nn-ampliado" id="[^"]+">(.*?)</template>', html, flags=re.S)
+    assert [b["attrs"]["data-ampliado"] for b in botoes] == list(modelos)
+    corpos = list(modelos.values())
     assert len(corpos) == len(graficos)
     for (pergunta, grafico), corpo in zip(graficos, corpos, strict=True):
         assert len(re.findall(r'viewBox="0 0 1100 520"', corpo)) == 1  # o grafico na terceira largura, pronto do Python
@@ -517,10 +518,37 @@ def test_cada_grafico_do_inicio_tem_botao_e_template_ampliado(gerado, dados, con
     assert any(g.get("quebras") for _, g in graficos) and any("alerta" in p for p, _ in graficos)
 
 
+def _ampliados(saida: Path, arvore: Arvore, idioma: str = "pt", pagina: str = "index") -> dict[str, str]:
+    """Os templates do modal Ampliar da pagina, do JSON que o <dialog> aponta (data-ampliados, com ?v=)."""
+    (dialogo,) = [d for d in arvore.achar("dialog", classe="nn-modal") if "nn-modal-autor" not in d["attrs"]["class"]]
+    endereco = dialogo["attrs"]["data-ampliados"]
+    caminho, versao = endereco.split("?v=")
+    assert caminho == f"/ampliados/{idioma}-{pagina}.json"
+    conteudo = (saida / caminho.lstrip("/")).read_bytes()
+    assert versao == hashlib.sha256(conteudo).hexdigest()[:8]
+    return json.loads(conteudo)
+
+
+def test_ampliados_ficam_fora_do_html_e_sem_estilo_ou_script(gerado):
+    saida, _ = gerado
+    for idioma, pagina, rota in (("pt", "index", "index.html"), ("en", "index", "en/index.html"),
+                                 ("pt", "inovacao", "inovacao/index.html"), ("en", "inovacao", "en/innovation/index.html")):
+        html = _ler(saida, rota)
+        assert "<template" not in html
+        modelos = _ampliados(saida, Arvore(html), idioma, pagina)
+        assert modelos and all(k.startswith("nn-ampliado-") for k in modelos)
+        for corpo in modelos.values():
+            arvore = Arvore(corpo)
+            assert not any("style" in e["attrs"] for e in arvore.elementos)
+            assert not arvore.achar("script") and not arvore.achar("style") and "<template" not in corpo
+    assert sorted(p.name for p in (saida / "ampliados").iterdir()) == [
+        "en-index.json", "en-inovacao.json", "pt-index.json", "pt-inovacao.json"]
+
+
 def test_ampliado_so_traz_as_atualizacoes_dos_indicadores_do_proprio_grafico(gerado, dados, conteudo):
     saida, _ = gerado
-    html, _ = _inicio(saida)
-    corpos = re.findall(r'<template class="nn-ampliado" id="[^"]+">(.*?)</template>', html, flags=re.S)
+    _, arvore = _inicio(saida)
+    corpos = list(_ampliados(saida, arvore).values())
     graficos = [g for p in conteudo.perguntas for g in p["graficos"]]
     for grafico, corpo in zip(graficos, corpos, strict=True):
         indicadores = {l["indicador"] for l in grafico["linhas"]}

@@ -21,7 +21,7 @@ GRADE = {
     "RS": (1, 7),
 }
 COLUNAS, LINHAS = 6, 8
-CLASSES = 6  # tons da escala sequencial (nn-mapa-q0 a nn-mapa-q5, o mais escuro e o maior valor)
+CLASSES = 6  # tons da escala sequencial (nn-mosaico-q0 a nn-mosaico-q5, o mais escuro e o maior valor)
 PASSOS = (1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000)
 VISTAS = ("cresceu", "hoje")
 TOPO = 5  # quantos estados em cada ponta do ranking
@@ -139,16 +139,16 @@ def mapa_svg(mapa: dict, titulo: str) -> str:
     largura = COLUNAS * LADO + (COLUNAS - 1) * VAO
     altura = LINHAS * LADO + (LINHAS - 1) * VAO
     partes = [
-        f'<svg class="nn-mapa-svg" viewBox="0 0 {largura} {altura}" width="{largura}" height="{altura}" role="img" '
+        f'<svg class="nn-mosaico-svg" viewBox="0 0 {largura} {altura}" width="{largura}" height="{altura}" role="img" '
         f'aria-label="{_attr(titulo)}">'
     ]
     for q in mapa["quadrados"]:
         x, y = q["coluna"] * (LADO + VAO), q["linha"] * (LADO + VAO)
-        classe = f"nn-mapa-svg-uf nn-mapa-q{q['tons']['cresceu']}" + (" nn-mapa-svg-ne" if q["ne"] else "")
+        classe = f"nn-mosaico-svg-uf nn-mosaico-q{q['tons']['cresceu']}" + (" nn-mosaico-svg-ne" if q["ne"] else "")
         partes.append(
             f'<g class="{classe}"><rect x="{x + 1.5}" y="{y + 1.5}" width="{LADO - 3}" height="{LADO - 3}" rx="5"/>'
-            f'<text x="{x + LADO / 2}" y="{y + 19}" class="nn-mapa-svg-sigla">{q["sigla"]}</text>'
-            f'<text x="{x + LADO / 2}" y="{y + 34}" class="nn-mapa-svg-valor">{_attr(q["valores"]["cresceu"])}</text></g>'
+            f'<text x="{x + LADO / 2}" y="{y + 19}" class="nn-mosaico-svg-sigla">{q["sigla"]}</text>'
+            f'<text x="{x + LADO / 2}" y="{y + 34}" class="nn-mosaico-svg-valor">{_attr(q["valores"]["cresceu"])}</text></g>'
         )
     partes.append("</svg>")
     return "".join(partes)

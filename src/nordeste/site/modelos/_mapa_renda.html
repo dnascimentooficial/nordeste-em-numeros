@@ -5,56 +5,58 @@
    na linha de leitura. Nada de estilo inline: a posição e o tom de cada quadrado são classes do estilo.css. #}
 {% macro mapa_renda(m, ui, rotas) %}
 {% set d = m.dados %}
-<section class="nn-card nn-mapa nn-mapa-vista-cresceu" id="mapa-renda" aria-labelledby="titulo-mapa-renda">
+<section class="nn-card nn-mosaico nn-mosaico-vista-cresceu" id="mapa-renda" aria-labelledby="titulo-mapa-renda">
   <p class="nn-eyebrow">{{ m.eyebrow }}</p>
   <h2 id="titulo-mapa-renda">{{ m.titulo }}</h2>
-  <p class="nn-muted nn-mapa-intro">{{ m.intro }}</p>
-  <div class="nn-mapa-abas" role="group" aria-label="{{ m.abas.rotulo }}" hidden>
+  <p class="nn-muted nn-mosaico-intro">{{ m.intro }}</p>
+  <div class="nn-mosaico-abas" role="group" aria-label="{{ m.abas.rotulo }}" hidden>
 {% for vista in ("cresceu", "hoje") %}
-    <button type="button" class="nn-mapa-aba" data-vista="{{ vista }}" aria-pressed="{{ 'true' if loop.first else 'false' }}" aria-controls="nn-mapa-grade">{{ m.abas[vista] }}</button>
+    <button type="button" class="nn-mosaico-aba" data-vista="{{ vista }}" aria-pressed="{{ 'true' if loop.first else 'false' }}" aria-controls="nn-mosaico-grade">{{ m.abas[vista] }}</button>
 {% endfor %}
   </div>
-  <div class="nn-mapa-corpo">
-    <div class="nn-mapa-figura">
-      <div class="nn-mapa-grade" id="nn-mapa-grade" role="group" aria-label="{{ m.rotulo_mapa }}">
+  <div class="nn-mosaico-corpo">
+    <div class="nn-mosaico-figura">
+      <div class="nn-mosaico-grade" id="nn-mosaico-grade" role="group" aria-label="{{ m.rotulo_mapa }}">
 {% for q in d.quadrados %}
-        <button type="button" class="nn-mapa-uf nn-mapa-c{{ q.coluna }} nn-mapa-l{{ q.linha }} nn-mapa-cq{{ q.tons.cresceu }} nn-mapa-hq{{ q.tons.hoje }}{% if q.ne %} nn-mapa-ne{% endif %}" data-uf="{{ q.sigla }}" aria-label="{{ q.rotulo }}"><span class="nn-mapa-sigla" aria-hidden="true">{{ q.sigla }}</span><span class="nn-mapa-v nn-so-cresceu" aria-hidden="true">{{ q.valores.cresceu }}</span><span class="nn-mapa-v nn-so-hoje" aria-hidden="true">{{ q.valores.hoje }}</span></button>
+        <button type="button" class="nn-mosaico-uf nn-mosaico-c{{ q.coluna }} nn-mosaico-l{{ q.linha }} nn-mosaico-cq{{ q.tons.cresceu }} nn-mosaico-hq{{ q.tons.hoje }}{% if q.ne %} nn-mosaico-ne{% endif %}" data-uf="{{ q.sigla }}" aria-label="{{ q.rotulo }}"><span class="nn-mosaico-sigla" aria-hidden="true">{{ q.sigla }}</span><span class="nn-mosaico-v nn-so-cresceu" aria-hidden="true">{{ q.valores.cresceu }}</span><span class="nn-mosaico-v nn-so-hoje" aria-hidden="true">{{ q.valores.hoje }}</span></button>
 {% endfor %}
       </div>
-      <p class="nn-mapa-leitura" aria-hidden="true" data-dica="{{ m.dica }}" hidden></p>
+      <p class="nn-mosaico-leitura" aria-hidden="true" data-dica="{{ m.dica }}" hidden></p>
 {% for vista in ("cresceu", "hoje") %}
-      <div class="nn-mapa-legenda nn-so-{{ vista }}">
-        <p class="nn-mapa-legenda-titulo">{{ m["legenda_" + vista] }}</p>
+      <div class="nn-mosaico-legenda nn-so-{{ vista }}">
+        <p class="nn-mosaico-legenda-titulo">{{ m["legenda_" + vista] }}</p>
         <ul>
 {% for faixa in d.legendas[vista] %}
-          <li><span class="nn-mapa-amostra nn-mapa-q{{ faixa.tom }}" aria-hidden="true"></span>{{ faixa.texto }}</li>
+          <li><span class="nn-mosaico-amostra nn-mosaico-q{{ faixa.tom }}" aria-hidden="true"></span>{{ faixa.texto }}</li>
 {% endfor %}
-          <li><span class="nn-mapa-amostra nn-mapa-amostra-ne" aria-hidden="true"></span>{{ m.legenda_ne }}</li>
+          <li><span class="nn-mosaico-amostra nn-mosaico-amostra-ne" aria-hidden="true"></span>{{ m.legenda_ne }}</li>
         </ul>
       </div>
 {% endfor %}
     </div>
-    <div class="nn-mapa-rankings">
+    <div class="nn-mosaico-lado">
+    <div class="nn-mosaico-rankings">
 {% for vista in ("cresceu", "hoje") %}
 {% for ponta in ("mais", "menos") %}
-      <div class="nn-mapa-ranking nn-so-{{ vista }}">
+      <div class="nn-mosaico-ranking nn-so-{{ vista }}">
         <h3>{{ m.ranking[vista][ponta] }}</h3>
         <ol>
 {% for item in d.rankings[vista][ponta] %}
-          <li value="{{ item.posicao }}"{% if item.ne %} class="nn-mapa-ne"{% endif %}><span class="nn-mapa-pos" aria-hidden="true">{{ item.posicao }}</span><span class="nn-mapa-nome">{{ item.nome }}{% if item.ne %} <span class="nn-mapa-marca">{{ m.marca_ne }}</span>{% endif %}</span><span class="nn-mapa-valor">{{ item.valor }}</span></li>
+          <li value="{{ item.posicao }}"{% if item.ne %} class="nn-mosaico-ne"{% endif %}><span class="nn-mosaico-pos" aria-hidden="true">{{ item.posicao }}</span><span class="nn-mosaico-nome">{{ item.nome }}{% if item.ne %} <span class="nn-mosaico-marca" aria-hidden="true">{{ m.marca_ne }}</span><span class="nn-so-leitor"> ({{ m.legenda_ne }})</span>{% endif %}</span><span class="nn-mosaico-valor">{{ item.valor }}</span></li>
 {% endfor %}
         </ol>
       </div>
 {% endfor %}
 {% endfor %}
     </div>
-  </div>
 {% if m.veredito %}
-  <p class="nn-mapa-veredito">{{ m.veredito }}</p>
+    <p class="nn-mosaico-veredito">{{ m.veredito }}</p>
 {% endif %}
 {% if m.complemento %}
-  <p class="nn-mapa-complemento">{{ m.complemento }}</p>
+    <p class="nn-mosaico-complemento">{{ m.complemento }}</p>
 {% endif %}
+    </div>
+  </div>
   <details>
     <summary>{{ m.tabela.resumo }}</summary>
     <div class="nn-tabela" tabindex="0" role="region" aria-label="{{ m.tabela.rotulo }}">
@@ -62,7 +64,7 @@
         <thead><tr><th scope="col">{{ m.tabela.estado }}</th><th scope="col">{{ m.tabela.regiao }}</th><th scope="col" class="nn-num">{{ m.tabela.inicial }}</th><th scope="col" class="nn-num">{{ m.tabela.final }}</th><th scope="col" class="nn-num">{{ m.tabela.variacao }}</th></tr></thead>
         <tbody>
 {% for linha in d.tabela %}
-          <tr{% if linha.ne %} class="nn-mapa-ne"{% endif %}><th scope="row">{{ linha.nome }}</th><td>{{ linha.regiao }}</td><td class="nn-num">{{ linha.v0 }}</td><td class="nn-num">{{ linha.v1 }}</td><td class="nn-num">{{ linha.variacao }}</td></tr>
+          <tr{% if linha.ne %} class="nn-mosaico-ne"{% endif %}><th scope="row">{{ linha.nome }}</th><td>{{ linha.regiao }}</td><td class="nn-num">{{ linha.v0 }}</td><td class="nn-num">{{ linha.v1 }}</td><td class="nn-num">{{ linha.variacao }}</td></tr>
 {% endfor %}
         </tbody>
       </table>

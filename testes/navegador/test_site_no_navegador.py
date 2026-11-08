@@ -70,6 +70,7 @@ def test_axe_sem_violacao_grave(abrir, rotas, esquema):
 def test_axe_com_o_modal_aberto_e_com_o_explorar_trocado(abrir):
     with abrir("/") as pagina:
         pagina.locator("button.nn-ampliar").first.click()
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)').open")
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open")
         # a entrada do modal acabou: o contraste vale o do estado final, nao o de um quadro da animacao
         pagina.wait_for_function(
@@ -179,6 +180,7 @@ def test_reduced_motion_sem_animacao(abrir, rotas):
                 animados[rota] = achados[:5]
     with abrir("/", reduced_motion="reduce") as pagina:  # o modal tem entrada animada: tambem sem animacao
         pagina.locator("button.nn-ampliar").first.click()
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)').open")
         assert pagina.evaluate(_ANIMADOS) == []
     assert animados == {}
 

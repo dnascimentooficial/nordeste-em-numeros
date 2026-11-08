@@ -1,6 +1,7 @@
 """Página inicial editorial: placar das perguntas, resposta primeiro em cada pergunta, saídas, legenda com as siglas dos
 governos, menu lateral e capítulos (plano docs/plans/2026-11-03-inicio-intuitivo.md, tarefas 1 a 7)."""
 
+import json
 import re
 from pathlib import Path
 
@@ -184,13 +185,13 @@ def test_nenhum_texto_das_perguntas_sumiu(gerado, conteudo):
         assert len(Arvore(_artigo(html, p["id"])).achar("tr")) > len(p["graficos"])
 
 
-def test_templates_do_ampliado_ficam_fora_dos_details(gerado):
+def test_templates_do_ampliado_ficam_fora_da_pagina(gerado):
     html = _ler(gerado)
-    fim_das_perguntas = html.index("</section>", html.rindex('<article class="nn-capitulo'))
-    templates = re.findall(r'<template class="nn-ampliado" id="(nn-ampliado-[^"]+)"', html)
-    assert templates and html.index("<template") > fim_das_perguntas
+    assert "<template" not in html  # vao para /ampliados/pt-index.json, que o site.js pede quando o modal abre
+    endereco = re.search(r'data-ampliados="(/ampliados/pt-index\.json\?v=[0-9a-f]{8})"', html).group(1)
+    templates = json.loads((gerado / endereco.split("?")[0].lstrip("/")).read_text(encoding="utf-8"))
     botoes = re.findall(r'data-ampliado="(nn-ampliado-[^"]+)"', html)
-    assert sorted(botoes) == sorted(templates)  # cada Ampliar, inclusive os de dentro dos <details>, tem o seu
+    assert botoes and sorted(botoes) == sorted(templates)  # cada Ampliar, inclusive os de dentro dos <details>, tem o seu
 
 
 # --- tarefa 4: saidas ---

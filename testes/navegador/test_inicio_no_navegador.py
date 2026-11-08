@@ -349,8 +349,13 @@ def test_inicio_ampliar_dentro_de_details_aberto_abre_o_grafico_certo(abrir):
         mais.locator("summary").click()
         botao = mais.locator("button.nn-ampliar").first
         alvo = botao.get_attribute("data-ampliado")
-        titulo = pagina.locator(f"template#{alvo}").evaluate("t => t.content.querySelector('h3').textContent")
+        assert pagina.locator("template").count() == 0  # os templates vem do JSON do data-ampliados, pedido ao abrir
+        titulo = pagina.evaluate(
+            """(alvo) => fetch(document.querySelector('dialog[data-ampliados]').dataset.ampliados).then((r) => r.json())
+                 .then((todos) => { const t = document.createElement('template'); t.innerHTML = todos[alvo];
+                                    return t.content.querySelector('h3').textContent; })""", alvo)
         botao.click()
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)').open")
         dialogo = pagina.locator("dialog.nn-modal:not(.nn-modal-autor)")
         assert dialogo.evaluate("d => d.open") and dialogo.locator(".nn-modal-corpo h3").inner_text() == titulo
         pagina.keyboard.press("Escape")

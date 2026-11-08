@@ -18,6 +18,7 @@ IDS_DOS_DESTAQUES = {
     "ideb_em_ne", "ideb_em_br", "vol_ne", "vol_br", "part_ne", "desoc_ne", "desoc_br", "renda_razao", "renda_ne",
     "renda_ref", "rend_ne", "rend_br", "informal_ne", "informal_ref", "gini_ne", "gini_br", "idhm_ne", "idhm_br",
     "superior_ne", "creche_ne", "internet_ne", "internet_br",
+    "renda_br", "renda_cresc_ne", "renda_cresc_br", "renda_gap_se", "renda_prop_se", "renda_topo6",  # o mapa do Inicio
 }
 
 
@@ -51,11 +52,11 @@ def _condicoes(conteudo):
         yield f"card {c['id']}", c["condicao"]
 
 
-def test_conteudo_real_tem_18_cards_e_6_perguntas(conteudo):
+def test_conteudo_real_tem_19_cards_e_6_perguntas(conteudo):
     assert len(conteudo.perguntas) == 6
-    assert len(conteudo.cards) == 18
+    assert len(conteudo.cards) == 19
     assert set(conteudo.destaques) == IDS_DOS_DESTAQUES
-    assert len({c["id"] for c in conteudo.cards}) == 18
+    assert len({c["id"] for c in conteudo.cards}) == 19
 
 
 def test_conteudo_real_carrega_e_preenche_tudo(conteudo, destaques):
@@ -95,7 +96,7 @@ def test_numeros_do_conteudo_real_vem_da_base_publicada(conteudo, destaques):
 
 def test_condicoes_reais_valem_na_base_publicada(conteudo, destaques):
     condicoes = list(_condicoes(conteudo))
-    assert len(condicoes) == 6 + 18
+    assert len(condicoes) == 6 + 19
     falsas = [(onde, expr) for onde, expr in condicoes if not avaliar_condicao(expr, destaques)]
     assert falsas == []
 

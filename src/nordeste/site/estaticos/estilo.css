@@ -1194,64 +1194,65 @@ body {
 }
 
 /* --- o mapa do Início: os 27 estados em quadrados do mesmo tamanho, cada um mais ou menos onde o estado fica (mapa.py).
-   A vista (nn-mapa-vista-cresceu ou -hoje, no <section>) escolhe o tom de cada quadrado (nn-mapa-cq0..5 ou
-   nn-mapa-hq0..5), o valor, a legenda e o ranking à vista. A escala vai da cor do painel (tom 0) à da tinta (tom 5),
+   A vista (nn-mosaico-vista-cresceu ou -hoje, no <section>) escolhe o tom de cada quadrado (nn-mosaico-cq0..5 ou
+   nn-mosaico-hq0..5), o valor, a legenda e o ranking à vista. A escala vai da cor do painel (tom 0) à da tinta (tom 5),
    nos dois temas; no card (sempre preto), do preto ao branco. O Nordeste leva o contorno laranja. --- */
 
-.nn-mapa {
-  --nn-mapa-cor: var(--nn-tinta);
-  --nn-mapa-base: var(--nn-painel);
+.nn-mosaico {
+  --nn-mosaico-cor: var(--nn-tinta);
+  --nn-mosaico-base: var(--nn-painel);
+  min-width: 0; /* a grade dos quadrados (aspect-ratio) não alarga a coluna do <main> no celular */
   gap: 18px;
 }
 
-.nn-mapa-vista-cresceu .nn-so-hoje,
-.nn-mapa-vista-hoje .nn-so-cresceu {
+.nn-mosaico-vista-cresceu .nn-so-hoje,
+.nn-mosaico-vista-hoje .nn-so-cresceu {
   display: none;
 }
 
-.nn-mapa-q0,
-.nn-mapa-vista-cresceu .nn-mapa-cq0,
-.nn-mapa-vista-hoje .nn-mapa-hq0 {
-  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 9%, var(--nn-mapa-base));
-  --nn-mapa-texto: var(--nn-mapa-cor);
+.nn-mosaico-q0,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq0,
+.nn-mosaico-vista-hoje .nn-mosaico-hq0 {
+  --nn-mosaico-fundo: color-mix(in srgb, var(--nn-mosaico-cor) 9%, var(--nn-mosaico-base));
+  --nn-mosaico-texto: var(--nn-mosaico-cor);
 }
 
-.nn-mapa-q1,
-.nn-mapa-vista-cresceu .nn-mapa-cq1,
-.nn-mapa-vista-hoje .nn-mapa-hq1 {
-  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 22%, var(--nn-mapa-base));
-  --nn-mapa-texto: var(--nn-mapa-cor);
+.nn-mosaico-q1,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq1,
+.nn-mosaico-vista-hoje .nn-mosaico-hq1 {
+  --nn-mosaico-fundo: color-mix(in srgb, var(--nn-mosaico-cor) 22%, var(--nn-mosaico-base));
+  --nn-mosaico-texto: var(--nn-mosaico-cor);
 }
 
-.nn-mapa-q2,
-.nn-mapa-vista-cresceu .nn-mapa-cq2,
-.nn-mapa-vista-hoje .nn-mapa-hq2 {
-  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 36%, var(--nn-mapa-base));
-  --nn-mapa-texto: var(--nn-mapa-cor);
+.nn-mosaico-q2,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq2,
+.nn-mosaico-vista-hoje .nn-mosaico-hq2 {
+  --nn-mosaico-fundo: color-mix(in srgb, var(--nn-mosaico-cor) 36%, var(--nn-mosaico-base));
+  --nn-mosaico-texto: var(--nn-mosaico-cor);
 }
 
-.nn-mapa-q3,
-.nn-mapa-vista-cresceu .nn-mapa-cq3,
-.nn-mapa-vista-hoje .nn-mapa-hq3 {
-  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 64%, var(--nn-mapa-base));
-  --nn-mapa-texto: var(--nn-mapa-base);
+.nn-mosaico-q3,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq3,
+.nn-mosaico-vista-hoje .nn-mosaico-hq3 {
+  --nn-mosaico-fundo: color-mix(in srgb, var(--nn-mosaico-cor) 64%, var(--nn-mosaico-base));
+  --nn-mosaico-texto: var(--nn-mosaico-base);
 }
 
-.nn-mapa-q4,
-.nn-mapa-vista-cresceu .nn-mapa-cq4,
-.nn-mapa-vista-hoje .nn-mapa-hq4 {
-  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 80%, var(--nn-mapa-base));
-  --nn-mapa-texto: var(--nn-mapa-base);
+.nn-mosaico-q4,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq4,
+.nn-mosaico-vista-hoje .nn-mosaico-hq4 {
+  --nn-mosaico-fundo: color-mix(in srgb, var(--nn-mosaico-cor) 80%, var(--nn-mosaico-base));
+  --nn-mosaico-texto: var(--nn-mosaico-base);
 }
 
-.nn-mapa-q5,
-.nn-mapa-vista-cresceu .nn-mapa-cq5,
-.nn-mapa-vista-hoje .nn-mapa-hq5 {
-  --nn-mapa-fundo: var(--nn-mapa-cor);
-  --nn-mapa-texto: var(--nn-mapa-base);
+.nn-mosaico-q5,
+.nn-mosaico-vista-cresceu .nn-mosaico-cq5,
+.nn-mosaico-vista-hoje .nn-mosaico-hq5 {
+  --nn-mosaico-fundo: var(--nn-mosaico-cor);
+  --nn-mosaico-texto: var(--nn-mosaico-base);
 }
 
-.nn-mapa-abas {
+.nn-mosaico-abas {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -1261,11 +1262,11 @@ body {
   border-radius: 999px;
 }
 
-.nn-mapa-abas[hidden] {
+.nn-mosaico-abas[hidden] {
   display: none;
 }
 
-.nn .nn-mapa-aba {
+.nn .nn-mosaico-aba {
   min-height: 40px;
   padding: 0 16px;
   border: 0;
@@ -1278,38 +1279,38 @@ body {
   cursor: pointer;
 }
 
-.nn .nn-mapa-aba:hover {
+.nn .nn-mosaico-aba:hover {
   text-decoration: underline;
   text-decoration-color: var(--nn-laranja);
   text-underline-offset: 3px;
 }
 
-.nn .nn-mapa-aba[aria-pressed="true"] {
+.nn .nn-mosaico-aba[aria-pressed="true"] {
   background: var(--nn-tinta);
   color: var(--nn-painel);
   text-decoration: none;
 }
 
-.nn-mapa-corpo {
+.nn-mosaico-corpo {
   display: grid;
   grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
   gap: 24px clamp(24px, 4vw, 56px);
   align-items: start;
 }
 
-.nn-mapa-figura {
+.nn-mosaico-figura {
   display: grid;
   gap: 12px;
   min-width: 0;
 }
 
-.nn-mapa-grade {
+.nn-mosaico-grade {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 4px;
 }
 
-.nn .nn-mapa-uf {
+.nn .nn-mosaico-uf {
   aspect-ratio: 1;
   min-width: 0;
   display: grid;
@@ -1318,72 +1319,72 @@ body {
   padding: 0;
   border: 0;
   border-radius: 6px;
-  background: var(--nn-mapa-fundo);
-  color: var(--nn-mapa-texto);
+  background: var(--nn-mosaico-fundo);
+  color: var(--nn-mosaico-texto);
   font: inherit;
   line-height: 1.1;
   cursor: pointer;
 }
 
-.nn .nn-mapa-uf.nn-mapa-ne {
+.nn .nn-mosaico-uf.nn-mosaico-ne {
   box-shadow: inset 0 0 0 3px var(--nn-laranja);
 }
 
-.nn .nn-mapa-uf:focus-visible {
+.nn .nn-mosaico-uf:focus-visible {
   outline: 3px solid var(--nn-tinta);
   outline-offset: 2px;
 }
 
-.nn .nn-mapa-uf:hover {
+.nn .nn-mosaico-uf:hover {
   outline: 2px solid var(--nn-tinta);
   outline-offset: 1px;
 }
 
-.nn-mapa-sigla {
+.nn-mosaico-sigla {
   font-family: var(--nn-display);
   font-size: clamp(12px, 3vw, 15px);
   font-weight: 800;
 }
 
-.nn-mapa-v {
+.nn-mosaico-v {
   font-size: clamp(10px, 2.6vw, 12px);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-.nn-mapa-c0 { grid-column: 1; }
-.nn-mapa-c1 { grid-column: 2; }
-.nn-mapa-c2 { grid-column: 3; }
-.nn-mapa-c3 { grid-column: 4; }
-.nn-mapa-c4 { grid-column: 5; }
-.nn-mapa-c5 { grid-column: 6; }
-.nn-mapa-l0 { grid-row: 1; }
-.nn-mapa-l1 { grid-row: 2; }
-.nn-mapa-l2 { grid-row: 3; }
-.nn-mapa-l3 { grid-row: 4; }
-.nn-mapa-l4 { grid-row: 5; }
-.nn-mapa-l5 { grid-row: 6; }
-.nn-mapa-l6 { grid-row: 7; }
-.nn-mapa-l7 { grid-row: 8; }
+.nn-mosaico-c0 { grid-column: 1; }
+.nn-mosaico-c1 { grid-column: 2; }
+.nn-mosaico-c2 { grid-column: 3; }
+.nn-mosaico-c3 { grid-column: 4; }
+.nn-mosaico-c4 { grid-column: 5; }
+.nn-mosaico-c5 { grid-column: 6; }
+.nn-mosaico-l0 { grid-row: 1; }
+.nn-mosaico-l1 { grid-row: 2; }
+.nn-mosaico-l2 { grid-row: 3; }
+.nn-mosaico-l3 { grid-row: 4; }
+.nn-mosaico-l4 { grid-row: 5; }
+.nn-mosaico-l5 { grid-row: 6; }
+.nn-mosaico-l6 { grid-row: 7; }
+.nn-mosaico-l7 { grid-row: 8; }
 
-.nn .nn-mapa-leitura {
+.nn .nn-mosaico-leitura {
   min-height: 3.2em;
   font-size: 14px;
   line-height: 1.4;
   color: var(--nn-suave);
 }
 
-.nn-mapa-legenda {
+.nn-mosaico-legenda {
   display: grid;
   gap: 6px;
   font-size: 13px;
 }
 
-.nn .nn-mapa-legenda-titulo {
+.nn .nn-mosaico-legenda-titulo {
   font-weight: 700;
 }
 
-.nn-mapa-legenda ul {
+.nn-mosaico-legenda ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1392,34 +1393,41 @@ body {
   gap: 6px 14px;
 }
 
-.nn-mapa-legenda li {
+.nn-mosaico-legenda li {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-variant-numeric: tabular-nums;
 }
 
-.nn-mapa-amostra {
+.nn-mosaico-amostra {
   width: 16px;
   height: 16px;
   border-radius: 3px;
-  background: var(--nn-mapa-fundo);
+  background: var(--nn-mosaico-fundo);
   border: 1px solid var(--nn-linha);
 }
 
-.nn-mapa-amostra-ne {
+.nn-mosaico-amostra-ne {
   background: transparent;
   border: 3px solid var(--nn-laranja);
 }
 
-.nn-mapa-rankings {
+.nn-mosaico-lado {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+  min-width: 0;
+}
+
+.nn-mosaico-rankings {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px 28px;
   align-content: start;
 }
 
-.nn .nn-mapa-ranking h3 {
+.nn .nn-mosaico-ranking h3 {
   font-family: var(--nn-texto);
   font-size: 12px;
   font-weight: 700;
@@ -1428,14 +1436,14 @@ body {
   color: var(--nn-suave);
 }
 
-.nn-mapa-ranking ol {
+.nn-mosaico-ranking ol {
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
   display: grid;
 }
 
-.nn-mapa-ranking li {
+.nn-mosaico-ranking li {
   display: grid;
   grid-template-columns: 26px minmax(0, 1fr) auto;
   gap: 8px;
@@ -1445,23 +1453,23 @@ body {
   font-size: 15px;
 }
 
-.nn-mapa-ranking li:last-child {
+.nn-mosaico-ranking li:last-child {
   border-bottom: 1px solid var(--nn-linha);
 }
 
-.nn-mapa-pos {
+.nn-mosaico-pos {
   color: var(--nn-suave);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.nn-mapa-ranking .nn-mapa-ne .nn-mapa-nome,
-.nn-mapa tr.nn-mapa-ne th {
+.nn-mosaico-ranking .nn-mosaico-ne .nn-mosaico-nome,
+.nn-mosaico tr.nn-mosaico-ne th {
   color: var(--nn-laranja-texto);
   font-weight: 700;
 }
 
-.nn-mapa-marca {
+.nn-mosaico-marca {
   display: inline-block;
   margin-left: 4px;
   padding: 0 6px;
@@ -1475,13 +1483,13 @@ body {
   vertical-align: 1px;
 }
 
-.nn-mapa-valor {
+.nn-mosaico-valor {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.nn .nn-mapa-veredito {
+.nn .nn-mosaico-veredito {
   max-width: 62ch;
   padding: 4px 0 4px 16px;
   border-left: 4px solid var(--nn-laranja);
@@ -1492,63 +1500,63 @@ body {
   line-height: 1.28;
 }
 
-.nn .nn-mapa-complemento {
+.nn .nn-mosaico-complemento {
   max-width: 68ch;
   color: var(--nn-suave);
 }
 
 @media (max-width: 860px) {
-  .nn-mapa-corpo {
+  .nn-mosaico-corpo {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .nn-mapa-figura {
+  .nn-mosaico-figura {
     max-width: 440px;
   }
 }
 
 @media (max-width: 520px) {
-  .nn-mapa-rankings {
+  .nn-mosaico-rankings {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 /* o mapa no card (mapa.mapa_svg): ao lado do número e da frase, do preto ao branco */
 
-.nn-mapa-svg {
-  --nn-mapa-cor: var(--nn-branco);
-  --nn-mapa-base: #1b1b1b;
+.nn-mosaico-svg {
+  --nn-mosaico-cor: var(--nn-branco);
+  --nn-mosaico-base: #1b1b1b;
 }
 
-.nn-mapa-svg-uf rect {
-  fill: var(--nn-mapa-fundo);
+.nn-mosaico-svg-uf rect {
+  fill: var(--nn-mosaico-fundo);
   stroke: rgba(255, 255, 255, 0.18);
   stroke-width: 1;
 }
 
-.nn-mapa-svg-ne rect {
+.nn-mosaico-svg-ne rect {
   stroke: var(--nn-laranja);
   stroke-width: 3;
 }
 
-.nn-mapa-svg-uf text {
-  fill: var(--nn-mapa-texto);
+.nn-mosaico-svg-uf text {
+  fill: var(--nn-mosaico-texto);
   text-anchor: middle;
   font-family: var(--nn-texto);
 }
 
-.nn-mapa-svg-sigla {
+.nn-mosaico-svg-sigla {
   font-size: 13px;
   font-weight: 800;
 }
 
-.nn-mapa-svg-valor {
+.nn-mosaico-svg-valor {
   font-size: 11px;
   font-weight: 600;
 }
 
 .nn-cartao-mapa {
-  grid-template-columns: minmax(0, 1fr) 40%;
+  grid-template-columns: minmax(0, 1fr) 46%;
   column-gap: 18px;
   grid-template-areas: "marca marca" "mito mito" "sera sera" "numero mapa" "frase mapa" "vazio mapa" "fecho fecho" "fonte fonte";
 }
@@ -1576,7 +1584,8 @@ body {
 }
 
 .nn-cartao-mapa .nn-c-frase {
-  font-size: clamp(12px, 3vw, 16px);
+  font-size: clamp(11px, 3vw, 16px);
+  line-height: 1.3;
 }
 
 /* --- as perguntas como capítulos de uma reportagem: o menu lateral fixo (260 px) e a folha que o sobrepõe em 28 px,

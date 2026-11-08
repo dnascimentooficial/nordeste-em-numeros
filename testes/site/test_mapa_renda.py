@@ -5,6 +5,7 @@ Os valores sinteticos abaixo sao os da tabela 7533 do SIDRA (2012 e 2025, reais 
 site; os testes nao dependem da base publicada.
 """
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -55,6 +56,11 @@ def _dados(renda: dict[str, tuple[float, float]] = RENDA) -> DadosSite:
 @pytest.fixture(scope="module")
 def conteudo():
     return carregar_conteudo(PASTA_SITE)
+
+
+def _sp(texto: str) -> str:
+    """O texto com o espaco sem quebra (depois de R$) como espaco comum."""
+    return texto.replace("\u00a0", " ")
 
 
 def _mapa(renda=RENDA, idioma="pt"):
@@ -135,7 +141,7 @@ def test_mapa_montado_com_ranking_tabela_e_rotulos():
     assert len(d["quadrados"]) == 27 and sum(q["ne"] for q in d["quadrados"]) == 9
     to = next(q for q in d["quadrados"] if q["uf"] == "TO")
     assert to["valores"] == {"cresceu": "+62%", "hoje": "1.979"} and to["tons"]["cresceu"] == 5
-    assert to["rotulo"] == "Tocantins: +62,5% de 2012 a 2025, de R$ 1.218 para R$ 1.979 por pessoa, por mês"
+    assert _sp(to["rotulo"]) == "Tocantins: +62,5% de 2012 a 2025, de R$ 1.218 para R$ 1.979 por pessoa, por mês"
     assert next(q for q in d["quadrados"] if q["uf"] == "SE_UF")["sigla"] == "SE"
     mais = d["rankings"]["cresceu"]["mais"]
     assert [i["uf"] for i in mais] == ["TO", "RN", "PI", "MA", "AL"] and [i["ne"] for i in mais] == [False] + [True] * 4
@@ -150,16 +156,16 @@ def test_mapa_montado_com_ranking_tabela_e_rotulos():
 def test_mapa_em_ingles_formata_no_padrao_americano():
     (mapa, _), _ = _mapa(idioma="en")
     to = next(q for q in mapa["dados"]["quadrados"] if q["uf"] == "TO")
-    assert to["rotulo"] == "Tocantins: +62.5% from 2012 to 2025, from R$ 1,218 to R$ 1,979 per person, per month"
+    assert _sp(to["rotulo"]) == "Tocantins: +62.5% from 2012 to 2025, from R$ 1,218 to R$ 1,979 per person, per month"
     assert mapa["titulo"] == "Where has income grown the most since 2012?"
     assert mapa["veredito"].startswith("Income grew the most where it was lowest: 5 of the six states")
-    assert "R$ 1,082 in 2012, R$ 1,199 in 2025" in mapa["veredito"]
+    assert "R$ 1,082 in 2012, R$ 1,199 in 2025" in _sp(mapa["veredito"])
 
 
 def test_svg_do_card_sem_estilo_inline():
     (mapa, _), _ = _mapa()
     svg = mapa_svg(mapa["dados"], "Mapa")
-    assert svg.count("<rect") == 27 and svg.count("nn-mapa-svg-ne") == 9
+    assert svg.count("<rect") == 27 and svg.count("nn-mosaico-svg-ne") == 9
     assert "style=" not in svg and "<script" not in svg and 'role="img"' in svg
 
 
@@ -169,7 +175,7 @@ def test_svg_do_card_sem_estilo_inline():
 def test_veredito_com_a_base_de_hoje():
     (mapa, suprimidos), _ = _mapa()
     assert mapa["titulo"] == "Onde a renda mais cresceu desde 2012?"
-    assert mapa["veredito"] == (
+    assert _sp(mapa["veredito"]) == (
         "A renda cresceu mais onde era menor: 5 dos seis estados que mais cresceram desde 2012 são do Nordeste. "
         "Mas, em reais, a distância para o Sudeste aumentou: R$ 1.082 em 2012, R$ 1.199 em 2025."
     )
@@ -181,7 +187,7 @@ def test_veredito_com_a_base_de_hoje():
 def test_veredito_diz_que_a_distancia_diminuiu_quando_ela_diminui():
     renda = {**RENDA, "SE": (2170, 2500)}  # Sudeste - Nordeste: 1.082 -> 1.030
     (mapa, suprimidos), _ = _mapa(renda)
-    assert "a distância para o Sudeste também diminuiu: R$ 1.082 em 2012, R$ 1.030 em 2025." in mapa["veredito"]
+    assert "a distância para o Sudeste também diminuiu: R$ 1.082 em 2012, R$ 1.030 em 2025." in _sp(mapa["veredito"])
     assert "Mas," not in mapa["veredito"] and suprimidos == []
 
 
@@ -206,3 +212,129 @@ def test_sem_as_27_ufs_o_bloco_inteiro_sai():
                                                                              "PB", "PE", "AL", "BA"}}
     (mapa, suprimidos), _ = _mapa(so_o_nordeste)
     assert mapa is None and suprimidos == ["mapa_renda"]
+
+
+# --- o bloco no site gerado (base publicada e copias alteradas) ---
+
+
+from nordeste.caminhos import Caminhos  # noqa: E402
+from nordeste.site.gerar import gerar_site  # noqa: E402
+
+from auxiliares import Arvore, alterar_base, copiar_base  # noqa: E402
+
+
+@pytest.fixture(scope="module")
+def site(tmp_path_factory):
+    saida = tmp_path_factory.mktemp("site") / "saida"
+    return saida, gerar_site(Caminhos(raiz=RAIZ), saida, imagens=False)
+
+
+def _gerar_com(tmp_path_factory, alterar):
+    raiz = copiar_base(tmp_path_factory.mktemp("repo") / "repo")
+    alterar_base(raiz, alterar)
+    saida = tmp_path_factory.mktemp("site") / "saida"
+    return saida, gerar_site(Caminhos(raiz=raiz), saida, imagens=False)
+
+
+def _bloco(saida: Path, pagina: str = "index.html") -> tuple[str, Arvore]:
+    html = (saida / pagina).read_text(encoding="utf-8")
+    inicio = html.find('<section class="nn-card nn-mosaico')
+    if inicio < 0:
+        return html, Arvore("")
+    return html, Arvore(html[inicio:html.index("</section>", html.index("nn-saidas", inicio))])
+
+
+def test_base_publicada_tem_as_27_ufs_so_na_renda():
+    base = pd.read_csv(RAIZ / "dados" / "base" / "base_nordeste.csv", dtype=str, keep_default_na=False)
+    fora = {"RO", "AC", "AM", "RR", "PA", "AP", "TO", "MG", "ES", "RJ", "SP", "PR", "SC", "RS", "MS", "MT", "GO", "DF"}
+    renda = base[base.indicador_id == "renda_dom_pc"]
+    assert fora <= set(renda.territorio_id)
+    assert not fora & set(base[base.indicador_id != "renda_dom_pc"].territorio_id)
+    anos = set(renda[renda.territorio_id == "NE"].ano)
+    for uf in fora:
+        assert set(renda[renda.territorio_id == uf].ano) == anos, uf
+
+
+@pytest.mark.parametrize("pagina, titulo, abas", [
+    ("index.html", "Onde a renda mais cresceu desde 2012?", ["Quanto cresceu", "Quanto é hoje"]),
+    ("en/index.html", "Where has income grown the most since 2012?", ["How much it grew", "How much it is today"]),
+])
+def test_bloco_no_inicio_depois_da_faixa_e_antes_do_placar(site, pagina, titulo, abas):
+    saida, relatorio = site
+    html, bloco = _bloco(saida, pagina)
+    assert html.index("nn-faixa-abertura") < html.index('class="nn-card nn-mosaico') < html.index("nn-placar")
+    assert Arvore.texto(bloco.achar("h2")[0]) == titulo
+    assert [Arvore.texto(b) for b in bloco.achar("button", classe="nn-mosaico-aba")] == abas
+    (grupo,) = bloco.achar("div", classe="nn-mosaico-abas")
+    assert "hidden" in grupo["attrs"] and grupo["attrs"]["role"] == "group"  # sem JavaScript, so a vista "cresceu"
+    assert [b["attrs"]["aria-pressed"] for b in bloco.achar("button", classe="nn-mosaico-aba")] == ["true", "false"]
+    quadrados = bloco.achar("button", classe="nn-mosaico-uf")
+    assert len(quadrados) == 27 and len(bloco.achar("button", classe="nn-mosaico-ne")) == 9
+    assert all(q["attrs"]["aria-label"] and q["attrs"]["data-uf"] for q in quadrados)
+    assert len(bloco.achar("tr")) == 28  # a tabela dos 27, legivel sem JavaScript
+    assert not any("style" in e["attrs"] for e in bloco.elementos) and not bloco.achar("script")
+    assert bloco.achar("p", classe="nn-mosaico-veredito")
+    assert "mapa_renda" not in relatorio.fechos_suprimidos and "mapa_renda" not in relatorio.cards_suprimidos
+
+
+def test_veredito_e_fonte_no_html_publicado(site):
+    saida, _ = site
+    _, bloco = _bloco(saida)
+    veredito = Arvore.texto(bloco.achar("p", classe="nn-mosaico-veredito")[0])
+    assert veredito.startswith("A renda cresceu mais onde era menor: 5 dos seis estados que mais cresceram desde 2012")
+    assert "a distância para o Sudeste aumentou: R$ 1.082 em 2012, R$ 1.199 em 2025." in veredito
+    fonte = Arvore.texto(bloco.achar("div", classe="nn-fonte")[0])
+    assert "tabela 7533" in fonte and "a preços médios de 2025" in fonte and "não a emenda com o Censo" in fonte
+    (saida_estados,) = bloco.achar("a", data_umami_event="cta-click")
+    assert saida_estados["attrs"]["href"] == "/estados/" and saida_estados["attrs"]["data-umami-event-place"] == "mapa-renda"
+    _, en = _bloco(saida, "en/index.html")
+    veredito_en = Arvore.texto(en.achar("p", classe="nn-mosaico-veredito")[0])
+    assert veredito_en.startswith("Income grew the most where it was lowest: 5 of the six states")
+    assert "the gap to the Southeast widened: R$ 1,082 in 2012, R$ 1,199 in 2025." in veredito_en
+
+
+def test_estados_e_explorar_continuam_so_com_o_nordeste(site):
+    saida, _ = site
+    for pagina in ("estados/index.html", "explorar/index.html"):
+        texto = Arvore((saida / pagina).read_text(encoding="utf-8")).texto_visivel()
+        for nome in ("São Paulo", "Tocantins", "Distrito Federal", "Acre"):
+            assert nome not in texto, (pagina, nome)
+    explorar = json.loads((saida / "explorar" / "dados" / "renda.json").read_text(encoding="utf-8"))
+    assert not {"SP", "TO", "DF"} & set(explorar)
+
+
+def test_card_do_mapa_com_o_mapa_dos_27(site):
+    saida, relatorio = site
+    assert "cards/mapa_renda/index.html" in relatorio.paginas and "en/cards/mapa_renda/index.html" in relatorio.paginas
+    arvore = Arvore((saida / "cards" / "mapa_renda" / "index.html").read_text(encoding="utf-8"))
+    (cartao,) = arvore.achar("article", classe="nn-cartao-mapa")
+    (svg,) = arvore.achar("svg", classe="nn-mosaico-svg")
+    assert len(arvore.achar("rect")) == 27
+    assert Arvore.texto(arvore.achar("p", classe="nn-c-fecho")[0]) == "5 dos 6 estados que mais cresceram são do Nordeste."
+
+
+def _sudeste_mais_perto(base):
+    ultimo = base[(base.indicador_id == "renda_dom_pc") & (base.territorio_id == "SE")].ano.max()
+    linha = (base.indicador_id == "renda_dom_pc") & (base.territorio_id == "SE") & (base.ano == ultimo)
+    base.loc[linha, "valor"] = "2500"
+    return base
+
+
+def _sem_sao_paulo(base):
+    return base[~((base.indicador_id == "renda_dom_pc") & (base.territorio_id == "SP"))]
+
+
+def test_com_a_distancia_menor_o_veredito_diz_que_diminuiu(tmp_path_factory):
+    saida, relatorio = _gerar_com(tmp_path_factory, _sudeste_mais_perto)
+    _, bloco = _bloco(saida)
+    veredito = Arvore.texto(bloco.achar("p", classe="nn-mosaico-veredito")[0])
+    assert "E, em reais, a distância para o Sudeste também diminuiu: R$ 1.082 em 2012, R$ 1.030 em 2025." in veredito
+    assert "aumentou" not in veredito and "mapa_renda_veredito" not in relatorio.fechos_suprimidos
+
+
+def test_sem_uma_uf_o_bloco_e_o_card_saem(tmp_path_factory):
+    saida, relatorio = _gerar_com(tmp_path_factory, _sem_sao_paulo)
+    html, _ = _bloco(saida)
+    assert "nn-mosaico" not in html and "mapa_renda" in relatorio.fechos_suprimidos
+    assert "mapa_renda" in relatorio.cards_suprimidos and not (saida / "cards" / "mapa_renda").exists()
+    assert "nn-placar" in html  # o resto do Inicio segue

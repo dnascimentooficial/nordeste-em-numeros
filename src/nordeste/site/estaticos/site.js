@@ -809,18 +809,18 @@
      que é só visual: o leitor de tela já lê o mesmo rótulo no próprio botão. A medição conta a troca de aba
      (map-tab) e o clique no estado (map-tile; Enter e espaço no botão também são clique). */
   function ligarMapa() {
-    document.querySelectorAll('.nn-mapa').forEach((bloco) => {
-      const abas = bloco.querySelector('.nn-mapa-abas');
-      const leitura = bloco.querySelector('.nn-mapa-leitura');
+    document.querySelectorAll('.nn-mosaico').forEach((bloco) => {
+      const abas = bloco.querySelector('.nn-mosaico-abas');
+      const leitura = bloco.querySelector('.nn-mosaico-leitura');
       if (abas) {
-        const botoes = Array.from(abas.querySelectorAll('.nn-mapa-aba'));
+        const botoes = Array.from(abas.querySelectorAll('.nn-mosaico-aba'));
         botoes.forEach((botao) => {
           botao.addEventListener('click', () => {
             if (botao.getAttribute('aria-pressed') === 'true') return;
             const vista = botao.getAttribute('data-vista');
             botoes.forEach((outro) => outro.setAttribute('aria-pressed', String(outro === botao)));
-            botoes.forEach((outro) => bloco.classList.remove('nn-mapa-vista-' + outro.getAttribute('data-vista')));
-            bloco.classList.add('nn-mapa-vista-' + vista);
+            botoes.forEach((outro) => bloco.classList.remove('nn-mosaico-vista-' + outro.getAttribute('data-vista')));
+            bloco.classList.add('nn-mosaico-vista-' + vista);
             medir('map-tab', { tab: vista });
           });
         });
@@ -830,7 +830,7 @@
         leitura.textContent = leitura.getAttribute('data-dica') || '';
         leitura.hidden = false;
       }
-      bloco.querySelectorAll('.nn-mapa-uf').forEach((estado) => {
+      bloco.querySelectorAll('.nn-mosaico-uf').forEach((estado) => {
         const mostrar = () => {
           if (leitura) leitura.textContent = estado.getAttribute('aria-label');
         };
@@ -1377,7 +1377,7 @@
   /* O "mapa de calor" por seção, sem gravar sessão: cada capítulo ou bloco conta uma vez por visita (scroll-depth),
      quando metade dele fica à vista (ou, se ele é mais alto que a tela, quando ocupa metade da tela). Liga no load,
      depois do script do Umami (defer, depois do site.js); sem ele, nada é observado. */
-  const SECOES_LIDAS = 'main .nn-capitulo[id], main .nn-placar, main .nn-chamada-historia, main .nn-hist-bloco, ' +
+  const SECOES_LIDAS = 'main .nn-capitulo[id], main .nn-mosaico, main .nn-placar, main .nn-chamada-historia, main .nn-hist-bloco, ' +
     'main .nn-hist-linha, main #sobre > article[id]';
 
   function nomeDaSecao(secao) {

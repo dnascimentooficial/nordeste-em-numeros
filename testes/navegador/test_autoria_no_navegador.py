@@ -102,6 +102,7 @@ def test_modal_prende_o_foco_e_nao_deixa_a_pagina_rolar(abrir):
 def test_modal_do_autor_nao_atrapalha_o_ampliar_nem_as_epocas(abrir):
     with abrir("/", reduced_motion="reduce") as pagina:  # o Ampliar do Inicio continua sendo o dele
         pagina.locator("button.nn-ampliar").first.click()
+        pagina.wait_for_function("() => document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)').open")
         assert pagina.locator("dialog.nn-modal:not(.nn-modal-autor)").evaluate("d => d.open")
         assert not pagina.locator(MODAL).evaluate("d => d.open")
         pagina.keyboard.press("Escape")
