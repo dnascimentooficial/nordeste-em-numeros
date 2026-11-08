@@ -10,4 +10,3 @@ aviso,A01,"patentes_residentes (serie badepi_v12): variacao acima de 200% entre 
 aviso,A01,programas_pos (serie nota_3_ou_mais): variacao acima de 200% entre observacoes consecutivas em 1 caso(s); exemplos: PI 1998->1999 (inf%)
 aviso,A01,superior (serie censup): variacao acima de 50% entre observacoes consecutivas em 1 caso(s); exemplos: universidades/total/MA 2011->2012 (100.0%)
 aviso,A01,superior (serie censup_pre2009): variacao acima de 50% entre observacoes consecutivas em 1 caso(s); exemplos: universidades/total/AL 2004->2005 (100.0%)
-aviso,A02,3 valores alterados em relacao a base publicada (patentes_residentes)
