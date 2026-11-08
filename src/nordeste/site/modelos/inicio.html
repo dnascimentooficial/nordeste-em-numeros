@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
 {% from "_componentes.html" import atualizacoes, legenda with context %}
-{% from "_modal_grafico.html" import ampliado, dialogo with context %}
+{% from "_modal_grafico.html" import dialogo with context %}
 {% from "_epoca.html" import credito with context %}
 {% from "_grafico.html" import grafico with context %}
+{% from "_mapa_renda.html" import mapa_renda as bloco_mapa_renda with context %}
 {% block conteudo %}
 {% set abertura = textos.abertura %}
 <section class="nn-hero{% if foto %} nn-hero-com-foto{% endif %}" id="topo" aria-labelledby="titulo-principal">
@@ -25,6 +26,10 @@
 {% endif %}
   <p class="nn-faixa-nota">{{ faixa.nota }}</p>
 </section>
+
+{% if mapa_renda %}
+{{ bloco_mapa_renda(mapa_renda, ui, rotas) }}
+{% endif %}
 
 {% if placar %}
 {% set t = textos.placar %}
@@ -135,10 +140,5 @@
   <p class="nn-chamada-credito">{{ c.credito }}: {{ credito(c.imagem) }}.</p>
 </section>
 {% endif %}
-{% for p in perguntas %}
-{% for g in p.graficos %}
-{{ ampliado(p, g, textos.ampliar) }}
-{% endfor %}
-{% endfor %}
-{{ dialogo(textos.ampliar) }}
+{{ dialogo(textos.ampliar, ampliados) }}
 {% endblock %}

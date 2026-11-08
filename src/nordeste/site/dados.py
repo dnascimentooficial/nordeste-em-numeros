@@ -11,6 +11,7 @@ from nordeste.coletores.registro import ler_registro
 from nordeste.esquema import COLUNAS_DERIVADOS, normalizar_base
 from nordeste.fichas import Ficha, carregar_fichas
 from nordeste.governos import carregar_governos
+from nordeste.territorios import carregar_territorios
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,8 @@ class DadosSite:
     governos: pd.DataFrame
     sha256_base: str
     data_base: str
+    # metadados/territorios.csv: o nome e a regiao de cada UF (o mapa do Inicio); sem o arquivo, None e o mapa nao sai
+    territorios: pd.DataFrame | None = None
 
     @classmethod
     def carregar(cls, caminhos: Caminhos) -> "DadosSite":
@@ -57,6 +60,7 @@ class DadosSite:
             governos=carregar_governos(caminhos.governos_csv),
             sha256_base=hashlib.sha256(arquivo_base.read_bytes()).hexdigest(),
             data_base=max(coletas["data_coleta"]),
+            territorios=carregar_territorios(caminhos.territorios_csv) if caminhos.territorios_csv.is_file() else None,
         )
 
     def serie(
@@ -76,12 +80,23 @@ class DadosSite:
 
     def razao(self, indicador: str, territorio: str, referencia: str) -> list[Ponto]:
         """Razao do territorio sobre a referencia (metrica `razao` de derivados.csv), por (ano, serie)."""
+        return self.metrica(indicador, territorio, "razao", referencia)
+
+    def metrica(self, indicador: str, territorio: str, metrica: str, referencia: str = "") -> list[Ponto]:
+        """Uma metrica publicada em derivados.csv (`razao`, `variacao_acumulada`...) do territorio, por (ano, serie)."""
         d = self.derivados
         selecao = (
             (d["indicador_id"] == indicador) & (d["territorio_id"] == territorio)
-            & (d["referencia"] == referencia) & (d["metrica"] == "razao") & d["valor"].notna()
+            & (d["referencia"] == referencia) & (d["metrica"] == metrica) & d["valor"].notna()
         )
         return _pontos(d[selecao])
+
+    def ufs(self) -> list[tuple[str, str, str]]:
+        """(id, nome, regiao) das 27 UFs da tabela de territorios, na ordem dela."""
+        if self.territorios is None:
+            return []
+        t = self.territorios[self.territorios["tipo"] == "uf"]
+        return list(zip(t["territorio_id"], t["nome"], t["regiao_id"]))
 
     def atualizado_em(self, indicador: str) -> str:
         """Maior data de coleta do indicador (`AAAA-MM-DD`); no calculado, a de seus insumos.

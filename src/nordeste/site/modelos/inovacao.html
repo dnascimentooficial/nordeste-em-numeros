@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set sobre_foto = true %}
 {% from "_componentes.html" import atualizacoes, capa, legenda with context %}
-{% from "_modal_grafico.html" import ampliado, dialogo with context %}
+{% from "_modal_grafico.html" import dialogo with context %}
 {% from "_grafico.html" import grafico with context %}
 {% block conteudo %}
 {% set i = inovacao %}
@@ -182,10 +182,5 @@
 {% endfor %}
   </div>
 </section>
-{% for c in i.capitulos %}
-{% for g in c.graficos %}
-{{ ampliado(c, g, textos.ampliar) }}
-{% endfor %}
-{% endfor %}
-{{ dialogo(textos.ampliar) }}
+{{ dialogo(textos.ampliar, ampliados) }}
 {% endblock %}

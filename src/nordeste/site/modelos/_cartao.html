@@ -1,5 +1,5 @@
 {% macro cartao(c, t, data_curta, ui) %}
-<article class="nn-cartao{% if ui.frase_comum %} nn-cartao-comum{% endif %}" data-card="{{ c.id }}" aria-label="{{ ui.card }}: {{ c.titulo_sem_aspas }}">
+<article class="nn-cartao{% if ui.frase_comum %} nn-cartao-comum{% endif %}{% if c.com_mapa %} nn-cartao-mapa{% endif %}" data-card="{{ c.id }}" aria-label="{{ ui.card }}: {{ c.titulo_sem_aspas }}">
   <p class="nn-c-marca">Nordeste em Números · Júlio Diógenes</p>
 {% if ui.frase_comum %}
   <p class="nn-c-comum">{{ ui.frase_comum }}</p>

@@ -396,12 +396,18 @@ dentro da meia casa (0,05), em 11 anos conferidos.
 ### renda_dom_pc / pnadc
 
 - Página oficial: https://sidra.ibge.gov.br/tabela/7533
-- URL de coleta: `https://apisidra.ibge.gov.br/values/t/7533/n1/all/n2/all/n3/21,22,23,24,25,26,27,28,29/v/10816/p/all`
+- URL de coleta: `https://apisidra.ibge.gov.br/values/t/7533/n1/all/n2/all/n3/all/v/10816/p/all` (parâmetro
+  `todas_as_ufs: true`, desde 2026-11-08: as 27 UFs, para o mapa "Onde a renda mais cresceu desde 2012?" do Início; até
+  então, `n3/21,...,29`, só as nove do Nordeste).
 - Variável 10816: "Rendimento médio mensal real domiciliar per capita, a preços médios do último ano", Reais. A tabela 7533 é
   a de rendimento de todas as fontes por classes de percentual das pessoas; a consulta sem classificação devolve a
   categoria Total (código 49243).
 - Obtido: 210 linhas = 14 anos (2012 a 2025) x 15 territórios, todas `observado`. Brasil 2012 = 1.782 e 2025 = 2.264; Nordeste
-  2012 = 1.088 e 2025 = 1.470 (reais de 2025).
+  2012 = 1.088 e 2025 = 1.470 (reais de 2025). Com as 27 UFs (coleta de 2026-11-08): 462 linhas = 14 anos x 33 territórios,
+  todas `observado`; os valores do Nordeste, das regiões e do Brasil são os mesmos da coleta anterior. Conferidos à mão contra a
+  tabela 7533: Tocantins 1.218 → 1.979 (+62,5%), Rio Grande do Norte 1.122 → 1.779 (+58,6%), São Paulo 2.470 → 2.862 (+15,9%),
+  Sudeste 2.170 → 2.669 (+23,0%). As 18 UFs de fora do Nordeste servem só ao mapa do Início: não entram em Estados, Explorar,
+  nas métricas do Nordeste nem nas outras séries.
 - Preços: "médios do último ano" da divulgação (2025 hoje); a série inteira é reapresentada a cada ano novo. A variante "a preços
   médios do ano" (tabela 7531, v10824) não deflaciona entre anos e não foi usada. A ficha declara `reais_constantes` com
   `ano_base: ultimo_ano` (revisão final, decisão R-AE: a série é reapresentada a cada divulgação, então nenhum ano fixo é

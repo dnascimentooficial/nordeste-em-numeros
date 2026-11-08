@@ -1,0 +1,6 @@
+{# Os gráficos ampliados de uma página (Início ou Inovação), cada um num <template class="nn-ampliado">: o gerador os
+   tira do HTML da página e os grava em /ampliados/<idioma>-<página>.json, que o site.js pede quando o modal abre. #}
+{% from "_modal_grafico.html" import ampliado with context %}
+{% for p, g in pares %}
+{{ ampliado(p, g, textos.ampliar) }}
+{% endfor %}

@@ -1,5 +1,7 @@
 {% from "_componentes.html" import atualizacoes, legenda with context %}
-{# O gráfico grande e o contexto dele, guardados num <template> que o site.js clona no <dialog> (Ruling S-W). #}
+{# O gráfico grande e o contexto dele, num <template> que o site.js clona no <dialog> (Ruling S-W). Os templates não
+   ficam no HTML da página (pesavam ~89 KB no Início): saem em /ampliados/<idioma>-<página>.json (modelo ampliados.html),
+   que o site.js pede na primeira vez que o modal abre (ou quando o mouse ou o foco chega num botão Ampliar). #}
 {% macro ampliado(p, g, t) %}
 <template class="nn-ampliado" id="nn-ampliado-{{ g.id }}">
   <div class="nn-ampliado-conteudo">
@@ -26,9 +28,10 @@
   </div>
 </template>
 {% endmacro %}
-{# A janela única da página: vazia até o site.js abrir um gráfico (sem JavaScript os botões "Ampliar" ficam escondidos). #}
-{% macro dialogo(t) %}
-<dialog class="nn-modal" aria-labelledby="nn-modal-titulo">
+{# A janela única da página: vazia até o site.js abrir um gráfico (sem JavaScript os botões "Ampliar" ficam escondidos).
+   `ampliados` é o endereço (com ?v=) do JSON dos gráficos ampliados da página. #}
+{% macro dialogo(t, ampliados) %}
+<dialog class="nn-modal" aria-labelledby="nn-modal-titulo" data-ampliados="{{ ampliados }}">
   <div class="nn-modal-caixa">
     <div class="nn-modal-topo">
       <button type="button" class="nn-modal-fechar"><span>{{ t.fechar }}</span> <span aria-hidden="true">×</span></button>

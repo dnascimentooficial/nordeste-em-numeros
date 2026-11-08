@@ -45,6 +45,57 @@ faixa:
   condicao: "pob_ne.ultimo < pob_ne.primeiro e pob_ne.ultimo > pob_br.ultimo"
   nota: "Tudo aqui vem do IBGE, do INEP, do Ipea e do Atlas Brasil. Nada é estimado por mim. As faixas cinza nos gráficos mostram quem governava o país em cada período, só para situar o tempo. Nenhum número aqui diz que um governo causou um resultado."
 
+# O mapa logo depois da faixa: "Onde a renda mais cresceu desde 2012?". As 27 UFs em quadrados do mesmo tamanho, na
+# posição aproximada de cada estado (src/nordeste/site/mapa.py), com duas vistas, o ranking das pontas e o veredito.
+# Só a renda domiciliar per capita (PNAD Contínua, SIDRA 7533) tem as 27 UFs na base; o bloco some se faltar alguma.
+# leitura é o rótulo de cada estado ([nome], [variacao], [ano0], [ano1], [v0], [v1] vêm da base). O veredito é o
+# primeiro item cuja condição vale (nenhum vale: não sai); complemento sai se a condição dele vale.
+mapa_renda:
+  indicador: renda_dom_pc
+  eyebrow: "Renda por estado"
+  titulo: "Onde a renda mais cresceu desde {renda_topo6.ano_primeiro}?"
+  intro: "Renda domiciliar por pessoa, por mês, nas 27 unidades da federação, já descontada a inflação. Os quadrados ficam mais ou menos onde cada estado fica no mapa; os do Nordeste têm o contorno laranja."
+  abas:
+    rotulo: "O que o mapa mostra"
+    cresceu: "Quanto cresceu"
+    hoje: "Quanto é hoje"
+  rotulo_mapa: "Mapa dos 27 estados"
+  legenda_cresceu: "Variação real de {renda_topo6.ano_primeiro} a {renda_topo6.ano_ultimo}"
+  legenda_hoje: "R$ por pessoa, por mês, em {renda_topo6.ano_ultimo}"
+  legenda_ne: "Nordeste"
+  dica: "Passe o mouse, toque ou navegue pelo teclado num estado para ver o nome e o valor."
+  leitura: "[nome]: [variacao] de [ano0] a [ano1], de R$ [v0] para R$ [v1] por pessoa, por mês"
+  ranking:
+    cresceu: {mais: "Cresceram mais", menos: "Cresceram menos"}
+    hoje: {mais: "Renda mais alta", menos: "Renda mais baixa"}
+  marca_ne: "Nordeste"
+  veredito:
+    # "Cresceu mais onde era menor": o Nordeste começou abaixo do Brasil e cresceu mais que ele, e a maioria (4 ou
+    # mais) dos seis estados que mais cresceram é do Nordeste. "Aumentou" e "diminuiu": a diferença Sudeste − Nordeste
+    # em reais, do primeiro ao último ano.
+    - id: mapa_renda_distancia_aumentou
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. Mas, em reais, a distância para o Sudeste aumentou: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo > renda_gap_se.primeiro"
+    - id: mapa_renda_distancia_diminuiu
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. E, em reais, a distância para o Sudeste também diminuiu: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo < renda_gap_se.primeiro"
+  complemento:
+    id: mapa_renda_proporcao
+    texto: "Em proporção, o Nordeste se aproximou: a renda por pessoa da região foi de {renda_prop_se.primeiro:0%} para {renda_prop_se.ultimo:0%} da do Sudeste. O Nordeste cresceu {renda_cresc_ne.ultimo:1%}; o Brasil, {renda_cresc_br.ultimo:1%}."
+    condicao: "renda_prop_se.ultimo > renda_prop_se.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo"
+  tabela:
+    resumo: "Ver os números dos 27 estados"
+    rotulo: "Renda domiciliar por pessoa nos 27 estados"
+    estado: "Estado"
+    regiao: "Região"
+    inicial: "R$ em [ano0]"
+    final: "R$ em [ano1]"
+    variacao: "Variação real"
+  fonte:
+    - "Fonte: IBGE, PNAD Contínua anual, tabela 7533 (rendimento médio mensal real domiciliar per capita, de todas as fontes), a preços médios de {renda_topo6.ano_ultimo}. Variação e ranking calculados pelo projeto."
+    - "A série começa em {renda_topo6.ano_primeiro}, com a PNAD Contínua. Este site não a emenda com o Censo nem com a PNAD antiga: são pesquisas diferentes, e misturá-las cria variação que não existe."
+  saida: "Ver os estados do Nordeste"
+
 # O placar logo depois da faixa: uma linha por pergunta publicada, com o tema e o "No frigir dos ovos" dela (o fecho, com
 # a primeira letra maiúscula). Pergunta cujo fecho saiu mostra sem_veredito no lugar, e a que saiu inteira some.
 placar:

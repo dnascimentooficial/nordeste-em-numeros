@@ -23,8 +23,8 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from nordeste.caminhos import Caminhos
 from nordeste.site.conteudo import (
-    Conteudo, Destaque, ErroConteudo, avaliar_condicao, calcular_destaques, carregar_conteudo, destaques_citados,
-    pontos_da_selecao, preencher,
+    Conteudo, Destaque, ErroConteudo, avaliar_condicao, calcular_destaques, carregar_conteudo, comparacao_das_ufs,
+    destaques_citados, pontos_da_selecao, preencher,
 )
 from nordeste.site.dados import DadosSite
 from nordeste.site.explorar import (
@@ -54,6 +54,7 @@ from nordeste.site.historia import (
 )
 from nordeste.site.imagens import VERSAO_DO_RENDER, AlvoImagem, renderizar
 from nordeste.site.inovacao import carregar_inovacao
+from nordeste.site.mapa import mapa_svg, montar_mapa
 
 NOME_DO_SITE = "Nordeste em Números"
 URL_DO_SITE = "https://nordeste.dnascimento.com.br"
@@ -118,6 +119,7 @@ AUTOR_MARCA_TAMANHO_MAXIMO = 60_000  # bytes, cada versao
 LARGO = {"largura": 720}  # os dois tamanhos de cada grafico (Ruling S-O): o CSS mostra um conforme a largura da tela
 ESTREITO = {"largura": 360, "altura": 240}
 AMPLIADO = {"largura": 1100, "altura": 520}  # o terceiro, do modal "Ampliar" (Ruling S-W): guardado num <template>
+PASTA_DOS_AMPLIADOS = "ampliados"  # na raiz do site: <idioma>-<pagina>.json, os graficos do modal Ampliar de cada pagina
 MANIFESTO_DE_IMAGENS = "_imagens.json"  # na raiz do site: sha256 das entradas de cada PNG (Ruling S-X); sem dado sensivel
 ARQUIVOS_DE_DADOS = ("base_nordeste.csv", "derivados.csv")
 EXPLORAR_INICIAL = ("pib_pc", "NE")  # a vista que ja vem desenhada no HTML: indicador e territorio
@@ -135,6 +137,15 @@ TEXTOS_EXIGIDOS = {  # seção de textos.yaml: chaves lidas pelo gerador e pelos
         "botao_historia": {"antes", "texto"}, "botao_cards": {"texto"},
     },
     "chamada_historia": {"eyebrow", "titulo", "texto", "botao", "credito"},  # o bloco do Inicio que leva a Como chegamos
+    "mapa_renda": {  # o mapa do Inicio, logo depois da faixa de numeros (Onde a renda mais cresceu?)
+        **dict.fromkeys((
+            "indicador", "eyebrow", "titulo", "intro", "rotulo_mapa", "legenda_cresceu", "legenda_hoje", "legenda_ne",
+            "dica", "leitura", "marca_ne", "veredito", "complemento", "fonte", "saida",
+        )),
+        "abas": {"rotulo", "cresceu", "hoje"},
+        "ranking": {"cresceu": {"mais", "menos"}, "hoje": {"mais", "menos"}},
+        "tabela": {"resumo", "rotulo", "estado", "regiao", "inicial", "final", "variacao"},
+    },
     "compartilhamento": {"alt", "credito"},  # a imagem de compartilhamento das paginas (estaticos/compartilhar.jpg)
     "ampliar": {"botao", "rotulo", "fechar", "gire", "quebra"},
     "por_que": {"titulo", "paragrafos"}, "como_ler": {"titulo", "itens"}, "o_que_falta": {"titulo", "itens"},
@@ -422,11 +433,13 @@ def _placar(perguntas: list[dict]) -> list[dict]:
     ]
 
 
-def _cards_suprimidos(conteudo: Conteudo, destaques: dict[str, Destaque]) -> list[str]:
-    """Ids dos cards cuja condicao e falsa ou cujo texto cita destaque ausente da base."""
+def _cards_suprimidos(conteudo: Conteudo, destaques: dict[str, Destaque], com_mapa: bool = True) -> list[str]:
+    """Ids dos cards cuja condicao e falsa ou cujo texto cita destaque ausente da base; o card do mapa dos estados
+    tambem sai quando o mapa do Inicio nao foi publicado."""
     return [
         c["id"] for c in conteudo.cards
         if not (avaliar_condicao(c["condicao"], destaques) and _cita_so_o_que_existe(c, destaques))
+        or ("mapa" in c and not com_mapa)
     ]
 
 
@@ -488,18 +501,65 @@ def _contexto_do_explorar(dados: DadosSite, por_indicador: dict[str, dict[str, l
     }
 
 
-def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict) -> dict:
-    """O card pronto para o modelo: textos preenchidos, minigrafico e o resumo das previas de compartilhamento."""
+def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict, mapa: dict | None = None) -> dict:
+    """O card pronto para o modelo: textos preenchidos, minigrafico (ou, no card com `mapa`, o mapa dos estados do
+    Inicio) e o resumo das previas de compartilhamento."""
     de, para = preencher(card["de"], destaques), preencher(card["para"], destaques)
     frase, fecho = preencher(card["frase"], destaques), preencher(card["fecho"], destaques)
     frase_feita = preencher(card["frase_feita"], destaques)
+    if "mapa" in card:
+        mini = mapa_svg(mapa["dados"], mapa["legenda_cresceu"])
+    else:
+        mini = minigrafico(_linhas(dados, card["grafico"]))
     return {
         "id": card["id"], "rotulo": preencher(card["rotulo"], destaques), "frase_feita": frase_feita,
         "titulo_sem_aspas": frase_feita.strip("“”"), "de": de, "para": para, "frase": frase, "fecho": fecho,
-        "fonte": preencher(card["fonte"], destaques), "longo": card.get("longo", False),
-        "mini": minigrafico(_linhas(dados, card["grafico"])),
+        "fonte": preencher(card["fonte"], destaques), "longo": card.get("longo", False), "com_mapa": "mapa" in card,
+        "mini": mini,
         "resumo": f"{de} → {para} {frase} {fecho}",
     }
+
+
+# --- o mapa do Inicio ---
+
+def _mapa_renda(
+    dados: DadosSite, destaques: dict[str, Destaque], textos: dict, data: str,
+) -> tuple[dict | None, list[str]]:
+    """O bloco "Onde a renda mais cresceu?" pronto para o modelo e os ids do que saiu.
+
+    O bloco inteiro sai (id `mapa_renda`) quando a base nao tem as 27 UFs do indicador ou quando um texto do corpo cita
+    destaque ausente. O veredito e o primeiro item cuja condicao vale e cujo texto so cita o que existe (nenhum: sai,
+    com o id `mapa_renda_veredito`); o complemento sai sozinho, como um fecho.
+    """
+    comparacao = comparacao_das_ufs(dados, textos["indicador"])
+    corpo = {k: v for k, v in textos.items() if k not in ("veredito", "complemento")}
+    if comparacao is None or not _cita_so_o_que_existe(corpo, destaques):
+        return None, ["mapa_renda"]
+    suprimidos = []
+    pronto = _resolver(corpo, destaques, data)
+    anos = {"[ano0]": str(comparacao.ano_inicial), "[ano1]": str(comparacao.ano_final)}
+    for chave in ("inicial", "final"):
+        for marcador, ano in anos.items():
+            pronto["tabela"][chave] = pronto["tabela"][chave].replace(marcador, ano)
+    veredito = next((
+        preencher(v["texto"], destaques) for v in textos["veredito"]
+        if _cita_so_o_que_existe(v["texto"], destaques) and avaliar_condicao(v["condicao"], destaques)
+    ), None)
+    if veredito is None:
+        suprimidos.append("mapa_renda_veredito")
+    complemento = textos["complemento"]
+    vale = _cita_so_o_que_existe(complemento["texto"], destaques) and avaliar_condicao(complemento["condicao"], destaques)
+    if not vale:
+        suprimidos.append(complemento["id"])
+    nomes = {uf: nome for uf, nome, _ in dados.ufs()}
+    regioes = {uf: regiao for uf, _, regiao in dados.ufs()}
+    return {
+        **pronto,
+        "dados": montar_mapa(comparacao, nomes, regioes, textos["leitura"]),
+        "veredito": veredito,
+        "complemento": preencher(complemento["texto"], destaques) if vale else None,
+        "atualizacoes": _atualizacoes(dados, [textos["indicador"]]),
+    }, suprimidos
 
 
 # --- Inovacao ---
@@ -1333,16 +1393,17 @@ def _preparar(
     data = data_por_extenso(dados.data_base)
     abertura, paragrafos_suprimidos = _paragrafos_da_abertura(conteudo.textos["abertura"]["intro"], destaques)
     faixa, faixa_suprimida = _faixa(conteudo.textos["faixa"], destaques)
-    com_abertura = {
-        **{k: v for k, v in conteudo.textos.items() if k != "chamada_historia"},  # os marcadores dela sao [colchetes]
+    mapa, mapa_suprimido = _mapa_renda(dados, destaques, conteudo.textos["mapa_renda"], data)
+    com_abertura = {  # a chamada da historia usa [colchetes]; o mapa e resolvido em _mapa_renda
+        **{k: v for k, v in conteudo.textos.items() if k not in ("chamada_historia", "mapa_renda")},
         "abertura": {**conteudo.textos["abertura"], "intro": abertura}, "faixa": faixa,
     }
     textos = _resolver(com_abertura, destaques, data)
     for n in textos["faixa"]["numeros"]:
         n["comparacao"] = partes_em_negrito(n["comparacao"])
     perguntas, fechos_suprimidos = _perguntas(dados, destaques, conteudo)
-    cards_fora = _cards_suprimidos(conteudo, destaques)
-    cards = [_cartao(dados, destaques, c) for c in conteudo.cards if c["id"] not in cards_fora]
+    cards_fora = _cards_suprimidos(conteudo, destaques, com_mapa=mapa is not None)
+    cards = [_cartao(dados, destaques, c, mapa) for c in conteudo.cards if c["id"] not in cards_fora]
     for p in perguntas:  # o botao "Baixar o card" so leva a card publicado, nunca a um 404
         if p["card"] in cards_fora:
             p["card"] = None
@@ -1358,7 +1419,7 @@ def _preparar(
         "foto": _foto(textos.get("foto")), "autor": _contexto_do_autor(textos["autor"]),
         "textos": textos, "selo": f"{textos['abertura']['eyebrow']} · {anos[0]}–{anos[1]}" if idioma == "en"
         else f"{textos['abertura']['eyebrow']} · {anos[0]} a {anos[1]}",
-        "perguntas": perguntas, "placar": _placar(perguntas), "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
+        "perguntas": perguntas, "placar": _placar(perguntas), "mapa_renda": mapa, "fontes": _fontes(dados), "arquivos": arquivos, "cards": cards,
         "data_curta": data_curta(dados.data_base),
         "creditos_historia": _creditos_da_historia(historia) if com_historia else [],
         "chamada_historia": _chamada_da_historia(conteudo.textos["chamada_historia"], historia) if com_historia else None,
@@ -1373,8 +1434,35 @@ def _preparar(
     return {
         "dados": dados, "textos": textos, "comum": comum, "por_pagina": por_pagina, "cards": cards, "anos": anos,
         "arquivos": arquivos, "paginas_do_menu": paginas_do_menu, "cards_fora": cards_fora,
-        "suprimidos": [*paragrafos_suprimidos, *faixa_suprimida, *fechos_suprimidos, *vereditos_suprimidos],
+        "suprimidos": [
+            *paragrafos_suprimidos, *faixa_suprimida, *mapa_suprimido, *fechos_suprimidos, *vereditos_suprimidos],
     }
+
+
+def _pares_ampliados(chave: str, comum: dict, por_pagina: dict) -> list[tuple[dict, dict]] | None:
+    """(pergunta ou capitulo, grafico) de cada grafico com modal Ampliar da pagina; None na pagina que nao tem modal."""
+    if chave == "index":
+        return [(p, g) for p in comum["perguntas"] for g in p["graficos"]]
+    if chave == PAGINA_INOVACAO.chave:
+        return [(c, g) for c in por_pagina["inovacao"]["capitulos"] for g in c["graficos"]]
+    return None
+
+
+_TEMPLATE_AMPLIADO = re.compile(r'<template class="nn-ampliado" id="([^"]+)">\n?(.*?)\n?</template>', re.S)
+
+
+def _escrever_ampliados(ambiente: Environment, saida: Path, chave: str, pares: list, **contexto: object) -> str:
+    """Grava /ampliados/<idioma>-<pagina>.json ({id do template: HTML do conteudo}) e devolve o endereco com ?v= (oito
+    primeiros do sha256): o HTML da pagina leva so o endereco, e o site.js pede o arquivo quando o modal abre."""
+    html = _html_enxuto(ambiente.get_template("ampliados.html").render(pares=pares, **contexto))
+    modelos = dict(_TEMPLATE_AMPLIADO.findall(html))
+    if len(modelos) != len(pares):
+        raise ErroConteudo(f"ampliados de {chave}: {len(pares)} graficos, {len(modelos)} templates.")
+    texto = json.dumps(modelos, ensure_ascii=False, separators=(",", ":")) + "\n"
+    nome = f"{PASTA_DOS_AMPLIADOS}/{idioma_atual()}-{chave}.json"
+    (saida / PASTA_DOS_AMPLIADOS).mkdir(exist_ok=True)
+    (saida / nome).write_bytes(texto.encode("utf-8"))
+    return f"/{nome}?v={hashlib.sha256(texto.encode('utf-8')).hexdigest()[:8]}"
 
 
 def _escrever_paginas(ambiente: Environment, saida: Path, pronto: dict, historia: Historia | None) -> list[str]:
@@ -1388,7 +1476,11 @@ def _escrever_paginas(ambiente: Environment, saida: Path, pronto: dict, historia
             _json_ld(dados, textos, pronto["anos"], pronto["arquivos"]) if p.chave in PAGINAS_COM_DATASET else None,
             noindex=p.chave == PAGINA_HISTORIA.chave and historia.provisoria,
         )
-        _escrever(ambiente, saida, p.modelo, p.arquivo, pagina=pagina, **comum, **pronto["por_pagina"].get(p.chave, {}))
+        da_pagina = pronto["por_pagina"].get(p.chave, {})
+        pares = _pares_ampliados(p.chave, comum, da_pagina)
+        ampliados = None if pares is None else _escrever_ampliados(
+            ambiente, saida, p.chave, pares, pagina=pagina, **comum, **da_pagina)
+        _escrever(ambiente, saida, p.modelo, p.arquivo, pagina=pagina, ampliados=ampliados, **comum, **da_pagina)
     arquivos_dos_cards = []
     for card in cards:
         rota = rota_do_card(card["id"])

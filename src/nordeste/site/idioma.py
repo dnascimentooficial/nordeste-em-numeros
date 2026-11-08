@@ -45,8 +45,8 @@ NAO_TRADUZIR = frozenset({"id", "condicao", "arquivo", "url", "licenca"})
 # chaves que, com um identificador (uma palavra so, sem espaco), apontam para a selecao dos dados ou para outra parte
 # do conteudo (`card: pibpc`, `grafico: renda`, `tipo: serie`); com texto de leitura (`saidas.card`), sao traduzidas
 SE_IDENTIFICADOR = frozenset({
-    "indicador", "territorio", "referencia", "tipo", "sub", "etapa", "rede", "serie", "card", "grafico", "destaque",
-    "destaque_populacao",
+    "indicador", "territorio", "referencia", "tipo", "sub", "etapa", "rede", "serie", "card", "grafico", "mapa",
+    "destaque", "destaque_populacao",
 })
 IDENTIFICADOR = re.compile(r"[A-Za-z0-9_.\-]+")
 

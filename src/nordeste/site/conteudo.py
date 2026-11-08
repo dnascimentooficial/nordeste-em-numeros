@@ -171,12 +171,15 @@ def avaliar_condicao(expr: str, destaques: dict[str, Destaque]) -> bool:
 
 # --- carga e validacao dos YAML ---
 
-_SELECAO = ("tipo", "indicador", "territorio", "referencia", "sub", "etapa", "rede", "serie")
+_SELECAO = ("tipo", "indicador", "territorio", "referencia", "sub", "etapa", "rede", "serie", "topo")
 _FILTROS_DA_SERIE = ("sub", "etapa", "rede", "serie")
-_CHAVES_DO_CARD = {
-    "obrigatorias": {"id", "rotulo", "frase_feita", "de", "para", "frase", "grafico", "fecho", "condicao", "fonte"},
-    "opcionais": {"longo"},
+_TIPOS = ("serie", "razao", "fatia", "variacao", "diferenca", "proporcao", "no_topo")
+_COM_REFERENCIA = ("razao", "diferenca", "proporcao")
+_CHAVES_DO_CARD = {  # e `grafico` ou `mapa` (o mapa dos estados do Inicio, na vista "cresceu"), um dos dois
+    "obrigatorias": {"id", "rotulo", "frase_feita", "de", "para", "frase", "fecho", "condicao", "fonte"},
+    "opcionais": {"longo", "grafico", "mapa"},
 }
+_VISTAS_DO_MAPA_NO_CARD = ("cresceu",)
 _CHAVES_DA_PERGUNTA = {
     "obrigatorias": {"id", "rotulo", "frase_feita", "lide", "graficos", "fecho", "fonte"},
     "opcionais": {"explicacao", "alerta", "card"},  # card: id em cards.yaml (o botao "Baixar o card" da pergunta)
@@ -203,18 +206,27 @@ def _exigir_chaves(obj: object, chaves: dict[str, set[str]], onde: str) -> None:
 def _validar_selecao(spec: object, onde: str) -> None:
     """Destaque ou linha de grafico: `serie` filtra a base; `razao` le a razao publicada contra a referencia; `fatia`
     e o territorio como % do Brasil, ano a ano e na mesma serie, com os dois valores da base (o pedaco do Nordeste
-    numa contagem do pais)."""
+    numa contagem do pais).
+
+    So para destaques (o mapa do Inicio): `variacao` le a variacao acumulada publicada (%, desde o primeiro ano do
+    Brasil na serie); `diferenca` e `proporcao` sao o territorio menos a referencia e o territorio como % da
+    referencia, ano a ano e na mesma serie, com os valores da base; `no_topo` conta quantas UFs da regiao `territorio`
+    estao entre as `topo` UFs do pais que mais cresceram (variacao real do primeiro ao ultimo ano em que as 27 tem
+    valor na mesma serie), e o primeiro e o ultimo ponto levam a mesma contagem, nos anos da comparacao."""
     if not isinstance(spec, dict) or not {"tipo", "indicador", "territorio"} <= spec.keys():
         raise ErroConteudo(f"{onde}: precisa de tipo, indicador e territorio.")
-    if spec["tipo"] not in ("serie", "razao", "fatia"):
-        raise ErroConteudo(f"{onde}: tipo {spec['tipo']!r} fora de serie|razao|fatia.")
-    if spec["tipo"] in ("serie", "fatia") and "referencia" in spec:
+    if spec["tipo"] not in _TIPOS:
+        raise ErroConteudo(f"{onde}: tipo {spec['tipo']!r} fora de {'|'.join(_TIPOS)}.")
+    if spec["tipo"] not in _COM_REFERENCIA and "referencia" in spec:
         raise ErroConteudo(f"{onde}: {spec['tipo']} nao leva referencia.")
-    if spec["tipo"] == "razao":
-        if "referencia" not in spec:
-            raise ErroConteudo(f"{onde}: razao exige referencia.")
-        if any(f in spec for f in _FILTROS_DA_SERIE):
-            raise ErroConteudo(f"{onde}: razao nao filtra por {_FILTROS_DA_SERIE}.")
+    if spec["tipo"] in _COM_REFERENCIA and "referencia" not in spec:
+        raise ErroConteudo(f"{onde}: {spec['tipo']} exige referencia.")
+    if spec["tipo"] in ("razao", "variacao") and any(f in spec for f in _FILTROS_DA_SERIE):
+        raise ErroConteudo(f"{onde}: {spec['tipo']} nao filtra por {_FILTROS_DA_SERIE}.")
+    if (spec["tipo"] == "no_topo") != ("topo" in spec):
+        raise ErroConteudo(f"{onde}: `topo` vale so (e sempre) no tipo no_topo.")
+    if "topo" in spec and not (isinstance(spec["topo"], int) and not isinstance(spec["topo"], bool) and spec["topo"] >= 1):
+        raise ErroConteudo(f"{onde}: topo deve ser um inteiro positivo.")
 
 
 def _validar_destaques(destaques: object) -> None:
@@ -236,6 +248,8 @@ def _validar_grafico(grafico: object, onde: str) -> None:
     for i, linha in enumerate(grafico["linhas"]):
         _exigir_chaves(linha, _CHAVES_DA_LINHA, f"{onde}, linha {i}")
         _validar_selecao(linha, f"{onde}, linha {i}")
+        if linha["tipo"] not in ("serie", "razao", "fatia"):
+            raise ErroConteudo(f"{onde}, linha {i}: o grafico desenha so serie, razao ou fatia.")
         if not isinstance(linha["destaque"], bool):
             raise ErroConteudo(f"{onde}, linha {i}: destaque deve ser verdadeiro ou falso.")
     for i, quebra in enumerate(grafico.get("quebras", [])):
@@ -286,6 +300,12 @@ def _validar_cards(cards: object, graficos: dict[str, dict]) -> None:
         if card["id"] in ids:
             raise ErroConteudo(f"{onde}: id repetido.")
         ids.add(card["id"])
+        if ("grafico" in card) == ("mapa" in card):
+            raise ErroConteudo(f"{onde}: o card leva grafico ou mapa, um dos dois.")
+        if "mapa" in card:
+            if card["mapa"] not in _VISTAS_DO_MAPA_NO_CARD:
+                raise ErroConteudo(f"{onde}: mapa {card['mapa']!r} fora de {_VISTAS_DO_MAPA_NO_CARD}.")
+            continue
         if isinstance(card["grafico"], str):
             if card["grafico"] not in graficos:
                 raise ErroConteudo(f"{onde}: grafico {card['grafico']!r} nao esta em perguntas.yaml.")
@@ -346,13 +366,82 @@ def carregar_conteudo(pasta: Path, idioma: str = PADRAO) -> Conteudo:
 # --- calculo ---
 
 def pontos_da_selecao(dados: DadosSite, spec: dict) -> list[Ponto]:
-    """Pontos de um destaque ou linha de grafico: serie filtrada da base, ou razao publicada contra a referencia."""
+    """Pontos de um destaque ou linha de grafico: serie filtrada da base, razao ou variacao publicada, ou uma conta
+    ano a ano com os valores da base (ver _validar_selecao)."""
     if spec["tipo"] == "razao":
         return dados.razao(spec["indicador"], spec["territorio"], spec["referencia"])
+    if spec["tipo"] == "variacao":
+        return dados.metrica(spec["indicador"], spec["territorio"], "variacao_acumulada")
     filtros = {f: spec.get(f) for f in _FILTROS_DA_SERIE}
     if spec["tipo"] == "fatia":
         return fatia_do_brasil(dados, spec["indicador"], spec["territorio"], **filtros)
+    if spec["tipo"] in ("diferenca", "proporcao"):
+        return _conta_ano_a_ano(dados, spec, filtros)
+    if spec["tipo"] == "no_topo":
+        return _no_topo(dados, spec, filtros)
     return dados.serie(spec["indicador"], spec["territorio"], **filtros)
+
+
+def _conta_ano_a_ano(dados: DadosSite, spec: dict, filtros: dict) -> list[Ponto]:
+    """Territorio menos referencia (`diferenca`) ou territorio como % da referencia (`proporcao`), nos anos e series
+    em que os dois tem valor na base."""
+    referencia = {(p.ano, p.serie): p.valor for p in dados.serie(spec["indicador"], spec["referencia"], **filtros)}
+    pontos = []
+    for p in dados.serie(spec["indicador"], spec["territorio"], **filtros):
+        ref = referencia.get((p.ano, p.serie))
+        if ref is None or (spec["tipo"] == "proporcao" and not ref):
+            continue
+        pontos.append(Ponto(p.ano, p.valor - ref if spec["tipo"] == "diferenca" else p.valor / ref * 100, p.serie))
+    return pontos
+
+
+@dataclass(frozen=True)
+class ComparacaoDasUfs:
+    """Primeiro e ultimo ano em que todas as UFs da tabela de territorios tem valor na mesma serie, e o valor de cada
+    UF nesses anos."""
+    serie: str
+    ano_inicial: int
+    ano_final: int
+    valores: dict[str, tuple[float, float]]  # uf -> (valor no ano inicial, valor no ano final)
+
+    def variacao(self, uf: str) -> float:
+        inicial, final = self.valores[uf]
+        return (final / inicial - 1) * 100
+
+    def por_variacao(self) -> list[str]:
+        """As UFs da que mais cresceu para a que menos cresceu (empate: ordem alfabetica do id)."""
+        return sorted(self.valores, key=lambda uf: (-self.variacao(uf), uf))
+
+
+def comparacao_das_ufs(dados: DadosSite, indicador: str, **filtros) -> ComparacaoDasUfs | None:
+    """A comparacao das 27 UFs (`ComparacaoDasUfs`) na serie mais recente em que todas tem valor em ao menos dois
+    anos; None se falta alguma UF (base so com o Nordeste, por exemplo) ou algum valor inicial e zero ou negativo."""
+    ufs = [uf for uf, _, _ in dados.ufs()]
+    if not ufs:
+        return None
+    por_uf = {uf: {(p.serie, p.ano): p.valor for p in dados.serie(indicador, uf, **filtros)} for uf in ufs}
+    series = sorted({s for valores in por_uf.values() for s, _ in valores}, reverse=True)
+    escolhida = None
+    for serie in series:
+        anos = set.intersection(*({a for s, a in v if s == serie} for v in por_uf.values()))
+        if len(anos) >= 2 and (escolhida is None or max(anos) > escolhida[2]):
+            escolhida = (serie, min(anos), max(anos))
+    if escolhida is None:
+        return None
+    serie, inicial, final = escolhida
+    valores = {uf: (v[serie, inicial], v[serie, final]) for uf, v in por_uf.items()}
+    if any(a <= 0 for a, _ in valores.values()):
+        return None
+    return ComparacaoDasUfs(serie, inicial, final, valores)
+
+
+def _no_topo(dados: DadosSite, spec: dict, filtros: dict) -> list[Ponto]:
+    comparacao = comparacao_das_ufs(dados, spec["indicador"], **filtros)
+    if comparacao is None:
+        return []
+    regiao = {uf: r for uf, _, r in dados.ufs()}
+    n = sum(regiao[uf] == spec["territorio"] for uf in comparacao.por_variacao()[:spec["topo"]])
+    return [Ponto(comparacao.ano_inicial, float(n), comparacao.serie), Ponto(comparacao.ano_final, float(n), comparacao.serie)]
 
 
 def fatia_do_brasil(dados: DadosSite, indicador: str, territorio: str, **filtros) -> list[Ponto]:

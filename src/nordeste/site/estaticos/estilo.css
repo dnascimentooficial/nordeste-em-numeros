@@ -1193,6 +1193,392 @@ body {
   border: 0;
 }
 
+/* --- o mapa do Início: os 27 estados em quadrados do mesmo tamanho, cada um mais ou menos onde o estado fica (mapa.py).
+   A vista (nn-mapa-vista-cresceu ou -hoje, no <section>) escolhe o tom de cada quadrado (nn-mapa-cq0..5 ou
+   nn-mapa-hq0..5), o valor, a legenda e o ranking à vista. A escala vai da cor do painel (tom 0) à da tinta (tom 5),
+   nos dois temas; no card (sempre preto), do preto ao branco. O Nordeste leva o contorno laranja. --- */
+
+.nn-mapa {
+  --nn-mapa-cor: var(--nn-tinta);
+  --nn-mapa-base: var(--nn-painel);
+  gap: 18px;
+}
+
+.nn-mapa-vista-cresceu .nn-so-hoje,
+.nn-mapa-vista-hoje .nn-so-cresceu {
+  display: none;
+}
+
+.nn-mapa-q0,
+.nn-mapa-vista-cresceu .nn-mapa-cq0,
+.nn-mapa-vista-hoje .nn-mapa-hq0 {
+  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 9%, var(--nn-mapa-base));
+  --nn-mapa-texto: var(--nn-mapa-cor);
+}
+
+.nn-mapa-q1,
+.nn-mapa-vista-cresceu .nn-mapa-cq1,
+.nn-mapa-vista-hoje .nn-mapa-hq1 {
+  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 22%, var(--nn-mapa-base));
+  --nn-mapa-texto: var(--nn-mapa-cor);
+}
+
+.nn-mapa-q2,
+.nn-mapa-vista-cresceu .nn-mapa-cq2,
+.nn-mapa-vista-hoje .nn-mapa-hq2 {
+  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 36%, var(--nn-mapa-base));
+  --nn-mapa-texto: var(--nn-mapa-cor);
+}
+
+.nn-mapa-q3,
+.nn-mapa-vista-cresceu .nn-mapa-cq3,
+.nn-mapa-vista-hoje .nn-mapa-hq3 {
+  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 64%, var(--nn-mapa-base));
+  --nn-mapa-texto: var(--nn-mapa-base);
+}
+
+.nn-mapa-q4,
+.nn-mapa-vista-cresceu .nn-mapa-cq4,
+.nn-mapa-vista-hoje .nn-mapa-hq4 {
+  --nn-mapa-fundo: color-mix(in srgb, var(--nn-mapa-cor) 80%, var(--nn-mapa-base));
+  --nn-mapa-texto: var(--nn-mapa-base);
+}
+
+.nn-mapa-q5,
+.nn-mapa-vista-cresceu .nn-mapa-cq5,
+.nn-mapa-vista-hoje .nn-mapa-hq5 {
+  --nn-mapa-fundo: var(--nn-mapa-cor);
+  --nn-mapa-texto: var(--nn-mapa-base);
+}
+
+.nn-mapa-abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-self: start;
+  padding: 4px;
+  border: 1px solid var(--nn-linha);
+  border-radius: 999px;
+}
+
+.nn-mapa-abas[hidden] {
+  display: none;
+}
+
+.nn .nn-mapa-aba {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nn .nn-mapa-aba:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--nn-laranja);
+  text-underline-offset: 3px;
+}
+
+.nn .nn-mapa-aba[aria-pressed="true"] {
+  background: var(--nn-tinta);
+  color: var(--nn-painel);
+  text-decoration: none;
+}
+
+.nn-mapa-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: 24px clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+
+.nn-mapa-figura {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.nn-mapa-grade {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.nn .nn-mapa-uf {
+  aspect-ratio: 1;
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--nn-mapa-fundo);
+  color: var(--nn-mapa-texto);
+  font: inherit;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.nn .nn-mapa-uf.nn-mapa-ne {
+  box-shadow: inset 0 0 0 3px var(--nn-laranja);
+}
+
+.nn .nn-mapa-uf:focus-visible {
+  outline: 3px solid var(--nn-tinta);
+  outline-offset: 2px;
+}
+
+.nn .nn-mapa-uf:hover {
+  outline: 2px solid var(--nn-tinta);
+  outline-offset: 1px;
+}
+
+.nn-mapa-sigla {
+  font-family: var(--nn-display);
+  font-size: clamp(12px, 3vw, 15px);
+  font-weight: 800;
+}
+
+.nn-mapa-v {
+  font-size: clamp(10px, 2.6vw, 12px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-mapa-c0 { grid-column: 1; }
+.nn-mapa-c1 { grid-column: 2; }
+.nn-mapa-c2 { grid-column: 3; }
+.nn-mapa-c3 { grid-column: 4; }
+.nn-mapa-c4 { grid-column: 5; }
+.nn-mapa-c5 { grid-column: 6; }
+.nn-mapa-l0 { grid-row: 1; }
+.nn-mapa-l1 { grid-row: 2; }
+.nn-mapa-l2 { grid-row: 3; }
+.nn-mapa-l3 { grid-row: 4; }
+.nn-mapa-l4 { grid-row: 5; }
+.nn-mapa-l5 { grid-row: 6; }
+.nn-mapa-l6 { grid-row: 7; }
+.nn-mapa-l7 { grid-row: 8; }
+
+.nn .nn-mapa-leitura {
+  min-height: 3.2em;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--nn-suave);
+}
+
+.nn-mapa-legenda {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.nn .nn-mapa-legenda-titulo {
+  font-weight: 700;
+}
+
+.nn-mapa-legenda ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+.nn-mapa-legenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-mapa-amostra {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--nn-mapa-fundo);
+  border: 1px solid var(--nn-linha);
+}
+
+.nn-mapa-amostra-ne {
+  background: transparent;
+  border: 3px solid var(--nn-laranja);
+}
+
+.nn-mapa-rankings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 28px;
+  align-content: start;
+}
+
+.nn .nn-mapa-ranking h3 {
+  font-family: var(--nn-texto);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nn-suave);
+}
+
+.nn-mapa-ranking ol {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+}
+
+.nn-mapa-ranking li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-top: 1px solid var(--nn-linha);
+  font-size: 15px;
+}
+
+.nn-mapa-ranking li:last-child {
+  border-bottom: 1px solid var(--nn-linha);
+}
+
+.nn-mapa-pos {
+  color: var(--nn-suave);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-mapa-ranking .nn-mapa-ne .nn-mapa-nome,
+.nn-mapa tr.nn-mapa-ne th {
+  color: var(--nn-laranja-texto);
+  font-weight: 700;
+}
+
+.nn-mapa-marca {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+.nn-mapa-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.nn .nn-mapa-veredito {
+  max-width: 62ch;
+  padding: 4px 0 4px 16px;
+  border-left: 4px solid var(--nn-laranja);
+  font-family: var(--nn-display);
+  font-size: clamp(19px, 2.2vw, 23px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.28;
+}
+
+.nn .nn-mapa-complemento {
+  max-width: 68ch;
+  color: var(--nn-suave);
+}
+
+@media (max-width: 860px) {
+  .nn-mapa-corpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nn-mapa-figura {
+    max-width: 440px;
+  }
+}
+
+@media (max-width: 520px) {
+  .nn-mapa-rankings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* o mapa no card (mapa.mapa_svg): ao lado do número e da frase, do preto ao branco */
+
+.nn-mapa-svg {
+  --nn-mapa-cor: var(--nn-branco);
+  --nn-mapa-base: #1b1b1b;
+}
+
+.nn-mapa-svg-uf rect {
+  fill: var(--nn-mapa-fundo);
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+}
+
+.nn-mapa-svg-ne rect {
+  stroke: var(--nn-laranja);
+  stroke-width: 3;
+}
+
+.nn-mapa-svg-uf text {
+  fill: var(--nn-mapa-texto);
+  text-anchor: middle;
+  font-family: var(--nn-texto);
+}
+
+.nn-mapa-svg-sigla {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.nn-mapa-svg-valor {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.nn-cartao-mapa {
+  grid-template-columns: minmax(0, 1fr) 40%;
+  column-gap: 18px;
+  grid-template-areas: "marca marca" "mito mito" "sera sera" "numero mapa" "frase mapa" "vazio mapa" "fecho fecho" "fonte fonte";
+}
+
+.nn-cartao-comum.nn-cartao-mapa {
+  grid-template-areas: "marca marca" "comum comum" "mito mito" "sera sera" "numero mapa" "frase mapa" "vazio mapa" "fecho fecho" "fonte fonte";
+}
+
+.nn-cartao-mapa .nn-c-marca { grid-area: marca; }
+.nn-cartao-mapa .nn-c-comum { grid-area: comum; }
+.nn-cartao-mapa .nn-c-mito { grid-area: mito; }
+.nn-cartao-mapa .nn-c-sera { grid-area: sera; }
+.nn-cartao-mapa .nn-c-numero { grid-area: numero; }
+.nn-cartao-mapa .nn-c-frase { grid-area: frase; }
+.nn-cartao-mapa .nn-c-fecho { grid-area: fecho; }
+.nn-cartao-mapa .nn-c-fonte { grid-area: fonte; }
+
+.nn-cartao-mapa .nn-c-mini {
+  grid-area: mapa;
+  align-self: start;
+}
+
+.nn-cartao-mapa .nn-c-numero.nn-c-longo {
+  font-size: clamp(24px, 6.4vw, 42px);
+}
+
+.nn-cartao-mapa .nn-c-frase {
+  font-size: clamp(12px, 3vw, 16px);
+}
+
 /* --- as perguntas como capítulos de uma reportagem: o menu lateral fixo (260 px) e a folha que o sobrepõe em 28 px,
    com a legenda presa no alto. Sem JavaScript o menu fica sempre à vista; com ele (nn-indice-ligado), aparece depois
    do placar e marca a pergunta em leitura. Até 1100 px o menu vira uma faixa de atalhos presa no alto. --- */

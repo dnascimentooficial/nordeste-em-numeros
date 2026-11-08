@@ -1,0 +1,80 @@
+{% from "_componentes.html" import atualizacoes with context %}
+{# O mapa do Início, logo depois da faixa de números: os 27 estados em quadrados (mapa.py), duas vistas, o ranking das
+   pontas, o veredito e a fonte. Sem JavaScript: a vista "quanto cresceu", sem as abas, com a tabela dos 27 em "Ver os
+   números". Com ele (ligarMapa no site.js), as abas trocam a classe da vista no <section> e o estado apontado aparece
+   na linha de leitura. Nada de estilo inline: a posição e o tom de cada quadrado são classes do estilo.css. #}
+{% macro mapa_renda(m, ui, rotas) %}
+{% set d = m.dados %}
+<section class="nn-card nn-mapa nn-mapa-vista-cresceu" id="mapa-renda" aria-labelledby="titulo-mapa-renda">
+  <p class="nn-eyebrow">{{ m.eyebrow }}</p>
+  <h2 id="titulo-mapa-renda">{{ m.titulo }}</h2>
+  <p class="nn-muted nn-mapa-intro">{{ m.intro }}</p>
+  <div class="nn-mapa-abas" role="group" aria-label="{{ m.abas.rotulo }}" hidden>
+{% for vista in ("cresceu", "hoje") %}
+    <button type="button" class="nn-mapa-aba" data-vista="{{ vista }}" aria-pressed="{{ 'true' if loop.first else 'false' }}" aria-controls="nn-mapa-grade">{{ m.abas[vista] }}</button>
+{% endfor %}
+  </div>
+  <div class="nn-mapa-corpo">
+    <div class="nn-mapa-figura">
+      <div class="nn-mapa-grade" id="nn-mapa-grade" role="group" aria-label="{{ m.rotulo_mapa }}">
+{% for q in d.quadrados %}
+        <button type="button" class="nn-mapa-uf nn-mapa-c{{ q.coluna }} nn-mapa-l{{ q.linha }} nn-mapa-cq{{ q.tons.cresceu }} nn-mapa-hq{{ q.tons.hoje }}{% if q.ne %} nn-mapa-ne{% endif %}" data-uf="{{ q.sigla }}" aria-label="{{ q.rotulo }}"><span class="nn-mapa-sigla" aria-hidden="true">{{ q.sigla }}</span><span class="nn-mapa-v nn-so-cresceu" aria-hidden="true">{{ q.valores.cresceu }}</span><span class="nn-mapa-v nn-so-hoje" aria-hidden="true">{{ q.valores.hoje }}</span></button>
+{% endfor %}
+      </div>
+      <p class="nn-mapa-leitura" aria-hidden="true" data-dica="{{ m.dica }}" hidden></p>
+{% for vista in ("cresceu", "hoje") %}
+      <div class="nn-mapa-legenda nn-so-{{ vista }}">
+        <p class="nn-mapa-legenda-titulo">{{ m["legenda_" + vista] }}</p>
+        <ul>
+{% for faixa in d.legendas[vista] %}
+          <li><span class="nn-mapa-amostra nn-mapa-q{{ faixa.tom }}" aria-hidden="true"></span>{{ faixa.texto }}</li>
+{% endfor %}
+          <li><span class="nn-mapa-amostra nn-mapa-amostra-ne" aria-hidden="true"></span>{{ m.legenda_ne }}</li>
+        </ul>
+      </div>
+{% endfor %}
+    </div>
+    <div class="nn-mapa-rankings">
+{% for vista in ("cresceu", "hoje") %}
+{% for ponta in ("mais", "menos") %}
+      <div class="nn-mapa-ranking nn-so-{{ vista }}">
+        <h3>{{ m.ranking[vista][ponta] }}</h3>
+        <ol>
+{% for item in d.rankings[vista][ponta] %}
+          <li value="{{ item.posicao }}"{% if item.ne %} class="nn-mapa-ne"{% endif %}><span class="nn-mapa-pos" aria-hidden="true">{{ item.posicao }}</span><span class="nn-mapa-nome">{{ item.nome }}{% if item.ne %} <span class="nn-mapa-marca">{{ m.marca_ne }}</span>{% endif %}</span><span class="nn-mapa-valor">{{ item.valor }}</span></li>
+{% endfor %}
+        </ol>
+      </div>
+{% endfor %}
+{% endfor %}
+    </div>
+  </div>
+{% if m.veredito %}
+  <p class="nn-mapa-veredito">{{ m.veredito }}</p>
+{% endif %}
+{% if m.complemento %}
+  <p class="nn-mapa-complemento">{{ m.complemento }}</p>
+{% endif %}
+  <details>
+    <summary>{{ m.tabela.resumo }}</summary>
+    <div class="nn-tabela" tabindex="0" role="region" aria-label="{{ m.tabela.rotulo }}">
+      <table>
+        <thead><tr><th scope="col">{{ m.tabela.estado }}</th><th scope="col">{{ m.tabela.regiao }}</th><th scope="col" class="nn-num">{{ m.tabela.inicial }}</th><th scope="col" class="nn-num">{{ m.tabela.final }}</th><th scope="col" class="nn-num">{{ m.tabela.variacao }}</th></tr></thead>
+        <tbody>
+{% for linha in d.tabela %}
+          <tr{% if linha.ne %} class="nn-mapa-ne"{% endif %}><th scope="row">{{ linha.nome }}</th><td>{{ linha.regiao }}</td><td class="nn-num">{{ linha.v0 }}</td><td class="nn-num">{{ linha.v1 }}</td><td class="nn-num">{{ linha.variacao }}</td></tr>
+{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  <div class="nn-fonte">
+{% for linha in m.fonte %}
+    <span>{{ linha }}</span>
+{% endfor %}
+{{ atualizacoes(m.atualizacoes) }}  </div>
+  <nav class="nn-saidas" aria-label="{{ m.eyebrow }}">
+    <a href="{{ rotas.estados }}" data-umami-event="cta-click" data-umami-event-target="estados" data-umami-event-place="mapa-renda">{{ m.saida }}</a>
+  </nav>
+</section>
+{% endmacro %}

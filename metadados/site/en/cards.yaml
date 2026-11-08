@@ -169,6 +169,16 @@
   condicao: "renda_ne.ultimo >= renda_ne.primeiro * 1.33"
   fonte: "IBGE, PNAD Contínua"
 
+- id: mapa_renda
+  rotulo: "Income by state"
+  frase_feita: "“Income doesn't grow here.”"
+  longo: true
+  de: "R$ {renda_ne.primeiro:0}"
+  para: "R$ {renda_ne.ultimo:0}"
+  frase: "was income per person, per month, in the Northeast in {renda_ne.ano_primeiro} and in {renda_ne.ano_ultimo}, adjusted for inflation: up {renda_cresc_ne.ultimo:1%}. Brazil, {renda_cresc_br.ultimo:1%}. The map shows how much each state grew."
+  fecho: "{renda_topo6.ultimo:0} of the 6 states that grew the most are in the Northeast."
+  fonte: "IBGE, PNAD Contínua"
+
 - id: rend
   rotulo: "Work"
   frase_feita: "“Working here doesn't pay.”"

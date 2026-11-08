@@ -801,27 +801,88 @@
     }
   }
 
+  /* --- mapa do Início: os 27 estados em quadrados ------------------------------------------------------------ */
+
+  /* Sem JavaScript o mapa mostra a vista "quanto cresceu" e as abas ficam com hidden. Com ele, cada aba (botão com
+     aria-pressed) troca a classe da vista no <section>, o que troca o tom e o valor dos quadrados, a legenda e o
+     ranking. Passar o mouse, focar ou clicar num estado escreve o rótulo dele (nome e valores) na linha de leitura,
+     que é só visual: o leitor de tela já lê o mesmo rótulo no próprio botão. A medição conta a troca de aba
+     (map-tab) e o clique no estado (map-tile; Enter e espaço no botão também são clique). */
+  function ligarMapa() {
+    document.querySelectorAll('.nn-mapa').forEach((bloco) => {
+      const abas = bloco.querySelector('.nn-mapa-abas');
+      const leitura = bloco.querySelector('.nn-mapa-leitura');
+      if (abas) {
+        const botoes = Array.from(abas.querySelectorAll('.nn-mapa-aba'));
+        botoes.forEach((botao) => {
+          botao.addEventListener('click', () => {
+            if (botao.getAttribute('aria-pressed') === 'true') return;
+            const vista = botao.getAttribute('data-vista');
+            botoes.forEach((outro) => outro.setAttribute('aria-pressed', String(outro === botao)));
+            botoes.forEach((outro) => bloco.classList.remove('nn-mapa-vista-' + outro.getAttribute('data-vista')));
+            bloco.classList.add('nn-mapa-vista-' + vista);
+            medir('map-tab', { tab: vista });
+          });
+        });
+        abas.hidden = false;
+      }
+      if (leitura) {
+        leitura.textContent = leitura.getAttribute('data-dica') || '';
+        leitura.hidden = false;
+      }
+      bloco.querySelectorAll('.nn-mapa-uf').forEach((estado) => {
+        const mostrar = () => {
+          if (leitura) leitura.textContent = estado.getAttribute('aria-label');
+        };
+        estado.addEventListener('mouseenter', mostrar);
+        estado.addEventListener('focus', mostrar);
+        estado.addEventListener('click', () => {
+          mostrar();
+          medir('map-tile', { uf: estado.getAttribute('data-uf') });
+        });
+      });
+    });
+  }
+
   /* --- modal "Ampliar" ---------------------------------------------------------------------------------------- */
 
-  /* Cada gráfico do Início tem um <template class="nn-ampliado"> com o gráfico grande (1100 x 520, pronto do Python) e
-     o contexto dele. O botão Ampliar (e, com mouse ou caneta, o próprio gráfico) clona o template no único <dialog>,
-     abre com showModal() e liga a dica de valor ao SVG grande, como nos gráficos da página. Fecha pelo botão, por Esc
-     e por clique fora; o foco volta ao botão que abriu. Sem JavaScript os botões ficam com hidden. */
+  /* Cada gráfico do Início (e da Inovação) tem um <template class="nn-ampliado"> com o gráfico grande (1100 x 520,
+     pronto do Python) e o contexto dele. Os templates não vêm no HTML da página: ficam em /ampliados/<idioma>-<página>.json
+     (o data-ampliados do <dialog>, com ?v=), que este código pede uma vez, na primeira abertura ou antes, quando o mouse
+     ou o foco chega num botão Ampliar. O botão Ampliar (e, com mouse ou caneta, o próprio gráfico) clona o template no
+     único <dialog>, abre com showModal() e liga a dica de valor ao SVG grande, como nos gráficos da página. Fecha pelo
+     botão, por Esc e por clique fora; o foco volta ao botão que abriu. Sem JavaScript os botões ficam com hidden. */
   function ligarAmpliar() {
     /* os <dialog> das épocas (Como chegamos) e do autor também são .nn-modal, mas são de ligarHistoria e ligarAutor:
        este esvazia o corpo ao fechar */
     const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)');
     if (!dialogo || typeof dialogo.showModal !== 'function') return;
     const corpo = dialogo.querySelector('.nn-modal-corpo');
+    const endereco = dialogo.getAttribute('data-ampliados');
     let origem = null;
+    let pedido = null;
+    let abrindo = false;
 
-    /* o clique no botão a medição conta pelo data-umami-event dele; o clique no próprio gráfico (`peloGrafico`), aqui */
-    function abrir(botao, peloGrafico) {
-      const modelo = document.getElementById(botao.getAttribute('data-ampliado'));
-      if (!modelo || dialogo.open) return;
-      if (peloGrafico) {
-        medir('chart-enlarge', { chart: botao.getAttribute('data-umami-event-chart'), page: paginaAtual() });
+    /* o JSON dos templates, pedido uma vez; um pedido que falhou pode ser refeito no próximo clique */
+    function modelos() {
+      if (!pedido) {
+        pedido = fetch(endereco, { credentials: 'same-origin' })
+          .then((resposta) => {
+            if (!resposta.ok) throw new Error('ampliados: ' + resposta.status + ' ' + endereco);
+            return resposta.json();
+          })
+          .catch((erro) => {
+            pedido = null;
+            throw erro;
+          });
       }
+      return pedido;
+    }
+
+    function mostrar(botao, html) {
+      if (dialogo.open || typeof html !== 'string') return;
+      const modelo = document.createElement('template');
+      modelo.innerHTML = html;
       origem = botao;
       corpo.replaceChildren(modelo.content.cloneNode(true));
       const titulo = corpo.querySelector('.nn-modal-titulo');
@@ -829,6 +890,27 @@
       dialogo.showModal();
       dialogo.scrollTop = 0;
       corpo.querySelectorAll('svg[data-pontos]').forEach(ligarDica);
+    }
+
+    /* o clique no botão a medição conta pelo data-umami-event dele; o clique no próprio gráfico (`peloGrafico`), aqui */
+    function abrir(botao, peloGrafico) {
+      if (dialogo.open || abrindo || !endereco) return;
+      if (peloGrafico) {
+        medir('chart-enlarge', { chart: botao.getAttribute('data-umami-event-chart'), page: paginaAtual() });
+      }
+      abrindo = true;
+      botao.setAttribute('aria-busy', 'true');
+      modelos()
+        .then((todos) => mostrar(botao, todos[botao.getAttribute('data-ampliado')]))
+        .catch((erro) => console.error(erro))
+        .finally(() => {
+          abrindo = false;
+          botao.removeAttribute('aria-busy');
+        });
+    }
+
+    function adiantar() {
+      if (endereco) modelos().catch(() => {});
     }
 
     dialogo.querySelector('.nn-modal-fechar').addEventListener('click', () => dialogo.close());
@@ -844,12 +926,15 @@
     document.querySelectorAll('.nn-ampliar').forEach((botao) => {
       botao.hidden = false;
       botao.addEventListener('click', () => abrir(botao));
+      botao.addEventListener('pointerenter', adiantar, { once: true });
+      botao.addEventListener('focus', adiantar, { once: true });
       const grafico = botao.closest('.nn-grafico');
       const caixa = grafico && grafico.querySelector('.nn-graf');
       if (!caixa) return;
       /* no toque, tocar no gráfico mostra o valor (ligarDica); só o botão abre o modal */
       let toque = false;
       caixa.classList.add('nn-clicavel');
+      caixa.addEventListener('pointerenter', adiantar, { once: true });
       caixa.addEventListener('pointerdown', (evento) => { toque = evento.pointerType === 'touch'; });
       caixa.addEventListener('click', () => { if (!toque) abrir(botao, true); });
     });
@@ -1433,6 +1518,7 @@
     tentar(ligarVoltar);
     tentar(() => document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica));
     tentar(ligarAmpliar);
+    tentar(ligarMapa);
     tentar(ligarAutor);
     tentar(() => {
       try {

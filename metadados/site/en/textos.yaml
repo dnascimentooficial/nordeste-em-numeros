@@ -29,6 +29,44 @@ faixa:
   condicao: "pob_ne.ultimo < pob_ne.primeiro e pob_ne.ultimo > pob_br.ultimo"
   nota: "Everything here comes from IBGE (the national statistics office), INEP (the national education research agency), Ipea (the federal applied economic research institute) and Atlas Brasil (the Atlas of Human Development in Brazil). I estimate nothing myself. The gray bands in the charts show who governed the country in each period, only to place the dates in time. No number here says that a government caused a result."
 
+mapa_renda:
+  eyebrow: "Income by state"
+  titulo: "Where has income grown the most since {renda_topo6.ano_primeiro}?"
+  intro: "Household income per person, per month, in the 27 federative units, adjusted for inflation. Each square sits roughly where its state is on the map; the Northeast's have an orange outline."
+  abas:
+    rotulo: "What the map shows"
+    cresceu: "How much it grew"
+    hoje: "How much it is today"
+  rotulo_mapa: "Map of the 27 states"
+  legenda_cresceu: "Real change from {renda_topo6.ano_primeiro} to {renda_topo6.ano_ultimo}"
+  legenda_hoje: "R$ per person, per month, in {renda_topo6.ano_ultimo}"
+  legenda_ne: "Northeast"
+  dica: "Hover, tap or use the keyboard on a state to see its name and value."
+  leitura: "[nome]: [variacao] from [ano0] to [ano1], from R$ [v0] to R$ [v1] per person, per month"
+  ranking:
+    cresceu: {mais: "Grew the most", menos: "Grew the least"}
+    hoje: {mais: "Highest income", menos: "Lowest income"}
+  marca_ne: "Northeast"
+  veredito:
+    - id: mapa_renda_distancia_aumentou
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+    - id: mapa_renda_distancia_diminuiu
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+  complemento:
+    texto: "In proportion, the Northeast caught up: the region's income per person went from {renda_prop_se.primeiro:0%} to {renda_prop_se.ultimo:0%} of the Southeast's. The Northeast grew {renda_cresc_ne.ultimo:1%}; Brazil, {renda_cresc_br.ultimo:1%}."
+  tabela:
+    resumo: "See the numbers for the 27 states"
+    rotulo: "Household income per person in the 27 states"
+    estado: "State"
+    regiao: "Region"
+    inicial: "R$ in [ano0]"
+    final: "R$ in [ano1]"
+    variacao: "Real change"
+  fonte:
+    - "Source: IBGE, annual PNAD Contínua (the continuous national household survey), table 7533 (average real monthly household income per capita, from all sources), at average prices of {renda_topo6.ano_ultimo}. Change and ranking calculated by the project."
+    - "The series starts in {renda_topo6.ano_primeiro}, with the PNAD Contínua. This site does not splice it with the Census or with the old PNAD: they are different surveys, and mixing them creates change that does not exist."
+  saida: "See the Northeast's states"
+
 placar:
   eyebrow: "The six questions"
   titulo: "What the numbers say"

@@ -1,6 +1,7 @@
-# Os 18 cards para compartilhar: uma frase feita, o numero de antes e de depois, a frase de contexto,
+# Os 19 cards para compartilhar: uma frase feita, o numero de antes e de depois, a frase de contexto,
 # o fecho e a condicao que o sustenta. `de` e `para` sao marcadores; `grafico` e o id de um grafico de
-# perguntas.yaml ou, onde nenhuma pergunta o desenha, o grafico inteiro. `fonte` e so o nome da fonte:
+# perguntas.yaml ou, onde nenhuma pergunta o desenha, o grafico inteiro; no lugar dele, `mapa: cresceu` poe no card o
+# mapa dos estados do Inicio (e o card sai junto com o mapa). `fonte` e so o nome da fonte:
 # o card acrescenta a data da base e o endereco. A condicao cobre o que o fecho afirma e a base permite
 # verificar (comparacoes ligadas por "e", com "id.campo * numero" para proporcoes); palavras vagas ganham um
 # limite editorial, comentado em cada card. Card cuja condicao falha nao e publicado.
@@ -180,6 +181,19 @@
   fecho: "Subiu mais de um terço."
   # "Mais de um terço": ao menos 1,33 vez o primeiro valor.
   condicao: "renda_ne.ultimo >= renda_ne.primeiro * 1.33"
+  fonte: "IBGE, PNAD Contínua"
+
+- id: mapa_renda
+  rotulo: "Renda por estado"
+  frase_feita: "“Aqui a renda não cresce.”"
+  longo: true
+  de: "R$ {renda_ne.primeiro:0}"
+  para: "R$ {renda_ne.ultimo:0}"
+  frase: "era a renda por pessoa, por mês, no Nordeste em {renda_ne.ano_primeiro} e em {renda_ne.ano_ultimo}, já descontada a inflação: alta de {renda_cresc_ne.ultimo:1%}. No Brasil, {renda_cresc_br.ultimo:1%}. No mapa, quanto cada estado cresceu."
+  mapa: cresceu
+  fecho: "{renda_topo6.ultimo:0} dos 6 estados que mais cresceram são do Nordeste."
+  # O fecho diz quantos, e a condição exige a maioria (4 ou mais) e o Nordeste acima do Brasil (a frase compara os dois).
+  condicao: "renda_topo6.ultimo >= 4 e renda_cresc_ne.ultimo > renda_cresc_br.ultimo"
   fonte: "IBGE, PNAD Contínua"
 
 - id: rend

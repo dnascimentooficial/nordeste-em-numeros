@@ -31,3 +31,10 @@ gini_ne: {tipo: serie, indicador: gini, territorio: NE, serie: pnadc}
 gini_br: {tipo: serie, indicador: gini, territorio: BR, serie: pnadc}
 internet_ne: {tipo: serie, indicador: internet_domicilios, territorio: NE, serie: sem_restricao}
 internet_br: {tipo: serie, indicador: internet_domicilios, territorio: BR, serie: sem_restricao}
+# O mapa do Início (Onde a renda mais cresceu desde 2012?): só a renda domiciliar per capita tem as 27 UFs na base.
+renda_br: {tipo: serie, indicador: renda_dom_pc, territorio: BR}
+renda_cresc_ne: {tipo: variacao, indicador: renda_dom_pc, territorio: NE}
+renda_cresc_br: {tipo: variacao, indicador: renda_dom_pc, territorio: BR}
+renda_gap_se: {tipo: diferenca, indicador: renda_dom_pc, territorio: SE, referencia: NE}
+renda_prop_se: {tipo: proporcao, indicador: renda_dom_pc, territorio: NE, referencia: SE}
+renda_topo6: {tipo: no_topo, indicador: renda_dom_pc, territorio: NE, topo: 6}
