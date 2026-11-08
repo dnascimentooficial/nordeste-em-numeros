@@ -1,7 +1,10 @@
 # Base histórica de indicadores do Nordeste
 
 Pipeline em Python que coleta indicadores oficiais (IBGE, INEP, Ipea, INPI, Cetic.br, CAPES, MCTI) do Brasil, das cinco regiões e das nove
-UFs do Nordeste, padroniza tudo numa base longa única, valida e publica em `dados/base/`. O desenho completo
+UFs do Nordeste, padroniza tudo numa base longa única, valida e publica em `dados/base/`. A exceção é a renda
+domiciliar per capita (SIDRA 7533), coletada nas 27 UFs (parâmetro `todas_as_ufs: true` da série) para o mapa
+"Onde a renda mais cresceu desde 2012?" do Início; as 18 UFs de fora do Nordeste não entram nas outras séries, em
+Estados, no Explorar nem nas contas do Nordeste. O desenho completo
 está em `docs/specs/2026-10-31-base-historica-design.md`; as conferências feitas fonte a fonte, em
 `docs/dicionario-verificacao.md`.
 
