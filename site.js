@@ -40,6 +40,15 @@ colunas: ['Ano', 'Território', 'Valor', 'Série da fonte'],
 function preencherModelo(modelo, valores) {
 return modelo.replace(/\{(\w+)\}/g, (inteiro, nome) => (nome in valores ? String(valores[nome]) : inteiro));
 }
+function medir(nome, dados) {
+try {
+if (window.umami && typeof window.umami.track === 'function') window.umami.track(nome, Object.assign({ lang: IDIOMA }, dados));
+} catch (erro) {
+}
+}
+function paginaAtual() {
+return document.body.getAttribute('data-pagina') || window.location.pathname;
+}
 function coord(valor) {
 let texto = arredondar(valor, 1);
 if (valor < 0 && /[1-9]/.test(texto)) texto = '-' + texto;
@@ -404,6 +413,7 @@ seletor.addEventListener('change', () => {
 mostrar();
 const padrao = [...seletor.options].find((o) => o.defaultSelected);
 gravarEndereco({ indicador: padrao && padrao.value === seletor.value ? null : seletor.value });
+medir('states-select', { indicator: seletor.value });
 });
 }
 function territoriosDoGrafico(territorio, comparado) {
@@ -598,11 +608,28 @@ ligarDica(svg);
 ligarArrasto(svg, escolherPeriodo);
 });
 }
+let selecaoPendente = false;
+let esperaDaMedida = 0;
+function selecionou() {
+selecaoPendente = true;
+carregarEDesenhar();
+}
+function desenhado() {
+if (!selecaoPendente) return;
+selecaoPendente = false;
+window.clearTimeout(esperaDaMedida);
+esperaDaMedida = window.setTimeout(() => {
+const comparado = comparadoValido();
+medir('explore-select', Object.assign(
+{ indicator: estado.indicador, territory: estado.territorio }, comparado ? { compare: comparado } : {}));
+}, 800);
+}
 function carregarEDesenhar() {
 sincronizar();
 const indicador = estado.indicador;
 if (cache[indicador]) {
 desenhar();
+desenhado();
 return;
 }
 pedido += 1;
@@ -615,7 +642,10 @@ return resposta.json();
 })
 .then((dados) => {
 cache[indicador] = dados;
-if (este === pedido && estado.indicador === indicador) desenhar();
+if (este === pedido && estado.indicador === indicador) {
+desenhar();
+desenhado();
+}
 })
 .catch(() => {
 if (este === pedido) vista.replaceChildren(aviso(cartao.getAttribute('data-erro')));
@@ -624,9 +654,9 @@ if (este === pedido) vista.replaceChildren(aviso(cartao.getAttribute('data-erro'
 if (este === pedido) vista.removeAttribute('aria-busy');
 });
 }
-selIndicador.addEventListener('change', () => { estado.indicador = selIndicador.value; carregarEDesenhar(); });
-selTerritorio.addEventListener('change', () => { estado.territorio = selTerritorio.value; carregarEDesenhar(); });
-selComparado.addEventListener('change', () => { estado.comparado = selComparado.value; carregarEDesenhar(); });
+selIndicador.addEventListener('change', () => { estado.indicador = selIndicador.value; selecionou(); });
+selTerritorio.addEventListener('change', () => { estado.territorio = selTerritorio.value; selecionou(); });
+selComparado.addEventListener('change', () => { estado.comparado = selComparado.value; selecionou(); });
 zoomDe.addEventListener('change', () => {
 estado.de = zoomDe.value;
 if (estado.de && estado.ate && Number(estado.de) >= Number(estado.ate)) estado.ate = '';
@@ -661,9 +691,12 @@ const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia):
 if (!dialogo || typeof dialogo.showModal !== 'function') return;
 const corpo = dialogo.querySelector('.nn-modal-corpo');
 let origem = null;
-function abrir(botao) {
+function abrir(botao, peloGrafico) {
 const modelo = document.getElementById(botao.getAttribute('data-ampliado'));
 if (!modelo || dialogo.open) return;
+if (peloGrafico) {
+medir('chart-enlarge', { chart: botao.getAttribute('data-umami-event-chart'), page: paginaAtual() });
+}
 origem = botao;
 corpo.replaceChildren(modelo.content.cloneNode(true));
 const titulo = corpo.querySelector('.nn-modal-titulo');
@@ -690,7 +723,7 @@ if (!caixa) return;
 let toque = false;
 caixa.classList.add('nn-clicavel');
 caixa.addEventListener('pointerdown', (evento) => { toque = evento.pointerType === 'touch'; });
-caixa.addEventListener('click', () => { if (!toque) abrir(botao); });
+caixa.addEventListener('click', () => { if (!toque) abrir(botao, true); });
 });
 }
 function ligarAutor() {
@@ -770,6 +803,7 @@ if (li !== aberta) {
 devolver();
 aberta = li;
 corpo.append(artigo);
+medir('era-open', { era: li.id });
 }
 dialogo.setAttribute('aria-labelledby', artigo.getAttribute('aria-labelledby'));
 artigo.querySelectorAll('.nn-marco-alvo').forEach((m) => m.classList.remove('nn-marco-alvo'));
@@ -1054,6 +1088,28 @@ atualizar();
 window.addEventListener('scroll', pedir, { passive: true });
 window.addEventListener('resize', pedir);
 }
+const SECOES_LIDAS = 'main .nn-capitulo[id], main .nn-placar, main .nn-chamada-historia, main .nn-hist-bloco, ' +
+'main .nn-hist-linha, main #sobre > article[id]';
+function nomeDaSecao(secao) {
+return secao.id || (secao.getAttribute('aria-labelledby') || '').replace(/^titulo-/, '');
+}
+function ligarLeitura() {
+if (!window.umami || !('IntersectionObserver' in window)) return;
+const pagina = paginaAtual();
+const limiares = Array.from({ length: 21 }, (_, i) => i / 20);
+const observador = new IntersectionObserver((entradas) => {
+entradas.forEach((entrada) => {
+if (!entrada.isIntersecting) return;
+const metade = Math.min(entrada.boundingClientRect.height, window.innerHeight) / 2;
+if (metade <= 0 || entrada.intersectionRect.height < metade) return;
+observador.unobserve(entrada.target);
+medir('scroll-depth', { page: pagina, section: nomeDaSecao(entrada.target) });
+});
+}, { threshold: limiares });
+document.querySelectorAll(SECOES_LIDAS).forEach((secao) => {
+if (nomeDaSecao(secao)) observador.observe(secao);
+});
+}
 function abaixoDaDobra(elemento) {
 const caixa = elemento.getBoundingClientRect();
 return caixa.height > 0 && caixa.top > window.innerHeight;
@@ -1167,6 +1223,9 @@ animarAoRolar();
 contarNumeros();
 }
 });
+const comecarLeitura = () => tentar(ligarLeitura);
+if (document.readyState === 'complete') comecarLeitura();
+else window.addEventListener('load', comecarLeitura, { once: true });
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
 else iniciar();
