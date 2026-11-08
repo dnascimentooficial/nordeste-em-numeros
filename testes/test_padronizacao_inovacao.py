@@ -22,7 +22,7 @@ from nordeste.padronizacao.ibid import padronizar_ibid
 from nordeste.padronizacao.mcti import padronizar_mcti
 from nordeste.padronizacao.pintec import padronizar_pintec
 from nordeste.padronizacao.sidra import padronizar_sidra
-from nordeste.territorios import UFS_NE, carregar_territorios
+from nordeste.territorios import UFS_NE, carregar_territorios, territorios_do_nordeste
 
 RAIZ = Path(__file__).resolve().parent.parent
 REAIS = RAIZ / "testes" / "reais"
@@ -36,7 +36,8 @@ def fichas():
 
 @pytest.fixture(scope="module")
 def territorios():
-    return carregar_territorios(RAIZ / "metadados" / "territorios.csv")
+    # a tabela que padronizar() passa as series sem `todas_as_ufs`: sem as UFs de fora do Nordeste
+    return territorios_do_nordeste(carregar_territorios(RAIZ / "metadados" / "territorios.csv"))
 
 
 def _valor(df: pd.DataFrame, territorio: str, ano: int, sub: str = "") -> float:

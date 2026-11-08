@@ -133,14 +133,15 @@ def montar_mapa(comparacao: ComparacaoDasUfs, nomes: dict[str, str], regioes: di
 LADO, VAO = 44, 4  # px do quadrado e do vao no viewBox
 
 
-def mapa_svg(mapa: dict, titulo: str) -> str:
+def mapa_svg(mapa: dict) -> str:
     """O mapa da vista "quanto cresceu" em SVG, para o card: cada quadrado com a sigla e a variacao arredondada; os do
-    Nordeste com o contorno laranja. Cores por classe (estilo.css), nada de estilo inline."""
+    Nordeste com o contorno laranja. Decorativo, como o minigrafico dos outros cards (a frase do card diz o que ele
+    mostra). Cores por classe (estilo.css), nada de estilo inline."""
     largura = COLUNAS * LADO + (COLUNAS - 1) * VAO
     altura = LINHAS * LADO + (LINHAS - 1) * VAO
     partes = [
-        f'<svg class="nn-mosaico-svg" viewBox="0 0 {largura} {altura}" width="{largura}" height="{altura}" role="img" '
-        f'aria-label="{_attr(titulo)}">'
+        f'<svg class="nn-mosaico-svg" viewBox="0 0 {largura} {altura}" width="{largura}" height="{altura}" '
+        'aria-hidden="true" focusable="false">'
     ]
     for q in mapa["quadrados"]:
         x, y = q["coluna"] * (LADO + VAO), q["linha"] * (LADO + VAO)

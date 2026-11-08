@@ -164,9 +164,9 @@ def test_mapa_em_ingles_formata_no_padrao_americano():
 
 def test_svg_do_card_sem_estilo_inline():
     (mapa, _), _ = _mapa()
-    svg = mapa_svg(mapa["dados"], "Mapa")
+    svg = mapa_svg(mapa["dados"])
     assert svg.count("<rect") == 27 and svg.count("nn-mosaico-svg-ne") == 9
-    assert "style=" not in svg and "<script" not in svg and 'role="img"' in svg
+    assert "style=" not in svg and "<script" not in svg and 'aria-hidden="true"' in svg
 
 
 # --- o veredito: as palavras mudam ou a frase sai quando os fatos mudam ---

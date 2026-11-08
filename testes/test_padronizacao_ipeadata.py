@@ -11,6 +11,7 @@ from nordeste.coletores.registro import Coleta
 from nordeste.esquema import COLUNAS_BASE
 from nordeste.padronizacao import ErroLayout, padronizar
 from nordeste.padronizacao.ipeadata import padronizar_ipeadata
+from nordeste.territorios import territorios_do_nordeste
 
 DATA_2001 = "2001-01-01T00:00:00-02:00"
 
@@ -65,7 +66,7 @@ def test_descarta_niveis_e_territorios_desconhecidos(ficha_ipeadata, territorios
         ("Estados", "35", DATA_2001, 2.0),   # SP: fora da tabela
         ("Regiões", "9", DATA_2001, 3.0),
         ("Estados", "21", DATA_2001, 4.0),
-    ]), ficha_ipeadata, ficha_ipeadata.series[0], "c1", territorios)
+    ]), ficha_ipeadata, ficha_ipeadata.series[0], "c1", territorios_do_nordeste(territorios))
     assert df.territorio_id.tolist() == ["MA"]
 
 

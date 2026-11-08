@@ -176,7 +176,9 @@
   de: "R$ {renda_ne.primeiro:0}"
   para: "R$ {renda_ne.ultimo:0}"
   frase: "was income per person, per month, in the Northeast in {renda_ne.ano_primeiro} and in {renda_ne.ano_ultimo}, adjusted for inflation: up {renda_cresc_ne.ultimo:1%}. Brazil, {renda_cresc_br.ultimo:1%}. The map shows how much each state grew."
+  mapa: cresceu
   fecho: "{renda_topo6.ultimo:0} of the 6 states that grew the most are in the Northeast."
+  condicao: "renda_topo6.ultimo >= 4 e renda_cresc_ne.ultimo > renda_cresc_br.ultimo"
   fonte: "IBGE, PNAD Contínua"
 
 - id: rend

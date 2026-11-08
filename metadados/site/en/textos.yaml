@@ -30,6 +30,7 @@ faixa:
   nota: "Everything here comes from IBGE (the national statistics office), INEP (the national education research agency), Ipea (the federal applied economic research institute) and Atlas Brasil (the Atlas of Human Development in Brazil). I estimate nothing myself. The gray bands in the charts show who governed the country in each period, only to place the dates in time. No number here says that a government caused a result."
 
 mapa_renda:
+  indicador: renda_dom_pc
   eyebrow: "Income by state"
   titulo: "Where has income grown the most since {renda_topo6.ano_primeiro}?"
   intro: "Household income per person, per month, in the 27 federative units, adjusted for inflation. Each square sits roughly where its state is on the map; the Northeast's have an orange outline."
@@ -50,10 +51,14 @@ mapa_renda:
   veredito:
     - id: mapa_renda_distancia_aumentou
       texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo > renda_gap_se.primeiro"
     - id: mapa_renda_distancia_diminuiu
       texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo < renda_gap_se.primeiro"
   complemento:
+    id: mapa_renda_proporcao
     texto: "In proportion, the Northeast caught up: the region's income per person went from {renda_prop_se.primeiro:0%} to {renda_prop_se.ultimo:0%} of the Southeast's. The Northeast grew {renda_cresc_ne.ultimo:1%}; Brazil, {renda_cresc_br.ultimo:1%}."
+    condicao: "renda_prop_se.ultimo > renda_prop_se.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo"
   tabela:
     resumo: "See the numbers for the 27 states"
     rotulo: "Household income per person in the 27 states"

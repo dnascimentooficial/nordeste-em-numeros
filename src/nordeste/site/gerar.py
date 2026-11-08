@@ -509,7 +509,7 @@ def _cartao(dados: DadosSite, destaques: dict[str, Destaque], card: dict, mapa: 
     frase, fecho = preencher(card["frase"], destaques), preencher(card["fecho"], destaques)
     frase_feita = preencher(card["frase_feita"], destaques)
     if "mapa" in card:
-        mini = mapa_svg(mapa["dados"], mapa["legenda_cresceu"])
+        mini = mapa_svg(mapa["dados"])
     else:
         mini = minigrafico(_linhas(dados, card["grafico"]))
     return {

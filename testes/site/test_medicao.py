@@ -172,7 +172,9 @@ def test_chamadas_das_paginas(saida):
     assert ("como-chegamos", "top") in alvos and ("como-chegamos", "home") in alvos
     assert {"card", "estados", "explorar"} <= {alvo for alvo, _ in alvos}
     ids = {e["attrs"]["id"] for e in inicio.achar("article", classe="nn-capitulo")}
-    do_pe = [_props(e) for e in chamadas if _props(e)["target"] in ("card", "estados", "explorar")]
+    assert ("estados", "mapa-renda") in alvos  # o mapa do Inicio leva a Estados
+    do_pe = [_props(e) for e in chamadas if _props(e)["target"] in ("card", "estados", "explorar")
+             and _props(e)["place"] != "mapa-renda"]
     assert len(do_pe) >= 2 * len(ids)  # o pe de cada pergunta diz de que pergunta saiu (place: o id dela)
     assert {f"q-{p['place']}" for p in do_pe} == ids
     inovacao = _eventos(_arvore(saida, "/inovacao/"), "cta-click")

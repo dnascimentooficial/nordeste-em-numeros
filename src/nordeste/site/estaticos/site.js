@@ -881,10 +881,10 @@
 
     function mostrar(botao, html) {
       if (dialogo.open || typeof html !== 'string') return;
-      const modelo = document.createElement('template');
-      modelo.innerHTML = html;
+      /* o HTML vem do próprio site (gerar._escrever_ampliados), sem estilo nem script: o DOMParser o lê inerte */
+      const lido = new DOMParser().parseFromString(html, 'text/html');
       origem = botao;
-      corpo.replaceChildren(modelo.content.cloneNode(true));
+      corpo.replaceChildren(...Array.from(lido.body.childNodes, (no) => document.importNode(no, true)));
       const titulo = corpo.querySelector('.nn-modal-titulo');
       if (titulo) titulo.id = dialogo.getAttribute('aria-labelledby');
       dialogo.showModal();

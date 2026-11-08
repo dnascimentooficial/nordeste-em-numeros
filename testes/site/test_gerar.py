@@ -179,9 +179,10 @@ def test_cada_grafico_sai_em_duas_larguras(gerado, conteudo):
     estreitos = arvore.achar("div", classe="nn-graf-estreito")
     assert len(largos) == len(estreitos) == graficos
     svgs = [s for s in arvore.achar("svg") if "data-pontos" in s["attrs"]]  # os do menu e do voltar ao topo sao icones
-    assert len(svgs) == 3 * graficos  # as duas da pagina e a ampliada, guardada num <template> (Ruling S-W)
+    assert len(svgs) == 2 * graficos  # as duas da pagina; a ampliada fica no JSON do modal (Ruling S-W)
     assert [s["attrs"]["viewbox"] for s in svgs[:2]] == ["0 0 720 300", "0 0 360 240"]
-    assert {s["attrs"]["viewbox"] for s in svgs[2 * graficos:]} == {"0 0 1100 520"}
+    ampliados = [Arvore(c).achar("svg")[0]["attrs"]["viewbox"] for c in _ampliados(saida, arvore).values()]
+    assert ampliados == ["0 0 1100 520"] * graficos
     for contenedor in arvore.achar("div", classe="nn-graf"):
         assert contenedor["attrs"]["id"].startswith("g-")
     # cada pergunta traz os numeros numa tabela, como a descricao acessivel promete, e a fonte e o metodo recolhidos;

@@ -22,7 +22,7 @@ from nordeste.padronizacao import ErroLayout, padronizar
 from nordeste.padronizacao.ibid import (
     AGREGADOS_DO_INPI, UFS_DO_INPI, ler_abas, ler_ibid, padronizar_ibid, posicoes_calculadas,
 )
-from nordeste.territorios import UFS_NE, carregar_territorios
+from nordeste.territorios import UFS_NE, carregar_territorios, territorios_do_nordeste
 
 RAIZ = Path(__file__).resolve().parent.parent
 REAL = RAIZ / "testes" / "reais" / "ibid-serie-historica.xlsx"
@@ -37,7 +37,8 @@ def ficha():
 
 @pytest.fixture(scope="module")
 def territorios():
-    return carregar_territorios(RAIZ / "metadados" / "territorios.csv")
+    # a tabela que padronizar() passa as series sem `todas_as_ufs`: sem as UFs de fora do Nordeste
+    return territorios_do_nordeste(carregar_territorios(RAIZ / "metadados" / "territorios.csv"))
 
 
 @pytest.fixture(scope="module")

@@ -587,9 +587,10 @@ def test_chamada_no_inicio_depois_das_perguntas_com_o_titulo_dos_censos(com_cham
     arvore = Arvore(html)
     chamada = arvore.achar("section", classe="nn-chamada-historia")
     assert len(chamada) == 1
-    # depois das perguntas (e antes dos <template> dos graficos ampliados), nao mais logo depois da faixa
+    # depois das perguntas (e antes do <dialog> dos graficos ampliados), nao mais logo depois da faixa
     fim_das_perguntas = html.index("</section>", html.rindex('<article class="nn-capitulo'))
-    assert html.index('id="resumo"') < fim_das_perguntas < html.index('<section class="nn-chamada-historia"') < html.index("<template")
+    assert html.index('id="resumo"') < fim_das_perguntas < html.index('<section class="nn-chamada-historia"') < html.index(
+        '<dialog class="nn-modal"')
     # os mesmos numeros da abertura da pagina historica (censos.csv de teste: 46,7% em 1872 e 26,9% em 2022)
     titulo = Arvore.texto(arvore.achar("h2", id="titulo-chamada-historia")[0])
     assert titulo == "Em 1872, 46,7% dos brasileiros viviam no Nordeste. Em 2022, 26,9%."

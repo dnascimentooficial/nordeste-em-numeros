@@ -57,7 +57,7 @@
 {% endif %}
     </div>
   </div>
-  <details>
+  <details class="nn-mosaico-numeros">
     <summary>{{ m.tabela.resumo }}</summary>
     <div class="nn-tabela" tabindex="0" role="region" aria-label="{{ m.tabela.rotulo }}">
       <table>
@@ -75,7 +75,7 @@
     <span>{{ linha }}</span>
 {% endfor %}
 {{ atualizacoes(m.atualizacoes) }}  </div>
-  <nav class="nn-saidas" aria-label="{{ m.eyebrow }}">
+  <nav class="nn-saidas nn-mosaico-saidas" aria-label="{{ m.eyebrow }}">
     <a href="{{ rotas.estados }}" data-umami-event="cta-click" data-umami-event-target="estados" data-umami-event-place="mapa-renda">{{ m.saida }}</a>
   </nav>
 </section>
