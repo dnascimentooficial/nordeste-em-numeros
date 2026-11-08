@@ -136,3 +136,10 @@ def test_pagina_inovacao_sem_decimal_digitado_nos_capitulos_com_numeros():
     for texto in _textos([inovacao["capa"], inovacao["placar"], inovacao["regua"], com_numeros]):
         decimais += re.findall(r"\d+[.,]\d+", re.sub(r"\{[^{}]*\}", "", texto))
     assert set(decimais) <= {"1.0", "2.0", "2.3"}  # nomes, nao dados: CNAE 1.0 e 2.0, tabelas 2.3.3 e 2.3.5 do MCTI
+
+
+def test_veredito_e_complemento_do_mapa_valem_na_base_publicada(conteudo, destaques):
+    mapa = conteudo.textos["mapa_renda"]
+    validos = [v["id"] for v in mapa["veredito"] if avaliar_condicao(v["condicao"], destaques)]
+    assert len(validos) == 1  # as redacoes se excluem: a distancia aumentou ou diminuiu
+    assert avaliar_condicao(mapa["complemento"]["condicao"], destaques)
