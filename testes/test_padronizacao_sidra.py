@@ -8,6 +8,7 @@ from nordeste.coletores.registro import Coleta
 from nordeste.esquema import COLUNAS_BASE
 from nordeste.padronizacao import ErroLayout, padronizar
 from nordeste.padronizacao.sidra import padronizar_sidra
+from nordeste.territorios import territorios_do_nordeste
 
 CABECALHO = {
     "NC": "Nível Territorial (Código)", "NN": "Nível Territorial",
@@ -64,12 +65,24 @@ def test_simbolos_de_indisponibilidade(fichas, territorios, simbolo):
     assert df.nota.iloc[0] == f"SIDRA: {simbolo}"
 
 
-def test_traco_e_zero_e_uf_fora_do_ne_descartada(fichas, territorios):
+def test_traco_e_zero_e_uf_fora_da_tabela_descartada(fichas, territorios):
     conteudo = json_sidra([("3", "26", "2002", "-"), ("3", "35", "2002", "5")])
     f = fichas["pib_nominal"]
-    df = padronizar_sidra(conteudo, f, f.serie("scr_ref2010"), "c1", territorios)
+    df = padronizar_sidra(conteudo, f, f.serie("scr_ref2010"), "c1", territorios_do_nordeste(territorios))
     assert df.valor.tolist() == [0.0] and df.territorio_id.tolist() == ["PE"]
     assert df.tipo_dado.tolist() == ["observado"] and df.nota.tolist() == [""]
+
+
+@pytest.mark.parametrize("todas_as_ufs", [None, False, True])
+def test_padronizar_so_traz_as_ufs_de_fora_do_ne_quando_a_serie_pede(projeto, fichas, territorios, todas_as_ufs):
+    f = fichas["amostra_per_capita"]
+    parametros = {} if todas_as_ufs is None else {"todas_as_ufs": todas_as_ufs}
+    s = replace(f.serie("scr_ref2010"), parametros=parametros)
+    arquivo = projeto.raiz / "testes/fixtures/amostra_per_capita/scr_ref2010.json"
+    arquivo.write_bytes(json_sidra([("3", "26", "2002", "1"), ("3", "35", "2002", "2"), ("2", "3", "2002", "3")]))
+    df = padronizar(f, s, _coleta_da_amostra(f, s), projeto, territorios)
+    esperado = {"PE": 1.0, "SE": 3.0, **({"SP": 2.0} if todas_as_ufs else {})}
+    assert dict(zip(df.territorio_id, df.valor)) == esperado
 
 
 def test_sem_linhas_devolve_base_vazia(fichas, territorios):

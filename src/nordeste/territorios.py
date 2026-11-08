@@ -1,4 +1,9 @@
-"""Tabela de territorios (Brasil, regioes, UFs do Nordeste e agregado derivado)."""
+"""Tabela de territorios (Brasil, regioes, as 27 UFs e agregado derivado).
+
+As 18 UFs de fora do Nordeste estao na tabela so para as series que as pedem (`todas_as_ufs: true` nos parametros,
+hoje so a renda domiciliar per capita, que alimenta o mapa do Inicio). Nas demais, o padronizador recebe a tabela do
+Nordeste (`territorios_do_nordeste`): Brasil, regioes, as nove UFs do Nordeste e o agregado derivado.
+"""
 
 import unicodedata
 from pathlib import Path
@@ -7,6 +12,9 @@ import pandas as pd
 
 UFS_NE: tuple[str, ...] = ("MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE_UF", "BA")
 REGIOES: tuple[str, ...] = ("N", "NE", "SE", "S", "CO")
+UFS_FORA_DO_NE: tuple[str, ...] = (
+    "RO", "AC", "AM", "RR", "PA", "AP", "TO", "MG", "ES", "RJ", "SP", "PR", "SC", "RS", "MS", "MT", "GO", "DF",
+)
 
 # Nivel territorial do IBGE (n1, n2, n3) -> valor de `tipo` na tabela.
 _TIPO_POR_NIVEL = {"n1": "pais", "n2": "regiao", "n3": "uf"}
@@ -15,6 +23,12 @@ _TIPO_POR_NIVEL = {"n1": "pais", "n2": "regiao", "n3": "uf"}
 def carregar_territorios(path: Path) -> pd.DataFrame:
     """Le territorios.csv com todas as colunas como texto (vazio vira "")."""
     return pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
+
+
+def territorios_do_nordeste(territorios: pd.DataFrame) -> pd.DataFrame:
+    """A tabela sem as UFs de fora do Nordeste: Brasil, regioes, UFs do Nordeste e o agregado derivado."""
+    fora = (territorios["tipo"] == "uf") & (territorios["regiao_id"] != "NE")
+    return territorios[~fora].reset_index(drop=True)
 
 
 def territorio_por_codigo(territorios: pd.DataFrame, nivel: str, codigo: str) -> str | None:

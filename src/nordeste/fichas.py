@@ -200,7 +200,8 @@ def _validar_serie(serie: Any, posicao: int) -> list[str]:
 
 
 def _validar_leitura(parametros: dict, nome: str) -> list[str]:
-    """`territorios_esperados` (ids publicados pela fonte, sem repeticao) e `filtro_linhas` (coluna -> texto ou numero)."""
+    """`territorios_esperados` (ids publicados pela fonte, sem repeticao), `todas_as_ufs` (true ou false) e
+    `filtro_linhas` (coluna -> texto ou numero)."""
     problemas: list[str] = []
     if "territorios_esperados" in parametros:
         esperados = parametros["territorios_esperados"]
@@ -212,6 +213,8 @@ def _validar_leitura(parametros: dict, nome: str) -> list[str]:
                 problemas.append(f"{nome}.territorios_esperados com territorio desconhecido: {', '.join(desconhecidos)}")
             if len(set(esperados)) != len(esperados):
                 problemas.append(f"{nome}.territorios_esperados repete territorio")
+    if "todas_as_ufs" in parametros and not isinstance(parametros["todas_as_ufs"], bool):
+        problemas.append(f"{nome}.todas_as_ufs deve ser true ou false")
     if "filtro_linhas" in parametros:
         filtro = parametros["filtro_linhas"]
         valido = isinstance(filtro, dict) and filtro and all(

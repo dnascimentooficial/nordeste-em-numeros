@@ -15,3 +15,21 @@ AL,Alagoas,uf,27,NE
 SE_UF,Sergipe,uf,28,NE
 BA,Bahia,uf,29,NE
 BR_FORA_NE,Brasil fora do Nordeste,agregado_derivado,,
+RO,Rondônia,uf,11,N
+AC,Acre,uf,12,N
+AM,Amazonas,uf,13,N
+RR,Roraima,uf,14,N
+PA,Pará,uf,15,N
+AP,Amapá,uf,16,N
+TO,Tocantins,uf,17,N
+MG,Minas Gerais,uf,31,SE
+ES,Espírito Santo,uf,32,SE
+RJ,Rio de Janeiro,uf,33,SE
+SP,São Paulo,uf,35,SE
+PR,Paraná,uf,41,S
+SC,Santa Catarina,uf,42,S
+RS,Rio Grande do Sul,uf,43,S
+MS,Mato Grosso do Sul,uf,50,CO
+MT,Mato Grosso,uf,51,CO
+GO,Goiás,uf,52,CO
+DF,Distrito Federal,uf,53,CO

@@ -37,6 +37,15 @@ _TERRITORIOS = [
     ("3", "26", "Pernambuco", 1), ("3", "27", "Alagoas", 1), ("3", "28", "Sergipe", 1),
     ("3", "29", "Bahia", 1),
 ]
+# As 18 UFs de fora do Nordeste, so nas series com `todas_as_ufs: true` (a renda domiciliar per capita).
+_UFS_FORA_DO_NE = [
+    ("3", "11", "Rondônia", 1), ("3", "12", "Acre", 1), ("3", "13", "Amazonas", 1), ("3", "14", "Roraima", 1),
+    ("3", "15", "Pará", 1), ("3", "16", "Amapá", 1), ("3", "17", "Tocantins", 1), ("3", "31", "Minas Gerais", 1),
+    ("3", "32", "Espírito Santo", 1), ("3", "33", "Rio de Janeiro", 1), ("3", "35", "São Paulo", 1),
+    ("3", "41", "Paraná", 1), ("3", "42", "Santa Catarina", 1), ("3", "43", "Rio Grande do Sul", 1),
+    ("3", "50", "Mato Grosso do Sul", 1), ("3", "51", "Mato Grosso", 1), ("3", "52", "Goiás", 1),
+    ("3", "53", "Distrito Federal", 1),
+]
 _NIVEIS = {"1": "Brasil", "2": "Grande Região", "3": "Unidade da Federação"}
 
 # Cabecalho de uma resposta SIDRA com uma variavel (D2) e o ano (D3), como na API real.
@@ -51,19 +60,20 @@ _CABECALHO = {
 
 def json_sidra(
     variavel: str, unidade_codigo: str, unidade: str, valor,
-    anos=ANOS, classificacoes: tuple[tuple[str, str], ...] = (),
+    anos=ANOS, classificacoes: tuple[tuple[str, str], ...] = (), todas_as_ufs: bool = False,
 ) -> list[dict]:
     """Monta o JSON SIDRA sintetico; `valor(nc, codigo, ano, multiplicador)` devolve o texto de V.
 
     `classificacoes` e uma tupla de (rotulo, codigo) ou (rotulo, codigo, nome da categoria) das classificacoes
     da tabela (colunas D4, D5, ...), como a API devolve quando a consulta fixa a categoria; sem nome, "Total".
+    `todas_as_ufs`: as 27 UFs (n3/all), como a consulta da serie com `todas_as_ufs: true`.
     """
     cabecalho = dict(_CABECALHO)
     for posicao, (rotulo, *_) in enumerate(classificacoes, start=4):
         cabecalho[f"D{posicao}C"], cabecalho[f"D{posicao}N"] = f"{rotulo} (Código)", rotulo
     linhas = [cabecalho]
     for ano in anos:
-        for nc, codigo, nome, multiplicador in _TERRITORIOS:
+        for nc, codigo, nome, multiplicador in [*_TERRITORIOS, *(_UFS_FORA_DO_NE if todas_as_ufs else [])]:
             linha = {
                 "NC": nc, "NN": _NIVEIS[nc], "MC": unidade_codigo, "MN": unidade,
                 "V": valor(nc, codigo, ano, multiplicador),
@@ -755,7 +765,7 @@ GERADORES = {
         anos=ANOS_PNADC, classificacoes=_CLASSE_RENDA),
     "renda_dom_pc/pnadc.json": lambda: json_sidra(
         "Rendimento médio mensal real domiciliar per capita (sintético)", "38", "Reais", _constante("1000"),
-        anos=ANOS_PNADC, classificacoes=_CLASSE_RENDA),
+        anos=ANOS_PNADC, classificacoes=_CLASSE_RENDA, todas_as_ufs=True),
     "pobreza/pnadc.json": lambda: json_sidra(
         "Proporção da população abaixo da linha de pobreza nacional (sintético)", "2", "Proporção (%)",
         _constante("50.0"), anos=ANOS_POBREZA),

@@ -2,8 +2,9 @@ id: renda_dom_pc
 nome: Renda domiciliar per capita
 descricao: >-
   Rendimento médio mensal real domiciliar per capita de todas as fontes, por
-  Brasil, região e unidade da federação, a preços médios do último ano da
-  série. Mostra o quanto cada pessoa dispõe, em média, de renda do domicílio.
+  Brasil, região e unidade da federação (as 27, para o mapa do Início), a
+  preços médios do último ano da série. Mostra o quanto cada pessoa dispõe, em
+  média, de renda do domicílio.
 eixo: social
 categoria: renda
 unidade: R$ por mês, a preços médios do último ano da série
@@ -25,7 +26,10 @@ observacoes: >-
   nos preços desse ano. O universo é o das tabelas de rendimento de todas as
   fontes (população residente com os rendimentos de todas as fontes), e pode
   diferir em cerca de 2% do rendimento domiciliar per capita que o IBGE destaca
-  em divulgação própria (R$ 2.316 em 2025, contra R$ 2.264 aqui).
+  em divulgação própria (R$ 2.316 em 2025, contra R$ 2.264 aqui). É a única
+  série da base com as 27 UFs (parâmetro `todas_as_ufs`): as 18 de fora do
+  Nordeste servem ao mapa do Início e não entram em Estados, Explorar nem nas
+  contas do Nordeste.
 sentido: maior_melhor
 limites: {min: 0}
 defasagem_meses: 5
@@ -47,7 +51,7 @@ series:
     base_origem: SIDRA, tabela 7533, variável 10816
     url: https://sidra.ibge.gov.br/tabela/7533
     coletor: sidra
-    parametros: {tabela: "7533", variavel: "10816"}
+    parametros: {tabela: "7533", variavel: "10816", todas_as_ufs: true}
     compatibilidade: >-
       Série da PNAD Contínua (2012 em diante). Não há série da PNAD antiga; a
       série não atravessa a troca de pesquisa.

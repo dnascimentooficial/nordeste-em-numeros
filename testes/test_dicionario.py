@@ -12,6 +12,7 @@ from nordeste.coletores.ipeadata import url_ipeadata
 from nordeste.coletores.sidra import url_sidra
 from nordeste.fichas import carregar_fichas
 from nordeste.tabela import cobertura_efetiva
+from nordeste.territorios import UFS_FORA_DO_NE
 
 TERRITORIOS_COMPLETOS = {
     "BR", "N", "NE", "SE", "S", "CO", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE_UF", "BA",
@@ -112,6 +113,20 @@ def test_series_de_populacao_nao_se_sobrepoem(fichas):
     assert not anos[0] & anos[1]
 
 
+def test_so_a_renda_domiciliar_per_capita_pede_as_27_ufs(fichas):
+    pedem = {(f.id, s.id) for f, s in _series(fichas) if s.parametros.get("todas_as_ufs")}
+    assert pedem == {("renda_dom_pc", "pnadc")}
+
+
+def test_renda_offline_tem_as_27_ufs_e_as_outras_series_so_as_do_nordeste(base):
+    ufs_fora = set(UFS_FORA_DO_NE)
+    renda = base[base.indicador_id == "renda_dom_pc"]
+    assert ufs_fora <= set(renda.territorio_id)
+    for uf, grupo in renda[renda.territorio_id.isin(ufs_fora)].groupby("territorio_id"):
+        assert set(grupo.ano) == set(ANOS_PNADC) and set(grupo.serie_id) == {"pnadc"}, uf
+    assert not ufs_fora & set(base[base.indicador_id != "renda_dom_pc"].territorio_id)
+
+
 def test_base_offline_tem_os_15_territorios_em_cada_ano_de_cada_serie(base, fichas):
     for f, s in _series(fichas):
         if f.id not in FICHAS_COMPLETAS:
@@ -119,8 +134,9 @@ def test_base_offline_tem_os_15_territorios_em_cada_ano_de_cada_serie(base, fich
         linhas = base[(base.indicador_id == f.id) & (base.serie_id == s.id)
                       & (base.territorio_id != "BR_FORA_NE")]
         assert not linhas.empty, f"{f.id}/{s.id} sem linhas"
+        esperados = TERRITORIOS_COMPLETOS | (set(UFS_FORA_DO_NE) if s.parametros.get("todas_as_ufs") else set())
         for ano, grupo in linhas.groupby("ano"):
-            assert set(grupo.territorio_id) == TERRITORIOS_COMPLETOS, f"{f.id}/{s.id} {ano}"
+            assert set(grupo.territorio_id) == esperados, f"{f.id}/{s.id} {ano}"
         assert linhas.ano.min() == s.inicio, f"{f.id}/{s.id}"
         if s.fim is not None:
             assert linhas.ano.max() == s.fim, f"{f.id}/{s.id}"

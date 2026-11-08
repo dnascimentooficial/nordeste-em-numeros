@@ -396,3 +396,15 @@ def test_territorios_esperados_na_serie_sem_partes_tambem_sao_validados(tmp_path
 def test_filtro_linhas_aceita_so_texto_ou_numero(tmp_path, ficha_minima, filtro):
     _gravar(tmp_path, _com_partes(ficha_minima, filtro_linhas=filtro))
     assert any("filtro_linhas" in m for m in verificar_fichas(tmp_path))
+
+
+@pytest.mark.parametrize("valor", ["sim", 1, None, ["NE"]])
+def test_todas_as_ufs_aceita_so_verdadeiro_ou_falso(tmp_path, ficha_minima, valor):
+    ficha_minima["series"][0]["parametros"] = {"todas_as_ufs": valor}
+    _gravar(tmp_path, ficha_minima)
+    assert any("todas_as_ufs" in m for m in verificar_fichas(tmp_path))
+
+
+def test_todas_as_ufs_verdadeiro_e_aceito(tmp_path, ficha_minima):
+    ficha_minima["series"][0]["parametros"] = {"todas_as_ufs": True}
+    assert carregar_ficha(_gravar(tmp_path, ficha_minima)).series[0].parametros["todas_as_ufs"] is True

@@ -17,6 +17,7 @@ from nordeste.padronizacao.mcti import padronizar_mcti
 from nordeste.padronizacao.pintec import padronizar_pintec
 from nordeste.padronizacao.planilha import padronizar_planilha
 from nordeste.padronizacao.sidra import padronizar_sidra
+from nordeste.territorios import territorios_do_nordeste
 
 NOTA_SEM_PESQUISA = "ano sem pesquisa (Censo)"
 
@@ -40,7 +41,8 @@ def padronizar(
 ) -> pd.DataFrame:
     """Padroniza o arquivo bruto da coleta, marca os anos de estimativa oficial e os anos sem pesquisa.
 
-    O padronizador vem de parametros["padronizador"] ou, na falta, do coletor da serie.
+    O padronizador vem de parametros["padronizador"] ou, na falta, do coletor da serie. Ele recebe a tabela de
+    territorios sem as UFs de fora do Nordeste, a nao ser que a serie peca `todas_as_ufs: true`.
     Anos de parametros["anos_estimativa"] viram estimativa_oficial; linhas indisponiveis
     continuam indisponiveis (valor nulo <=> indisponivel). Os anos de serie.anos_sem_publicacao (dentro de
     inicio..fim) ganham uma linha indisponivel para cada grupo e territorio da serie que a fonte nao trouxe
@@ -50,6 +52,8 @@ def padronizar(
     if nome not in _PADRONIZADORES:
         raise ErroLayout(f"padronizador desconhecido em {ficha.id}/{serie.id}: {nome}")
     conteudo = (caminhos.raiz / coleta.arquivo).read_bytes()
+    if not serie.parametros.get("todas_as_ufs"):
+        territorios = territorios_do_nordeste(territorios)
     df = _PADRONIZADORES[nome](conteudo, ficha, serie, coleta.coleta_id, territorios)
     estimados = df["ano"].isin(serie.parametros.get("anos_estimativa", [])) & (
         df["tipo_dado"] != "indisponivel")

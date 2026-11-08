@@ -70,6 +70,13 @@ def test_url_sidra():
         "21,22,23,24,25,26,27,28,29/v/56/p/all/c11255/90707")
 
 
+def test_url_sidra_pede_as_nove_ufs_do_nordeste_ou_as_27():
+    nordeste = url_sidra({"tabela": "7533", "variavel": "10816"})
+    assert "/n1/all/n2/all/n3/21,22,23,24,25,26,27,28,29/" in nordeste
+    assert "/n1/all/n2/all/n3/all/" in url_sidra({"tabela": "7533", "variavel": "10816", "todas_as_ufs": True})
+    assert url_sidra({"tabela": "7533", "variavel": "10816", "todas_as_ufs": False}) == nordeste
+
+
 def test_url_sidra_com_periodos_e_sem_classificacoes():
     assert url_sidra({"tabela": "1", "variavel": "2", "periodos": "2010-2020"}).endswith("/v/2/p/2010-2020")
 
