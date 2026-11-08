@@ -50,10 +50,10 @@ mapa_renda:
   marca_ne: "NE"
   veredito:
     - id: mapa_renda_distancia_aumentou
-      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:extenso} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. But, in reais, the gap to the Southeast widened: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo > renda_gap_se.primeiro"
     - id: mapa_renda_distancia_diminuiu
-      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:0} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
+      texto: "Income grew the most where it was lowest: {renda_topo6.ultimo:extenso} of the six states that grew the most since {renda_topo6.ano_primeiro} are in the Northeast. And, in reais, the gap to the Southeast narrowed too: R$ {renda_gap_se.primeiro:0} in {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} in {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo < renda_gap_se.primeiro"
   complemento:
     id: mapa_renda_proporcao

@@ -32,3 +32,19 @@ def ordinal(n: int, idioma: str | None = None) -> str:
         return f"{n}º"
     sufixo = "th" if 10 <= n % 100 <= 20 else ORDINAIS_EN.get(n % 10, "th")
     return f"{n}{sufixo}"
+
+
+_EXTENSO = {
+    "pt": ("zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"),
+    "en": ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"),
+}
+
+
+def por_extenso(valor: float, idioma: str | None = None) -> str:
+    """Inteiro de 0 a 10 por extenso, como manda o texto jornalistico (`5 -> "cinco"`, em ingles `"five"`); fora disso,
+    o numero com algarismos."""
+    idioma = idioma or idioma_atual()
+    n = round(valor)
+    if n == valor and 0 <= n <= 10:
+        return _EXTENSO["en" if idioma == "en" else "pt"][int(n)]
+    return numero(valor, 0, idioma)

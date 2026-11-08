@@ -158,7 +158,7 @@ def test_mapa_em_ingles_formata_no_padrao_americano():
     to = next(q for q in mapa["dados"]["quadrados"] if q["uf"] == "TO")
     assert _sp(to["rotulo"]) == "Tocantins: +62.5% from 2012 to 2025, from R$ 1,218 to R$ 1,979 per person, per month"
     assert mapa["titulo"] == "Where has income grown the most since 2012?"
-    assert mapa["veredito"].startswith("Income grew the most where it was lowest: 5 of the six states")
+    assert mapa["veredito"].startswith("Income grew the most where it was lowest: five of the six states")
     assert "R$ 1,082 in 2012, R$ 1,199 in 2025" in _sp(mapa["veredito"])
 
 
@@ -176,7 +176,7 @@ def test_veredito_com_a_base_de_hoje():
     (mapa, suprimidos), _ = _mapa()
     assert mapa["titulo"] == "Onde a renda mais cresceu desde 2012?"
     assert _sp(mapa["veredito"]) == (
-        "A renda cresceu mais onde era menor: 5 dos seis estados que mais cresceram desde 2012 são do Nordeste. "
+        "A renda cresceu mais onde era menor: cinco dos seis estados que mais cresceram desde 2012 são do Nordeste. "
         "Mas, em reais, a distância para o Sudeste aumentou: R$ 1.082 em 2012, R$ 1.199 em 2025."
     )
     assert mapa["complemento"] == ("Em proporção, o Nordeste se aproximou: a renda por pessoa da região foi de 50% para 55% "
@@ -281,7 +281,7 @@ def test_veredito_e_fonte_no_html_publicado(site):
     saida, _ = site
     _, bloco = _bloco(saida)
     veredito = Arvore.texto(bloco.achar("p", classe="nn-mosaico-veredito")[0])
-    assert veredito.startswith("A renda cresceu mais onde era menor: 5 dos seis estados que mais cresceram desde 2012")
+    assert veredito.startswith("A renda cresceu mais onde era menor: cinco dos seis estados que mais cresceram desde 2012")
     assert "a distância para o Sudeste aumentou: R$ 1.082 em 2012, R$ 1.199 em 2025." in veredito
     fonte = Arvore.texto(bloco.achar("div", classe="nn-fonte")[0])
     assert "tabela 7533" in fonte and "a preços médios de 2025" in fonte and "não a emenda com o Censo" in fonte
@@ -289,7 +289,7 @@ def test_veredito_e_fonte_no_html_publicado(site):
     assert saida_estados["attrs"]["href"] == "/estados/" and saida_estados["attrs"]["data-umami-event-place"] == "mapa-renda"
     _, en = _bloco(saida, "en/index.html")
     veredito_en = Arvore.texto(en.achar("p", classe="nn-mosaico-veredito")[0])
-    assert veredito_en.startswith("Income grew the most where it was lowest: 5 of the six states")
+    assert veredito_en.startswith("Income grew the most where it was lowest: five of the six states")
     assert "the gap to the Southeast widened: R$ 1,082 in 2012, R$ 1,199 in 2025." in veredito_en
 
 

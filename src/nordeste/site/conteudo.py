@@ -14,7 +14,7 @@ from pathlib import Path
 import yaml
 
 from nordeste.site.dados import DadosSite, Ponto
-from nordeste.site.formatacao import escala_auto, numero
+from nordeste.site.formatacao import escala_auto, numero, por_extenso
 from nordeste.site.idioma import PADRAO, ErroTraducao, traduzir
 
 
@@ -63,8 +63,8 @@ def _analisar_marcador(corpo: str) -> tuple[str, str, str | None]:
     if campo in _CAMPOS_DE_ANO:
         if formato is not None:
             raise ErroConteudo(f"Ano nao leva formato: {{{corpo}}}.")
-    elif formato is None or not (formato == "auto" or _FORMATO_EM_CASAS.fullmatch(formato)):
-        raise ErroConteudo(f"Formato invalido em {{{corpo}}}: use casas (1), casas e sufixo (1%), +1 ou auto.")
+    elif formato is None or not (formato in ("auto", "extenso") or _FORMATO_EM_CASAS.fullmatch(formato)):
+        raise ErroConteudo(f"Formato invalido em {{{corpo}}}: use casas (1), casas e sufixo (1%), +1, auto ou extenso.")
     return id_, campo, formato
 
 
@@ -73,6 +73,8 @@ def _formatar(valor: float, formato: str) -> str:
         if abs(valor) < 1000:
             raise ErroConteudo(f"Formato auto so vale de 1.000 em diante, nao para {valor}.")
         return escala_auto(valor)
+    if formato == "extenso":  # de 0 a 10 por extenso ("cinco dos seis"); acima, com algarismos
+        return por_extenso(valor)
     sinal, casas, sufixo = _FORMATO_EM_CASAS.fullmatch(formato).groups()
     texto = numero(valor, int(casas))
     if sinal and round(valor, int(casas)) > 0:

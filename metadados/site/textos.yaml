@@ -74,10 +74,10 @@ mapa_renda:
     # mais) dos seis estados que mais cresceram é do Nordeste. "Aumentou" e "diminuiu": a diferença Sudeste − Nordeste
     # em reais, do primeiro ao último ano.
     - id: mapa_renda_distancia_aumentou
-      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. Mas, em reais, a distância para o Sudeste aumentou: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:extenso} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. Mas, em reais, a distância para o Sudeste aumentou: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo > renda_gap_se.primeiro"
     - id: mapa_renda_distancia_diminuiu
-      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:0} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. E, em reais, a distância para o Sudeste também diminuiu: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
+      texto: "A renda cresceu mais onde era menor: {renda_topo6.ultimo:extenso} dos seis estados que mais cresceram desde {renda_topo6.ano_primeiro} são do Nordeste. E, em reais, a distância para o Sudeste também diminuiu: R$ {renda_gap_se.primeiro:0} em {renda_gap_se.ano_primeiro}, R$ {renda_gap_se.ultimo:0} em {renda_gap_se.ano_ultimo}."
       condicao: "renda_topo6.ultimo >= 4 e renda_ne.primeiro < renda_br.primeiro e renda_cresc_ne.ultimo > renda_cresc_br.ultimo e renda_gap_se.ultimo < renda_gap_se.primeiro"
   complemento:
     id: mapa_renda_proporcao
