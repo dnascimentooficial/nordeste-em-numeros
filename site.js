@@ -686,24 +686,91 @@ desenhar(linhas);
 carregarEDesenhar();
 }
 }
+function ligarMapa() {
+document.querySelectorAll('.nn-mosaico').forEach((bloco) => {
+const abas = bloco.querySelector('.nn-mosaico-abas');
+const leitura = bloco.querySelector('.nn-mosaico-leitura');
+if (abas) {
+const botoes = Array.from(abas.querySelectorAll('.nn-mosaico-aba'));
+botoes.forEach((botao) => {
+botao.addEventListener('click', () => {
+if (botao.getAttribute('aria-pressed') === 'true') return;
+const vista = botao.getAttribute('data-vista');
+botoes.forEach((outro) => outro.setAttribute('aria-pressed', String(outro === botao)));
+botoes.forEach((outro) => bloco.classList.remove('nn-mosaico-vista-' + outro.getAttribute('data-vista')));
+bloco.classList.add('nn-mosaico-vista-' + vista);
+medir('map-tab', { tab: vista });
+});
+});
+abas.hidden = false;
+}
+if (leitura) {
+leitura.textContent = leitura.getAttribute('data-dica') || '';
+leitura.hidden = false;
+}
+bloco.querySelectorAll('.nn-mosaico-uf').forEach((estado) => {
+const mostrar = () => {
+if (leitura) leitura.textContent = estado.getAttribute('aria-label');
+};
+estado.addEventListener('mouseenter', mostrar);
+estado.addEventListener('focus', mostrar);
+estado.addEventListener('click', () => {
+mostrar();
+medir('map-tile', { uf: estado.getAttribute('data-uf') });
+});
+});
+});
+}
 function ligarAmpliar() {
 const dialogo = document.querySelector('dialog.nn-modal:not(.nn-modal-historia):not(.nn-modal-autor)');
 if (!dialogo || typeof dialogo.showModal !== 'function') return;
 const corpo = dialogo.querySelector('.nn-modal-corpo');
+const endereco = dialogo.getAttribute('data-ampliados');
 let origem = null;
-function abrir(botao, peloGrafico) {
-const modelo = document.getElementById(botao.getAttribute('data-ampliado'));
-if (!modelo || dialogo.open) return;
-if (peloGrafico) {
-medir('chart-enlarge', { chart: botao.getAttribute('data-umami-event-chart'), page: paginaAtual() });
+let pedido = null;
+let abrindo = false;
+function modelos() {
+if (!pedido) {
+pedido = fetch(endereco, { credentials: 'same-origin' })
+.then((resposta) => {
+if (!resposta.ok) throw new Error('ampliados: ' + resposta.status + ' ' + endereco);
+return resposta.json();
+})
+.catch((erro) => {
+pedido = null;
+throw erro;
+});
 }
+return pedido;
+}
+function mostrar(botao, html) {
+if (dialogo.open || typeof html !== 'string') return;
+const lido = new DOMParser().parseFromString(html, 'text/html');
 origem = botao;
-corpo.replaceChildren(modelo.content.cloneNode(true));
+corpo.replaceChildren(...Array.from(lido.body.childNodes, (no) => document.importNode(no, true)));
 const titulo = corpo.querySelector('.nn-modal-titulo');
 if (titulo) titulo.id = dialogo.getAttribute('aria-labelledby');
 dialogo.showModal();
 dialogo.scrollTop = 0;
 corpo.querySelectorAll('svg[data-pontos]').forEach(ligarDica);
+}
+function abrir(botao, peloGrafico) {
+if (dialogo.open || abrindo || !endereco) return;
+if (peloGrafico) {
+medir('chart-enlarge', { chart: botao.getAttribute('data-umami-event-chart'), page: paginaAtual() });
+}
+abrindo = true;
+botao.setAttribute('aria-busy', 'true');
+modelos()
+.then((todos) => mostrar(botao, todos[botao.getAttribute('data-ampliado')]))
+.catch((erro) => console.error(erro))
+.finally(() => {
+abrindo = false;
+botao.removeAttribute('aria-busy');
+});
+}
+function adiantar() {
+if (endereco) modelos().catch(() => {});
 }
 dialogo.querySelector('.nn-modal-fechar').addEventListener('click', () => dialogo.close());
 dialogo.addEventListener('click', (evento) => {
@@ -717,11 +784,14 @@ origem = null;
 document.querySelectorAll('.nn-ampliar').forEach((botao) => {
 botao.hidden = false;
 botao.addEventListener('click', () => abrir(botao));
+botao.addEventListener('pointerenter', adiantar, { once: true });
+botao.addEventListener('focus', adiantar, { once: true });
 const grafico = botao.closest('.nn-grafico');
 const caixa = grafico && grafico.querySelector('.nn-graf');
 if (!caixa) return;
 let toque = false;
 caixa.classList.add('nn-clicavel');
+caixa.addEventListener('pointerenter', adiantar, { once: true });
 caixa.addEventListener('pointerdown', (evento) => { toque = evento.pointerType === 'touch'; });
 caixa.addEventListener('click', () => { if (!toque) abrir(botao, true); });
 });
@@ -1088,7 +1158,7 @@ atualizar();
 window.addEventListener('scroll', pedir, { passive: true });
 window.addEventListener('resize', pedir);
 }
-const SECOES_LIDAS = 'main .nn-capitulo[id], main .nn-placar, main .nn-chamada-historia, main .nn-hist-bloco, ' +
+const SECOES_LIDAS = 'main .nn-capitulo[id], main .nn-mosaico, main .nn-placar, main .nn-chamada-historia, main .nn-hist-bloco, ' +
 'main .nn-hist-linha, main #sobre > article[id]';
 function nomeDaSecao(secao) {
 return secao.id || (secao.getAttribute('aria-labelledby') || '').replace(/^titulo-/, '');
@@ -1205,6 +1275,7 @@ tentar(ligarIndice);
 tentar(ligarVoltar);
 tentar(() => document.querySelectorAll('.nn-graf svg[data-pontos]').forEach(ligarDica));
 tentar(ligarAmpliar);
+tentar(ligarMapa);
 tentar(ligarAutor);
 tentar(() => {
 try {
